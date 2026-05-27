@@ -1,0 +1,319 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cs-bg:#f4f7fc;
+  --cs-panel:#ffffff;
+  --cs-border:#d7e0ee;
+  --cs-shadow:0 14px 34px rgba(21,38,68,0.08);
+  --cs-shadow-soft:0 7px 16px rgba(21,38,68,0.06);
+  --cs-brand:#145ca4;
+  --cs-brand-soft:#eaf2fd;
+}
+body{
+  background:
+    radial-gradient(circle at 8% -8%, rgba(20,92,164,0.14), transparent 30%),
+    radial-gradient(circle at 95% 0%, rgba(15,110,86,0.10), transparent 28%),
+    var(--cs-bg);
+  color:var(--color-text-primary,#1c2a3b);
+  font-family:var(--font-sans,"Segoe UI",sans-serif);
+}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.w{
+  max-width:1120px;
+  margin:24px auto;
+  padding:1.75rem;
+  font-family:var(--font-sans);
+  background:rgba(255,255,255,0.82);
+  border:1px solid rgba(215,224,238,0.92);
+  border-radius:20px;
+  backdrop-filter:blur(8px);
+  box-shadow:var(--cs-shadow);
+}
+.hdr{margin-bottom:1.65rem;padding-bottom:1rem;border-bottom:1px solid rgba(215,224,238,0.85)}
+.hdr h1{font-size:31px;font-weight:700;letter-spacing:-0.03em;color:var(--color-text-primary,#1c2a3b);margin-bottom:9px}
+.hdr p{font-size:14px;color:var(--color-text-secondary,#51657e);line-height:1.75;max-width:760px}
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:1.6rem}
+.rc{background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);border:1px solid var(--cs-border);border-radius:14px;padding:13px 14px;box-shadow:var(--cs-shadow-soft)}
+.rc-title{font-size:11px;font-weight:700;color:var(--color-text-primary,#1c2a3b);margin-bottom:8px;text-transform:uppercase;letter-spacing:.09em}
+.rr{font-size:12px;color:var(--color-text-secondary,#51657e);line-height:1.8;display:flex;gap:8px}
+.rk{font-family:var(--font-mono,Consolas,monospace);color:var(--color-text-primary,#1c2a3b);font-size:10px;min-width:56px;flex-shrink:0;text-transform:uppercase;letter-spacing:.05em}
+.div{height:1px;background:linear-gradient(90deg,transparent,rgba(124,140,160,0.55),transparent);margin:1.5rem 0}
+.slbl{font-size:11px;font-weight:700;color:var(--color-text-tertiary,#71839a);letter-spacing:.15em;margin-bottom:1rem}
+.q{background:var(--color-background-primary,var(--cs-panel));border:1px solid var(--color-border-tertiary,var(--cs-border));border-radius:17px;padding:1.3rem;margin-bottom:1.25rem;box-shadow:var(--cs-shadow-soft);transition:transform .18s ease, box-shadow .18s ease}
+.q:hover{transform:translateY(-2px);box-shadow:var(--cs-shadow)}
+.qmeta{display:flex;align-items:center;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.qn{font-size:11px;font-weight:700;color:var(--color-text-tertiary,#71839a);letter-spacing:.1em}
+.b{font-size:10px;font-weight:700;padding:4px 8px;border-radius:999px;letter-spacing:.03em}
+.b-arc{background:#EEEDFE;color:#3C3489}
+.b-got{background:#FCEBEB;color:#791F1F}
+.b-cod{background:#FAEEDA;color:#633806}
+.b-thy{background:#E6F1FB;color:#0C447C}
+.b-des{background:#E1F5EE;color:#085041}
+.b-must{background:#F1EFE8;color:#444441}
+.b-out{background:#E6F1FB;color:#0C447C}
+.qt{font-size:16px;font-weight:600;color:var(--color-text-primary,#1c2a3b);line-height:1.68;margin-bottom:12px}
+.code{background:#0f1725;border:1px solid #26354b;border-radius:14px;padding:13px 14px;font-family:var(--font-mono,Consolas,monospace);font-size:11.5px;color:#e7eef8;line-height:1.86;margin-bottom:12px;white-space:pre;overflow-x:auto;box-shadow:inset 0 1px 0 rgba(255,255,255,0.04)}
+.rbtn{font-size:12px;font-weight:600;color:var(--cs-brand);cursor:pointer;background:var(--cs-brand-soft);border:1px solid rgba(20,92,164,0.18);padding:8px 12px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;transition:all .16s ease}
+.rbtn:hover{background:var(--cs-brand);color:#fff;border-color:var(--cs-brand)}
+.rbtn:focus-visible,.footer button:focus-visible{outline:2px solid var(--cs-brand);outline-offset:2px}
+.ans{display:none;margin-top:14px;border-top:1px solid var(--color-border-tertiary,var(--cs-border));padding-top:14px}
+.ans.open{display:block}
+.exp{background:#fff5e6;border:1px solid #efd7aa;border-radius:12px;padding:10px 12px;font-size:12px;color:#764f12;margin-bottom:10px;line-height:1.7}
+.atxt{font-size:13px;color:var(--color-text-secondary,#51657e);line-height:1.86}
+.atxt code{font-family:var(--font-mono,Consolas,monospace);background:#edf3fb;padding:2px 5px;border-radius:6px;font-size:11px;color:var(--color-text-primary,#1c2a3b)}
+.tip{border-left:3px solid #3d84c8;padding:10px 12px;background:#ecf5ff;font-size:12px;color:#1d5d95;line-height:1.7;margin-top:10px;border-radius:0 12px 12px 0}
+.tip code{font-family:var(--font-mono,Consolas,monospace);font-size:11px;background:rgba(24,95,165,0.14);padding:2px 5px;border-radius:6px}
+.warn{border-left:3px solid #c44444;padding:10px 12px;background:#fff0f0;font-size:12px;color:#8f2a2a;line-height:1.7;margin-top:10px;border-radius:0 12px 12px 0}
+.orow{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--color-border-tertiary,var(--cs-border));font-size:12px}
+.orow:last-child{border:none}
+.oln{font-family:var(--font-mono,Consolas,monospace);color:var(--color-text-tertiary,#71839a);min-width:72px;flex-shrink:0;text-transform:uppercase;font-size:10px;letter-spacing:.04em}
+.ores{font-family:var(--font-mono,Consolas,monospace);font-weight:700;min-width:104px;flex-shrink:0}
+.r-ok{color:#0F6E56}.r-err{color:#A32D2D}.r-val{color:#BA7517}
+.owhy{color:var(--color-text-secondary,#51657e);font-size:11px;flex:1;line-height:1.7}
+.footer{margin-top:1.7rem;padding:14px 16px;background:linear-gradient(180deg,#ffffff,#f7faff);border:1px solid var(--cs-border);border-radius:18px;font-size:12px;color:var(--color-text-secondary,#51657e);line-height:1.8;box-shadow:var(--cs-shadow-soft)}
+.footer button{font-size:12px;color:var(--cs-brand);background:none;border:none;cursor:pointer;padding:0;font-weight:600}
+.footer button:hover{text-decoration:underline}
+
+@media (max-width:760px){
+  .w{margin:10px;padding:1rem;border-radius:16px}
+  .hdr h1{font-size:24px}
+  .ref-grid{grid-template-columns:1fr}
+  .q{padding:1rem}
+  .qt{font-size:15px}
+  .code{font-size:11px}
+  .orow{flex-direction:column;gap:3px}
+  .oln,.ores{min-width:auto}
+}
+</style>
+
+<div class="w">
+<h2 class="sr-only">Senior React assessment on code splitting using React.lazy, Suspense, and dynamic import — 6 questions covering internals, gotchas, architecture, and coding patterns</h2>
+<div class="hdr">
+  <h1>Code splitting — React.lazy, Suspense, dynamic import</h1>
+  <p>6 questions across internals, gotchas, coding patterns, and architecture. This topic covers both how it works under the hood and how it fails in production.</p>
+</div>
+
+<div class="slbl">MENTAL MODEL</div>
+<div class="ref-grid">
+  <div class="rc">
+    <div class="rc-title">dynamic import()</div>
+    <div class="rr"><span class="rk">what</span>ES2020 spec — returns a Promise that resolves to a module object</div>
+    <div class="rr"><span class="rk">bundler</span>Webpack/Vite sees it as a split point — emits a separate chunk</div>
+    <div class="rr"><span class="rk">timing</span>Network request fires at call time, not at import time</div>
+  </div>
+  <div class="rc">
+    <div class="rc-title">React.lazy()</div>
+    <div class="rr"><span class="rk">what</span>Wraps a dynamic import — tells React to defer rendering</div>
+    <div class="rr"><span class="rk">expects</span>A function that returns a Promise resolving to a default export</div>
+    <div class="rr"><span class="rk">result</span>A lazy component — must be wrapped in Suspense</div>
+  </div>
+  <div class="rc">
+    <div class="rc-title">Suspense</div>
+    <div class="rr"><span class="rk">what</span>Catches "not ready yet" signals thrown by lazy components</div>
+    <div class="rr"><span class="rk">shows</span>fallback UI while the chunk loads</div>
+    <div class="rr"><span class="rk">scope</span>Nearest Suspense ancestor handles the thrown Promise</div>
+  </div>
+  <div class="rc">
+    <div class="rc-title">Error boundary</div>
+    <div class="rr"><span class="rk">why</span>Chunk load failures (network error, 404) must be caught</div>
+    <div class="rr"><span class="rk">rule</span>Always wrap lazy routes in both Suspense AND ErrorBoundary</div>
+    <div class="rr"><span class="rk">note</span>Suspense does NOT catch load errors — only load delays</div>
+  </div>
+</div>
+
+<div class="div"></div>
+<div class="slbl">QUESTIONS</div>
+
+<div class="q">
+  <div class="qmeta"><span class="qn">Q1</span><span class="b b-thy">theory</span><span class="b b-must">must-know</span></div>
+  <div class="qt">Explain exactly what happens — at the bundler level, the network level, and the React rendering level — from the moment a user navigates to a lazy route until the component appears on screen. Walk through every step.</div>
+  <button class="rbtn" onclick="tog(this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans">
+    <div class="exp">Senior expectation: Must cover all three layers — not just "React shows a fallback". Must explain the Promise-throwing mechanism (how Suspense actually works internally), the bundler chunk emission, and the network waterfall. Should mention that React re-renders the tree once the chunk resolves.</div>
+    <div class="atxt"><strong>Step 1 — Build time (bundler).</strong> When Webpack or Vite encounters <code>import('./Dashboard')</code>, it treats this as a split point and emits <code>Dashboard.[hash].js</code> as a separate chunk. The main bundle gets a small stub that knows how to fetch this chunk by its hashed filename.<br><br><strong>Step 2 — User navigates.</strong> React renders the lazy component for the first time. The lazy wrapper calls the factory function <code>() => import('./Dashboard')</code>. The Promise is pending — the chunk is not loaded yet.<br><br><strong>Step 3 — React's Suspense mechanism.</strong> React.lazy throws the pending Promise. This is not a regular error — React's reconciler catches thrown Promises specifically. It walks up the tree to find the nearest <code>&lt;Suspense&gt;</code> boundary and renders its <code>fallback</code> prop instead.<br><br><strong>Step 4 — Network.</strong> The browser requests <code>Dashboard.[hash].js</code>. This is a real network round-trip — subject to latency, CDN caching, and connection speed.<br><br><strong>Step 5 — Chunk resolves.</strong> The Promise settles. React re-renders from the Suspense boundary downward, this time successfully rendering the now-available component. The fallback is replaced with the real UI.<br><br><strong>Step 6 — Failure path.</strong> If the network request fails (404, timeout, offline), React.lazy's Promise rejects. Suspense does NOT handle rejections — the error propagates to the nearest Error Boundary. Without one, the entire tree crashes.</div>
+    <div class="tip">The thrown-Promise mechanism is not public API — it's an internal React convention called "Suspense for data". React 18 formalised this with the <code>use()</code> hook, which can throw any Promise, not just lazy component loads.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qmeta"><span class="qn">Q2</span><span class="b b-got">gotcha</span><span class="b b-must">must-know</span></div>
+  <div class="qt">This code has three mistakes that will cause real production problems. Identify all three and fix them.</div>
+  <div class="code">import React, { lazy } from 'react';
+
+const Dashboard = lazy(() => import('./Dashboard'));
+const Settings  = lazy(() => import('./Settings'));
+
+function App() {
+  return (
+    &lt;Suspense&gt;
+      &lt;Router&gt;
+        &lt;Route path="/dashboard" element={&lt;Dashboard /&gt;} /&gt;
+        &lt;Route path="/settings"  element={&lt;Settings /&gt;} /&gt;
+      &lt;/Router&gt;
+    &lt;/Suspense&gt;
+  );
+}</div>
+  <button class="rbtn" onclick="tog(this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans">
+    <div class="exp">Senior expectation: Must catch missing fallback prop (Suspense renders nothing during load), missing Error Boundary (chunk load failure crashes the app), and lazy definitions inside the component (they'd be recreated on every render). Should provide the corrected version.</div>
+    <div class="atxt"><strong>Problem 1 — Missing <code>fallback</code> prop on Suspense.</strong> Without a fallback, React renders nothing (null) while the chunk loads. Users see a blank screen with no indication anything is happening. Always provide a meaningful fallback — at minimum a spinner, ideally a skeleton that matches the page layout to prevent layout shift.<br><br><strong>Problem 2 — No Error Boundary.</strong> If <code>Dashboard.js</code> fails to load (network blip, deploy with new hashes, user offline), the thrown rejection is uncaught. React unmounts the entire tree and shows a blank screen in production. Wrap with an Error Boundary that shows a "Failed to load — retry" UI.<br><br><strong>Problem 3 — Lazy definitions are fine here</strong> (they're at module level), but a common variant of this mistake is defining lazy inside the component function body — that recreates the lazy reference on every render, triggering a new import() and destroying Suspense's ability to cache the result.<br><br>Corrected version:</div>
+    <div class="code">const Dashboard = lazy(() => import('./Dashboard'));
+const Settings  = lazy(() => import('./Settings'));
+
+function App() {
+  return (
+    &lt;ErrorBoundary fallback={&lt;ChunkLoadError /&gt;}&gt;
+      &lt;Suspense fallback={&lt;PageSkeleton /&gt;}&gt;
+        &lt;Router&gt;
+          &lt;Route path="/dashboard" element={&lt;Dashboard /&gt;} /&gt;
+          &lt;Route path="/settings"  element={&lt;Settings /&gt;} /&gt;
+        &lt;/Router&gt;
+      &lt;/Suspense&gt;
+    &lt;/ErrorBoundary&gt;
+  );
+}</div>
+    <div class="warn">Never define <code>React.lazy()</code> inside a component function body. The reference is recreated on every render, causing the component to remount on every parent re-render — destroying state, triggering redundant network requests, and flickering the fallback continuously.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qmeta"><span class="qn">Q3</span><span class="b b-cod">coding</span><span class="b b-must">must-know</span></div>
+  <div class="qt"><code>React.lazy</code> only supports default exports. Your team has a component library where everything is named export. Without changing the library, implement a pattern that makes lazy loading work for named exports — and explain why the constraint exists.</div>
+  <div class="code">// component-library/index.js
+export { HeavyChart } from './HeavyChart';
+export { DataGrid }  from './DataGrid';
+
+// You cannot modify the library.
+// How do you lazy load HeavyChart?</div>
+  <button class="rbtn" onclick="tog(this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans">
+    <div class="exp">Senior expectation: Must know the re-export wrapper pattern. Must explain WHY React.lazy requires default exports (it looks for module.default on the resolved module object). Bonus: mention that React's future versions and some bundler plugins are relaxing this constraint.</div>
+    <div class="atxt">Why the constraint exists: <code>React.lazy()</code> resolves the Promise and accesses <code>module.default</code> directly — it assumes a single default export represents the component. This is a deliberate simplicity choice, not a technical limitation.<br><br>The re-export wrapper pattern — create a thin proxy file:</div>
+    <div class="code">// lazy-wrappers/HeavyChart.js
+export { HeavyChart as default } from '../component-library';
+
+// In your app:
+const HeavyChart = lazy(
+  () => import('./lazy-wrappers/HeavyChart')
+);</div>
+    <div class="atxt">Alternatively, inline the re-export directly in the lazy call:</div>
+    <div class="code">const HeavyChart = lazy(() =>
+  import('../component-library').then(mod => ({
+    default: mod.HeavyChart
+  }))
+);</div>
+    <div class="atxt">The <code>.then(mod => ({ default: mod.HeavyChart }))</code> pattern constructs a synthetic module object that satisfies React.lazy's expectation. This is the idiomatic solution — no extra files needed. The trade-off: every lazily-loaded named export still pulls in the full library barrel unless your bundler's tree-shaking can isolate the chunk, which barrel files often defeat. The proxy file approach gives the bundler a cleaner split point.</div>
+    <div class="tip">Barrel files (<code>index.js</code> re-exporting everything) are the silent enemy of code splitting. Even with <code>React.lazy</code>, if the library barrel isn't tree-shakeable, the entire library lands in one chunk. Use direct imports or <code>sideEffects: false</code> in package.json to help bundlers split correctly.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qmeta"><span class="qn">Q4</span><span class="b b-got">gotcha</span></div>
+  <div class="qt">A user deploys a new version of the app. An existing user's browser still has the old HTML cached, which references old chunk filenames like <code>Dashboard.abc123.js</code>. The new deployment replaced that chunk with <code>Dashboard.xyz789.js</code>. What happens when the old user navigates to the dashboard, and how do you handle this in production?</div>
+  <button class="rbtn" onclick="tog(this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans">
+    <div class="exp">Senior expectation: This is a real production outage scenario called "chunk hash mismatch" or "stale chunk" problem. Must identify that the old chunk 404s, React.lazy rejects, and without an Error Boundary the app crashes. Must know at least two recovery strategies.</div>
+    <div class="atxt">What happens: the old HTML requests <code>Dashboard.abc123.js</code>. That file no longer exists on the CDN/server — it was replaced with <code>Dashboard.xyz789.js</code> in the new deployment. The browser gets a 404. React.lazy's Promise rejects. Without an Error Boundary, the entire React tree unmounts and the user sees a blank screen with no way to recover.<br><br><strong>Strategy 1 — Error Boundary with reload.</strong> Catch the chunk load failure and offer a "click to refresh" button. On click, call <code>window.location.reload()</code> — the browser fetches the new HTML with correct chunk references, and the new chunk loads successfully. This is the most user-friendly approach.</div>
+    <div class="code">class ChunkErrorBoundary extends React.Component {
+  state = { hasError: false };
+  static getDerivedStateFromError(error) {
+    const isChunkError = error?.name === 'ChunkLoadError'
+      || error?.message?.includes('Loading chunk');
+    return { hasError: true, isChunkError };
+  }
+  render() {
+    if (this.state.hasError && this.state.isChunkError) {
+      return (
+        &lt;div&gt;
+          &lt;p&gt;A new version is available.&lt;/p&gt;
+          &lt;button onClick={() =&gt; window.location.reload()}&gt;
+            Refresh to update
+          &lt;/button&gt;
+        &lt;/div&gt;
+      );
+    }
+    return this.props.children;
+  }
+}</div>
+    <div class="atxt"><strong>Strategy 2 — Keep old chunks alive.</strong> Configure your CDN/deployment to retain previous chunk versions for a rolling window (e.g. 24 hours). Old sessions can still load their expected chunks. New sessions get new chunks. This is the most robust solution but adds storage cost.<br><br><strong>Strategy 3 — Vite's <code>vite-plugin-chunk-rename</code> or Webpack's <code>runtimeChunk</code>.</strong> Separate the chunk manifest from the main bundle so only changed chunks get new hashes — stable chunks keep stable filenames and remain cached across deploys.</div>
+    <div class="warn">This is one of the most common production incidents in SPAs with code splitting. Every app that lazy-loads routes needs a chunk error boundary with reload logic. Without it, a deployment can silently strand users on broken sessions.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qmeta"><span class="qn">Q5</span><span class="b b-arc">architecture</span></div>
+  <div class="qt">Your React app has 40 routes. A colleague says "lazy load every route." Another says "only lazy load heavy routes." Who is right? Design a code splitting strategy for a large enterprise dashboard — explain what to split, where to place Suspense boundaries, and what NOT to split.</div>
+  <button class="rbtn" onclick="tog(this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans">
+    <div class="exp">Senior expectation: Must avoid the dogmatic "lazy everything" trap. Must explain the cost of splitting (extra network round trips, waterfall risk) vs the benefit (smaller initial bundle). Should give a concrete decision framework with specific Suspense boundary placement strategy.</div>
+    <div class="atxt"><strong>Don't lazy-load everything.</strong> Each split point is a potential network waterfall. If a user lands on <code>/dashboard</code> and the dashboard chunk triggers a data fetch inside it, you get: chunk load → render → data fetch → render. Two waterfalls where one would do. For small components (&lt;20KB gzipped), the network overhead of an extra request often exceeds the savings.<br><br><strong>What to split — apply these criteria:</strong></div>
+    <div class="orow"><span class="oln">Split</span><span class="ores r-ok">Heavy routes</span><span class="owhy">Analytics dashboards, map views, rich text editors, PDF viewers — anything pulling in large third-party libraries (chart.js, monaco-editor, pdf.js)</span></div>
+    <div class="orow"><span class="oln">Split</span><span class="ores r-ok">Role-gated routes</span><span class="owhy">Admin panels, super-user tools — routes most users will never see. No reason to ship that code to all users.</span></div>
+    <div class="orow"><span class="oln">Split</span><span class="ores r-ok">Below-fold modals</span><span class="owhy">Complex modals, drawers, wizard flows — load them on user interaction, not on page load</span></div>
+    <div class="orow"><span class="oln">Don't split</span><span class="ores r-err">Shell components</span><span class="owhy">Nav, sidebar, layout — always needed immediately. Splitting them adds latency with no benefit.</span></div>
+    <div class="orow"><span class="oln">Don't split</span><span class="ores r-err">Landing / login</span><span class="owhy">First thing the user sees. Any loading delay here kills perceived performance metrics (LCP).</span></div>
+    <div class="orow" style="border:none"><span class="oln">Don't split</span><span class="ores r-err">Small components</span><span class="owhy">If the gzipped chunk is under 10-15KB, the HTTP overhead is not worth it. Bundle it.</span></div>
+    <div class="atxt" style="margin-top:10px"><strong>Suspense boundary placement strategy:</strong> One global boundary at the router level handles route transitions. Additionally, place boundaries at the feature level for within-page lazy components (modals, tabs, sidepanels) — this prevents a loading modal from blanking the entire page. Nest boundaries intentionally: outer = route-level skeleton, inner = component-level spinner.</div>
+    <div class="tip">Use your bundler's bundle analyzer (<code>webpack-bundle-analyzer</code> or <code>vite-bundle-visualizer</code>) to identify what's actually large before splitting. Premature splitting without data adds complexity with no measurable benefit.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qmeta"><span class="qn">Q6</span><span class="b b-cod">coding</span><span class="b b-arc">architecture</span></div>
+  <div class="qt">Implement a <code>lazyWithPreload</code> utility — a wrapper around <code>React.lazy</code> that exposes a <code>preload()</code> method. Use it to preload a route's chunk on hover over its nav link, so it's already cached when the user clicks. Explain why this dramatically improves perceived performance.</div>
+  <button class="rbtn" onclick="tog(this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans">
+    <div class="exp">Senior expectation: Must know that dynamic import() is idempotent — calling it twice for the same chunk hits the module cache the second time, not the network. Must implement preload() by calling the factory function early and caching the Promise. The hover → preload pattern is a real production technique used in large SPAs.</div>
+    <div class="atxt">The key insight: <code>import('./Dashboard')</code> called multiple times for the same module is idempotent — Webpack/Vite cache the Promise internally. The second call returns the same (already-resolved) Promise. So calling the factory function early just "warms" the cache — when React.lazy needs it, the chunk is already there.</div>
+    <div class="code">function lazyWithPreload(factory) {
+  let cachedPromise = null;
+
+  const LazyComponent = React.lazy(() => {
+    if (!cachedPromise) cachedPromise = factory();
+    return cachedPromise;
+  });
+
+  LazyComponent.preload = () => {
+    if (!cachedPromise) cachedPromise = factory();
+    return cachedPromise;
+  };
+
+  return LazyComponent;
+}
+
+// Usage:
+const Dashboard = lazyWithPreload(
+  () => import('./Dashboard')
+);
+
+// In nav component:
+&lt;NavLink
+  to="/dashboard"
+  onMouseEnter={() => Dashboard.preload()}
+&gt;
+  Dashboard
+&lt;/NavLink&gt;</div>
+    <div class="atxt">Why this works: hover intent gives you ~100–300ms of user deliberation time before the click. On a fast connection, a JS chunk typically loads in 50–150ms. By the time the user clicks, the chunk is already cached — Suspense shows its fallback for near-zero time or skips it entirely.<br><br>Extended strategy: also preload on <code>onFocus</code> (keyboard navigation) and on <code>touchstart</code> (mobile — fires before tap resolves). You can further preload predictively based on the current route — if the user is on <code>/dashboard</code>, preload <code>/settings</code> during idle time using <code>requestIdleCallback(() => Settings.preload())</code>.</div>
+    <div class="tip">React Router v6.4+ has a <code>loader</code> API that handles data preloading alongside route transitions. Combining route-level data loaders with chunk preloading eliminates both the chunk waterfall and the data waterfall — the two biggest perceived-performance killers in SPAs.</div>
+  </div>
+</div>
+
+<div class="footer">
+  <span style="font-weight:500;color:var(--color-text-primary)">Score guide:</span> Q1 is the internals baseline — if you can't walk through all three layers, the other answers won't be convincing. Q2+Q3 are the most commonly asked in UBS-style rounds. Q4 (chunk hash mismatch) is a senior production awareness signal — most people haven't thought about it until it's happened to them. Q5 separates pragmatic seniors from pattern-appliers. Q6 (preload) is principal-level — knowing how to make Suspense invisible to the user.
+  <div style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap">
+    <button onclick="sendPrompt('Give me a senior-level assessment question on: useMemo vs useCallback — when each actually helps')" style="font-size:12px;color:var(--color-text-info);background:none;border:none;cursor:pointer;padding:0">Next: useMemo vs useCallback ↗</button>
+    <button onclick="sendPrompt('Give me a senior-level assessment question on: Virtual DOM & reconciliation (diffing algo)')" style="font-size:12px;color:var(--color-text-info);background:none;border:none;cursor:pointer;padding:0">Or: Virtual DOM & diffing ↗</button>
+  </div>
+</div>
+</div>
+
+<script>
+function tog(btn){
+  const box=btn.nextElementSibling;
+  const open=box.classList.toggle('open');
+  btn.innerHTML=open
+    ?'<i class="ti ti-chevron-up" aria-hidden="true"></i>Hide answer'
+    :'<i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer';
+}
+</script>

@@ -1,0 +1,328 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --rm-bg:#f5f7fb;
+  --rm-card:#ffffff;
+  --rm-border:#d9e2ee;
+  --rm-shadow:0 12px 30px rgba(15,30,64,0.08);
+  --rm-shadow-soft:0 6px 14px rgba(15,30,64,0.06);
+}
+body{
+  font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  background:
+    radial-gradient(circle at 10% -10%, rgba(24,95,165,0.12), transparent 34%),
+    radial-gradient(circle at 95% 0%, rgba(15,110,86,0.10), transparent 30%),
+    var(--rm-bg);
+  color:var(--color-text-primary,#1d2433);
+}
+.wrap{
+  max-width:1180px;
+  margin:24px auto;
+  padding:1.5rem;
+  background:rgba(255,255,255,0.78);
+  border:1px solid rgba(217,226,238,0.9);
+  border-radius:18px;
+  backdrop-filter:blur(6px);
+}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px}
+.top-bar h1{font-size:19px;font-weight:600;color:var(--color-text-primary,#1d2433)}
+.legend{display:flex;gap:14px;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--color-text-secondary,#4c5f7a)}
+.dot{width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,0.8)}
+.dot-must{background:#185FA5}.dot-high{background:#0F6E56}.dot-med{background:#BA7517}.dot-low{background:#888780}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.3rem}
+.fbtn{padding:6px 13px;border:1px solid var(--color-border-secondary,var(--rm-border));border-radius:999px;font-size:12px;cursor:pointer;background:var(--color-background-primary,var(--rm-card));color:var(--color-text-secondary,#4c5f7a);transition:all 0.18s ease}
+.fbtn:hover{background:#edf2fb;border-color:#c9d6ea;transform:translateY(-1px)}
+.fbtn.on{background:#185FA5;color:#fff;border-color:#185FA5;box-shadow:var(--rm-shadow-soft)}
+.fbtn:focus-visible,.drill-btn:focus-visible,.done-toggle:focus-visible{outline:2px solid #185FA5;outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.cat-card{background:var(--color-background-primary,var(--rm-card));border:1px solid var(--color-border-tertiary,var(--rm-border));border-radius:14px;overflow:hidden;box-shadow:var(--rm-shadow-soft);transition:transform 0.2s ease,box-shadow 0.2s ease}
+.cat-card:hover{transform:translateY(-2px);box-shadow:var(--rm-shadow)}
+.cat-header{padding:13px 14px;border-bottom:1px solid var(--color-border-tertiary,var(--rm-border));display:flex;align-items:center;gap:10px;cursor:pointer;background:linear-gradient(180deg,#ffffff 0%,#f9fbff 100%)}
+.cat-icon{font-size:16px;color:var(--color-text-secondary,#4c5f7a)}
+.cat-title{font-size:14px;font-weight:600;color:var(--color-text-primary,#1d2433);flex:1}
+.cat-count{font-size:11px;color:var(--color-text-tertiary,#6a7e96)}
+.chevron{font-size:14px;color:var(--color-text-tertiary,#6a7e96);transition:transform 0.2s}
+.cat-body{padding:10px 14px}
+.topic-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--color-border-tertiary,var(--rm-border));transition:background-color 0.15s ease}
+.topic-row:hover{background:rgba(24,95,165,0.04)}
+.topic-row:last-child{border-bottom:none}
+.prio-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.topic-name{font-size:13px;color:var(--color-text-primary,#1d2433);flex:1;line-height:1.5}
+.topic-tag{font-size:10px;padding:2px 7px;border-radius:999px;flex-shrink:0;font-weight:600;letter-spacing:0.2px}
+.tag-output{background:#E6F1FB;color:#0C447C}
+.tag-concept{background:#E1F5EE;color:#085041}
+.tag-code{background:#FAEEDA;color:#633806}
+.tag-design{background:#EEEDFE;color:#3C3489}
+.tag-gotcha{background:#FCEBEB;color:#791F1F}
+.drill-btn{font-size:11px;padding:3px 9px;border:1px solid var(--color-border-secondary,var(--rm-border));border-radius:8px;cursor:pointer;background:#fff;color:#185FA5;white-space:nowrap;transition:all 0.15s ease}
+.drill-btn:hover{background:#185FA5;color:#fff;border-color:#185FA5}
+.progress-bar{height:6px;background:var(--color-border-tertiary,var(--rm-border));border-radius:999px;margin-top:10px;overflow:hidden}
+.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#185FA5,#3f84c8);transition:width 0.3s}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
+.stat{background:linear-gradient(180deg,#ffffff,#f8fbff);border:1px solid var(--rm-border);border-radius:12px;padding:12px 10px;text-align:center;box-shadow:var(--rm-shadow-soft)}
+.stat-num{font-size:22px;font-weight:700;color:var(--color-text-primary,#1d2433)}
+.stat-lbl{font-size:11px;color:var(--color-text-tertiary,#6a7e96);margin-top:2px;text-transform:uppercase;letter-spacing:0.35px}
+.done-toggle{font-size:12px;color:var(--color-text-tertiary,#6a7e96);cursor:pointer;background:none;border:none;padding:0 2px;margin-left:auto;line-height:1}
+.done-toggle:hover{color:#185FA5}
+.topic-row.done .topic-name{text-decoration:line-through;color:var(--color-text-tertiary,#6a7e96)}
+
+@media (max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width:640px){
+  .wrap{margin:10px;padding:1rem;border-radius:14px}
+  .grid{grid-template-columns:1fr}
+  .topic-row{gap:6px}
+  .topic-name{font-size:12px}
+  .drill-btn{padding:2px 7px}
+}
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">Complete senior frontend interview topic roadmap with priority levels and drill-down buttons</h2>
+
+<div class="top-bar">
+  <div>
+    <div style="font-size:19px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">Complete interview prep roadmap</div>
+    <div style="font-size:13px;color:var(--color-text-secondary)">Click any topic to start a drill session. Track what you've covered.</div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num" id="total-count">72</div><div class="stat-lbl">total topics</div></div>
+  <div class="stat"><div class="stat-num" id="done-count">0</div><div class="stat-lbl">covered</div></div>
+  <div class="stat"><div class="stat-num" id="must-count">22</div><div class="stat-lbl">must-know</div></div>
+  <div class="stat"><div class="stat-num" id="pct">0%</div><div class="stat-lbl">progress</div></div>
+</div>
+
+<div class="legend" style="margin-bottom:1rem">
+  <div class="leg"><div class="dot dot-must"></div>Must know</div>
+  <div class="leg"><div class="dot dot-high"></div>High priority</div>
+  <div class="leg"><div class="dot dot-med"></div>Medium</div>
+  <div class="leg"><div class="dot dot-low"></div>Good to have</div>
+</div>
+
+<div class="filter-bar">
+  <button class="fbtn on" onclick="filterCat('all',this)">All categories</button>
+  <button class="fbtn" onclick="filterCat('js',this)">JavaScript</button>
+  <button class="fbtn" onclick="filterCat('react',this)">React</button>
+  <button class="fbtn" onclick="filterCat('ts',this)">TypeScript</button>
+  <button class="fbtn" onclick="filterCat('css',this)">CSS / HTML</button>
+  <button class="fbtn" onclick="filterCat('perf',this)">Performance</button>
+  <button class="fbtn" onclick="filterCat('test',this)">Testing</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="progress-bar" style="margin-top:1.5rem"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+<div style="font-size:12px;color:var(--color-text-tertiary);margin-top:6px" id="prog-label">0 of 72 topics marked as covered</div>
+</div>
+
+<script>
+const DATA = [
+  {id:'js', label:'JavaScript core', icon:'ti-brand-javascript', cat:'js', topics:[
+    {n:'Hoisting — var vs let vs const TDZ',p:'must',type:'gotcha'},
+    {n:'Closure & scope chain',p:'must',type:'concept'},
+    {n:'Lexical vs dynamic scope',p:'high',type:'concept'},
+    {n:'Event loop — call stack, microtask, macrotask',p:'must',type:'concept'},
+    {n:'Prototype chain & inheritance',p:'must',type:'concept'},
+    {n:'this keyword — 4 binding rules',p:'must',type:'gotcha'},
+    {n:'Arrow function vs regular function',p:'must',type:'concept'},
+    {n:'Execution context & scope',p:'high',type:'concept'},
+    {n:'Callback hell & pyramid of doom',p:'high',type:'code'},
+    {n:'Generators & yield',p:'med',type:'concept'},
+    {n:'Symbols & iterators',p:'med',type:'concept'},
+    {n:'WeakMap / WeakSet / WeakRef',p:'med',type:'concept'},
+    {n:'Garbage collection & memory management',p:'high',type:'concept'},
+    {n:'Debounce & throttle — implement from scratch',p:'must',type:'code'},
+    {n:'Deep clone — structuredClone vs JSON vs lodash',p:'high',type:'code'},
+    {n:'Pure functions & side effects',p:'high',type:'concept'},
+    {n:'First-class functions & higher-order functions',p:'high',type:'concept'},
+    {n:'Event delegation, bubbling, capturing',p:'must',type:'concept'},
+  ]},
+  {id:'async', label:'Async JavaScript', icon:'ti-clock', cat:'js', topics:[
+    {n:'Promises — states, chaining, combinators',p:'must',type:'concept'},
+    {n:'async/await — error handling patterns',p:'must',type:'code'},
+    {n:'Microtask queue output prediction',p:'must',type:'output'},
+    {n:'Promise.all vs allSettled vs race vs any',p:'must',type:'concept'},
+    {n:'Implement retryWithBackoff',p:'high',type:'code'},
+    {n:'Concurrency limiter (N at a time)',p:'high',type:'code'},
+    {n:'Cancellable promises & AbortController',p:'high',type:'concept'},
+    {n:'Async iterators & for-await-of',p:'med',type:'concept'},
+  ]},
+  {id:'arrays', label:'Arrays & Objects', icon:'ti-brackets', cat:'js', topics:[
+    {n:'map / filter / reduce — chained output questions',p:'must',type:'output'},
+    {n:'flat / flatMap — nested array manipulation',p:'high',type:'code'},
+    {n:'Array.from, Array.of, spread vs rest',p:'high',type:'concept'},
+    {n:'Object.freeze vs Object.seal vs const',p:'must',type:'gotcha'},
+    {n:'Object.keys/values/entries iteration order',p:'high',type:'gotcha'},
+    {n:'Shallow vs deep copy patterns',p:'must',type:'concept'},
+    {n:'Destructuring — defaults, renaming, nested',p:'high',type:'code'},
+    {n:'Optional chaining & nullish coalescing',p:'high',type:'code'},
+    {n:'Date API — formatting, timezones, Intl.DateTimeFormat',p:'med',type:'code'},
+    {n:'Set & Map — when to use over array/object',p:'high',type:'concept'},
+  ]},
+  {id:'react', label:'React fundamentals', icon:'ti-components', cat:'react', topics:[
+    {n:'Virtual DOM & reconciliation (diffing algo)',p:'must',type:'concept'},
+    {n:'React Fiber — what it solved, incremental rendering',p:'must',type:'concept'},
+    {n:'Controlled vs uncontrolled components',p:'must',type:'concept'},
+    {n:'Class lifecycle vs hooks equivalents',p:'high',type:'concept'},
+    {n:'React Strict Mode behavior',p:'high',type:'gotcha'},
+    {n:'Keys — why they matter, bad key patterns',p:'must',type:'gotcha'},
+    {n:'Synthetic events & event pooling',p:'med',type:'concept'},
+    {n:'Error boundaries — class only, placement strategy',p:'high',type:'concept'},
+  ]},
+  {id:'hooks', label:'React hooks', icon:'ti-hook', cat:'react', topics:[
+    {n:'useState — batching, functional updates, stale closure',p:'must',type:'gotcha'},
+    {n:'useEffect — deps array, cleanup, common mistakes',p:'must',type:'gotcha'},
+    {n:'useRef — DOM refs vs mutable values',p:'must',type:'concept'},
+    {n:'useMemo vs useCallback — when each actually helps',p:'must',type:'concept'},
+    {n:'useReducer — when to choose over useState',p:'high',type:'concept'},
+    {n:'useContext — performance gotchas, re-render scope',p:'high',type:'gotcha'},
+    {n:'useLayoutEffect vs useEffect — timing difference',p:'high',type:'concept'},
+    {n:'useTransition & useDeferredValue (concurrent)',p:'high',type:'concept'},
+    {n:'Custom hooks — design patterns & rules of hooks',p:'must',type:'code'},
+    {n:'useImperativeHandle & forwardRef',p:'med',type:'concept'},
+  ]},
+  {id:'patterns', label:'React patterns & architecture', icon:'ti-building', cat:'react', topics:[
+    {n:'HOC vs custom hook vs render props',p:'must',type:'design'},
+    {n:'State management — useState/useReducer/Context/Redux',p:'must',type:'design'},
+    {n:'Redux Toolkit — slices, thunks, RTK Query',p:'high',type:'concept'},
+    {n:'Code splitting — React.lazy, Suspense, dynamic import',p:'must',type:'concept'},
+    {n:'Micro-frontend architecture',p:'high',type:'design'},
+    {n:'Compound components & Context-based APIs',p:'high',type:'design'},
+    {n:'Performance — memo, virtualization, avoiding re-renders',p:'must',type:'design'},
+    {n:'React Query / SWR — caching, stale-while-revalidate',p:'high',type:'concept'},
+    {n:'SSR vs SSG vs CSR trade-offs (Next.js)',p:'high',type:'design'},
+    {n:'Prop drilling — when it becomes a problem & solutions',p:'high',type:'concept'},
+  ]},
+  {id:'ts', label:'TypeScript', icon:'ti-brand-typescript', cat:'ts', topics:[
+    {n:'type vs interface — key differences & when to use',p:'must',type:'concept'},
+    {n:'Generics — constraints, defaults, infer',p:'must',type:'code'},
+    {n:'Utility types — Partial, Required, Pick, Omit, Record',p:'must',type:'code'},
+    {n:'Union & intersection types — discriminated unions',p:'must',type:'concept'},
+    {n:'any vs unknown vs never — type safety implications',p:'must',type:'gotcha'},
+    {n:'Type narrowing — typeof, instanceof, in, custom guards',p:'high',type:'concept'},
+    {n:'Mapped types & conditional types',p:'high',type:'concept'},
+    {n:'Declaration merging & module augmentation',p:'med',type:'concept'},
+    {n:'Strict mode flags — what each enforces',p:'med',type:'concept'},
+  ]},
+  {id:'css', label:'CSS & HTML', icon:'ti-palette', cat:'css', topics:[
+    {n:'Specificity — calculation, !important pitfalls',p:'must',type:'gotcha'},
+    {n:'Box model — content/padding/border/margin',p:'must',type:'concept'},
+    {n:'Flexbox vs Grid — when to use which',p:'must',type:'concept'},
+    {n:'CSS Grid — areas, auto-fill vs auto-fit, minmax',p:'high',type:'code'},
+    {n:'Responsive design — media queries, container queries',p:'must',type:'concept'},
+    {n:'Pseudo-classes vs pseudo-elements',p:'high',type:'concept'},
+    {n:'CSS custom properties (variables) & theming',p:'high',type:'concept'},
+    {n:'SCSS — nesting, mixins, functions, extends',p:'med',type:'concept'},
+    {n:'Stacking context & z-index gotchas',p:'high',type:'gotcha'},
+    {n:'Semantic HTML — why it matters, SEO & a11y',p:'must',type:'concept'},
+    {n:'HTML meta tags — viewport, OG, charset',p:'med',type:'concept'},
+    {n:'Accessibility — ARIA roles, focus management',p:'high',type:'concept'},
+  ]},
+  {id:'perf', label:'Performance & tooling', icon:'ti-gauge', cat:'perf', topics:[
+    {n:'Core Web Vitals — LCP, FID/INP, CLS',p:'must',type:'concept'},
+    {n:'Browser rendering pipeline — parse, layout, paint, composite',p:'must',type:'concept'},
+    {n:'Webpack — loaders, plugins, tree shaking, code splitting',p:'high',type:'concept'},
+    {n:'Vite vs Webpack — how Vite\'s ESM dev server works',p:'high',type:'concept'},
+    {n:'Lazy loading — images, routes, components',p:'high',type:'concept'},
+    {n:'Virtualization — react-window, when/why',p:'high',type:'concept'},
+    {n:'Security — XSS, CSRF, CORS, CSP headers',p:'must',type:'concept'},
+    {n:'HTTP methods & REST constraints',p:'must',type:'concept'},
+  ]},
+  {id:'test', label:'Testing', icon:'ti-test-pipe', cat:'test', topics:[
+    {n:'Jest — mocking, spies, timers, module mocks',p:'must',type:'concept'},
+    {n:'React Testing Library — queries, user-event, philosophy',p:'must',type:'concept'},
+    {n:'RTL vs Enzyme — why RTL won',p:'high',type:'concept'},
+    {n:'Snapshot testing — when useful, when harmful',p:'high',type:'concept'},
+    {n:'Testing async code — waitFor, findBy, act()',p:'must',type:'code'},
+    {n:'Testing custom hooks — renderHook',p:'high',type:'code'},
+    {n:'MSW (Mock Service Worker) — intercepting at network level',p:'high',type:'concept'},
+    {n:'E2E testing — Playwright / Cypress philosophy',p:'med',type:'concept'},
+  ]},
+];
+
+const doneSet = new Set();
+let currentFilter = 'all';
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  DATA.forEach(cat => {
+    if (currentFilter !== 'all' && cat.cat !== currentFilter) return;
+    const topics = cat.topics;
+    const card = document.createElement('div');
+    card.className = 'cat-card';
+    const doneInCat = topics.filter(t => doneSet.has(cat.id+t.n)).length;
+    card.innerHTML = `
+      <div class="cat-header" onclick="toggleCard(this)">
+        <i class="ti ${cat.icon} cat-icon" aria-hidden="true"></i>
+        <span class="cat-title">${cat.label}</span>
+        <span class="cat-count">${doneInCat}/${topics.length}</span>
+        <i class="ti ti-chevron-down chevron"></i>
+      </div>
+      <div class="cat-body">
+        ${topics.map(t => {
+          const key = cat.id+t.n;
+          const isDone = doneSet.has(key);
+          const dotClass = {must:'dot-must',high:'dot-high',med:'dot-med',low:'dot-low'}[t.p];
+          const tagClass = {output:'tag-output',concept:'tag-concept',code:'tag-code',design:'tag-design',gotcha:'tag-gotcha'}[t.type];
+          return `<div class="topic-row${isDone?' done':''}" id="row-${encodeURIComponent(key)}">
+            <div class="prio-dot ${dotClass}"></div>
+            <span class="topic-name">${t.n}</span>
+            <span class="topic-tag ${tagClass}">${t.type}</span>
+            <button class="drill-btn" onclick="drill('${t.n.replace(/'/g,"\\'")}')">drill ↗</button>
+            <button class="done-toggle" onclick="toggleDone('${encodeURIComponent(key)}')" title="mark done">${isDone?'✓':'○'}</button>
+          </div>`;
+        }).join('')}
+      </div>`;
+    grid.appendChild(card);
+  });
+  updateStats();
+}
+
+function toggleCard(header) {
+  const body = header.nextElementSibling;
+  const chev = header.querySelector('.chevron');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  chev.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+}
+
+function toggleDone(key) {
+  const decoded = decodeURIComponent(key);
+  if (doneSet.has(decoded)) doneSet.delete(decoded);
+  else doneSet.add(decoded);
+  renderGrid();
+}
+
+function drill(topic) {
+  sendPrompt('Give me a senior-level assessment question on: ' + topic);
+}
+
+function filterCat(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderGrid();
+}
+
+function updateStats() {
+  const total = DATA.reduce((a,c) => a+c.topics.length, 0);
+  const done = doneSet.size;
+  const must = DATA.reduce((a,c) => a+c.topics.filter(t=>t.p==='must').length, 0);
+  const pct = Math.round(done/total*100);
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('done-count').textContent = done;
+  document.getElementById('must-count').textContent = must;
+  document.getElementById('pct').textContent = pct+'%';
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-label').textContent = `${done} of ${total} topics marked as covered`;
+}
+
+renderGrid();
+</script>
