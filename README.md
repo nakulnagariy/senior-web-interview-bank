@@ -28,6 +28,15 @@ Senior-focused web development interview prep with practical questions, edge cas
     - runtime semantics
     - react + promises
 
+## Role-Specific Preparation Packs
+
+- react-angular
+  - SCOR_RUP_REACT_EXPERT_INTERVIEW_PREP.md
+  - SCOR_RUP_REACT_EXPERT_MOCK_INTERVIEW.md
+  - SCOR_RUP_CV_ALIGNMENT_CHECKLIST.md
+  - SCOR_RUP_90_SECOND_INTRO.md
+  - POPULAR_DESIGN_PATTERNS_WITH_EXAMPLES.md
+
 ## Planned Structure
 
 - javascript
