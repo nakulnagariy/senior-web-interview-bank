@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Debounce & throttle - implement from scratch?","Define the mechanism and link it to reliability/performance impact.","advanced"
+"Which failure mode should be mentioned first for Debounce & throttle - implement from scratch?","Name one realistic edge case and describe mitigation.","advanced"
+"How would you validate Debounce & throttle - implement from scratch after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
+"What trade-off appears in Debounce & throttle - implement from scratch decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
+"How do you explain js-core/debounce-throttle-implement-from-scratch to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"

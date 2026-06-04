@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of useReducer - when to choose over useState?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for useReducer - when to choose over useState?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate useReducer - when to choose over useState after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in useReducer - when to choose over useState decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain react-hooks/usereducer-when-to-choose-over-usestate to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

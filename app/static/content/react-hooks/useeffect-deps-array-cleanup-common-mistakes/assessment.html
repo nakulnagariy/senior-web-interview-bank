@@ -1,0 +1,313 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.w{padding:1.5rem 0;font-family:var(--font-sans)}
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:1.5rem}
+.rc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.rc h3{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
+.rr{font-size:11px;color:var(--color-text-secondary);line-height:1.75;display:flex;gap:5px}
+.rk{font-family:var(--font-mono);color:var(--color-text-primary);font-size:10px;min-width:56px;flex-shrink:0}
+.div{height:0.5px;background:var(--color-border-tertiary);margin:1.25rem 0}
+.slbl{font-size:11px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.07em;margin-bottom:1rem}
+.q{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1.25rem}
+.qm{display:flex;align-items:center;gap:7px;margin-bottom:9px;flex-wrap:wrap}
+.qn{font-size:11px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.05em}
+.b{font-size:10px;font-weight:500;padding:2px 7px;border-radius:4px}
+.b1{background:#EEEDFE;color:#3C3489}
+.b2{background:#FCEBEB;color:#791F1F}
+.b3{background:#FAEEDA;color:#633806}
+.b4{background:#E6F1FB;color:#0C447C}
+.b5{background:#E1F5EE;color:#085041}
+.b6{background:#F1EFE8;color:#444441}
+.qt{font-size:14px;font-weight:500;color:var(--color-text-primary);line-height:1.6;margin-bottom:11px}
+.cd{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;font-family:var(--font-mono);font-size:11px;color:var(--color-text-primary);line-height:1.8;margin-bottom:10px;white-space:pre;overflow-x:auto}
+.rbtn{font-size:12px;color:var(--color-text-info);cursor:pointer;background:none;border:none;padding:0;display:flex;align-items:center;gap:4px;margin-top:2px}
+.ans{display:none;margin-top:13px;border-top:0.5px solid var(--color-border-tertiary);padding-top:13px}
+.ans.open{display:block}
+.exp{background:var(--color-background-warning);border-radius:var(--border-radius-md);padding:9px 12px;font-size:12px;color:var(--color-text-warning);margin-bottom:10px;line-height:1.6}
+.at{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.at code{font-family:var(--font-mono);background:var(--color-background-secondary);padding:1px 4px;border-radius:3px;font-size:11px;color:var(--color-text-primary)}
+.tip{border-left:2px solid var(--color-border-info);padding:8px 11px;background:var(--color-background-info);font-size:12px;color:var(--color-text-info);line-height:1.6;margin-top:10px;border-radius:0}
+.tip code{font-family:var(--font-mono);font-size:11px;background:rgba(24,95,165,0.1);padding:1px 4px;border-radius:3px}
+.warn{border-left:2px solid var(--color-border-danger);padding:8px 11px;background:var(--color-background-danger);font-size:12px;color:var(--color-text-danger);line-height:1.6;margin-top:10px;border-radius:0}
+.warn code{font-family:var(--font-mono);font-size:11px;background:rgba(163,45,45,0.1);padding:1px 4px;border-radius:3px}
+.orow{display:flex;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.orow:last-child{border:none}
+.ol{font-family:var(--font-mono);color:var(--color-text-tertiary);min-width:90px;flex-shrink:0;font-size:11px}
+.or{font-weight:500;min-width:52px;flex-shrink:0;font-size:12px}
+.ok{color:#0F6E56}.er{color:#A32D2D}
+.ow{color:var(--color-text-secondary);font-size:11px;flex:1;line-height:1.6}
+.foot{margin-top:1.5rem;padding:12px 14px;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);font-size:12px;color:var(--color-text-secondary);line-height:1.7}
+</style>
+
+<div class="w">
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Senior React assessment on useEffect — deps array, cleanup, and common mistakes. 6 questions with working reveal buttons.</h2>
+
+<div style="margin-bottom:1.5rem">
+  <h1 style="font-size:19px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">useEffect — deps array, cleanup, common mistakes</h1>
+  <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.6">6 questions covering lifecycle equivalents, the 3 deps array modes, cleanup timing, infinite loops, and race conditions. The most commonly failed hook topic in senior interviews.</p>
+</div>
+
+<div class="slbl">MENTAL MODEL</div>
+<div class="rg">
+  <div class="rc"><h3>3 deps modes</h3>
+    <div class="rr"><span class="rk">no array</span>Runs after every render</div>
+    <div class="rr"><span class="rk">[]</span>Runs once — after mount</div>
+    <div class="rr"><span class="rk">[a,b]</span>Runs after mount + when a or b changes</div>
+  </div>
+  <div class="rc"><h3>Lifecycle map</h3>
+    <div class="rr"><span class="rk">didMount</span>useEffect(() => {}, [])</div>
+    <div class="rr"><span class="rk">didUpdate</span>useEffect(() => {}, [dep])</div>
+    <div class="rr"><span class="rk">willUnmount</span>Return cleanup fn from effect</div>
+  </div>
+  <div class="rc"><h3>Cleanup timing</h3>
+    <div class="rr"><span class="rk">when</span>Before next effect runs + on unmount</div>
+    <div class="rr"><span class="rk">order</span>cleanup (prev) → effect (next)</div>
+    <div class="rr"><span class="rk">strict mode</span>Mount → cleanup → mount (dev only)</div>
+  </div>
+  <div class="rc"><h3>Key rules</h3>
+    <div class="rr"><span class="rk">deps</span>Must include everything the effect reads from scope</div>
+    <div class="rr"><span class="rk">objects</span>New reference every render = infinite loop risk</div>
+    <div class="rr"><span class="rk">async</span>Effect fn cannot be async — wrap inside</div>
+  </div>
+</div>
+
+<div class="div"></div>
+<div class="slbl">QUESTIONS</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q1</span><span class="b b4">output</span><span class="b b6">must-know</span></div>
+  <div class="qt">Predict the exact console output — including order — when this component first mounts, when userId changes from 1 to 2, and when the component unmounts. Most engineers miss the cleanup ordering.</div>
+  <div class="cd">function UserProfile({ userId }) {
+  useEffect(() => {
+    console.log('effect run', userId);
+    return () => {
+      console.log('cleanup', userId);
+    };
+  }, [userId]);
+
+  console.log('render', userId);
+  return &lt;div&gt;User {userId}&lt;/div&gt;;
+}</div>
+  <button class="rbtn" onclick="tog('a1',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a1">
+    <div class="exp">Senior expectation: Must give the exact sequence for all three phases. The critical insight is that cleanup runs with the OLD dep value before the new effect runs with the NEW value — proving that cleanups close over their own render's values, not the latest ones.</div>
+    <div class="at" style="margin-bottom:8px"><strong>Phase 1 — Initial mount (userId=1):</strong></div>
+    <div class="orow"><span class="ol">sync</span><span class="or ok">render 1</span><span class="ow">Component renders synchronously first</span></div>
+    <div class="orow"><span class="ol">after paint</span><span class="or ok">effect run 1</span><span class="ow">useEffect fires after browser has painted</span></div>
+    <div class="at" style="margin:8px 0"><strong>Phase 2 — userId changes to 2:</strong></div>
+    <div class="orow"><span class="ol">sync</span><span class="or ok">render 2</span><span class="ow">Component re-renders with new userId</span></div>
+    <div class="orow"><span class="ol">after paint</span><span class="or ok">cleanup 1</span><span class="ow">Previous effect's cleanup runs FIRST — with old userId=1 captured in its closure</span></div>
+    <div class="orow"><span class="ol">after paint</span><span class="or ok">effect run 2</span><span class="ow">New effect runs with userId=2</span></div>
+    <div class="at" style="margin:8px 0"><strong>Phase 3 — Unmount:</strong></div>
+    <div class="orow"><span class="ol">on unmount</span><span class="or ok">cleanup 2</span><span class="ow">Final cleanup runs with userId=2 — the last rendered value</span></div>
+    <div class="at" style="margin-top:8px">The critical insight: cleanup functions close over the values from their own render cycle. <code>cleanup 1</code> logs <code>userId=1</code> even though the component has already re-rendered with <code>userId=2</code>. This is what makes cleanup safe for cancelling the right request, removing the right listener — it always references what it set up.</div>
+    <div class="tip">In React Strict Mode (dev), the sequence on mount is: render → effect → cleanup → effect. React intentionally mounts, cleans up, and remounts to surface missing cleanup bugs. This double-fire is dev-only — never happens in production.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q2</span><span class="b b2">gotcha</span><span class="b b6">must-know</span></div>
+  <div class="qt">This component has an infinite render loop. Identify every cause — there are two independent ones — and fix both.</div>
+  <div class="cd">function Dashboard({ config }) {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const options = { ...config, timestamp: Date.now() };
+    fetch('/api/data', { body: JSON.stringify(options) })
+      .then(r => r.json())
+      .then(setData);
+  }, [config, data]);
+
+  return &lt;div&gt;{JSON.stringify(data)}&lt;/div&gt;;
+}</div>
+  <button class="rbtn" onclick="tog('a2',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a2">
+    <div class="exp">Senior expectation: Must catch BOTH causes independently. Cause 1: data in deps — setData triggers re-render, which re-runs effect, which calls setData again. Cause 2: config is likely an object — if the parent passes a new object reference on every render, Object.is comparison fails every time even with identical content. Must fix both.</div>
+    <div class="at"><strong>Cause 1 — <code>data</code> in the deps array.</strong> The effect calls <code>setData</code>, which updates state, which triggers a re-render, which re-runs the effect (because <code>data</code> changed), which calls <code>setData</code> again — infinite loop. <code>data</code> is the effect's output, not its input. It should never be in the deps array of the effect that produces it.<br><br><strong>Cause 2 — <code>config</code> is an object.</strong> If the parent component passes <code>config</code> as an inline object literal (<code>&lt;Dashboard config={{ theme: 'dark' }} /&gt;</code>), a new reference is created on every parent render. <code>Object.is(prevConfig, nextConfig)</code> fails even if the content is identical — the effect re-runs on every parent render regardless of whether config actually changed.<br><br>Fixed version:</div>
+    <div class="cd">function Dashboard({ config }) {
+  const [data, setData] = useState(null);
+
+  // Stabilise config with useMemo if it's an object from parent
+  // Better: destructure primitives from config instead
+  const { theme, pageSize } = config;
+
+  useEffect(() => {
+    fetch(`/api/data?theme=${theme}&size=${pageSize}`)
+      .then(r => r.json())
+      .then(setData);       // data removed from deps
+  }, [theme, pageSize]);    // primitives — stable comparisons
+
+  return &lt;div&gt;{JSON.stringify(data)}&lt;/div&gt;;
+}</div>
+    <div class="at">Two rules derived from this: (1) Never put a state setter's output in the deps of the effect that calls that setter. (2) Never put object/array/function references in deps unless you can guarantee their referential stability — destructure to primitives or use useMemo at the source.</div>
+    <div class="warn">The ESLint <code>exhaustive-deps</code> rule will catch the missing dep but won't catch the infinite loop from including <code>data</code>. Linters enforce completeness, not correctness of the dependency design. That judgment is yours.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q3</span><span class="b b2">gotcha</span><span class="b b6">must-know</span></div>
+  <div class="qt">This effect has a race condition that causes stale data to overwrite fresh data when userId changes quickly. Explain precisely how the race occurs and implement the fix using both the cancellation flag pattern and AbortController.</div>
+  <div class="cd">function UserCard({ userId }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetchUser(userId).then(data => {
+      setUser(data);
+    });
+  }, [userId]);
+
+  return &lt;div&gt;{user?.name}&lt;/div&gt;;
+}</div>
+  <button class="rbtn" onclick="tog('a3',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a3">
+    <div class="exp">Senior expectation: Must describe the race precisely — two concurrent requests where the slower one (for an older userId) resolves after the faster one (for the newer userId), overwriting correct data with stale data. Must implement both fix patterns and explain which to prefer and when.</div>
+    <div class="at">The race: user is on profile 1 (slow network). They quickly navigate to profile 2 (fast network). Profile 2 resolves first → <code>setUser(profile2data)</code>. Then profile 1 resolves → <code>setUser(profile1data)</code> overwrites the correct result. The user sees profile 1's data on profile 2's page.<br><br><strong>Fix 1 — Cancellation flag:</strong></div>
+    <div class="cd">useEffect(() => {
+  let cancelled = false;
+
+  fetchUser(userId).then(data => {
+    if (!cancelled) setUser(data);
+  });
+
+  return () => { cancelled = true; };
+}, [userId]);</div>
+    <div class="at">When <code>userId</code> changes, cleanup runs first — setting <code>cancelled = true</code> on the old effect's closure. When the stale request resolves, it checks the flag and skips <code>setUser</code>. The network request still completes — it just discards the result.<br><br><strong>Fix 2 — AbortController (preferred for fetch):</strong></div>
+    <div class="cd">useEffect(() => {
+  const controller = new AbortController();
+
+  fetch(`/api/users/${userId}`, { signal: controller.signal })
+    .then(r => r.json())
+    .then(data => setUser(data))
+    .catch(err => {
+      if (err.name === 'AbortError') return; // ignore cancellation
+      setError(err);
+    });
+
+  return () => controller.abort();
+}, [userId]);</div>
+    <div class="at"><code>AbortController</code> actually cancels the in-flight network request — the browser stops receiving data and frees the connection. More efficient than the flag pattern for large responses. Limitation: only works with <code>fetch</code> — not axios (unless you pass the signal) or custom async logic.<br><br>Rule of thumb: use <code>AbortController</code> for fetch calls. Use the cancellation flag for non-fetch async operations (custom promises, third-party SDKs, sequential async logic).</div>
+    <div class="tip">React Query and SWR handle this race condition automatically — their caching layer discards responses for stale keys. If you're doing manual fetch-in-useEffect at scale, that's the signal to adopt a data-fetching library rather than writing cancellation logic in every component.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q4</span><span class="b b2">gotcha</span></div>
+  <div class="qt">A junior engineer tries to make their useEffect async because they need to await a fetch call. They write this — it silently swallows errors and has a subtle memory leak. Explain both problems and show the correct pattern.</div>
+  <div class="cd">// Junior's version
+useEffect(async () => {
+  const data = await fetchData();
+  setData(data);
+}, []);</div>
+  <button class="rbtn" onclick="tog('a4',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a4">
+    <div class="exp">Senior expectation: Must identify that async functions return a Promise — but useEffect expects either undefined or a cleanup function. React ignores the returned Promise, meaning: (1) async errors are unhandled silently, (2) cleanup is impossible since the Promise return value is discarded. Must show the IIFE pattern and the named async function pattern.</div>
+    <div class="at"><strong>Problem 1 — Cleanup is impossible.</strong> <code>useEffect</code> expects its callback to return either <code>undefined</code> or a synchronous cleanup function. An <code>async</code> function always returns a Promise. React receives that Promise as the "cleanup" return value, does not recognise it as a function, and ignores it entirely. This means you can never return an <code>AbortController.abort()</code> or a cancellation flag from an async effect — your cleanup code simply never runs.<br><br><strong>Problem 2 — Errors are silently swallowed.</strong> Because React ignores the returned Promise, any rejection from <code>fetchData()</code> or the <code>await</code> chain goes unhandled. No error boundary catches it. No <code>.catch()</code> is attached. In development you might see an unhandled rejection warning — in production it silently fails with no user feedback.<br><br>Fix 1 — Named async function inside effect (most readable):</div>
+    <div class="cd">useEffect(() => {
+  const controller = new AbortController();
+
+  async function load() {
+    try {
+      const data = await fetchData(controller.signal);
+      setData(data);
+    } catch(err) {
+      if (err.name !== 'AbortError') setError(err);
+    }
+  }
+
+  load();
+
+  return () => controller.abort(); // cleanup works correctly
+}, []);</div>
+    <div class="at">Fix 2 — IIFE pattern (compact but less readable):</div>
+    <div class="cd">useEffect(() => {
+  (async () => {
+    try {
+      const data = await fetchData();
+      setData(data);
+    } catch(err) {
+      setError(err);
+    }
+  })();
+}, []);</div>
+    <div class="at">The named function pattern is preferred — it is easier to read, easier to attach the AbortController signal, and easier to test the async logic in isolation. The IIFE works but produces a harder-to-scan code structure as complexity grows.</div>
+    <div class="warn">Never write <code>useEffect(async () =&gt; {...})</code>. ESLint's <code>react-hooks/exhaustive-deps</code> rule does not catch this mistake. The only indication is a React warning in development: "Warning: An effect function must not return anything besides a function, which is used for clean-up."</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q5</span><span class="b b2">gotcha</span></div>
+  <div class="qt">This component registers a window event listener. It works correctly on first mount but causes a detectable memory leak and bugs after the parent re-renders. Identify all the problems and produce the correct implementation.</div>
+  <div class="cd">function KeyTracker({ onKeyPress }) {
+  useEffect(() => {
+    window.addEventListener('keydown', onKeyPress);
+  }, []);
+
+  return null;
+}</div>
+  <button class="rbtn" onclick="tog('a5',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a5">
+    <div class="exp">Senior expectation: Must catch all three problems: missing cleanup (listener accumulates on every mount), empty deps suppressing onKeyPress updates (stale closure — always calls the original prop value), and if the parent passes a new function reference on every render the effect still won't re-run due to the empty array. Must produce a correct fix.</div>
+    <div class="at"><strong>Problem 1 — No cleanup.</strong> Every time this component mounts (including Strict Mode double-mount), a new <code>keydown</code> listener is added to <code>window</code> with no corresponding removal. If the component mounts and unmounts multiple times (route transitions, conditional rendering), listeners accumulate — each one still firing, still holding a reference to <code>onKeyPress</code> and the component's closure. Classic memory leak.<br><br><strong>Problem 2 — Stale closure on <code>onKeyPress</code>.</strong> The empty deps array means the effect runs once and never again. The <code>onKeyPress</code> captured in the listener's closure is the prop value from the first render. If the parent passes a new function (e.g. it changed what the callback does), the listener still calls the old one — stale prop reference forever.<br><br><strong>Problem 3 — ESLint violation.</strong> <code>onKeyPress</code> is used inside the effect but absent from deps. The exhaustive-deps rule flags this — and it's right to. The empty array is a lie about this effect's dependencies.<br><br>Correct implementation:</div>
+    <div class="cd">function KeyTracker({ onKeyPress }) {
+  // Stabilise with useRef so we always call the latest prop
+  // without adding it to deps (which would re-register listener)
+  const onKeyPressRef = useRef(onKeyPress);
+  useEffect(() => {
+    onKeyPressRef.current = onKeyPress;
+  }, [onKeyPress]);
+
+  useEffect(() => {
+    function handler(e) {
+      onKeyPressRef.current(e); // always calls latest version
+    }
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []); // empty deps correct now — handler never changes
+
+  return null;
+}</div>
+    <div class="at">The ref pattern decouples two concerns: (1) keeping the callback current (the first small effect, runs whenever prop changes) and (2) registering/unregistering the listener (the second effect, runs once). The listener always calls the latest <code>onKeyPress</code> via the ref, without needing to re-register on every prop change.</div>
+    <div class="tip">This is the "event handler ref" pattern — a well-known solution for stable event listeners with unstable callbacks. React's own <code>useEffectEvent</code> hook (RFC stage as of 2024) formalises this pattern: <code>const stableHandler = useEffectEvent(onKeyPress)</code> — a ref-backed stable function reference that always calls the latest prop.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q6</span><span class="b b1">architecture</span><span class="b b6">must-know</span></div>
+  <div class="qt">A tech lead asks you: "Give me the complete mental model you use when writing a useEffect. Walk me through every decision point before you write a single line of the effect body." Give a production-grade answer that would satisfy a principal engineer.</div>
+  <button class="rbtn" onclick="tog('a6',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a6">
+    <div class="exp">Senior expectation: Must go beyond "I check the deps array." Should present a structured decision process covering: whether useEffect is even needed, what the effect synchronises, what cleanup it requires, how deps are composed, and what failure modes to check. This answer reveals whether you've truly internalised the hook's purpose or just memorised its API.</div>
+    <div class="at"><strong>Step 1 — Ask: does this need to be an effect at all?</strong><br>useEffect is for synchronising with external systems — the DOM, network, timers, subscriptions, browser APIs. If the code derives state from props/state (filtering a list, computing a total, formatting a string), it belongs in the render body or useMemo — not an effect. Most over-use of useEffect comes from reaching for it when a derived value would suffice.<br><br><strong>Step 2 — Identify what external system this effect owns.</strong><br>Name it explicitly: "this effect owns the WebSocket connection," "this effect owns the scroll event listener," "this effect owns the data fetch for userId." An effect should own exactly one external resource. If it owns two, split into two effects — they'll have different deps and different cleanup requirements.<br><br><strong>Step 3 — Write the cleanup before the effect body.</strong><br>Ask: what does this external system need to release when the effect stops? Write the return function first. If you cannot name a cleanup, ask whether the effect has a side effect that outlives the component. Timer? Clear it. Listener? Remove it. Fetch? Abort it. Subscription? Unsubscribe.<br><br><strong>Step 4 — Determine deps precisely.</strong><br>List everything the effect reads from the component scope: props, state, context values, functions. Every one of them goes in deps — no exceptions, no suppressions. Then audit for stability:<br></div>
+    <div class="orow"><span class="ol">primitives</span><span class="or ok">safe</span><span class="ow">Strings, numbers, booleans — compared by value. Always stable if the underlying data hasn't changed.</span></div>
+    <div class="orow"><span class="ol">objects/arrays</span><span class="or er">risky</span><span class="ow">New reference on every render unless stabilised with useMemo. Destructure to primitives where possible.</span></div>
+    <div class="orow"><span class="ol">functions</span><span class="or er">risky</span><span class="ow">New reference on every render unless stabilised with useCallback. Consider the event handler ref pattern for callbacks.</span></div>
+    <div class="at" style="margin-top:8px"><strong>Step 5 — Check for failure modes:</strong><br>
+    — Does the effect call a setter whose output is in its deps? (infinite loop)<br>
+    — Is there an async operation without a cancellation mechanism? (race condition, stale setState on unmount)<br>
+    — Is the effect async? (wrap in named function — never make the effect callback itself async)<br>
+    — Does React Strict Mode's double-invoke expose a cleanup bug? (it will in dev — fix it)<br><br>
+    <strong>Step 6 — Consider extraction.</strong><br>
+    If the effect is more than ~10 lines, or if the same effect pattern appears in multiple components, extract it into a custom hook. The hook name (<code>useWebSocket</code>, <code>useDocumentTitle</code>, <code>useIntersectionObserver</code>) becomes the documentation. A well-named custom hook makes the component's intent obvious without reading the effect internals.</div>
+    <div class="tip">The one-line heuristic: if you can describe your effect as "synchronise X with Y," it belongs in useEffect. If you can describe it as "compute Z from A and B," it belongs in useMemo or the render body. If you cannot describe it simply, the effect is probably doing too much.</div>
+  </div>
+</div>
+
+<div class="foot">
+  <span style="font-weight:500;color:var(--color-text-primary)">Score guide:</span> Q1 is the cleanup ordering baseline — missing that cleanup fires with the OLD value is extremely common. Q2 catches the two most frequent infinite loop causes. Q3 is the race condition — asked in nearly every UBS-style round. Q4 is the async effect mistake that every junior makes and many seniors don't know to avoid. Q5 combines missing cleanup + stale closure in a real-world event listener. Q6 is the architecture question — a mechanical "check the deps" answer fails; a structured decision process passes.
+  <div style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap">
+    <button onclick="sendPrompt('Give me a senior-level assessment question on: this keyword — 4 binding rules')" style="font-size:12px;color:var(--color-text-info);background:none;border:none;cursor:pointer;padding:0">Next: this keyword ↗</button>
+    <button onclick="sendPrompt('Give me a senior-level assessment question on: Redux Toolkit — slices, thunks, RTK Query')" style="font-size:12px;color:var(--color-text-info);background:none;border:none;cursor:pointer;padding:0">Or: Redux Toolkit ↗</button>
+  </div>
+</div>
+</div>
+
+<script>
+function tog(id,btn){
+  var box=document.getElementById(id);
+  var open=box.classList.toggle('open');
+  btn.innerHTML=open
+    ?'<i class="ti ti-chevron-up" aria-hidden="true"></i>Hide answer'
+    :'<i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer';
+}
+</script>

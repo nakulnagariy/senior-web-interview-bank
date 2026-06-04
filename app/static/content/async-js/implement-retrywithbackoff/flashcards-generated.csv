@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Implement retryWithBackoff?","Define the mechanism and link it to reliability/performance impact.","advanced"
+"Which failure mode should be mentioned first for Implement retryWithBackoff?","Name one realistic edge case and describe mitigation.","advanced"
+"How would you validate Implement retryWithBackoff after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
+"What trade-off appears in Implement retryWithBackoff decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
+"How do you explain async-js/implement-retrywithbackoff to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"

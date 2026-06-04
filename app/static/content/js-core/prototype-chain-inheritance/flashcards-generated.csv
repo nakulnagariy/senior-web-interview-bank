@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Prototype chain & inheritance?","Define the mechanism and link it to reliability/performance impact.","advanced"
+"Which failure mode should be mentioned first for Prototype chain & inheritance?","Name one realistic edge case and describe mitigation.","advanced"
+"How would you validate Prototype chain & inheritance after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
+"What trade-off appears in Prototype chain & inheritance decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
+"How do you explain js-core/prototype-chain-inheritance to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"

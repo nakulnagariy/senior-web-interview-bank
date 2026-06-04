@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of HOC vs custom hook vs render props?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for HOC vs custom hook vs render props?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate HOC vs custom hook vs render props after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in HOC vs custom hook vs render props decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain react-patterns-architecture/hoc-vs-custom-hook-vs-render-props to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

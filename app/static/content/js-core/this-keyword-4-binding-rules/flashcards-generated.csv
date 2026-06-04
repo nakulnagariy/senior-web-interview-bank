@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of this keyword - 4 binding rules?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for this keyword - 4 binding rules?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate this keyword - 4 binding rules after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in this keyword - 4 binding rules decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain js-core/this-keyword-4-binding-rules to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

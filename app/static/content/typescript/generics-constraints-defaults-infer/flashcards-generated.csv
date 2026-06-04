@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Generics - constraints, defaults, infer?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Generics - constraints, defaults, infer?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Generics - constraints, defaults, infer after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Generics - constraints, defaults, infer decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain typescript/generics-constraints-defaults-infer to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

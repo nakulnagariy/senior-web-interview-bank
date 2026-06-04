@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Virtualization - react-window, when/why?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Virtualization - react-window, when/why?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Virtualization - react-window, when/why after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Virtualization - react-window, when/why decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain performance-tooling/virtualization-react-window-when-why to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

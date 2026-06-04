@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Responsive design - media queries, container queries?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Responsive design - media queries, container queries?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Responsive design - media queries, container queries after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Responsive design - media queries, container queries decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain css-html/responsive-design-media-queries-container-queries to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

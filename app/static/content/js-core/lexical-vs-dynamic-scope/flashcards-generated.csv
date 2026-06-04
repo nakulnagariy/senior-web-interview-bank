@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Lexical vs dynamic scope?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Lexical vs dynamic scope?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Lexical vs dynamic scope after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Lexical vs dynamic scope decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain js-core/lexical-vs-dynamic-scope to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

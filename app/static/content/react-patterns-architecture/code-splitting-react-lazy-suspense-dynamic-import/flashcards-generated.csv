@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Code splitting - React.lazy, Suspense, dynamic import?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Code splitting - React.lazy, Suspense, dynamic import?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Code splitting - React.lazy, Suspense, dynamic import after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Code splitting - React.lazy, Suspense, dynamic import decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain react-patterns-architecture/code-splitting-react-lazy-suspense-dynamic-import to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

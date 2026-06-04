@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of React Fiber - what it solved, incremental rendering?","Define the mechanism and link it to reliability/performance impact.","advanced"
+"Which failure mode should be mentioned first for React Fiber - what it solved, incremental rendering?","Name one realistic edge case and describe mitigation.","advanced"
+"How would you validate React Fiber - what it solved, incremental rendering after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
+"What trade-off appears in React Fiber - what it solved, incremental rendering decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
+"How do you explain react-fundamentals/react-fiber-what-it-solved-incremental-rendering to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"

@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Error boundaries - class only, placement strategy?","Define the mechanism and link it to reliability/performance impact.","advanced"
+"Which failure mode should be mentioned first for Error boundaries - class only, placement strategy?","Name one realistic edge case and describe mitigation.","advanced"
+"How would you validate Error boundaries - class only, placement strategy after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
+"What trade-off appears in Error boundaries - class only, placement strategy decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
+"How do you explain react-fundamentals/error-boundaries-class-only-placement-strategy to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"

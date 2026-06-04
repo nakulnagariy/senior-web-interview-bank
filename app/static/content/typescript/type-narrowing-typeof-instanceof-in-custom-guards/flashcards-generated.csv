@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Type narrowing - typeof, instanceof, in, custom guards?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Type narrowing - typeof, instanceof, in, custom guards?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Type narrowing - typeof, instanceof, in, custom guards after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Type narrowing - typeof, instanceof, in, custom guards decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain typescript/type-narrowing-typeof-instanceof-in-custom-guards to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

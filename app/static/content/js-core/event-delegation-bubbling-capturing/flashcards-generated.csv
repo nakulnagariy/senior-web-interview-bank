@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Event delegation, bubbling, capturing?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Event delegation, bubbling, capturing?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Event delegation, bubbling, capturing after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Event delegation, bubbling, capturing decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain js-core/event-delegation-bubbling-capturing to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

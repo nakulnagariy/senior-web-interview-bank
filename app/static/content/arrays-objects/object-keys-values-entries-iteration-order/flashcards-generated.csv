@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Object.keys/values/entries iteration order?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Object.keys/values/entries iteration order?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Object.keys/values/entries iteration order after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Object.keys/values/entries iteration order decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain arrays-objects/object-keys-values-entries-iteration-order to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

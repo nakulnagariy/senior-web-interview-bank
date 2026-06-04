@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Class lifecycle vs hooks equivalents?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Class lifecycle vs hooks equivalents?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Class lifecycle vs hooks equivalents after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Class lifecycle vs hooks equivalents decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain react-fundamentals/class-lifecycle-vs-hooks-equivalents to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

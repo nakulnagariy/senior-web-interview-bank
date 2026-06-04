@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Box model - content/padding/border/margin?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Box model - content/padding/border/margin?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Box model - content/padding/border/margin after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Box model - content/padding/border/margin decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain css-html/box-model-content-padding-border-margin to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

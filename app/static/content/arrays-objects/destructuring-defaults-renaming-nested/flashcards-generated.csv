@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Destructuring - defaults, renaming, nested?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Destructuring - defaults, renaming, nested?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Destructuring - defaults, renaming, nested after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Destructuring - defaults, renaming, nested decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain arrays-objects/destructuring-defaults-renaming-nested to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

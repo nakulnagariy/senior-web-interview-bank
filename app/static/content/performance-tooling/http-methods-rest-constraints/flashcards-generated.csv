@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of HTTP methods & REST constraints?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for HTTP methods & REST constraints?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate HTTP methods & REST constraints after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in HTTP methods & REST constraints decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain performance-tooling/http-methods-rest-constraints to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

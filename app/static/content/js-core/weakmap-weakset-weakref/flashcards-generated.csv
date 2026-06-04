@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of WeakMap / WeakSet / WeakRef?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for WeakMap / WeakSet / WeakRef?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate WeakMap / WeakSet / WeakRef after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in WeakMap / WeakSet / WeakRef decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain js-core/weakmap-weakset-weakref to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

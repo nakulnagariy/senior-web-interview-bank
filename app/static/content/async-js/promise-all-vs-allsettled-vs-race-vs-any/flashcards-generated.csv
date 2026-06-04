@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Promise.all vs allSettled vs race vs any?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Promise.all vs allSettled vs race vs any?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Promise.all vs allSettled vs race vs any after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Promise.all vs allSettled vs race vs any decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain async-js/promise-all-vs-allsettled-vs-race-vs-any to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

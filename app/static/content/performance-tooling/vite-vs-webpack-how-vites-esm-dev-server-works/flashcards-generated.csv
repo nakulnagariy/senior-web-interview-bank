@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Vite vs Webpack - how Vite's ESM dev server works?","Define the mechanism and link it to reliability/performance impact.","advanced"
+"Which failure mode should be mentioned first for Vite vs Webpack - how Vite's ESM dev server works?","Name one realistic edge case and describe mitigation.","advanced"
+"How would you validate Vite vs Webpack - how Vite's ESM dev server works after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
+"What trade-off appears in Vite vs Webpack - how Vite's ESM dev server works decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
+"How do you explain performance-tooling/vite-vs-webpack-how-vites-esm-dev-server-works to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"

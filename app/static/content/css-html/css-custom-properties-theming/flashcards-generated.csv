@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of CSS custom properties (variables) & theming?","Define the mechanism and link it to reliability/performance impact.","advanced"
+"Which failure mode should be mentioned first for CSS custom properties (variables) & theming?","Name one realistic edge case and describe mitigation.","advanced"
+"How would you validate CSS custom properties (variables) & theming after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
+"What trade-off appears in CSS custom properties (variables) & theming decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
+"How do you explain css-html/css-custom-properties-theming to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"

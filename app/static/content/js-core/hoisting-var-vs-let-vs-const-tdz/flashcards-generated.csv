@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Hoisting - var vs let vs const TDZ?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Hoisting - var vs let vs const TDZ?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Hoisting - var vs let vs const TDZ after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Hoisting - var vs let vs const TDZ decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain js-core/hoisting-var-vs-let-vs-const-tdz to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"
