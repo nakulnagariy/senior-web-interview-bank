@@ -6,7 +6,9 @@
 		{ label: 'TypeScript', value: 'ts' },
 		{ label: 'CSS / HTML', value: 'css' },
 		{ label: 'Performance', value: 'perf' },
-		{ label: 'Testing', value: 'test' }
+		{ label: 'Testing', value: 'test' },
+		{ label: 'React vs Angular', value: 'angular' },
+		{ label: 'System Design', value: 'design' }
 	] as const;
 
 	type FilterValue = (typeof options)[number]['value'];

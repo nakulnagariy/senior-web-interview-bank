@@ -13,7 +13,7 @@
 	import TopicSidebar from '$lib/components/TopicSidebar.svelte';
 	import TopicViewer from '$lib/components/TopicViewer.svelte';
 
-	type FilterValue = 'all' | 'js' | 'react' | 'ts' | 'css' | 'perf' | 'test';
+	type FilterValue = 'all' | 'js' | 'react' | 'ts' | 'css' | 'perf' | 'test' | 'angular' | 'design';
 
 	const DONE_STORAGE_KEY = 'bench_done_topics';
 

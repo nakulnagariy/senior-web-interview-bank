@@ -21,7 +21,7 @@ export type Topic = {
 export type TopicCategory = {
 	id: string;
 	label: string;
-	cat: 'js' | 'react' | 'ts' | 'css' | 'perf' | 'test';
+	cat: 'js' | 'react' | 'ts' | 'css' | 'perf' | 'test' | 'angular' | 'design';
 	topics: Topic[];
 };
 
@@ -209,6 +209,39 @@ const RAW_DATA: RawCategory[] = [
 			{ n: 'MSW (Mock Service Worker) - intercepting at network level', p: 'high', type: 'concept' },
 			{ n: 'E2E testing - Playwright / Cypress philosophy', p: 'med', type: 'concept' }
 		]
+	},
+	{
+		id: 'react-angular',
+		label: 'React vs Angular',
+		cat: 'angular',
+		topics: [
+			{ n: 'React vs Angular - architecture & philosophy', p: 'must', type: 'concept' },
+			{ n: 'React hooks vs Angular lifecycle & services', p: 'must', type: 'concept' },
+			{ n: 'Popular design patterns with examples', p: 'high', type: 'design' },
+			{ n: 'Senior React expert interview prep', p: 'must', type: 'concept' },
+			{ n: 'Senior React expert mock interview', p: 'high', type: 'concept' },
+			{ n: 'CV alignment checklist', p: 'high', type: 'concept' },
+			{ n: '90-second intro pitch', p: 'med', type: 'concept' }
+		]
+	},
+	{
+		id: 'system-design',
+		label: 'System Design',
+		cat: 'design',
+		topics: [
+			{ n: 'Frontend architecture - SPA vs MPA vs MFE', p: 'must', type: 'design' },
+			{ n: 'Design a URL shortener', p: 'must', type: 'design' },
+			{ n: 'Design a real-time chat system', p: 'must', type: 'design' },
+			{ n: 'Design a news feed / social timeline', p: 'must', type: 'design' },
+			{ n: 'Design a type-ahead / autocomplete', p: 'high', type: 'design' },
+			{ n: 'Design a rate limiter', p: 'high', type: 'design' },
+			{ n: 'CDN and caching strategies', p: 'high', type: 'concept' },
+			{ n: 'API design - REST vs GraphQL vs tRPC', p: 'must', type: 'concept' },
+			{ n: 'Authentication & authorisation patterns', p: 'must', type: 'concept' },
+			{ n: 'Observability - logging, metrics, tracing', p: 'high', type: 'concept' },
+			{ n: 'Database selection - SQL vs NoSQL trade-offs', p: 'high', type: 'concept' },
+			{ n: 'Scalability patterns - horizontal vs vertical scaling', p: 'high', type: 'design' }
+		]
 	}
 ];
 
@@ -279,6 +312,27 @@ const EXISTING_ASSET_MAP: Record<string, TopicAsset[]> = {
 	'react-patterns-architecture/state-management-usestate-usereducer-context-redux': [
 		{ label: 'Patterns reference', type: 'markdown', path: '/content/react-patterns-architecture/state-management-usestate-usereducer-context-redux/popular-design-patterns.md' },
 		{ label: 'React vs Angular', type: 'markdown', path: '/content/react-patterns-architecture/state-management-usestate-usereducer-context-redux/react-vs-angular.md' }
+	],
+	'react-angular/react-vs-angular-architecture-philosophy': [
+		{ label: 'Notes', type: 'markdown', path: '/content/react-angular/react-vs-angular/notes.md' }
+	],
+	'react-angular/react-hooks-vs-angular-lifecycle-services': [
+		{ label: 'Notes', type: 'markdown', path: '/content/react-angular/react-hooks-vs-angular/notes.md' }
+	],
+	'react-angular/popular-design-patterns-with-examples': [
+		{ label: 'Notes', type: 'markdown', path: '/content/react-angular/popular-design-patterns-with-examples/notes.md' }
+	],
+	'react-angular/senior-react-expert-interview-prep': [
+		{ label: 'Notes', type: 'markdown', path: '/content/react-angular/scor-rup-react-expert-interview-prep/notes.md' }
+	],
+	'react-angular/senior-react-expert-mock-interview': [
+		{ label: 'Notes', type: 'markdown', path: '/content/react-angular/scor-rup-react-expert-mock-interview/notes.md' }
+	],
+	'react-angular/cv-alignment-checklist': [
+		{ label: 'Notes', type: 'markdown', path: '/content/react-angular/scor-rup-cv-alignment-checklist/notes.md' }
+	],
+	'react-angular/90-second-intro-pitch': [
+		{ label: 'Notes', type: 'markdown', path: '/content/react-angular/scor-rup-90-second-intro/notes.md' }
 	]
 };
 

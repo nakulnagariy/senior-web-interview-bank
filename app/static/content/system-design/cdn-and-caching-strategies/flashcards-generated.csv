@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of CDN and caching strategies?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for CDN and caching strategies?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate CDN and caching strategies after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in CDN and caching strategies decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain system-design/cdn-and-caching-strategies to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"
