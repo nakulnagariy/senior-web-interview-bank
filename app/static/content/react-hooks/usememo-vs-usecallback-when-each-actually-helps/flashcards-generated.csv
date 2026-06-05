@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of useMemo vs useCallback - when each actually helps?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for useMemo vs useCallback - when each actually helps?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate useMemo vs useCallback - when each actually helps after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in useMemo vs useCallback - when each actually helps decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain react-hooks/usememo-vs-usecallback-when-each-actually-helps to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

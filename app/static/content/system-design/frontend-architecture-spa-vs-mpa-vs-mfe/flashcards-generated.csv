@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Frontend architecture - SPA vs MPA vs MFE?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Frontend architecture - SPA vs MPA vs MFE?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Frontend architecture - SPA vs MPA vs MFE after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Frontend architecture - SPA vs MPA vs MFE decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain system-design/frontend-architecture-spa-vs-mpa-vs-mfe to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

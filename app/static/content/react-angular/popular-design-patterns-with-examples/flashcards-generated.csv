@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Popular design patterns with examples?","Define the mechanism and link it to reliability/performance impact.","advanced"
+"Which failure mode should be mentioned first for Popular design patterns with examples?","Name one realistic edge case and describe mitigation.","advanced"
+"How would you validate Popular design patterns with examples after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
+"What trade-off appears in Popular design patterns with examples decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
+"How do you explain react-angular/popular-design-patterns-with-examples to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"

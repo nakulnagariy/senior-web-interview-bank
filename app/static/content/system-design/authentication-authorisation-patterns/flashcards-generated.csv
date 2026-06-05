@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Authentication & authorisation patterns?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Authentication & authorisation patterns?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Authentication & authorisation patterns after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Authentication & authorisation patterns decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain system-design/authentication-authorisation-patterns to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

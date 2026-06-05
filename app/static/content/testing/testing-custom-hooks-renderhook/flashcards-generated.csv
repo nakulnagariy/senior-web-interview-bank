@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Testing custom hooks - renderHook?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Testing custom hooks - renderHook?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Testing custom hooks - renderHook after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Testing custom hooks - renderHook decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain testing/testing-custom-hooks-renderhook to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

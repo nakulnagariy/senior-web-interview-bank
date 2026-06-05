@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Virtual DOM & reconciliation (diffing algo)?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Virtual DOM & reconciliation (diffing algo)?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Virtual DOM & reconciliation (diffing algo) after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Virtual DOM & reconciliation (diffing algo) decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain react-fundamentals/virtual-dom-reconciliation to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

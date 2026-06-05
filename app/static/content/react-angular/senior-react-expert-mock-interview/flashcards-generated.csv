@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Senior React expert mock interview?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Senior React expert mock interview?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Senior React expert mock interview after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Senior React expert mock interview decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain react-angular/senior-react-expert-mock-interview to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

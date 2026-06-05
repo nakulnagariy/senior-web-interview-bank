@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Deep clone - structuredClone vs JSON vs lodash?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Deep clone - structuredClone vs JSON vs lodash?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Deep clone - structuredClone vs JSON vs lodash after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Deep clone - structuredClone vs JSON vs lodash decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain js-core/deep-clone-structuredclone-vs-json-vs-lodash to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

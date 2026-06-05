@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of type vs interface - key differences & when to use?","Define the mechanism and link it to reliability/performance impact.","advanced"
+"Which failure mode should be mentioned first for type vs interface - key differences & when to use?","Name one realistic edge case and describe mitigation.","advanced"
+"How would you validate type vs interface - key differences & when to use after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
+"What trade-off appears in type vs interface - key differences & when to use decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
+"How do you explain typescript/type-vs-interface-key-differences-when-to-use to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"

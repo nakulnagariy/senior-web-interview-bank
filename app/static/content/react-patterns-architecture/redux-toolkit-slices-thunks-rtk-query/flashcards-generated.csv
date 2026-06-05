@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Redux Toolkit - slices, thunks, RTK Query?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Redux Toolkit - slices, thunks, RTK Query?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Redux Toolkit - slices, thunks, RTK Query after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Redux Toolkit - slices, thunks, RTK Query decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain react-patterns-architecture/redux-toolkit-slices-thunks-rtk-query to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

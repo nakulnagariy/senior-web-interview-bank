@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Concurrency limiter (N at a time)?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Concurrency limiter (N at a time)?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Concurrency limiter (N at a time) after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Concurrency limiter (N at a time) decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain async-js/concurrency-limiter to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

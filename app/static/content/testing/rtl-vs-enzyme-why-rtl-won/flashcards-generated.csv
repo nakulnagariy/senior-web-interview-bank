@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of RTL vs Enzyme - why RTL won?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for RTL vs Enzyme - why RTL won?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate RTL vs Enzyme - why RTL won after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in RTL vs Enzyme - why RTL won decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain testing/rtl-vs-enzyme-why-rtl-won to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

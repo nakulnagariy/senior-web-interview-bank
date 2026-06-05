@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of useImperativeHandle & forwardRef?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for useImperativeHandle & forwardRef?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate useImperativeHandle & forwardRef after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in useImperativeHandle & forwardRef decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain react-hooks/useimperativehandle-forwardref to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

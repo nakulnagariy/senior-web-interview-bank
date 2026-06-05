@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Callback hell & pyramid of doom?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Callback hell & pyramid of doom?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Callback hell & pyramid of doom after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Callback hell & pyramid of doom decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain js-core/callback-hell-pyramid-of-doom to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

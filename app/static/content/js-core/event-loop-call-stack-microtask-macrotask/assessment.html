@@ -1,0 +1,287 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.w{padding:1.5rem 0;font-family:var(--font-sans)}
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:1.5rem}
+.rc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.rc h3{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
+.rr{font-size:11px;color:var(--color-text-secondary);line-height:1.75;display:flex;gap:5px}
+.rk{font-family:var(--font-mono);color:var(--color-text-primary);font-size:10px;min-width:56px;flex-shrink:0}
+.div{height:0.5px;background:var(--color-border-tertiary);margin:1.25rem 0}
+.slbl{font-size:11px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.07em;margin-bottom:1rem}
+.q{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1.25rem}
+.qm{display:flex;align-items:center;gap:7px;margin-bottom:9px;flex-wrap:wrap}
+.qn{font-size:11px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.05em}
+.b{font-size:10px;font-weight:500;padding:2px 7px;border-radius:4px}
+.b1{background:#EEEDFE;color:#3C3489}
+.b2{background:#FCEBEB;color:#791F1F}
+.b3{background:#FAEEDA;color:#633806}
+.b4{background:#E6F1FB;color:#0C447C}
+.b5{background:#E1F5EE;color:#085041}
+.b6{background:#F1EFE8;color:#444441}
+.qt{font-size:14px;font-weight:500;color:var(--color-text-primary);line-height:1.6;margin-bottom:11px}
+.cd{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;font-family:var(--font-mono);font-size:11px;color:var(--color-text-primary);line-height:1.8;margin-bottom:10px;white-space:pre;overflow-x:auto}
+.rbtn{font-size:12px;color:var(--color-text-info);cursor:pointer;background:none;border:none;padding:0;display:flex;align-items:center;gap:4px;margin-top:2px}
+.ans{display:none;margin-top:13px;border-top:0.5px solid var(--color-border-tertiary);padding-top:13px}
+.ans.open{display:block}
+.exp{background:var(--color-background-warning);border-radius:var(--border-radius-md);padding:9px 12px;font-size:12px;color:var(--color-text-warning);margin-bottom:10px;line-height:1.6}
+.at{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.at code{font-family:var(--font-mono);background:var(--color-background-secondary);padding:1px 4px;border-radius:3px;font-size:11px;color:var(--color-text-primary)}
+.tip{border-left:2px solid var(--color-border-info);padding:8px 11px;background:var(--color-background-info);font-size:12px;color:var(--color-text-info);line-height:1.6;margin-top:10px;border-radius:0}
+.tip code{font-family:var(--font-mono);font-size:11px;background:rgba(24,95,165,0.1);padding:1px 4px;border-radius:3px}
+.warn{border-left:2px solid var(--color-border-danger);padding:8px 11px;background:var(--color-background-danger);font-size:12px;color:var(--color-text-danger);line-height:1.6;margin-top:10px;border-radius:0}
+.orow{display:flex;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.orow:last-child{border:none}
+.ol{font-family:var(--font-mono);color:var(--color-text-tertiary);min-width:72px;flex-shrink:0;font-size:11px}
+.or{font-weight:500;min-width:48px;flex-shrink:0;font-size:12px}
+.ok{color:#0F6E56}.er{color:#A32D2D}
+.ow{color:var(--color-text-secondary);font-size:11px;flex:1;line-height:1.6}
+.order-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:10px 0}
+.oc{border-radius:var(--border-radius-md);padding:9px 11px;border:0.5px solid var(--color-border-tertiary)}
+.oc-lbl{font-size:10px;font-weight:500;margin-bottom:4px}
+.oc-sync .oc-lbl{color:#3C3489;background:#EEEDFE;display:inline-block;padding:1px 6px;border-radius:3px}
+.oc-micro .oc-lbl{color:#0C447C;background:#E6F1FB;display:inline-block;padding:1px 6px;border-radius:3px}
+.oc-macro .oc-lbl{color:#633806;background:#FAEEDA;display:inline-block;padding:1px 6px;border-radius:3px}
+.oc-item{font-size:11px;color:var(--color-text-secondary);font-family:var(--font-mono);padding:2px 0;line-height:1.6}
+.foot{margin-top:1.5rem;padding:12px 14px;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);font-size:12px;color:var(--color-text-secondary);line-height:1.7}
+</style>
+
+<div class="w">
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Senior assessment: JavaScript event loop — call stack, microtask queue, and macrotask queue. 6 output prediction and architecture questions with reveal-on-demand answers.</h2>
+
+<div style="margin-bottom:1.5rem">
+  <h1 style="font-size:19px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">Event loop — call stack, microtask, macrotask</h1>
+  <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.6">6 questions. Output prediction is the most common interview format here — work every answer before revealing. All buttons functional.</p>
+</div>
+
+<div class="slbl">EXECUTION ORDER REFERENCE</div>
+<div class="order-grid">
+  <div class="oc oc-sync">
+    <div class="oc-lbl">1 — synchronous</div>
+    <div class="oc-item">Runs first, always</div>
+    <div class="oc-item">Blocks everything else</div>
+    <div class="oc-item">Lives on the call stack</div>
+  </div>
+  <div class="oc oc-micro">
+    <div class="oc-lbl">2 — microtask queue</div>
+    <div class="oc-item">Promise .then/.catch</div>
+    <div class="oc-item">queueMicrotask()</div>
+    <div class="oc-item">MutationObserver</div>
+    <div class="oc-item">Drains fully before any macrotask</div>
+  </div>
+  <div class="oc oc-macro">
+    <div class="oc-lbl">3 — macrotask queue</div>
+    <div class="oc-item">setTimeout / setInterval</div>
+    <div class="oc-item">setImmediate (Node)</div>
+    <div class="oc-item">I/O callbacks</div>
+    <div class="oc-item">One task per loop tick</div>
+  </div>
+</div>
+<div class="tip" style="margin-bottom:1.5rem">Key rule: after each macrotask, the entire microtask queue drains completely before the next macrotask runs. A microtask that queues another microtask keeps draining — it does not wait for a macrotask.</div>
+
+<div class="div"></div>
+<div class="slbl">QUESTIONS</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q1</span><span class="b b4">output</span><span class="b b6">must-know</span></div>
+  <div class="qt">Predict the exact output in order. Then explain the precise state of the call stack, microtask queue, and macrotask queue at each step.</div>
+  <div class="cd">console.log('A');
+
+setTimeout(() => console.log('B'), 0);
+
+Promise.resolve()
+  .then(() => console.log('C'))
+  .then(() => console.log('D'));
+
+console.log('E');</div>
+  <button class="rbtn" onclick="tog('a1',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a1">
+    <div class="exp">Senior expectation: Must give A→E→C→D→B and explain why. Must articulate that setTimeout(fn, 0) does not mean "immediately" — it means "after current sync + all microtasks." Must walk the queue state at each transition point.</div>
+    <div style="margin-bottom:10px">
+      <div class="orow"><span class="ol">step 1</span><span class="or ok">A</span><span class="ow">Synchronous. console.log('A') pushed onto call stack, runs, pops.</span></div>
+      <div class="orow"><span class="ol">step 2</span><span class="or" style="color:var(--color-text-tertiary)">—</span><span class="ow">setTimeout callback registered with browser timer API. Even with 0ms delay it goes to macrotask queue — never runs before sync code finishes.</span></div>
+      <div class="orow"><span class="ol">step 3</span><span class="or" style="color:var(--color-text-tertiary)">—</span><span class="ow">Promise.resolve() settles immediately. First .then callback queued in microtask queue.</span></div>
+      <div class="orow"><span class="ol">step 4</span><span class="or ok">E</span><span class="ow">Synchronous. console.log('E') runs. Call stack now empty.</span></div>
+      <div class="orow"><span class="ol">step 5</span><span class="or ok">C</span><span class="ow">Call stack empty — event loop drains microtask queue. First .then fires, logs C. This .then returns undefined, which schedules the next .then as a new microtask.</span></div>
+      <div class="orow"><span class="ol">step 6</span><span class="or ok">D</span><span class="ow">Microtask queue not yet empty — second .then fires, logs D. Queue now empty.</span></div>
+      <div class="orow"><span class="ol">step 7</span><span class="or ok">B</span><span class="ow">Microtask queue drained. Event loop picks next macrotask — setTimeout callback runs, logs B.</span></div>
+    </div>
+    <div class="at">Final output: <code>A E C D B</code>. The critical insight: <code>setTimeout(fn, 0)</code> does not mean "run immediately after this line." It means "schedule this as a macrotask, run after current sync AND after the entire microtask queue drains." The 0ms is the minimum delay, not the actual delay.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q2</span><span class="b b4">output</span><span class="b b6">must-know</span></div>
+  <div class="qt">This is the question most seniors get wrong. Predict the exact output and explain the two-tick penalty that causes 'D' to appear after 'E'.</div>
+  <div class="cd">Promise.resolve()
+  .then(() => {
+    console.log('A');
+    return Promise.resolve('inner');
+  })
+  .then(v => console.log('B', v));
+
+Promise.resolve()
+  .then(() => console.log('C'))
+  .then(() => console.log('D'))
+  .then(() => console.log('E'));</div>
+  <button class="rbtn" onclick="tog('a2',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a2">
+    <div class="exp">Senior expectation: Output is A→C→D→E→B inner. Must explain the two-tick penalty: returning Promise.resolve() from inside a .then() handler causes two extra microtask ticks before the next .then fires — due to the PromiseResolveThenableJob introduced by the spec to handle potentially synchronous thenables. This is the most commonly missed senior-level output question on promises and the event loop combined.</div>
+    <div class="at">Both chains register their first <code>.then</code> as microtasks simultaneously. The microtask queue starts with: <code>[chain1.then1, chain2.then1]</code>.<br><br>Tick 1 — chain1.then1 runs → logs <code>A</code> → returns <code>Promise.resolve('inner')</code> (a thenable). The spec mandates a PromiseResolveThenableJob to assimilate this — costs one extra microtask tick. Queue: <code>[chain2.then1, resolveThenableJob]</code><br><br>Tick 2 — chain2.then1 runs → logs <code>C</code>. Schedules chain2.then2. Queue: <code>[resolveThenableJob, chain2.then2]</code><br><br>Tick 3 — resolveThenableJob runs → resolves the outer promise with 'inner' → schedules chain1.then2. Queue: <code>[chain2.then2, chain1.then2]</code><br><br>Tick 4 — chain2.then2 runs → logs <code>D</code>. Schedules chain2.then3. Queue: <code>[chain1.then2, chain2.then3]</code><br><br>Tick 5 — chain1.then2 runs → logs <code>B inner</code>. Queue: <code>[chain2.then3]</code><br><br>Tick 6 — chain2.then3 runs → logs <code>E</code>.</div>
+    <div style="margin-top:10px">
+      <div class="orow"><span class="ol">final output</span><span class="or ok">A C D B E</span><span class="ow">Not A C D E B — the two-tick penalty from returning Promise.resolve() lets chain2 advance two more steps before chain1's second .then fires.</span></div>
+    </div>
+    <div class="tip">Production implication: returning <code>Promise.resolve(value)</code> from inside a <code>.then()</code> adds latency versus returning a plain value. In tight async pipelines this two-tick gap is measurable. Return plain values unless you specifically need a new Promise.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q3</span><span class="b b4">output</span><span class="b b2">gotcha</span></div>
+  <div class="qt">Predict the output. The tricky part is the interaction between async/await and the event loop — trace exactly what happens when the engine hits each await.</div>
+  <div class="cd">async function foo() {
+  console.log('B');
+  await Promise.resolve();
+  console.log('D');
+}
+
+console.log('A');
+foo();
+console.log('C');</div>
+  <button class="rbtn" onclick="tog('a3',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a3">
+    <div class="exp">Senior expectation: Output is A→B→C→D. Must explain that async functions run synchronously until the first await — they are not deferred entirely. The await suspends the function and schedules the remainder as a microtask, returning control to the caller. Must explain await as syntactic sugar over Promise.then.</div>
+    <div style="margin-bottom:10px">
+      <div class="orow"><span class="ol">step 1</span><span class="or ok">A</span><span class="ow">Synchronous. console.log('A') runs.</span></div>
+      <div class="orow"><span class="ol">step 2</span><span class="or ok">B</span><span class="ow">foo() is called. The async function body runs synchronously until the first await. console.log('B') executes immediately.</span></div>
+      <div class="orow"><span class="ol">step 3</span><span class="or" style="color:var(--color-text-tertiary)">—</span><span class="ow">await Promise.resolve() suspends foo(). The rest of foo() (after the await) is scheduled as a microtask. foo() returns a pending Promise to the caller.</span></div>
+      <div class="orow"><span class="ol">step 4</span><span class="or ok">C</span><span class="ow">Control returns to the call site. console.log('C') runs synchronously. Call stack empties.</span></div>
+      <div class="orow"><span class="ol">step 5</span><span class="or ok">D</span><span class="ow">Microtask queue drains. foo() resumes after the await. console.log('D') runs.</span></div>
+    </div>
+    <div class="at">Final output: <code>A B C D</code>. The key mental model: <code>async function</code> does not defer the entire function — it runs synchronously until the first <code>await</code>. At that point, it suspends, schedules its continuation as a microtask, and returns control to whoever called it. <code>await x</code> is equivalent to <code>Promise.resolve(x).then(resume)</code> — it always costs at least one microtask tick even when awaiting an already-resolved promise.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q4</span><span class="b b4">output</span><span class="b b2">gotcha</span></div>
+  <div class="qt">This is a harder async/await + setTimeout interaction. Predict the full output in order and explain the queue state after each transition.</div>
+  <div class="cd">async function bar() {
+  console.log('2');
+  await null;
+  console.log('4');
+  await null;
+  console.log('6');
+}
+
+console.log('1');
+bar();
+setTimeout(() => console.log('7'), 0);
+console.log('3');</div>
+  <button class="rbtn" onclick="tog('a4',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a4">
+    <div class="exp">Senior expectation: Output is 1→2→3→4→6→7. Must show that each await null costs one microtask tick, so '4' and '6' fire before the setTimeout macrotask. A common wrong answer is 1→2→3→4→7→6 — getting this right proves deep understanding of microtask queue draining.</div>
+    <div style="margin-bottom:10px">
+      <div class="orow"><span class="ol">sync phase</span><span class="or ok">1, 2, 3</span><span class="ow">'1' logs. bar() called: '2' logs, hits first await null, suspends. setTimeout registered as macrotask. '3' logs. Call stack empty.</span></div>
+      <div class="orow"><span class="ol">microtask 1</span><span class="or ok">4</span><span class="ow">First await null resolves — bar() resumes, logs '4', hits second await null, suspends again. New microtask scheduled.</span></div>
+      <div class="orow"><span class="ol">microtask 2</span><span class="or ok">6</span><span class="ow">Second await null resolves — bar() resumes, logs '6', function completes. Microtask queue now empty.</span></div>
+      <div class="orow"><span class="ol">macrotask</span><span class="or ok">7</span><span class="ow">Microtask queue fully drained. Event loop picks setTimeout callback — logs '7'.</span></div>
+    </div>
+    <div class="at">Final output: <code>1 2 3 4 6 7</code>. Each <code>await</code> suspends and resumes via the microtask queue — so both resumptions (<code>'4'</code> and <code>'6'</code>) fire before the macrotask (<code>'7'</code>). The rule holds: the full microtask queue — including microtasks spawned by microtasks — drains completely before any macrotask gets to run.</div>
+    <div class="warn">Common wrong answer: <code>1 2 3 4 7 6</code> — this would only be correct if each <code>await</code> pushed continuation to the macrotask queue. It does not. <code>await</code> always uses microtasks. If you said 7 before 6, you confused microtask and macrotask scheduling.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q5</span><span class="b b2">gotcha</span><span class="b b6">must-know</span></div>
+  <div class="qt">A junior engineer writes a "sleep" utility using setTimeout and is confused why the code after it runs before the UI updates. Then they switch to a queueMicrotask-based sleep and the app hangs. Explain both failure modes and what the correct tool is for each use case.</div>
+  <div class="cd">function sleepMacro(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function sleepMicro() {
+  return new Promise(resolve => queueMicrotask(resolve));
+}
+
+async function runA() {
+  await sleepMacro(0);
+  console.log('after macro sleep');
+}
+
+async function runB() {
+  while(true) {
+    await sleepMicro();
+    processNextItem();
+  }
+}</div>
+  <button class="rbtn" onclick="tog('a5',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a5">
+    <div class="exp">Senior expectation: Must explain that setTimeout(0) yields to the browser for rendering but adds ~4ms minimum delay. queueMicrotask never yields — a microtask loop starves the macrotask queue indefinitely, freezing rendering and I/O. Must know the correct tool: scheduler.yield() or MessageChannel for cooperative yielding without minimum delay.</div>
+    <div class="at"><code>sleepMacro(0)</code> issue: <code>setTimeout</code> has a minimum clamped delay of ~4ms (spec-enforced, ~1ms in some environments). If the engineer wants to yield to the browser to allow a paint/reflow, this works — but it adds non-trivial latency in tight loops. If they want to simply defer to after the current microtask queue, setTimeout is heavier than needed.<br><br><code>sleepMicro()</code> hang: <code>queueMicrotask</code> queues in the microtask queue. The while loop <code>await</code>s a microtask — which resolves, which schedules the next iteration as a microtask, which resolves, infinitely. The microtask queue never empties. The browser's rendering pipeline and all setTimeout/setInterval callbacks live in the macrotask queue — they never get a turn. The tab freezes completely: no repaints, no user input, no network callbacks.<br><br>The correct tools by use case:</div>
+    <div class="orow"><span class="ol">yield to render</span><span class="or ok">setTimeout(0)</span><span class="ow">Guarantees a rendering opportunity before continuation. Use for chunked heavy work that must not block paint.</span></div>
+    <div class="orow"><span class="ol">cooperative yield</span><span class="or ok">scheduler.yield()</span><span class="ow">New browser API — yields to the browser without the 4ms setTimeout tax. Falls back to MessageChannel hack in older browsers.</span></div>
+    <div class="orow"><span class="ol">post-render check</span><span class="or ok">requestAnimationFrame</span><span class="ow">Fires after the browser has committed a paint. Use for animation-synchronised work.</span></div>
+    <div class="orow"><span class="ol">idle work</span><span class="or ok">requestIdleCallback</span><span class="ow">Runs when the browser has spare time between frames. Use for non-urgent background processing.</span></div>
+    <div class="tip">The <code>MessageChannel</code> trick for zero-delay macrotask yielding (without setTimeout's 4ms clamp): <code>const {port1, port2} = new MessageChannel(); port1.onmessage = resolve; port2.postMessage('')</code> — posts a message to itself, which fires as a macrotask with no artificial delay.</div>
+  </div>
+</div>
+
+<div class="q">
+  <div class="qm"><span class="qn">Q6</span><span class="b b1">architecture</span></div>
+  <div class="qt">Production scenario: your React app processes large CSV uploads (100k rows) synchronously on the main thread. The UI freezes for 3–5 seconds during processing. Using your knowledge of the event loop, design two different solutions — one that stays on the main thread, one that leaves it — and explain the trade-offs of each.</div>
+  <button class="rbtn" onclick="tog('a6',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
+  <div class="ans" id="a6">
+    <div class="exp">Senior expectation: Solution 1 must use chunked processing with setTimeout/scheduler.yield to cooperatively yield between chunks — keeping the main thread responsive. Solution 2 must use a Web Worker to fully offload processing. Must give concrete trade-offs: Workers have serialization cost, can't touch the DOM; chunking keeps UI responsive but processing takes longer overall.</div>
+    <div class="at"><strong>Solution 1 — Chunked processing on main thread:</strong> Split the 100k rows into chunks of ~500 rows. Process one chunk, then yield to the browser for a render opportunity, then process the next chunk. This keeps the UI responsive (user can see a progress bar update) at the cost of slightly longer total processing time.</div>
+    <div class="cd">async function processCSV(rows) {
+  const CHUNK = 500;
+  const results = [];
+
+  for (let i = 0; i < rows.length; i += CHUNK) {
+    const chunk = rows.slice(i, i + CHUNK);
+    results.push(...chunk.map(transform));
+
+    const progress = Math.round((i / rows.length) * 100);
+    setProgress(progress);
+
+    await new Promise(r => setTimeout(r, 0));
+  }
+
+  return results;
+}</div>
+    <div class="at"><strong>Solution 2 — Web Worker offload:</strong> Spin up a Worker, post the full dataset, receive the processed result. The main thread is completely free during processing — zero UI jank. Worker runs on a separate OS thread with its own event loop.</div>
+    <div class="cd">const worker = new Worker('/csv-worker.js');
+
+worker.postMessage({ rows });
+
+worker.onmessage = ({ data }) => {
+  setResults(data.results);
+  setProgress(100);
+};
+
+worker.onerror = (err) => setError(err.message);</div>
+    <div class="at">Trade-offs side by side:</div>
+    <div class="orow"><span class="ol">chunked</span><span class="or ok">pros</span><span class="ow">No serialization cost. Can access DOM/React state directly. Progress bar updates naturally. Works in all browsers.</span></div>
+    <div class="orow"><span class="ol">chunked</span><span class="or er">cons</span><span class="ow">Total processing time is ~10-20% longer (yield overhead). UI still processes on main thread — other JS (animations, user input handlers) competes for ticks.</span></div>
+    <div class="orow"><span class="ol">web worker</span><span class="or ok">pros</span><span class="ow">True parallelism. Main thread completely free. Total processing time is faster — dedicated thread with no competition.</span></div>
+    <div class="orow"><span class="ol">web worker</span><span class="or er">cons</span><span class="ow">Data must be serialized/deserialized via postMessage (structured clone — costs time for 100k rows). No DOM/React access from Worker. Requires separate file or blob URL. Progress requires messaging back each chunk result.</span></div>
+    <div class="at" style="margin-top:8px">Optimal production choice: Web Worker for pure data transformation (no DOM needed), with chunk-based progress messages posted back. For the 100k row case, use <code>SharedArrayBuffer</code> + <code>Atomics</code> to share memory directly and avoid serialization cost entirely — though this requires secure context (HTTPS + COOP/COEP headers).</div>
+  </div>
+</div>
+
+<div class="foot">
+  <span style="font-weight:500;color:var(--color-text-primary)">Score guide:</span> Q1 is the baseline every senior must nail cold. Q2 is the question that separates seniors from principals — the two-tick penalty is almost universally missed. Q3+Q4 prove you understand await as microtask sugar, not macrotask deferral. Q5 is the practical gotcha — a microtask-based sleep is a real footgun. Q6 is the architecture question that proves you can apply event loop knowledge to production problems.
+  <div style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap">
+    <button onclick="sendPrompt('Give me a senior-level assessment question on: this keyword — 4 binding rules')" style="font-size:12px;color:var(--color-text-info);background:none;border:none;cursor:pointer;padding:0">Next: this keyword — 4 binding rules ↗</button>
+    <button onclick="sendPrompt('Give me a senior-level assessment question on: Prototype chain & inheritance')" style="font-size:12px;color:var(--color-text-info);background:none;border:none;cursor:pointer;padding:0">Or: Prototype chain ↗</button>
+  </div>
+</div>
+</div>
+
+<script>
+function tog(id,btn){
+  var box=document.getElementById(id);
+  var open=box.classList.toggle('open');
+  btn.innerHTML=open
+    ?'<i class="ti ti-chevron-up" aria-hidden="true"></i>Hide answer'
+    :'<i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer';
+}
+</script>

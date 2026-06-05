@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of useLayoutEffect vs useEffect - timing difference?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for useLayoutEffect vs useEffect - timing difference?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate useLayoutEffect vs useEffect - timing difference after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in useLayoutEffect vs useEffect - timing difference decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain react-hooks/uselayouteffect-vs-useeffect-timing-difference to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

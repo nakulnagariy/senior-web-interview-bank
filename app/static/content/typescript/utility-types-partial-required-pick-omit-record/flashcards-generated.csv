@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Utility types - Partial, Required, Pick, Omit, Record?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Utility types - Partial, Required, Pick, Omit, Record?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Utility types - Partial, Required, Pick, Omit, Record after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Utility types - Partial, Required, Pick, Omit, Record decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain typescript/utility-types-partial-required-pick-omit-record to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

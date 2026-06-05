@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Scalability patterns - horizontal vs vertical scaling?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Scalability patterns - horizontal vs vertical scaling?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Scalability patterns - horizontal vs vertical scaling after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Scalability patterns - horizontal vs vertical scaling decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain system-design/scalability-patterns-horizontal-vs-vertical-scaling to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

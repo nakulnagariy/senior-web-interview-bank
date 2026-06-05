@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Snapshot testing - when useful, when harmful?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Snapshot testing - when useful, when harmful?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Snapshot testing - when useful, when harmful after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Snapshot testing - when useful, when harmful decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain testing/snapshot-testing-when-useful-when-harmful to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

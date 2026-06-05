@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Controlled vs uncontrolled components?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Controlled vs uncontrolled components?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Controlled vs uncontrolled components after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Controlled vs uncontrolled components decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain react-fundamentals/controlled-vs-uncontrolled-components to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

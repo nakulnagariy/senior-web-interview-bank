@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of React Testing Library - queries, user-event, philosophy?","Define the mechanism and link it to reliability/performance impact.","advanced"
+"Which failure mode should be mentioned first for React Testing Library - queries, user-event, philosophy?","Name one realistic edge case and describe mitigation.","advanced"
+"How would you validate React Testing Library - queries, user-event, philosophy after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
+"What trade-off appears in React Testing Library - queries, user-event, philosophy decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
+"How do you explain testing/react-testing-library-queries-user-event-philosophy to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"

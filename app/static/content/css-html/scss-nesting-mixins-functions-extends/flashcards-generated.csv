@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of SCSS - nesting, mixins, functions, extends?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for SCSS - nesting, mixins, functions, extends?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate SCSS - nesting, mixins, functions, extends after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in SCSS - nesting, mixins, functions, extends decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain css-html/scss-nesting-mixins-functions-extends to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"

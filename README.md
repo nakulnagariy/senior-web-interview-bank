@@ -28,6 +28,57 @@ Senior-focused web development interview prep with practical questions, edge cas
     - runtime semantics
     - react + promises
 
+## Interview Navigator App (Svelte Static)
+
+A static SvelteKit app now lives in `app/` and provides a connected navigator for all roadmap topics.
+
+### Run locally
+
+1. `npm --prefix app install`
+2. `npm --prefix app run dev`
+
+### Build static site
+
+1. `npm --prefix app run build`
+2. Static output is generated in `app/build/`
+
+### Content maintenance scripts
+
+- `npm --prefix app run content:generate`
+  - Generates topic-specific md/html/js/csv files for missing asset types under `app/static/content/<category>/<topic-slug>/` using `*-generated.*` filenames.
+- `npm --prefix app run placeholders:sync`
+  - Backward-compatible alias for `content:generate`.
+- `npm --prefix app run validate:manifest`
+  - Validates topic slug uniqueness and that all mapped asset paths exist.
+- `npm --prefix app run report:coverage`
+  - Prints category-wise and overall coverage from manifest data (asset-backed vs placeholder-only topics).
+- `npm --prefix app run check:all`
+  - Runs placeholder sync + manifest validation + Svelte type checks.
+
+### App contracts
+
+- Topic metadata source: `app/src/lib/data/topics.ts`
+- Content source tree: `app/static/content/<category>/<topic-slug>/`
+- Category folder names should match manifest category IDs exactly (for example: `js-core`, `async-js`, `react-hooks`).
+- Any missing-topic content is rendered as a placeholder route so the graph stays fully connected.
+
+### Supported content renderers
+
+- Markdown (`.md`)
+- HTML assessments (`.html`)
+- JavaScript code (`.js`)
+- CSV flashcards (`.csv`)
+
+### Copilot workspace customization
+
+Repository-level Copilot customizations now exist in `.github/`:
+
+- `copilot-instructions.md`
+- `instructions/*.instructions.md`
+- `agents/*.agent.md`
+- `skills/**/SKILL.md`
+- `prompts/*.prompt.md`
+
 ## Role-Specific Preparation Packs
 
 - react-angular

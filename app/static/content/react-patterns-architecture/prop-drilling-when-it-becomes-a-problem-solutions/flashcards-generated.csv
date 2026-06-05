@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Prop drilling - when it becomes a problem & solutions?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Prop drilling - when it becomes a problem & solutions?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Prop drilling - when it becomes a problem & solutions after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Prop drilling - when it becomes a problem & solutions decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain react-patterns-architecture/prop-drilling-when-it-becomes-a-problem-solutions to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"

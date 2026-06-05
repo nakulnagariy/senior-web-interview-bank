@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Pseudo-classes vs pseudo-elements?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Pseudo-classes vs pseudo-elements?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Pseudo-classes vs pseudo-elements after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Pseudo-classes vs pseudo-elements decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain css-html/pseudo-classes-vs-pseudo-elements to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"
