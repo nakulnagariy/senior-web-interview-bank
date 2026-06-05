@@ -1,0 +1,6 @@
+{
+  "buildCommand": "npm --prefix app run build",
+  "outputDirectory": "app/build",
+  "installCommand": "npm --prefix app install",
+  "framework": null
+}
