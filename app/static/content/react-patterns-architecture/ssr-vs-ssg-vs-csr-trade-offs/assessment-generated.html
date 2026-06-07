@@ -1,45 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SSR vs SSG vs CSR trade-offs (Next.js) - Assessment</title>
+  <meta charset="UTF-8">
+  <title>SSR vs SSG vs CSR (Next.js) Assessment</title>
   <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f6f8fb;color:#1f2430}
-    .wrap{max-width:900px;margin:20px auto;padding:16px;background:#fff;border:1px solid #d7dfeb;border-radius:12px}
-    h1{margin:0 0 8px;font-size:22px}
-    p.meta{margin:0 0 14px;color:#5a667c;font-size:13px}
-    .card{border:1px solid #dde4ef;border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
-    .q{font-weight:600;margin-bottom:6px}
-    details{margin-top:6px}
-    code{background:#edf1f9;padding:1px 4px;border-radius:4px}
+    body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; }
+    .question { margin-bottom: 1.5em; padding: 1em; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px #eee; }
+    .reveal { display: none; margin-top: 0.5em; background: #e6f7ff; padding: 0.5em; border-radius: 6px; }
+    button { background: #007bff; color: #fff; border: none; padding: 0.5em 1em; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    h2 { color: #333; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>SSR vs SSG vs CSR trade-offs (Next.js) - Senior Assessment</h1>
-    <p class="meta">Topic slug: react-patterns-architecture/ssr-vs-ssg-vs-csr-trade-offs | Variant seed: 63</p>
+  <h2>SSR vs SSG vs CSR (Next.js) Assessment</h2>
 
-    <div class="card">
-      <div class="q">Q1. How would you evaluate SSR vs SSG vs CSR trade-offs (Next.js) when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q2. Which risk appears first if ssr-vs-ssg-vs-csr-trade-offs is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in SSR vs SSG vs CSR trade-offs (Next.js) to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>ssr-vs-ssg-vs-csr-trade-offs</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+  <div class="question">
+    <strong>1. What is the main difference between SSR, SSG, and CSR in Next.js?</strong>
+    <button onclick="document.getElementById('a1').style.display='block'">Reveal Answer</button>
+    <div id="a1" class="reveal">
+      <b>Answer:</b> SSR renders pages on the server at request time, SSG renders pages at build time as static HTML, and CSR renders pages in the browser after JavaScript loads.
     </div>
   </div>
+
+  <div class="question">
+    <strong>2. What are the trade-offs of using SSR for a page?</strong>
+    <button onclick="document.getElementById('a2').style.display='block'">Reveal Answer</button>
+    <div id="a2" class="reveal">
+      <b>Answer:</b> SSR provides fresh data and good SEO, but increases
+ server load, can be slower than SSG for static content, and may have higher latency.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>3. When is SSG the best choice, and what are its limitations?</strong>
+    <button onclick="document.getElementById('a3').style.display='block'">Reveal Answer</button>
+    <div id="a3" class="reveal">
+      <b>Answer:</b> SSG is best for static content that rarely changes (e.g., blogs, docs). Its limitation is that it can't serve dynamic or user-specific data unless using ISR.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>4. Why is CSR not ideal for SEO, and when would you still use it?</strong>
+    <button onclick="document.getElementById('a4').style.display='block'">Reveal Answer</button>
+    <div id="a4" class="reveal">
+      <b>Answer:</b> CSR renders content in the browser, so search engines may not see the content. It's still useful for highly interactive, app-like pages where SEO is not a priority.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>5. Coding: Show how to implement SSR and SSG in Next.js for a page.</strong>
+    <button onclick="document.getElementById('a5').style.display='block'">Reveal Answer</button>
+    <div id="a5" class="reveal">
+      <b>Answer:</b>
+      <pre>
+{`// SSR
+export async function getServerSideProps(context) {
+  return { props: { data: await fetchData() } };
+}
+
+// SSG
+export async function getStaticProps(context) {
+  return { props: { data: await fetchData() } };
+}
+`}
+      </pre>
+    </div>
+  </div>
+
 </body>
 </html>

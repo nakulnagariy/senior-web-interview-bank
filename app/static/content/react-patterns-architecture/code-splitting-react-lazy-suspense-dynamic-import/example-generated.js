@@ -1,34 +1,18 @@
-/**
- * Generated drill snippet for: Code splitting - React.lazy, Suspense, dynamic import
- * Slug: react-patterns-architecture/code-splitting-react-lazy-suspense-dynamic-import
- */
+import React, { Suspense } from 'react';
 
-const scenario = {
-  topic: "Code splitting - React.lazy, Suspense, dynamic import",
-  slug: "react-patterns-architecture/code-splitting-react-lazy-suspense-dynamic-import",
-  seed: 58
-};
+// Code splitting with React.lazy and Suspense
+const LazyComponent = React.lazy(() => import('./MyComponent'));
 
-function drillCodeSplittingReactLazySuspenseDynamicImport(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+export function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LazyComponent />
+    </Suspense>
+  );
 }
 
-const output = drillCodeSplittingReactLazySuspenseDynamicImport({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// Dynamic import for non-component code
+async function loadUtils() {
+  const utils = await import('./utils');
+  utils.doSomething();
+}

@@ -1,0 +1,237 @@
+/*
+ * assessment.css — shared stylesheet for all assessment HTML files
+ * Injected by TopicViewer before srcdoc rendering.
+ * Covers three generations of class-name conventions:
+ *   - New names  (.q-card, .reveal-btn, .ans-body, .cmp-row …)
+ *   - Legacy names (.q, .rbtn, .at, .orow …)  — old custom files
+ *   - Generated names (.wrap, .card, details/summary …) — assessment-generated.html
+ */
+
+/* ── Design tokens ───────────────────────────────────── */
+:root {
+  --bg:        #ffffff;
+  --bg-sec:    #f4f6f9;
+  --bg-warn:   #fffbee;
+  --bg-danger: #fff5f5;
+  --bg-info:   #f0f7ff;
+  --tx:        #20202a;
+  --tx-sec:    #596275;
+  --tx-ter:    #8a92a6;
+  --tx-warn:   #7c4d0a;
+  --tx-danger: #7c1f1f;
+  --tx-info:   #0c447c;
+  --bd:        #e0e5ed;
+  --bd-info:   #3b82c4;
+  --bd-danger: #c45050;
+  --r-sm:      5px;
+  --r-md:      8px;
+  --r-lg:      12px;
+  --font:      'Space Grotesk', system-ui, sans-serif;
+  --mono:      'IBM Plex Mono', 'Courier New', monospace;
+}
+
+/* ── Reset ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--tx);
+  background: var(--bg);
+  padding: 1.25rem 1rem 2.5rem;
+  line-height: 1.6;
+}
+
+/* ── Page header ─────────────────────────────────────── */
+/* new */
+.page-title { font-size: 1.2rem; font-weight: 600; color: var(--tx); margin-bottom: 0.3rem; }
+.page-sub   { font-size: 0.82rem; color: var(--tx-sec); margin-bottom: 1.5rem; line-height: 1.6; }
+/* legacy — .w wrapper contains unstyled h1/p */
+.w h1       { font-size: 1.2rem; font-weight: 500; color: var(--tx); margin-bottom: 0.3rem; }
+.w > div > h1 { font-size: 1.2rem; font-weight: 500; color: var(--tx); margin-bottom: 0.3rem; }
+.w > div > p  { font-size: 0.82rem; color: var(--tx-sec); line-height: 1.6; }
+/* generated */
+h1       { font-size: 1.2rem; font-weight: 600; color: var(--tx); margin: 0 0 0.3rem; }
+p.meta   { font-size: 0.82rem; color: var(--tx-sec); margin-bottom: 1.25rem; }
+
+/* ── Section label ───────────────────────────────────── */
+.section-label,
+.slbl {
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--tx-ter); margin-bottom: 0.85rem;
+}
+
+/* ── Reference grid ──────────────────────────────────── */
+.ref-grid,
+.rg {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 1.75rem;
+}
+.ref-card,
+.rc { background: var(--bg-sec); border-radius: var(--r-md); padding: 0.75rem 0.9rem; }
+
+.ref-card h3,
+.rc h3 { font-size: 0.74rem; font-weight: 600; color: var(--tx); margin-bottom: 0.5rem; }
+
+.ref-row,
+.rr { display: flex; gap: 0.4rem; font-size: 0.72rem; color: var(--tx-sec); line-height: 1.7; align-items: baseline; }
+
+.ref-key,
+.rk { font-family: var(--mono); font-size: 0.67rem; color: var(--tx); min-width: 56px; flex-shrink: 0; }
+
+/* ── Divider ─────────────────────────────────────────── */
+.divider,
+.div { height: 1px; background: var(--bd); margin: 1.5rem 0; }
+
+/* ── Question card ───────────────────────────────────── */
+/* new */
+.q-card {
+  background: var(--bg); border: 1px solid var(--bd);
+  border-radius: var(--r-lg); padding: 1.1rem 1.2rem; margin-bottom: 1rem;
+}
+.q-meta { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.55rem; flex-wrap: wrap; }
+.q-num  { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; color: var(--tx-ter); text-transform: uppercase; }
+.q-text { font-size: 0.92rem; font-weight: 500; color: var(--tx); line-height: 1.65; margin-bottom: 0.75rem; }
+/* legacy */
+.q {
+  background: var(--bg); border: 1px solid var(--bd);
+  border-radius: var(--r-lg); padding: 1.1rem 1.2rem; margin-bottom: 1rem;
+}
+.qm { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.55rem; flex-wrap: wrap; }
+.qn { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; color: var(--tx-ter); text-transform: uppercase; }
+.qt { font-size: 0.92rem; font-weight: 500; color: var(--tx); line-height: 1.65; margin-bottom: 0.75rem; }
+/* generated */
+.wrap { padding: 0; }
+.card {
+  border: 1px solid var(--bd); border-radius: var(--r-lg);
+  padding: 1rem 1.1rem; margin-bottom: 1rem; background: var(--bg);
+}
+/* .card .q overrides the shared .q block styles */
+.card .q {
+  background: none; border: none; border-radius: 0; padding: 0; margin-bottom: 0.5rem;
+  font-weight: 600; font-size: 0.9rem; color: var(--tx); line-height: 1.6;
+}
+
+/* ── Badges ──────────────────────────────────────────── */
+.badge,
+.b {
+  font-size: 0.66rem; font-weight: 600;
+  padding: 0.15rem 0.5rem; border-radius: var(--r-sm); white-space: nowrap;
+}
+.b-arch,  .b1 { background: #eeedfe; color: #3c3489; }
+.b-gotcha,.b2 { background: #fcebeb; color: #791f1f; }
+              .b3 { background: #faeeda; color: #633806; }
+              .b4 { background: #e6f1fb; color: #0c447c; }
+              .b5 { background: #e1f5ee; color: #085041; }
+.b-must,  .b6 { background: #f1efe8; color: #444441; }
+
+/* ── Reveal button ───────────────────────────────────── */
+.reveal-btn,
+.rbtn {
+  font-family: var(--font); font-size: 0.78rem; font-weight: 500; color: var(--tx-info);
+  cursor: pointer; background: none; border: none; padding: 0;
+  display: inline-flex; align-items: center; gap: 0.3rem; transition: opacity 0.15s;
+  margin-top: 2px;
+}
+.reveal-btn:hover, .rbtn:hover { opacity: 0.75; }
+.reveal-btn svg, .rbtn svg { width: 13px; height: 13px; flex-shrink: 0; transition: transform 0.2s; }
+.reveal-btn.open svg, .rbtn.open svg { transform: rotate(180deg); }
+
+/* ── Answer panel ────────────────────────────────────── */
+.answer,
+.ans { display: none; margin-top: 1rem; border-top: 1px solid var(--bd); padding-top: 1rem; }
+.answer.open,
+.ans.open { display: block; }
+
+/* ── Expectation callout ─────────────────────────────── */
+.expectation,
+.exp {
+  background: var(--bg-warn); border-radius: var(--r-md);
+  padding: 0.65rem 0.9rem; font-size: 0.78rem; color: var(--tx-warn);
+  margin-bottom: 0.85rem; line-height: 1.65;
+}
+
+/* ── Answer body text ────────────────────────────────── */
+.ans-body,
+.at { font-size: 0.84rem; color: var(--tx-sec); line-height: 1.85; }
+.ans-body strong, .at strong { color: var(--tx); }
+.ans-body code,   .at code {
+  font-family: var(--mono); background: var(--bg-sec);
+  padding: 0.1rem 0.35rem; border-radius: var(--r-sm); font-size: 0.78rem; color: var(--tx);
+}
+
+/* ── Code block ──────────────────────────────────────── */
+.code-block,
+.cd {
+  background: var(--bg-sec); border: 1px solid var(--bd); border-radius: var(--r-md);
+  padding: 0.75rem 0.9rem; font-family: var(--mono); font-size: 0.76rem; color: var(--tx);
+  line-height: 1.85; margin: 0.75rem 0; white-space: pre; overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Callouts ────────────────────────────────────────── */
+.tip {
+  border-left: 3px solid var(--bd-info); background: var(--bg-info); color: var(--tx-info);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: 0.65rem 0.9rem; font-size: 0.78rem; line-height: 1.65; margin-top: 0.75rem;
+}
+.warn {
+  border-left: 3px solid var(--bd-danger); background: var(--bg-danger); color: var(--tx-danger);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: 0.65rem 0.9rem; font-size: 0.78rem; line-height: 1.65; margin-top: 0.75rem;
+}
+.tip  code, .warn code {
+  font-family: var(--mono); font-size: 0.74rem;
+  padding: 0.1rem 0.3rem; border-radius: var(--r-sm); background: rgba(0,0,0,0.07);
+}
+
+/* ── Comparison rows ─────────────────────────────────── */
+.cmp-row,
+.orow {
+  display: flex; gap: 0.75rem; padding: 0.45rem 0;
+  border-bottom: 1px solid var(--bd); font-size: 0.78rem; align-items: baseline;
+}
+.cmp-row:last-of-type, .orow:last-child { border-bottom: none; }
+.cmp-label, .ol { font-family: var(--mono); font-size: 0.72rem; color: var(--tx-ter); min-width: 100px; flex-shrink: 0; }
+.cmp-verdict,.or { font-weight: 600; font-size: 0.76rem; min-width: 36px; flex-shrink: 0; }
+.cmp-desc,  .ow { color: var(--tx-sec); flex: 1; line-height: 1.65; }
+.ok          { color: #0f6e56; }
+.no, .er     { color: #a32d2d; }
+
+/* ── Footer / study tip ──────────────────────────────── */
+.footer,
+.foot {
+  margin-top: 2rem; padding: 0.9rem 1rem; background: var(--bg-sec);
+  border-radius: var(--r-lg); font-size: 0.78rem; color: var(--tx-sec); line-height: 1.75;
+}
+
+/* ── Generated files: details / summary accordion ───── */
+details { margin-top: 0.5rem; }
+summary {
+  font-size: 0.78rem; color: var(--tx-info); cursor: pointer;
+  font-weight: 500; padding: 0.15rem 0; user-select: none;
+}
+summary:hover { opacity: 0.75; }
+details[open] summary { margin-bottom: 0.5rem; }
+details p { font-size: 0.82rem; color: var(--tx-sec); line-height: 1.7; }
+
+/* ── Inline code (fallback for plain <code> tags) ────── */
+code {
+  font-family: var(--mono); background: var(--bg-sec);
+  padding: 0.1rem 0.35rem; border-radius: var(--r-sm); font-size: 0.78rem; color: var(--tx);
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+@media (max-width: 600px) {
+  body { padding: 1rem 0.85rem 2rem; }
+  .ref-grid, .rg { grid-template-columns: 1fr 1fr; }
+  .q-card, .q { padding: 0.9rem; }
+  .q-text, .qt { font-size: 0.88rem; }
+}
+@media (max-width: 400px) {
+  .ref-grid, .rg { grid-template-columns: 1fr; }
+  .ans-body, .at { font-size: 0.82rem; }
+  .code-block, .cd { font-size: 0.72rem; }
+}

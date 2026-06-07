@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { CATEGORY_BY_ID, type Topic, type TopicCategory } from '$lib/data/topics';
 	import type { LoadedAsset } from '$lib/content/loaders';
+	import Flashcard from '$lib/components/Flashcard.svelte';
 
 	let {
 		topic,
@@ -73,26 +74,7 @@
 		{:else if loadedAsset?.asset.type === 'html' && loadedAsset.html}
 			<iframe title="assessment" class="html-frame" srcdoc={loadedAsset.html}></iframe>
 		{:else if loadedAsset?.asset.type === 'csv' && loadedAsset.rows}
-			<div class="csv-wrap">
-				<table>
-					<thead>
-						<tr>
-							{#each loadedAsset.rows[0] ?? [] as headCell}
-								<th>{headCell}</th>
-							{/each}
-						</tr>
-					</thead>
-					<tbody>
-						{#each loadedAsset.rows.slice(1) as row}
-							<tr>
-								{#each row as cell}
-									<td>{cell}</td>
-								{/each}
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+			<Flashcard rows={loadedAsset.rows} />
 		{:else if loadedAsset?.text}
 			<pre><code>{loadedAsset.text}</code></pre>
 		{/if}
@@ -119,6 +101,7 @@
 		display: grid;
 		align-content: start;
 		gap: 0.7rem;
+		min-width: 0;
 	}
 
 	.viewer-head {
@@ -207,6 +190,11 @@
 		margin-top: 1rem;
 	}
 
+	.markdown {
+		min-width: 0;
+		overflow-x: hidden;
+	}
+
 	.markdown :global(pre),
 	pre {
 		margin: 0;
@@ -214,9 +202,19 @@
 		color: #f8fbff;
 		padding: 0.75rem;
 		border-radius: 10px;
-		overflow: auto;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		max-width: 100%;
+		box-sizing: border-box;
 		font-family: 'IBM Plex Mono', monospace;
 		font-size: 0.84rem;
+		white-space: pre;
+		word-wrap: normal;
+	}
+
+	.markdown :global(code:not(pre > code)) {
+		word-break: break-word;
+		overflow-wrap: break-word;
 	}
 
 	.html-frame {
@@ -225,27 +223,6 @@
 		border: 1px solid #d7dde6;
 		border-radius: 10px;
 		background: #fff;
-	}
-
-	.csv-wrap {
-		overflow: auto;
-	}
-
-	table {
-		border-collapse: collapse;
-		width: 100%;
-		font-size: 0.85rem;
-	}
-
-	th,
-	td {
-		border: 1px solid #d8dee7;
-		padding: 0.45rem;
-		text-align: left;
-	}
-
-	th {
-		background: #f4f7fb;
 	}
 
 	.placeholder {
@@ -261,7 +238,8 @@
 		color: #6e1f1f;
 	}
 
-	@media (max-width: 640px) {
+	/* ── Phablets & phones (≤ 768px) ── */
+	@media (max-width: 768px) {
 		.viewer {
 			padding: 0.75rem;
 			min-height: unset;
@@ -298,6 +276,61 @@
 
 		.html-frame {
 			min-height: 45vh;
+		}
+	}
+
+	/* ── Small phones (≤ 480px) ── */
+	@media (max-width: 480px) {
+		.viewer {
+			padding: 0.65rem;
+			gap: 0.55rem;
+			border-radius: 10px;
+		}
+
+		.viewer-head h3 {
+			font-size: 0.98rem;
+		}
+
+		.topic-nav button {
+			font-size: 0.8rem;
+		}
+	}
+
+	/* ── Extra small phones (≤ 360px) ── */
+	@media (max-width: 360px) {
+		.viewer {
+			padding: 0.5rem;
+			gap: 0.45rem;
+		}
+
+		.viewer-head h3 {
+			font-size: 0.9rem;
+		}
+
+		.done-toggle {
+			font-size: 0.82rem;
+			padding: 0.5rem 0.6rem;
+		}
+
+		.topic-nav button {
+			font-size: 0.78rem;
+			padding: 0.45rem 0.4rem;
+		}
+
+		.asset-tabs button {
+			padding: 0.38rem 0.55rem;
+			font-size: 0.78rem;
+			min-height: 34px;
+		}
+
+		.html-frame {
+			min-height: 38vh;
+		}
+
+		.markdown :global(pre),
+		pre {
+			font-size: 0.78rem;
+			padding: 0.55rem;
 		}
 	}
 </style>

@@ -1,6 +1,8 @@
-"question","answer","level"
-"What is the primary objective of React Query / SWR - caching, stale-while-revalidate?","Define the mechanism and link it to reliability/performance impact.","advanced"
-"Which failure mode should be mentioned first for React Query / SWR - caching, stale-while-revalidate?","Name one realistic edge case and describe mitigation.","advanced"
-"How would you validate React Query / SWR - caching, stale-while-revalidate after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
-"What trade-off appears in React Query / SWR - caching, stale-while-revalidate decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
-"How do you explain react-patterns-architecture/react-query-swr-caching-stale-while-revalidate to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"
+Question,Answer
+What is stale-while-revalidate?,A caching strategy where stale data is shown immediately while fresh data is fetched in the background.
+How do React Query and SWR cache data?,They store fetched data in memory and reuse it for requests with the same key.
+What triggers background revalidation?,Window focus, network reconnect, interval polling, or manual invalidation.
+What is deduplication in React Query/SWR?,Sharing the same cache and network request for components using the same key.
+What is a trade-off of stale-while-revalidate?,Users may briefly see outdated data, but the UI is always responsive.
+How do you fetch data with SWR?,useSWR(key, fetcher)
+How do you fetch data with React Query?,useQuery([key, params], fetcher)

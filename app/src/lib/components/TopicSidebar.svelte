@@ -268,13 +268,15 @@
 		border-radius: 999px;
 	}
 
-	@media (max-width: 980px) {
+	/* ── Tablet: limit sidebar height when stacked (769px–1024px) ── */
+	@media (min-width: 769px) and (max-width: 1024px) {
 		.sidebar {
 			max-height: 42vh;
 		}
 	}
 
-	@media (max-width: 640px) {
+	/* ── Phablets & phones (≤ 768px): fixed drawer ── */
+	@media (max-width: 768px) {
 		.sidebar-slim {
 			display: none;
 		}
@@ -283,7 +285,7 @@
 			position: fixed;
 			top: 0;
 			left: 0;
-			width: min(85vw, 360px);
+			width: min(88vw, 380px);
 			height: 100dvh;
 			max-height: 100dvh;
 			z-index: 900;
@@ -306,6 +308,14 @@
 
 		.collapse-btn {
 			display: none;
+		}
+	}
+
+	/* ── Extra small phones (≤ 360px): tighter sidebar padding ── */
+	@media (max-width: 360px) {
+		.sidebar {
+			width: 92vw;
+			padding: 0.75rem;
 		}
 	}
 </style>

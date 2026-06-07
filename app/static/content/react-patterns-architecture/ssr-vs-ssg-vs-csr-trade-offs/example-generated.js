@@ -1,34 +1,33 @@
-/**
- * Generated drill snippet for: SSR vs SSG vs CSR trade-offs (Next.js)
- * Slug: react-patterns-architecture/ssr-vs-ssg-vs-csr-trade-offs
- */
-
-const scenario = {
-  topic: "SSR vs SSG vs CSR trade-offs (Next.js)",
-  slug: "react-patterns-architecture/ssr-vs-ssg-vs-csr-trade-offs",
-  seed: 63
-};
-
-function drillSsrVsSsgVsCsrTradeOffs(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+// SSR example (Next.js)
+export async function getServerSideProps(context) {
+  const res = await fetch('https://api.example.com/data');
+  const data = await res.json();
+  return { props: { data } };
 }
 
-const output = drillSsrVsSsgVsCsrTradeOffs({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+export default function SSRPage({ data }) {
+  return <div>SSR Data: {JSON.stringify(data)}</div>;
+}
+
+// SSG example (Next.js)
+export async function getStaticProps(context) {
+  const res = await fetch('https://api.example.com/data');
+  const data = await res.json();
+  return { props: { data } };
+}
+
+export function SSGPage({ data }) {
+  return <div>SSG Data: {JSON.stringify(data)}</div>;
+}
+
+// CSR example (Next.js)
+import { useEffect, useState } from 'react';
+export function CSRPage() {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch('https://api.example.com/data')
+      .then(res => res.json())
+      .then(setData);
+  }, []);
+  return <div>CSR Data: {JSON.stringify(data)}</div>;
+}

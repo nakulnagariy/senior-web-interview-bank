@@ -1,27 +1,42 @@
-# Prop drilling - when it becomes a problem & solutions
+# Prop Drilling: When It Becomes a Problem & Solutions
 
-## Interview Lens
-- Focus level: Applied
-- Route slug: react-patterns-architecture/prop-drilling-when-it-becomes-a-problem-solutions
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is Prop Drilling?
+- Prop drilling is the process of passing data from a parent component down to deeply nested child components via props, even if intermediate components don’t need the data.
 
-## Core Mental Model
-Prop drilling - when it becomes a problem & solutions should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## When Does Prop Drilling Become a Problem?
+- When data or functions must be passed through many layers of components that don’t use them.
+- Leads to tightly coupled components, harder maintenance, and more difficult refactoring.
+- Increases the risk of bugs and makes the codebase less readable.
 
-## Senior Discussion Anchors
-1. What breaks first when prop drilling - when it becomes a problem & solutions is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Solutions to Prop Drilling
+- **Context API:** Provides a way to share values between components without explicitly passing props through every level.
+- **State Management Libraries:** (Redux, Zustand, MobX, Recoil) for global or shared state.
+- **Component Composition:** Use render props, higher-order components, or hooks to avoid unnecessary prop passing.
+- **Colocation:** Move state closer to where it’s needed to minimize drilling.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example
 
-## Whiteboard Drill
-1. Explain Prop drilling - when it becomes a problem & solutions in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for prop-drilling-when-it-becomes-a-problem-solutions.
-3. List two metrics you would track to verify the approach in production.
+```js
+// Problem: Passing user through many layers
+<Parent user={user}>
+  <Child>
+    <Grandchild user={user} />
+  </Child>
+</Parent>
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Prop drilling - when it becomes a problem & solutions.
+// Solution: Context
+const UserContext = React.createContext();
+<UserContext.Provider value={user}>
+  <Parent>
+    <Child>
+      <Grandchild />
+    </Child>
+  </Parent>
+</UserContext.Provider>
+```
+
+### Summary
+- Prop drilling can lead to maintenance issues and tightly coupled components.
+- Use Context API, state management libraries, or component composition to avoid unnecessary prop passing and improve code maintainability.
+- Prop drilling is manageable for shallow trees but problematic for deep or wide trees.
+- Use Context or state management solutions to avoid unnecessary prop passing.
