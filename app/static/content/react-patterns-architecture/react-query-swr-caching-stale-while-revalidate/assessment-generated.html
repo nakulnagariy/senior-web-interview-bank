@@ -1,45 +1,62 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>React Query / SWR - caching, stale-while-revalidate - Assessment</title>
-  <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f6f8fb;color:#1f2430}
-    .wrap{max-width:900px;margin:20px auto;padding:16px;background:#fff;border:1px solid #d7dfeb;border-radius:12px}
-    h1{margin:0 0 8px;font-size:22px}
-    p.meta{margin:0 0 14px;color:#5a667c;font-size:13px}
-    .card{border:1px solid #dde4ef;border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
-    .q{font-weight:600;margin-bottom:6px}
-    details{margin-top:6px}
-    code{background:#edf1f9;padding:1px 4px;border-radius:4px}
-  </style>
+  <meta charset="UTF-8">
+  <title>React Query / SWR: Caching & SWR Assessment</title>
+  <!-- shared CSS injected by TopicViewer -->
 </head>
 <body>
-  <div class="wrap">
-    <h1>React Query / SWR - caching, stale-while-revalidate - Senior Assessment</h1>
-    <p class="meta">Topic slug: react-patterns-architecture/react-query-swr-caching-stale-while-revalidate | Variant seed: 62</p>
+  <h2>React Query / SWR: Caching & Stale-While-Revalidate Assessment</h2>
 
-    <div class="card">
-      <div class="q">Q1. How would you evaluate React Query / SWR - caching, stale-while-revalidate when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q2. Which risk appears first if react-query-swr-caching-stale-while-revalidate is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in React Query / SWR - caching, stale-while-revalidate to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>react-query-swr-caching-stale-while-revalidate</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+  <div class="question">
+    <strong>1. What is the "stale-while-revalidate" strategy, and how does it improve UX?</strong>
+    <button onclick="document.getElementById('a1').style.display='block'">Reveal Answer</button>
+    <div id="a1" class="reveal">
+      <b>Answer:</b> It shows cached (stale) data immediately while fetching fresh data in the background, so users see data instantly and it updates when new data arrives, reducing perceived latency.
     </div>
   </div>
+
+  <div class="question">
+    <strong>2. How do React Query and SWR handle caching and deduplication?</strong>
+    <button onclick="document.getElementById('a2').style.display='block'">Reveal Answer</button>
+    <div id="a2" class="reveal">
+      <b>Answer:</b> Both cache data in memory and deduplicate requests by sharing the same cache and network request for components using the same key.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>3. What triggers background revalidation in SWR or React Query?</strong>
+    <button onclick="document.getElementById('a3').style.display='block'">Reveal Answer</button>
+    <div id="a3" class="reveal">
+      <b>Answer:</b> Revalidation can be triggered by window focus, network reconnect, interval polling, or manual invalidation.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>4. Coding: Show how to use SWR and React Query to fetch user data with caching and SWR.</strong>
+    <button onclick="document.getElementById('a4').style.display='block'">Reveal Answer</button>
+    <div id="a4" class="reveal">
+      <b>Answer:</b>
+      <pre>
+{`// SWR
+import useSWR from 'swr';
+const { data, error, isLoading } = useSWR('/api/user', fetcher);
+
+// React Query
+import { useQuery } from '@tanstack/react-query';
+const { data, error, isLoading } = useQuery(['user', userId], fetchUser);
+`}
+      </pre>
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>5. What are the trade-offs of using stale-while-revalidate caching?</strong>
+    <button onclick="document.getElementById('a5').style.display='block'">Reveal Answer</button>
+    <div id="a5" class="reveal">
+      <b>Answer:</b> Users may briefly see outdated data, but the UI is always responsive. There is a risk of showing stale data if revalidation fails or is slow.
+    </div>
+  </div>
+
 </body>
 </html>

@@ -1,45 +1,84 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Prop drilling - when it becomes a problem & solutions - Assessment</title>
-  <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f6f8fb;color:#1f2430}
-    .wrap{max-width:900px;margin:20px auto;padding:16px;background:#fff;border:1px solid #d7dfeb;border-radius:12px}
-    h1{margin:0 0 8px;font-size:22px}
-    p.meta{margin:0 0 14px;color:#5a667c;font-size:13px}
-    .card{border:1px solid #dde4ef;border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
-    .q{font-weight:600;margin-bottom:6px}
-    details{margin-top:6px}
-    code{background:#edf1f9;padding:1px 4px;border-radius:4px}
-  </style>
+  <meta charset="UTF-8">
+  <title>Prop Drilling Assessment</title>
+  <!-- shared CSS injected by TopicViewer -->
 </head>
 <body>
-  <div class="wrap">
-    <h1>Prop drilling - when it becomes a problem & solutions - Senior Assessment</h1>
-    <p class="meta">Topic slug: react-patterns-architecture/prop-drilling-when-it-becomes-a-problem-solutions | Variant seed: 64</p>
+  <h2>Prop Drilling Assessment</h2>
 
-    <div class="card">
-      <div class="q">Q1. How would you evaluate Prop drilling - when it becomes a problem & solutions when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q2. Which risk appears first if prop-drilling-when-it-becomes-a-problem-solutions is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in Prop drilling - when it becomes a problem & solutions to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>prop-drilling-when-it-becomes-a-problem-solutions</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+  <div class="question">
+    <strong>1. What is prop drilling in React?</strong>
+    <button onclick="document.getElementById('a1').style.display='block'">Reveal Answer</button>
+    <div id="a1" class="reveal">
+      <b>Answer:</b> Passing data or functions from a parent to deeply nested children through props, even if intermediate components don’t use them.
     </div>
   </div>
+
+  <div class="question">
+    <strong>2. When does prop drilling become a problem?</strong>
+    <button onclick="document.getElementById('a2').style.display='block'">Reveal Answer</button>
+    <div id="a2" class="reveal">
+      <b>Answer:</b> When data must be passed through many layers, leading to tightly coupled components, harder maintenance, and more difficult refactoring.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>3. Name two solutions to prop drilling and explain when you would use each.</strong>
+    <button onclick="document.getElementById('a3').style.display='block'">Reveal Answer</button>
+    <div id="a3" class="reveal">
+      <b>Answer:</b>
+      <ul>
+        <li><b>Context
+ API:</b> For sharing data across many components without passing props manually.</li>
+        <li><b>State management libraries:</b> For complex or global state that needs to be accessed or updated from many places.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>4. Coding: Refactor a prop drilling example to use the Context API.</strong>
+    <button onclick="document.getElementById('a4').style.display='block'">Reveal Answer</button>
+    <div id="a4" class="reveal">
+      <b>Answer:</b>
+      <pre>
+{`// Before (prop drilling)
+function Grandchild({ user }) {
+  return <div>{user.name}</div>;
+}
+function Child({ user }) {
+  return <Grandchild user={user} />;
+}
+function Parent({ user }) {
+  return <Child user={user} />;
+}
+
+// After (Context)
+const UserContext = React.createContext();
+function Grandchild() {
+  const user = useContext(UserContext);
+  return <div>{user.name}</div>;
+}
+function Parent({ user }) {
+  return (
+    <UserContext.Provider value={user}>
+      <Child />
+    </UserContext.Provider>
+  );
+}
+`}
+      </pre>
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>5. What are the trade-offs of using Context or state management libraries to solve prop drilling?</strong>
+    <button onclick="document.getElementById('a5').style.display='block'">Reveal Answer</button>
+    <div id="a5" class="reveal">
+      <b>Answer:</b> Context and state libraries add complexity and can cause unnecessary re-renders if not used carefully, but they greatly improve maintainability and scalability for large apps.
+    </div>
+  </div>
+
 </body>
 </html>

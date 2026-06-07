@@ -1,27 +1,31 @@
-# Micro-frontend architecture
+# Micro-Frontend Architecture
 
-## Interview Lens
-- Focus level: Advanced
-- Route slug: react-patterns-architecture/micro-frontend-architecture
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is Micro-Frontend Architecture?
+- Micro-frontends apply the microservices concept to the frontend, breaking a large app into smaller, independently developed and deployed pieces.
+- Each team can own a feature or domain, building, testing, and deploying it independently.
 
-## Core Mental Model
-Micro-frontend architecture should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Key Concepts
+- **Decomposition:** Split the UI into semi-independent "verticals" (e.g., cart, search, profile).
+- **Integration:** Compose micro-frontends at runtime (client-side, server-side, or edge).
+- **Autonomy:** Teams choose their own tech stack, release cycles, and deployment pipelines.
+- **Shared Contracts:** Agree on APIs, events, and shared libraries for interoperability.
 
-## Senior Discussion Anchors
-1. What breaks first when micro-frontend architecture is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Integration Patterns
+- **Build-time:** Merge micro-frontends at build (e.g., npm packages, monorepo).
+- **Run-time:** Load micro-frontends dynamically (e.g., iframes, Web Components, Module Federation).
+- **Server-side:** Compose HTML on the server (Edge Side Includes, SSR).
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Challenges
+- **Shared State:** Managing global state and cross-app communication.
+- **Routing:** Coordinating navigation and deep linking.
+- **Performance:** Avoiding duplicated dependencies and excessive network requests.
+- **Consistency:** Maintaining a unified look and feel.
 
-## Whiteboard Drill
-1. Explain Micro-frontend architecture in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for micro-frontend-architecture.
-3. List two metrics you would track to verify the approach in production.
+## Example Technologies
+- Module Federation (Webpack 5)
+- Single-SPA
+- Web Components
+- Iframes (legacy, less common now)
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Micro-frontend architecture.
+## Summary
+- Micro-frontends enable independent development and deployment, but require careful integration, shared contracts, and governance.

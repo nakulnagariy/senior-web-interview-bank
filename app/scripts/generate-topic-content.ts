@@ -40,44 +40,41 @@ function htmlContent(title: string, slug: string, seed: number): string {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${title} - Assessment</title>
-  <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f6f8fb;color:#1f2430}
-    .wrap{max-width:900px;margin:20px auto;padding:16px;background:#fff;border:1px solid #d7dfeb;border-radius:12px}
-    h1{margin:0 0 8px;font-size:22px}
-    p.meta{margin:0 0 14px;color:#5a667c;font-size:13px}
-    .card{border:1px solid #dde4ef;border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
-    .q{font-weight:600;margin-bottom:6px}
-    details{margin-top:6px}
-    code{background:#edf1f9;padding:1px 4px;border-radius:4px}
-  </style>
+  <title>${title} — Assessment</title>
+  <!-- shared CSS injected by TopicViewer -->
 </head>
 <body>
-  <div class="wrap">
-    <h1>${title} - Senior Assessment</h1>
-    <p class="meta">Topic slug: ${slug} | Variant seed: ${seed}</p>
+  <h1 class="page-title">${title}</h1>
+  <p class="page-sub">Senior assessment — ${seed % 3 === 0 ? 'Foundational' : seed % 3 === 1 ? 'Applied' : 'Advanced'} level</p>
 
-    <div class="card">
-      <div class="q">Q1. ${promptA}</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
-    </div>
+  <div class="divider"></div>
+  <div class="section-label">Questions</div>
 
-    <div class="card">
-      <div class="q">Q2. ${promptB}</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q3. ${promptC}</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>${segment}</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
-    </div>
+  <div class="q-card">
+    <div class="q-meta"><span class="q-num">Q1</span></div>
+    <div class="q-text">${promptA}</div>
+    <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
   </div>
+
+  <div class="q-card">
+    <div class="q-meta"><span class="q-num">Q2</span></div>
+    <div class="q-text">${promptB}</div>
+    <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
+  </div>
+
+  <div class="q-card">
+    <div class="q-meta"><span class="q-num">Q3</span></div>
+    <div class="q-text">${promptC}</div>
+    <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
+  </div>
+
+  <div class="q-card">
+    <div class="q-meta"><span class="q-num">Q4</span></div>
+    <div class="q-text">Provide one anti-pattern and one corrected pattern for <code>${segment}</code>.</div>
+    <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+  </div>
+
+  <!-- shared JS injected by TopicViewer -->
 </body>
 </html>
 `;

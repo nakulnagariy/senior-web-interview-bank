@@ -11,6 +11,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"content:generate": "tsx scripts/generate-topic-content.ts",
+		"content:migrate": "tsx scripts/migrate-assessment-html.ts",
 		"placeholders:sync": "npm run content:generate",
 		"validate:manifest": "tsx scripts/validate-manifest.ts",
 		"report:coverage": "tsx scripts/coverage-report.ts",

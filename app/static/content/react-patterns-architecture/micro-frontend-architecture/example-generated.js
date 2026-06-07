@@ -1,34 +1,26 @@
-/**
- * Generated drill snippet for: Micro-frontend architecture
- * Slug: react-patterns-architecture/micro-frontend-architecture
- */
+// Example: Dynamically loading a remote micro-frontend with Module Federation
 
-const scenario = {
-  topic: "Micro-frontend architecture",
-  slug: "react-patterns-architecture/micro-frontend-architecture",
-  seed: 59
-};
+// Host app's webpack.config.js
+/*
+plugins: [
+  new ModuleFederationPlugin({
+    remotes: {
+      ProfileApp: 'profileApp@https://profile.example.com/remoteEntry.js'
+    },
+    shared: { react: { singleton: true }, 'react-dom': { singleton: true } }
+  })
+]
+*/
 
-function drillMicroFrontendArchitecture(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
+// In your host app code
+import React, { Suspense } from 'react';
 
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+const Profile = React.lazy(() => import('ProfileApp/Profile'));
+
+export function App() {
+  return (
+    <Suspense fallback="Loading Profile...">
+      <Profile />
+    </Suspense>
+  );
 }
-
-const output = drillMicroFrontendArchitecture({ candidate: 'senior', mode: 'discussion' });
-console.log(output);

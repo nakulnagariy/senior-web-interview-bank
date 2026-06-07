@@ -77,28 +77,90 @@
 		background: linear-gradient(90deg, #ef791b, #ffd561);
 	}
 
-	@media (max-width: 980px) {
+	/* ── Tablet + smaller (≤ 1024px): 2-column stats ── */
+	@media (max-width: 1024px) {
 		.stats {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 
-	@media (max-width: 640px) {
+	/* ── Phablets & phones (≤ 768px): compact hero ── */
+	@media (max-width: 768px) {
 		.hero {
-			padding: 0.8rem;
+			padding: 0.85rem 0.9rem;
+			border-radius: 12px;
 		}
 
 		.hero h1 {
-			font-size: 1.05rem;
+			font-size: 1.1rem;
 		}
 
 		.hero p {
-			font-size: 0.82rem;
+			font-size: 0.85rem;
 			margin-bottom: 0.6rem;
 		}
 
 		.stat span {
+			font-size: 1.05rem;
+		}
+	}
+
+	/* ── Small phones (≤ 480px) ── */
+	@media (max-width: 480px) {
+		.hero {
+			padding: 0.75rem;
+		}
+
+		.hero h1 {
 			font-size: 1rem;
+		}
+
+		.hero p {
+			font-size: 0.8rem;
+		}
+
+		.stat span {
+			font-size: 0.95rem;
+		}
+
+		.stat small {
+			font-size: 0.68rem;
+		}
+	}
+
+	/* ── Extra small phones (≤ 360px) ── */
+	@media (max-width: 360px) {
+		.hero {
+			padding: 0.65rem;
+			border-radius: 10px;
+		}
+
+		.hero h1 {
+			font-size: 0.92rem;
+		}
+
+		.hero p {
+			display: none;
+		}
+
+		.stats {
+			gap: 0.45rem;
+		}
+
+		.stat {
+			padding: 0.4rem;
+		}
+
+		.stat span {
+			font-size: 0.9rem;
+		}
+
+		.stat small {
+			font-size: 0.63rem;
+		}
+
+		.progress {
+			margin-top: 0.5rem;
 		}
 	}
 </style>

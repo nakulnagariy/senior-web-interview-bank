@@ -1,34 +1,29 @@
-/**
- * Generated drill snippet for: React Query / SWR - caching, stale-while-revalidate
- * Slug: react-patterns-architecture/react-query-swr-caching-stale-while-revalidate
- */
+// SWR example
+import useSWR from 'swr';
 
-const scenario = {
-  topic: "React Query / SWR - caching, stale-while-revalidate",
-  slug: "react-patterns-architecture/react-query-swr-caching-stale-while-revalidate",
-  seed: 62
-};
-
-function drillReactQuerySwrCachingStaleWhileRevalidate(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+function fetcher(url) {
+  return fetch(url).then(res => res.json());
 }
 
-const output = drillReactQuerySwrCachingStaleWhileRevalidate({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+export function UserProfileSWR() {
+  const { data, error, isLoading } = useSWR('/api/user', fetcher);
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error!</div>;
+  return <div>User: {data.name}</div>;
+}
+
+// React Query example
+import { useQuery } from '@tanstack/react-query';
+
+async function fetchUser({ queryKey }) {
+  const [, userId] = queryKey;
+  const res = await fetch(`/api/user/${userId}`);
+  return res.json();
+}
+
+export function UserProfileQuery({ userId }) {
+  const { data, error, isLoading } = useQuery(['user', userId], fetchUser);
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error!</div>;
+  return <div>User: {data.name}</div>;
+}

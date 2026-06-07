@@ -1,110 +1,242 @@
-
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Micro-frontend Architecture â€” Senior Assessment</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-.w{padding:1.5rem 0;font-family:var(--font-sans)}
-.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:1.5rem}
-.rc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
-.rc h3{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
-.rr{font-size:11px;color:var(--color-text-secondary);line-height:1.75;display:flex;gap:5px}
-.rk{font-family:var(--font-mono);color:var(--color-text-primary);font-size:10px;min-width:52px;flex-shrink:0}
-.div{height:0.5px;background:var(--color-border-tertiary);margin:1.25rem 0}
-.slbl{font-size:11px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.07em;margin-bottom:1rem}
-.q{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1.25rem}
-.qm{display:flex;align-items:center;gap:7px;margin-bottom:9px;flex-wrap:wrap}
-.qn{font-size:11px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.05em}
-.b{font-size:10px;font-weight:500;padding:2px 7px;border-radius:4px}
-.b1{background:#EEEDFE;color:#3C3489}
-.b2{background:#FCEBEB;color:#791F1F}
-.b3{background:#FAEEDA;color:#633806}
-.b4{background:#E6F1FB;color:#0C447C}
-.b5{background:#E1F5EE;color:#085041}
-.b6{background:#F1EFE8;color:#444441}
-.qt{font-size:14px;font-weight:500;color:var(--color-text-primary);line-height:1.6;margin-bottom:11px}
-.cd{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;font-family:var(--font-mono);font-size:11px;color:var(--color-text-primary);line-height:1.8;margin-bottom:10px;white-space:pre;overflow-x:auto}
-.rbtn{font-size:12px;color:var(--color-text-info);cursor:pointer;background:none;border:none;padding:0;display:flex;align-items:center;gap:4px;margin-top:2px}
-.ans{display:none;margin-top:13px;border-top:0.5px solid var(--color-border-tertiary);padding-top:13px}
-.ans.open{display:block}
-.exp{background:var(--color-background-warning);border-radius:var(--border-radius-md);padding:9px 12px;font-size:12px;color:var(--color-text-warning);margin-bottom:10px;line-height:1.6}
-.at{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
-.at code{font-family:var(--font-mono);background:var(--color-background-secondary);padding:1px 4px;border-radius:3px;font-size:11px;color:var(--color-text-primary)}
-.tip{border-left:2px solid var(--color-border-info);padding:8px 11px;background:var(--color-background-info);font-size:12px;color:var(--color-text-info);line-height:1.6;margin-top:10px;border-radius:0}
-.tip code{font-family:var(--font-mono);font-size:11px;background:rgba(24,95,165,0.1);padding:1px 4px;border-radius:3px}
-.warn{border-left:2px solid var(--color-border-danger);padding:8px 11px;background:var(--color-background-danger);font-size:12px;color:var(--color-text-danger);line-height:1.6;margin-top:10px;border-radius:0}
-.warn code{font-family:var(--font-mono);font-size:11px;background:rgba(163,45,45,0.1);padding:1px 4px;border-radius:3px}
-.orow{display:flex;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
-.orow:last-child{border:none}
-.ol{font-family:var(--font-mono);color:var(--color-text-tertiary);min-width:90px;flex-shrink:0;font-size:11px}
-.or{font-weight:500;min-width:48px;flex-shrink:0;font-size:11px}
-.ok{color:#0F6E56}.er{color:#A32D2D}
-.ow{color:var(--color-text-secondary);font-size:11px;flex:1;line-height:1.6}
-.foot{margin-top:1.5rem;padding:12px 14px;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);font-size:12px;color:var(--color-text-secondary);line-height:1.7}
+  /* â”€â”€ Design tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  :root {
+    --bg:        #ffffff;
+    --bg-sec:    #f4f6f9;
+    --bg-warn:   #fffbee;
+    --bg-danger: #fff5f5;
+    --bg-info:   #f0f7ff;
+    --tx:        #20202a;
+    --tx-sec:    #596275;
+    --tx-ter:    #8a92a6;
+    --tx-warn:   #7c4d0a;
+    --tx-danger: #7c1f1f;
+    --tx-info:   #0c447c;
+    --bd:        #e0e5ed;
+    --bd-info:   #3b82c4;
+    --bd-danger: #c45050;
+    --r-sm:      6px;
+    --r-md:      8px;
+    --r-lg:      12px;
+    --font:      'Space Grotesk', system-ui, sans-serif;
+    --mono:      'IBM Plex Mono', 'Courier New', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--tx);
+    background: var(--bg);
+    padding: 1.5rem 1.25rem 2.5rem;
+    line-height: 1.6;
+  }
+
+  .page-title { font-size: 1.25rem; font-weight: 600; color: var(--tx); margin-bottom: 0.3rem; }
+  .page-sub   { font-size: 0.82rem; color: var(--tx-sec); margin-bottom: 1.5rem; line-height: 1.6; }
+
+  .section-label {
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--tx-ter); margin-bottom: 0.85rem;
+  }
+
+  /* ref grid */
+  .ref-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.6rem; margin-bottom: 1.75rem;
+  }
+  .ref-card { background: var(--bg-sec); border-radius: var(--r-md); padding: 0.75rem 0.9rem; }
+  .ref-card h3 { font-size: 0.75rem; font-weight: 600; color: var(--tx); margin-bottom: 0.5rem; }
+  .ref-row  { display: flex; gap: 0.4rem; font-size: 0.72rem; color: var(--tx-sec); line-height: 1.7; align-items: baseline; }
+  .ref-key  { font-family: var(--mono); font-size: 0.67rem; color: var(--tx); min-width: 58px; flex-shrink: 0; }
+
+  .divider { height: 1px; background: var(--bd); margin: 1.5rem 0; }
+
+  /* question card */
+  .q-card { background: var(--bg); border: 1px solid var(--bd); border-radius: var(--r-lg); padding: 1.1rem 1.2rem; margin-bottom: 1rem; }
+  .q-meta { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.55rem; flex-wrap: wrap; }
+  .q-num  { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; color: var(--tx-ter); text-transform: uppercase; }
+  .q-text { font-size: 0.92rem; font-weight: 500; color: var(--tx); line-height: 1.65; margin-bottom: 0.75rem; }
+
+  /* badges */
+  .badge  { font-size: 0.66rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: var(--r-sm); white-space: nowrap; }
+  .b-arch   { background: #eeedfe; color: #3c3489; }
+  .b-gotcha { background: #fcebeb; color: #791f1f; }
+  .b-must   { background: #f1efe8; color: #444441; }
+
+  /* reveal button */
+  .reveal-btn {
+    font-family: var(--font); font-size: 0.78rem; font-weight: 500; color: var(--tx-info);
+    cursor: pointer; background: none; border: none; padding: 0;
+    display: inline-flex; align-items: center; gap: 0.3rem; transition: opacity 0.15s;
+  }
+  .reveal-btn:hover { opacity: 0.75; }
+  .reveal-btn svg { width: 13px; height: 13px; flex-shrink: 0; transition: transform 0.2s; }
+  .reveal-btn.open svg { transform: rotate(180deg); }
+
+  /* answer panel */
+  .answer { display: none; margin-top: 1rem; border-top: 1px solid var(--bd); padding-top: 1rem; }
+  .answer.open { display: block; }
+
+  .expectation {
+    background: var(--bg-warn); border-radius: var(--r-md);
+    padding: 0.65rem 0.9rem; font-size: 0.78rem; color: var(--tx-warn);
+    margin-bottom: 0.85rem; line-height: 1.65;
+  }
+
+  .ans-body { font-size: 0.84rem; color: var(--tx-sec); line-height: 1.85; }
+  .ans-body strong { color: var(--tx); }
+  .ans-body code {
+    font-family: var(--mono); background: var(--bg-sec);
+    padding: 0.1rem 0.35rem; border-radius: var(--r-sm); font-size: 0.78rem; color: var(--tx);
+  }
+
+  /* code block */
+  .code-block {
+    background: var(--bg-sec); border: 1px solid var(--bd); border-radius: var(--r-md);
+    padding: 0.75rem 0.9rem; font-family: var(--mono); font-size: 0.76rem; color: var(--tx);
+    line-height: 1.85; margin: 0.75rem 0; white-space: pre; overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* callouts */
+  .tip, .warn {
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    padding: 0.65rem 0.9rem; font-size: 0.78rem; line-height: 1.65; margin-top: 0.75rem;
+  }
+  .tip  { border-left: 3px solid var(--bd-info);   background: var(--bg-info);   color: var(--tx-info);   }
+  .warn { border-left: 3px solid var(--bd-danger);  background: var(--bg-danger); color: var(--tx-danger); }
+  .tip code, .warn code {
+    font-family: var(--mono); font-size: 0.74rem; padding: 0.1rem 0.3rem;
+    border-radius: var(--r-sm); background: rgba(0,0,0,0.06);
+  }
+
+  /* comparison rows */
+  .cmp-row {
+    display: flex; gap: 0.75rem; padding: 0.45rem 0;
+    border-bottom: 1px solid var(--bd); font-size: 0.78rem; align-items: baseline;
+  }
+  .cmp-row:last-of-type { border-bottom: none; }
+  .cmp-label   { font-family: var(--mono); font-size: 0.72rem; color: var(--tx-ter); min-width: 110px; flex-shrink: 0; }
+  .cmp-verdict { font-weight: 600; font-size: 0.76rem; min-width: 36px; flex-shrink: 0; }
+  .ok { color: #0f6e56; }
+  .no { color: #a32d2d; }
+  .cmp-desc { color: var(--tx-sec); flex: 1; line-height: 1.65; }
+
+  .footer {
+    margin-top: 2rem; padding: 0.9rem 1rem; background: var(--bg-sec);
+    border-radius: var(--r-lg); font-size: 0.78rem; color: var(--tx-sec); line-height: 1.75;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.9rem 2rem; }
+    .ref-grid { grid-template-columns: 1fr 1fr; }
+    .q-card { padding: 0.9rem; }
+    .q-text { font-size: 0.88rem; }
+  }
+  @media (max-width: 400px) {
+    .ref-grid { grid-template-columns: 1fr; }
+    .q-card { padding: 0.75rem; }
+    .ans-body { font-size: 0.82rem; }
+  }
 </style>
+</head>
+<body>
 
-<div class="w">
-<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Senior assessment on micro-frontend architecture — 6 questions covering integration strategies, Module Federation, shared state, CSS isolation, deployment, and when NOT to use micro-frontends.</h2>
+<h1 class="page-title">Micro-frontend Architecture</h1>
+<p class="page-sub">6 questions. This topic separates engineers who've read about micro-frontends from those who've designed and debugged them in production.</p>
 
-<div style="margin-bottom:1.5rem">
-  <h1 style="font-size:19px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">Micro-frontend architecture</h1>
-  <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.6">6 questions. This topic separates engineers who've read about micro-frontends from those who've designed and debugged them in production. All reveal buttons work.</p>
-</div>
-
-<div class="slbl">MENTAL MODEL</div>
-<div class="rg">
-  <div class="rc"><h3>What it is</h3>
-    <div class="rr"><span class="rk">concept</span>Apply microservices thinking to the frontend — independent, deployable UI slices</div>
-    <div class="rr"><span class="rk">goal</span>Teams own their vertical slice end-to-end</div>
-    <div class="rr"><span class="rk">shell app</span>Orchestrates routing + loads remote MFEs</div>
+<div class="section-label">Mental Model</div>
+<div class="ref-grid">
+  <div class="ref-card">
+    <h3>What it is</h3>
+    <div class="ref-row"><span class="ref-key">concept</span>Apply microservices thinking to the frontend â€” independent, deployable UI slices</div>
+    <div class="ref-row"><span class="ref-key">goal</span>Teams own their vertical slice end-to-end</div>
+    <div class="ref-row"><span class="ref-key">shell app</span>Orchestrates routing + loads remote MFEs</div>
   </div>
-  <div class="rc"><h3>Integration types</h3>
-    <div class="rr"><span class="rk">build-time</span>npm packages — tight coupling, sync deploys</div>
-    <div class="rr"><span class="rk">runtime</span>Module Federation, iframes, Web Components</div>
-    <div class="rr"><span class="rk">server</span>SSI, ESI — server composes HTML fragments</div>
+  <div class="ref-card">
+    <h3>Integration types</h3>
+    <div class="ref-row"><span class="ref-key">build-time</span>npm packages â€” tight coupling, sync deploys</div>
+    <div class="ref-row"><span class="ref-key">runtime</span>Module Federation, iframes, Web Components</div>
+    <div class="ref-row"><span class="ref-key">server</span>SSI, ESI â€” server composes HTML fragments</div>
   </div>
-  <div class="rc"><h3>Module Federation</h3>
-    <div class="rr"><span class="rk">what</span>Webpack 5 / Rspack plugin — load remote modules at runtime</div>
-    <div class="rr"><span class="rk">exposes</span>Remote declares what it shares</div>
-    <div class="rr"><span class="rk">consumes</span>Host declares what it uses from remotes</div>
+  <div class="ref-card">
+    <h3>Module Federation</h3>
+    <div class="ref-row"><span class="ref-key">what</span>Webpack 5 / Rspack plugin â€” load remote modules at runtime</div>
+    <div class="ref-row"><span class="ref-key">exposes</span>Remote declares what it shares</div>
+    <div class="ref-row"><span class="ref-key">consumes</span>Host declares what it uses from remotes</div>
   </div>
-  <div class="rc"><h3>Key challenges</h3>
-    <div class="rr"><span class="rk">shared deps</span>React loaded twice = two instances = broken Context</div>
-    <div class="rr"><span class="rk">CSS leakage</span>Styles bleeding across MFE boundaries</div>
-    <div class="rr"><span class="rk">comms</span>State sharing without tight coupling</div>
-    <div class="rr"><span class="rk">DX</span>Local dev with multiple running services</div>
-  </div>
-</div>
-
-<div class="div"></div>
-<div class="slbl">QUESTIONS</div>
-
-<div class="q">
-  <div class="qm"><span class="qn">Q1</span><span class="b b1">architecture</span><span class="b b6">must-know</span></div>
-  <div class="qt">Compare the four main micro-frontend integration strategies — build-time (npm packages), runtime via Module Federation, iframes, and Web Components. For each, give one real production scenario where it is the correct choice and one where it fails badly.</div>
-  <button class="rbtn" onclick="tog('a1',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
-  <div class="ans" id="a1">
-    <div class="exp">Senior expectation: Must go beyond surface-level definitions. Must articulate the deployment coupling problem with npm packages, the shared singleton problem with Module Federation, the iframe communication overhead, and the browser support / SSR limitations of Web Components. Each "fails badly" case should be a real scenario, not a vague trade-off.</div>
-    <div class="at"><strong>Build-time (npm packages):</strong><br>
-    Correct for: a shared design system — Button, Input, Modal — consumed by multiple teams. These components change infrequently and all teams can align on a release cycle. The type safety and tree-shaking benefits of a proper npm package outweigh the coordination cost.<br>
-    Fails badly when: teams need independent deployment. Publishing a patch to fix a checkout MFE bug requires every consuming team to update and redeploy their app simultaneously. One team's release schedule blocks another's hotfix. This is the core deployment coupling problem that makes npm packages wrong for independently-deployed features.<br><br>
-    <strong>Runtime via Module Federation:</strong><br>
-    Correct for: large product suites where teams need truly independent deploy cadences. The checkout team ships at 2pm, the product catalog team ships at 4pm — the shell app loads both at their latest URL without rebuilding. Zero coordination required for feature releases.<br>
-    Fails badly when: shared singletons are mismanaged. If React is not declared as a singleton shared dependency, each remote bundles its own React copy. Two React instances = two Context registries = Provider in remote A invisible to consumer in remote B. Entire feature trees silently break with no obvious error.<br><br>
-    <strong>Iframes:</strong><br>
-    Correct for: embedding third-party or legacy content with guaranteed style and script isolation — a payment widget, a legacy CRM screen, a third-party analytics dashboard. Hard security boundary is the feature, not the limitation.<br>
-    Fails badly when: UX requires seamless integration. Iframes cannot share DOM, cannot overflow their boundaries (modal dialogs are clipped), have complex cross-origin postMessage communication for every interaction, and break keyboard navigation and accessibility patterns. Any feature requiring "feels like one app" behaviour cannot live in an iframe.<br><br>
-    <strong>Web Components:</strong><br>
-    Correct for: framework-agnostic components shared across a mixed-framework estate — a team using Vue consuming a component from a React team, or embedding widgets in a CMS. The Custom Element API is framework-neutral by design.<br>
-    Fails badly when: SSR is required. Web Components have no server rendering story in most frameworks — they render as empty shells during SSR and hydrate on the client, creating large CLS and blank initial states. Also: React's synthetic event system does not bubble through Shadow DOM boundaries, breaking standard React event patterns inside Web Components.</div>
+  <div class="ref-card">
+    <h3>Key challenges</h3>
+    <div class="ref-row"><span class="ref-key">shared deps</span>React loaded twice = two instances = broken Context</div>
+    <div class="ref-row"><span class="ref-key">CSS leakage</span>Styles bleeding across MFE boundaries</div>
+    <div class="ref-row"><span class="ref-key">comms</span>State sharing without tight coupling</div>
+    <div class="ref-row"><span class="ref-key">DX</span>Local dev with multiple running services</div>
   </div>
 </div>
 
-<div class="q">
-  <div class="qm"><span class="qn">Q2</span><span class="b b1">architecture</span><span class="b b6">must-know</span></div>
-  <div class="qt">Explain exactly how Webpack Module Federation works under the hood — what the host and remote webpack configs look like, how the runtime resolves remote modules, and what "singleton" sharing means and why it's critical for React.</div>
-  <button class="rbtn" onclick="tog('a2',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
-  <div class="ans" id="a2">
-    <div class="exp">Senior expectation: Must show both webpack configs with correct plugin syntax. Must explain the remoteEntry.js bootstrap file mechanism. Must explain singleton sharing — React must be a singleton across all MFEs or Context, hooks, and reconciliation break. Should mention version negotiation and what happens on version mismatch.</div>
-    <div class="at">Module Federation works via a special webpack plugin that generates a <code>remoteEntry.js</code> file for each remote. This file is a manifest + runtime that declares what modules the remote exposes and what shared dependencies it has. The host loads this file at runtime (a dynamic script tag injection) and uses it to resolve module requests.<br><br>Remote webpack config (e.g. Checkout MFE):</div>
-    <div class="cd">// checkout/webpack.config.js
+<div class="divider"></div>
+<div class="section-label">Questions</div>
+
+
+<!-- Q1 -->
+<div class="q-card">
+  <div class="q-meta">
+    <span class="q-num">Q1</span>
+    <span class="badge b-arch">architecture</span>
+    <span class="badge b-must">must-know</span>
+  </div>
+  <div class="q-text">Compare the four main micro-frontend integration strategies â€” build-time (npm packages), runtime via Module Federation, iframes, and Web Components. For each, give one real production scenario where it is the correct choice and one where it fails badly.</div>
+  <button class="reveal-btn" onclick="tog('a1',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+    Reveal answer
+  </button>
+  <div class="answer" id="a1">
+    <div class="expectation"><strong>Senior expectation:</strong> Must go beyond surface-level definitions. Must articulate the deployment coupling problem with npm packages, the shared singleton problem with Module Federation, the iframe communication overhead, and the browser support / SSR limitations of Web Components. Each "fails badly" case should be a real scenario, not a vague trade-off.</div>
+    <div class="ans-body">
+      <strong>Build-time (npm packages):</strong><br>
+      Correct for: a shared design system â€” Button, Input, Modal â€” consumed by multiple teams. These components change infrequently and all teams can align on a release cycle. Type safety and tree-shaking benefits outweigh the coordination cost.<br>
+      Fails badly when: teams need independent deployment. A patch to fix a checkout MFE bug requires every consuming team to update and redeploy simultaneously. One team's release schedule blocks another's hotfix â€” the core deployment coupling problem.<br><br>
+
+      <strong>Runtime via Module Federation:</strong><br>
+      Correct for: large product suites where teams need truly independent deploy cadences. The checkout team ships at 2pm, the catalog team ships at 4pm â€” the shell loads both at their latest URL without rebuilding. Zero coordination required.<br>
+      Fails badly when: shared singletons are mismanaged. If React is not declared as a singleton shared dependency, each remote bundles its own React copy. Two React instances = two Context registries = Provider in remote A invisible to consumer in remote B.<br><br>
+
+      <strong>Iframes:</strong><br>
+      Correct for: embedding third-party or legacy content with guaranteed style and script isolation â€” a payment widget, a legacy CRM screen. Hard security boundary is the feature, not the limitation.<br>
+      Fails badly when: UX requires seamless integration. Iframes cannot share DOM, modal dialogs are clipped at the iframe boundary, cross-origin postMessage communication is required for every interaction, and keyboard navigation and accessibility patterns break.<br><br>
+
+      <strong>Web Components:</strong><br>
+      Correct for: framework-agnostic components shared across a mixed-framework estate â€” a Vue team consuming a component from a React team. The Custom Element API is framework-neutral by design.<br>
+      Fails badly when: SSR is required. Web Components render as empty shells during SSR, creating large CLS and blank initial states. React's synthetic event system does not bubble through Shadow DOM boundaries, breaking standard event patterns.
+    </div>
+  </div>
+</div>
+
+<!-- Q2 -->
+<div class="q-card">
+  <div class="q-meta">
+    <span class="q-num">Q2</span>
+    <span class="badge b-arch">architecture</span>
+    <span class="badge b-must">must-know</span>
+  </div>
+  <div class="q-text">Explain exactly how Webpack Module Federation works under the hood â€” what the host and remote webpack configs look like, how the runtime resolves remote modules, and what "singleton" sharing means and why it's critical for React.</div>
+  <button class="reveal-btn" onclick="tog('a2',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+    Reveal answer
+  </button>
+  <div class="answer" id="a2">
+    <div class="expectation"><strong>Senior expectation:</strong> Must show both webpack configs with correct plugin syntax. Must explain the remoteEntry.js bootstrap file mechanism. Must explain singleton sharing â€” React must be a singleton across all MFEs or Context, hooks, and reconciliation break. Should mention version negotiation and what happens on version mismatch.</div>
+    <div class="ans-body">Module Federation generates a <code>remoteEntry.js</code> for each remote â€” a manifest + runtime that declares exposed modules and shared dependencies. The host loads this file at runtime via dynamic script injection.<br><br><strong>Remote webpack config (Checkout MFE):</strong></div>
+    <div class="code-block">// checkout/webpack.config.js
 new ModuleFederationPlugin({
   name: 'checkout',
   filename: 'remoteEntry.js',
@@ -113,25 +245,24 @@ new ModuleFederationPlugin({
     './CartSummary':  './src/CartSummary',
   },
   shared: {
-    react:     { singleton: true, requiredVersion: '^18.0.0' },
+    react:       { singleton: true, requiredVersion: '^18.0.0' },
     'react-dom': { singleton: true, requiredVersion: '^18.0.0' },
   },
 })</div>
-    <div class="at">Host (shell app) webpack config:</div>
-    <div class="cd">// shell/webpack.config.js
+    <div class="ans-body"><strong>Host (shell app) webpack config:</strong></div>
+    <div class="code-block">// shell/webpack.config.js
 new ModuleFederationPlugin({
   name: 'shell',
   remotes: {
     checkout: 'checkout@https://checkout.myapp.com/remoteEntry.js',
   },
   shared: {
-    react:     { singleton: true, requiredVersion: '^18.0.0' },
+    react:       { singleton: true, requiredVersion: '^18.0.0' },
     'react-dom': { singleton: true, requiredVersion: '^18.0.0' },
   },
 })</div>
-    <div class="at">Consuming a remote module in the shell:</div>
-    <div class="cd">// In shell — dynamically imported, code-split automatically
-const CheckoutPage = lazy(() => import('checkout/CheckoutPage'));
+    <div class="ans-body"><strong>Consuming a remote module in the shell:</strong></div>
+    <div class="code-block">const CheckoutPage = lazy(() => import('checkout/CheckoutPage'));
 
 function App() {
   return (
@@ -140,157 +271,185 @@ function App() {
     &lt;/Suspense&gt;
   );
 }</div>
-    <div class="at"><strong>Why singleton: true is critical for React:</strong> Without it, if the shell has React 18.2.0 and checkout has React 18.0.0, Module Federation loads both. Two separate React instances means two separate reconcilers, two Context registries, two hook state systems. A <code>useContext(AuthContext)</code> in checkout reads from a different registry than the Provider in the shell — silently returns the default value. <code>useState</code> calls in checkout components are tracked by a different reconciler — hooks break in unpredictable ways.<br><br>With <code>singleton: true</code>, Module Federation's version negotiation picks one React version (the highest compatible one) and shares it across all MFEs. If versions are incompatible, it logs a warning but still shares one instance — the consuming app gets the host's version.</div>
-    <div class="warn">Version mismatch warnings from Module Federation in prod are often ignored. They shouldn't be — a remote expecting React 18 hooks behaviour running on React 17 will silently break features. Pin <code>requiredVersion</code> ranges tightly and treat version warnings as build failures in CI.</div>
+    <div class="ans-body"><strong>Why <code>singleton: true</code> is critical for React:</strong> Without it, if the shell has React 18.2.0 and checkout has React 18.0.0, Module Federation loads both. Two separate React instances = two reconcilers, two Context registries, two hook state systems. A <code>useContext(AuthContext)</code> in checkout reads from a different registry than the Provider in the shell â€” silently returns the default value. With <code>singleton: true</code>, version negotiation picks one React version and shares it across all MFEs.</div>
+    <div class="warn">Version mismatch warnings from Module Federation in prod are often ignored. They shouldn't be â€” a remote expecting React 18 hooks behaviour running on React 17 will silently break features. Pin <code>requiredVersion</code> ranges tightly and treat version warnings as build failures in CI.</div>
   </div>
 </div>
 
-<div class="q">
-  <div class="qm"><span class="qn">Q3</span><span class="b b2">gotcha</span><span class="b b6">must-know</span></div>
-  <div class="qt">Cross-MFE communication is one of the hardest problems in micro-frontend architecture. A user logs in via the Auth MFE — the Header MFE needs to show their name, and the Cart MFE needs their userId to load their cart. Design a communication architecture that keeps MFEs decoupled. Give at least three approaches with their trade-offs.</div>
-  <button class="rbtn" onclick="tog('a3',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
-  <div class="ans" id="a3">
-    <div class="exp">Senior expectation: Must identify that the core tension is decoupling vs coordination. Must give at least three concrete patterns with real trade-offs — not just "use an event bus" vaguely. Should explain why shared Redux store is a coupling trap and why the URL is underrated as a communication channel.</div>
-    <div class="at"><strong>Approach 1 — Custom event bus (pub/sub on window):</strong><br>
-    MFEs communicate through browser native CustomEvents — zero shared library required:</div>
-    <div class="cd">// Auth MFE — emits after login
+<!-- Q3 -->
+<div class="q-card">
+  <div class="q-meta">
+    <span class="q-num">Q3</span>
+    <span class="badge b-gotcha">gotcha</span>
+    <span class="badge b-must">must-know</span>
+  </div>
+  <div class="q-text">Cross-MFE communication is one of the hardest problems in micro-frontend architecture. A user logs in via the Auth MFE â€” the Header MFE needs to show their name, and the Cart MFE needs their userId to load their cart. Design a communication architecture that keeps MFEs decoupled. Give at least three approaches with their trade-offs.</div>
+  <button class="reveal-btn" onclick="tog('a3',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+    Reveal answer
+  </button>
+  <div class="answer" id="a3">
+    <div class="expectation"><strong>Senior expectation:</strong> Must identify that the core tension is decoupling vs coordination. Must give at least three concrete patterns with real trade-offs. Should explain why shared Redux store is a coupling trap and why the URL is underrated as a communication channel.</div>
+    <div class="ans-body"><strong>Approach 1 â€” Custom event bus (pub/sub on window):</strong></div>
+    <div class="code-block">// Auth MFE â€” emits after login
 window.dispatchEvent(new CustomEvent('mfe:auth:login', {
   detail: { userId: '123', name: 'Alice', token: 'jwt...' }
 }));
 
-// Header MFE — listens
-window.addEventListener('mfe:auth:login', (e) => {
-  setUser(e.detail);
-});
+// Header MFE â€” listens
+window.addEventListener('mfe:auth:login', (e) => { setUser(e.detail); });
 
-// Cart MFE — listens
-window.addEventListener('mfe:auth:login', (e) => {
-  loadCart(e.detail.userId);
-});</div>
-    <div class="at">Trade-offs: completely decoupled — MFEs don't import each other. Events are fire-and-forget — no guarantee a listener is registered when the event fires (race condition on slow-loading MFEs). No type safety without a shared event schema contract. Hard to debug — events leave no trace in React DevTools.<br><br>
-    <strong>Approach 2 — Shared state store via Module Federation:</strong><br>
-    Expose a singleton store from the shell, consumed by all MFEs:</div>
-    <div class="cd">// shell exposes a Zustand store
+// Cart MFE â€” listens
+window.addEventListener('mfe:auth:login', (e) => { loadCart(e.detail.userId); });</div>
+    <div class="ans-body">
+      Trade-offs: completely decoupled â€” MFEs don't import each other. Events are fire-and-forget â€” no guarantee a listener is registered when the event fires (race condition on slow-loading MFEs). No type safety without a shared event schema contract.<br><br>
+      <strong>Approach 2 â€” Shared state store via Module Federation:</strong>
+    </div>
+    <div class="code-block">// shell exposes a Zustand store
 exposes: { './store': './src/store' }
 
 // Remote MFE consumes it
 import { useAuthStore } from 'shell/store';
 const { user } = useAuthStore();</div>
-    <div class="at">Trade-offs: strongly typed, reactive, works like a normal store. But it creates a hard runtime dependency on the shell — the MFE cannot run standalone without the shell's store being present. Tightly couples MFE lifecycle to shell version. Good for auth/session state that all MFEs genuinely share. Bad for feature-specific state.<br><br>
-    <strong>Approach 3 — URL as the source of truth:</strong><br>
-    Encode shared state in the URL — query params, path segments, or hash. All MFEs read from the URL independently:</div>
-    <div class="cd">// After login, shell navigates to:
-// /dashboard?userId=123&sessionId=abc
+    <div class="ans-body">
+      Trade-offs: strongly typed, reactive, works like a normal store. Creates a hard runtime dependency on the shell â€” the MFE cannot run standalone. Tightly couples MFE lifecycle to shell version. Good for auth/session state; bad for feature-specific state.<br><br>
+      <strong>Approach 3 â€” URL as the source of truth:</strong>
+    </div>
+    <div class="code-block">// After login, shell navigates to: /dashboard?userId=123&sessionId=abc
 
-// Each MFE reads what it needs from the URL
+// Each MFE reads what it needs from the URL independently
 const userId = new URLSearchParams(location.search).get('userId');</div>
-    <div class="at">Trade-offs: zero coupling — each MFE is completely independent. Deep-linkable and bookmarkable state for free. Survives page refresh. Limitation: sensitive data (tokens) must not go in the URL. Complex state (arrays, nested objects) is cumbersome to encode. Not suitable for ephemeral UI state (tooltip open, animation progress).<br><br>
-    <strong>Approach 4 — BroadcastChannel API (tabs + iframes):</strong><br>
-    For cross-tab or cross-iframe communication without a shared window: <code>const ch = new BroadcastChannel('mfe-auth')</code> — posts messages to all MFEs on any tab. Survives iframe boundaries unlike CustomEvent.<br><br>
-    Production recommendation: use the URL for persistent shared state (user session, selected entity ID), CustomEvents for transient notifications (login, logout, cart updated), and a shared Zustand store (via MF) only for truly global reactive state that every MFE depends on.</div>
+    <div class="ans-body">
+      Trade-offs: zero coupling â€” each MFE is completely independent. Deep-linkable, bookmarkable, survives page refresh. Limitation: sensitive data (tokens) must not go in the URL. Complex state is cumbersome to encode.<br><br>
+      <strong>Approach 4 â€” BroadcastChannel API:</strong> For cross-tab or cross-iframe communication without a shared window: <code>new BroadcastChannel('mfe-auth')</code> posts messages to all MFEs on any tab. Survives iframe boundaries unlike CustomEvent.<br><br>
+      <strong>Production recommendation:</strong> URL for persistent shared state, CustomEvents for transient notifications (login, logout, cart updated), shared Zustand store (via MF) only for truly global reactive state.
+    </div>
   </div>
 </div>
 
-<div class="q">
-  <div class="qm"><span class="qn">Q4</span><span class="b b2">gotcha</span></div>
-  <div class="qt">CSS isolation is a silent killer in micro-frontend apps. Describe every way styles can leak between MFEs and for each one explain the correct isolation technique — including the trade-offs of each approach.</div>
-  <button class="rbtn" onclick="tog('a4',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
-  <div class="ans" id="a4">
-    <div class="exp">Senior expectation: Must cover global class name collisions, CSS custom property leakage, CSS-in-JS style tag injection ordering, and reset/normalise stylesheet conflicts. Must evaluate Shadow DOM, CSS Modules, BEM namespacing, and CSS-in-JS isolation. Must know that Shadow DOM breaks global portals and React modals.</div>
-    <div class="at"><strong>Problem 1 — Global class name collisions:</strong> MFE-A defines <code>.button { background: blue }</code>. MFE-B defines <code>.button { background: red }</code>. Both inject into the same document — whichever loads last wins, breaking the other MFE's styles randomly depending on load order.<br>
-    Fix: CSS Modules (generates <code>.button_a3f2k</code> scoped hashes at build time) or strict BEM namespacing (<code>.checkout__button</code>, <code>.catalog__button</code>). CSS Modules is better — namespacing is enforced by tooling, not convention.<br><br>
-    <strong>Problem 2 — Global reset/normalise conflicts:</strong> Both MFEs include their own <code>normalize.css</code> or CSS reset. They stack — margin resets apply twice, font-size resets conflict. The last loaded reset wins for each property.<br>
-    Fix: The shell owns the global reset. MFEs never include their own global resets — only scoped component styles.<br><br>
-    <strong>Problem 3 — CSS custom property leakage:</strong> MFE-A sets <code>:root { --color-primary: blue }</code>. Since <code>:root</code> is the document root, MFE-B inherits this — overriding its own design tokens if they share variable names.<br>
-    Fix: Scope custom properties to a container element, not <code>:root</code>: <code>[data-mfe="checkout"] { --color-primary: green }</code>. Each MFE wraps itself in a container with its own scope.<br><br>
-    <strong>Problem 4 — CSS-in-JS style injection ordering:</strong> Emotion and styled-components inject <code>&lt;style&gt;</code> tags into the document head. If two MFEs use different versions of the same CSS-in-JS library, their style tags interleave unpredictably — specificity ordering becomes non-deterministic.<br>
-    Fix: All MFEs must use the same CSS-in-JS library version (Module Federation singleton). Or use CSS Modules instead — build-time scoping has no runtime injection ordering problem.<br><br>
-    <strong>Shadow DOM — the nuclear option:</strong> Attach each MFE's React root inside a Shadow DOM element — complete style isolation, nothing leaks in or out.</div>
-    <div class="cd">const shadow = document.getElementById('mfe-checkout')
-  .attachShadow({ mode: 'open' });
+<!-- Q4 -->
+<div class="q-card">
+  <div class="q-meta">
+    <span class="q-num">Q4</span>
+    <span class="badge b-gotcha">gotcha</span>
+  </div>
+  <div class="q-text">CSS isolation is a silent killer in micro-frontend apps. Describe every way styles can leak between MFEs and for each one explain the correct isolation technique â€” including the trade-offs of each approach.</div>
+  <button class="reveal-btn" onclick="tog('a4',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+    Reveal answer
+  </button>
+  <div class="answer" id="a4">
+    <div class="expectation"><strong>Senior expectation:</strong> Must cover global class name collisions, CSS custom property leakage, CSS-in-JS style tag injection ordering, and reset/normalise stylesheet conflicts. Must evaluate Shadow DOM, CSS Modules, BEM namespacing, and CSS-in-JS isolation. Must know that Shadow DOM breaks global portals and React modals.</div>
+    <div class="ans-body">
+      <strong>Problem 1 â€” Global class name collisions:</strong> MFE-A defines <code>.button { background: blue }</code>. MFE-B defines <code>.button { background: red }</code>. Whichever loads last wins, breaking the other MFE's styles randomly.<br>
+      Fix: CSS Modules (generates <code>.button_a3f2k</code> scoped hashes at build time) or strict BEM namespacing (<code>.checkout__button</code>). CSS Modules is better â€” enforced by tooling, not convention.<br><br>
+
+      <strong>Problem 2 â€” Global reset/normalise conflicts:</strong> Both MFEs include their own <code>normalize.css</code>. They stack â€” the last loaded reset wins for each property.<br>
+      Fix: The shell owns the global reset. MFEs never include their own global resets â€” only scoped component styles.<br><br>
+
+      <strong>Problem 3 â€” CSS custom property leakage:</strong> MFE-A sets <code>:root { --color-primary: blue }</code>. Since <code>:root</code> is the document root, MFE-B inherits this, overriding its own design tokens.<br>
+      Fix: Scope custom properties to a container: <code>[data-mfe="checkout"] { --color-primary: green }</code>. Each MFE wraps itself in a container with its own scope.<br><br>
+
+      <strong>Problem 4 â€” CSS-in-JS style injection ordering:</strong> Emotion and styled-components inject <code>&lt;style&gt;</code> tags into document head. Two MFEs using different library versions interleave style tags unpredictably â€” specificity ordering becomes non-deterministic.<br>
+      Fix: All MFEs must use the same CSS-in-JS library version (Module Federation singleton). Or use CSS Modules â€” build-time scoping has no runtime injection ordering problem.<br><br>
+
+      <strong>Shadow DOM â€” the nuclear option:</strong>
+    </div>
+    <div class="code-block">const shadow = document.getElementById('mfe-checkout').attachShadow({ mode: 'open' });
 const root = ReactDOM.createRoot(shadow);
 root.render(&lt;CheckoutApp /&gt;);</div>
-    <div class="at">Trade-offs of Shadow DOM: global CSS (Tailwind, design tokens, fonts) does not penetrate Shadow DOM — must be duplicated inside each shadow root. React portals (<code>ReactDOM.createPortal</code>) render outside the shadow root into the light DOM — modal overlays escape their style scope. Third-party components that rely on global styles break. Shadow DOM is correct for true third-party widget isolation; it is usually too aggressive for same-company MFE architectures.</div>
-    <div class="tip">The pragmatic production choice: CSS Modules for all component styles + BEM namespace prefix for any unavoidable global classes + shell owns global resets and design tokens. Shadow DOM only for third-party embeds.</div>
+    <div class="ans-body">Trade-offs of Shadow DOM: global CSS (Tailwind, design tokens, fonts) does not penetrate Shadow DOM â€” must be duplicated inside each shadow root. React portals render outside the shadow root into the light DOM â€” modal overlays escape their style scope. Third-party components that rely on global styles break.</div>
+    <div class="tip"><strong>Pragmatic production choice:</strong> CSS Modules for all component styles + BEM namespace prefix for any unavoidable global classes + shell owns global resets and design tokens. Shadow DOM only for true third-party widget isolation.</div>
   </div>
 </div>
 
-<div class="q">
-  <div class="qm"><span class="qn">Q5</span><span class="b b1">architecture</span></div>
-  <div class="qt">Design the deployment and CI/CD pipeline for a micro-frontend system with one shell app and four feature MFEs. Address: independent deployability, versioning strategy, rollback, feature flags for MFEs, and how you handle the "chunk hash mismatch" problem when the shell caches a stale remoteEntry.js URL.</div>
-  <button class="rbtn" onclick="tog('a5',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
-  <div class="ans" id="a5">
-    <div class="exp">Senior expectation: Must design truly independent pipelines — not "deploy everything together." Must address the remoteEntry.js caching problem specifically (this is the most common production incident in MFE systems). Must cover rollback without requiring shell redeploy and feature flags at the MFE loading level.</div>
-    <div class="at"><strong>Independent CI/CD pipelines:</strong><br>
-    Each MFE has its own pipeline triggered by commits to its own repository (or monorepo package). The pipeline: test → build → deploy assets to CDN → update a manifest registry. The shell has no knowledge of individual MFE deployments — it reads a central manifest at runtime.</div>
-    <div class="cd">// Central manifest — updated by each MFE's pipeline
-// manifest.json (served by your infrastructure)
+<!-- Q5 -->
+<div class="q-card">
+  <div class="q-meta">
+    <span class="q-num">Q5</span>
+    <span class="badge b-arch">architecture</span>
+  </div>
+  <div class="q-text">Design the deployment and CI/CD pipeline for a micro-frontend system with one shell app and four feature MFEs. Address: independent deployability, versioning strategy, rollback, feature flags for MFEs, and how you handle the "chunk hash mismatch" problem when the shell caches a stale remoteEntry.js URL.</div>
+  <button class="reveal-btn" onclick="tog('a5',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+    Reveal answer
+  </button>
+  <div class="answer" id="a5">
+    <div class="expectation"><strong>Senior expectation:</strong> Must design truly independent pipelines. Must address the remoteEntry.js caching problem specifically â€” the most common production incident in MFE systems. Must cover rollback without requiring shell redeploy and feature flags at the MFE loading level.</div>
+    <div class="ans-body">
+      <strong>Independent CI/CD pipelines:</strong> Each MFE has its own pipeline triggered by commits to its own repository. The pipeline: test â†’ build â†’ deploy assets to CDN â†’ update a central manifest. The shell reads this manifest at runtime and has no knowledge of individual MFE deployments.
+    </div>
+    <div class="code-block">// manifest.json â€” served with Cache-Control: no-store, updated by each MFE's pipeline
 {
   "checkout": "https://cdn.myapp.com/checkout/v2.4.1/remoteEntry.js",
   "catalog":  "https://cdn.myapp.com/catalog/v1.9.0/remoteEntry.js",
   "cart":     "https://cdn.myapp.com/cart/v3.1.0/remoteEntry.js",
   "auth":     "https://cdn.myapp.com/auth/v1.2.3/remoteEntry.js"
 }</div>
-    <div class="at">The shell fetches this manifest on startup (or on each navigation) and uses the URLs to load remotes. A MFE deployment = update one entry in the manifest. Shell never needs to rebuild or redeploy.<br><br>
-    <strong>The remoteEntry.js caching problem:</strong><br>
-    If the shell hardcodes <code>checkout@https://cdn.myapp.com/checkout/remoteEntry.js</code> (no version in URL), the CDN/browser caches the old file. New checkout deployment is invisible until cache expires. The fix: version the remoteEntry.js URL itself. Each build of checkout deploys to <code>/checkout/v2.4.1/remoteEntry.js</code>. The manifest is the only file with no version in its URL — served with <code>Cache-Control: no-store</code> or very short TTL (30s). Asset chunks are content-hashed and cached aggressively (1 year).<br><br>
-    <strong>Rollback strategy:</strong><br>
-    Rollback = update the manifest to point to the previous version's URL. The old assets are still on the CDN (never delete old versions for 30 days). Rollback time: seconds. No shell redeploy required.</div>
-    <div class="cd">// Rollback checkout to v2.3.9:
-// Just update manifest.json:
+    <div class="ans-body">
+      <strong>The remoteEntry.js caching problem:</strong> If the shell hardcodes a URL without a version, the CDN caches the old file. New deployment is invisible until cache expires. Fix: version the remoteEntry.js URL itself â€” each build deploys to <code>/checkout/v2.4.1/remoteEntry.js</code>. The manifest file is served with <code>Cache-Control: no-store</code>. Asset chunks are content-hashed and cached aggressively (1 year).<br><br>
+      <strong>Rollback strategy:</strong> Rollback = update the manifest to point to the previous version URL. Old assets remain on CDN for 30 days. Rollback time: seconds. No shell redeploy required.
+    </div>
+    <div class="code-block">// Rollback checkout to v2.3.9 â€” update manifest.json only:
 "checkout": "https://cdn.myapp.com/checkout/v2.3.9/remoteEntry.js"
-// Shell picks it up on next manifest fetch</div>
-    <div class="at"><strong>Feature flags for MFEs:</strong><br>
-    The manifest itself becomes a feature flag system. Rather than loading <code>checkout/CheckoutPage</code> directly, the shell checks a feature flag service and either loads the new MFE remote or falls back to the current stable version. Dark launches (load but don't render), canary deployments (10% of users get v2.4.1), and A/B tests all become manifest-level decisions with zero code changes in MFEs.<br><br>
-    <strong>Monitoring:</strong><br>
-    Each MFE remote load is a network request — instrument with custom performance marks. Track: remote load time, module resolution failures (chunk 404s), and MFE error boundary activations. Alert on any MFE's error rate rising independently — isolates which team's deploy caused a production incident.</div>
-    <div class="tip">The manifest-driven architecture is the production-grade evolution of hardcoded Module Federation URLs. It gives you runtime control over which version of each MFE the shell loads — without any code change or redeploy. It is effectively a feature flag system for entire micro-frontends.</div>
+// Shell picks it up on next manifest fetch (~30s)</div>
+    <div class="ans-body"><strong>Feature flags for MFEs:</strong> The manifest becomes a feature flag system. The shell checks a feature flag service and loads either the new MFE remote or falls back to the current stable version. Dark launches, canary deployments (10% of users get v2.4.1), and A/B tests all become manifest-level decisions with zero code changes in MFEs.</div>
+    <div class="tip">The manifest-driven architecture gives you runtime control over which version of each MFE the shell loads â€” without any code change or redeploy. It is effectively a feature flag system for entire micro-frontends.</div>
   </div>
 </div>
 
-<div class="q">
-  <div class="qm"><span class="qn">Q6</span><span class="b b1">architecture</span><span class="b b6">must-know</span></div>
-  <div class="qt">The hardest micro-frontend question: when should you NOT use micro-frontends? A startup CTO asks you to evaluate whether their 8-engineer frontend team should adopt MFE architecture for their React monolith. Give a structured recommendation framework — including the specific signals that mean "yes, now" vs "not yet" vs "never for this team."</div>
-  <button class="rbtn" onclick="tog('a6',this)"><i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer</button>
-  <div class="ans" id="a6">
-    <div class="exp">Senior expectation: Must push back on the premise — most teams adopting MFEs are not at the scale that justifies them. Must give concrete team/org size thresholds and specific engineering costs. Must identify the two genuine problems MFEs solve (team autonomy at scale, tech heterogeneity) and show that neither applies to an 8-engineer team. Must articulate the correct scaling path.</div>
-    <div class="at">Micro-frontends solve exactly two problems: (1) team deployment autonomy at scale — when teams are blocked on each other's release schedules, (2) technology heterogeneity — when different parts of the product legitimately need different frameworks or versions.<br><br>
-    For an 8-engineer frontend team, neither problem exists yet. The recommendation: do not adopt MFEs now. Here is the framework:<br><br>
-    <strong>Signal: "not yet" (current state — 8 engineers):</strong></div>
-    <div class="orow"><span class="ol">deployment</span><span class="or er">no</span><span class="ow">8 engineers can coordinate a release in a standup. Deployment blocking is not a real pain yet — it is hypothetical future pain.</span></div>
-    <div class="orow"><span class="ol">team ownership</span><span class="or er">no</span><span class="ow">Clear feature ownership in a monorepo with good folder structure solves 90% of team autonomy problems without runtime complexity.</span></div>
-    <div class="orow"><span class="ol">build time</span><span class="or er">no</span><span class="ow">Build times become a problem at much larger codebase scale. Module Federation adds build complexity — you are solving a problem you don't have.</span></div>
-    <div class="orow"><span class="ol">tech debt</span><span class="or er">no</span><span class="ow">MFEs do not reduce existing tech debt — they add an integration layer on top of it. "Our code is messy" is not a MFE problem.</span></div>
-    <div class="at" style="margin-top:10px"><strong>Signal: "yes, now" (typically 50+ engineers, multiple product teams):</strong></div>
-    <div class="orow"><span class="ol">release blocking</span><span class="or ok">yes</span><span class="ow">Team A's broken PR is blocking Team B's hotfix from shipping. This is happening weekly. Shared deployment pipeline is the bottleneck.</span></div>
-    <div class="orow"><span class="ol">team scale</span><span class="or ok">yes</span><span class="ow">5+ independent product teams, each with their own roadmap and sprint cadence. Coordinating a shared frontend release across 5 teams is a project management nightmare.</span></div>
-    <div class="orow"><span class="ol">tech diversity</span><span class="or ok">yes</span><span class="ow">An acquired company's Angular app must be embedded in your React shell. Or one team legitimately needs to migrate to a new framework while others stay on the old one.</span></div>
-    <div class="orow"><span class="ol">owned verticals</span><span class="or ok">yes</span><span class="ow">Teams own full vertical slices (checkout, catalog, auth) with different SLAs, different deployment frequencies, and different tech stacks. Monolith coupling actively prevents this ownership.</span></div>
-    <div class="at" style="margin-top:10px"><strong>The correct path for 8 engineers:</strong><br>
-    1. Strong monorepo structure with clear package boundaries (<code>packages/checkout</code>, <code>packages/catalog</code>)<br>
-    2. Separate CI jobs per package with affected-only builds (Nx, Turborepo)<br>
-    3. Strict interface contracts between packages — import only from public API, never internals<br>
-    4. This gives you 80% of MFE's team-autonomy benefits with 10% of the operational complexity<br><br>
-    Revisit MFEs when: the team triples and deployment coordination becomes a measurable productivity drag. At that point, the monorepo package boundaries make migration to MFEs straightforward — the interfaces are already defined.</div>
-    <div class="warn">MFEs increase your operational surface area significantly: multiple build pipelines, a manifest service, shared dependency version negotiation, cross-MFE debugging complexity, and local development requiring multiple running servers. These costs are worth it at scale. They are not worth it for 8 engineers — they will slow the team down and produce no meaningful benefit.</div>
+<!-- Q6 -->
+<div class="q-card">
+  <div class="q-meta">
+    <span class="q-num">Q6</span>
+    <span class="badge b-arch">architecture</span>
+    <span class="badge b-must">must-know</span>
+  </div>
+  <div class="q-text">The hardest micro-frontend question: when should you NOT use micro-frontends? A startup CTO asks you to evaluate whether their 8-engineer frontend team should adopt MFE architecture for their React monolith. Give a structured recommendation framework including the specific signals that mean "yes, now" vs "not yet."</div>
+  <button class="reveal-btn" onclick="tog('a6',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+    Reveal answer
+  </button>
+  <div class="answer" id="a6">
+    <div class="expectation"><strong>Senior expectation:</strong> Must push back on the premise â€” most teams adopting MFEs are not at the scale that justifies them. Must give concrete team/org size thresholds. Must identify the two genuine problems MFEs solve (team autonomy at scale, tech heterogeneity) and show that neither applies to an 8-engineer team.</div>
+    <div class="ans-body">
+      Micro-frontends solve exactly two problems: (1) team deployment autonomy at scale, (2) technology heterogeneity. For an 8-engineer team, neither problem exists yet.<br><br>
+      <strong>Signals: "not yet" â€” current state (8 engineers):</strong>
+    </div>
+    <div class="cmp-row"><span class="cmp-label">deployment</span><span class="cmp-verdict no">no</span><span class="cmp-desc">8 engineers can coordinate a release in a standup. Deployment blocking is not real pain yet â€” it is hypothetical future pain.</span></div>
+    <div class="cmp-row"><span class="cmp-label">team ownership</span><span class="cmp-verdict no">no</span><span class="cmp-desc">Clear feature ownership in a monorepo with good folder structure solves 90% of team autonomy problems without runtime complexity.</span></div>
+    <div class="cmp-row"><span class="cmp-label">build time</span><span class="cmp-verdict no">no</span><span class="cmp-desc">Build times become a problem at much larger codebase scale. Module Federation adds build complexity â€” you are solving a problem you don't have.</span></div>
+    <div class="cmp-row"><span class="cmp-label">tech debt</span><span class="cmp-verdict no">no</span><span class="cmp-desc">MFEs do not reduce existing tech debt â€” they add an integration layer on top of it. "Our code is messy" is not a MFE problem.</span></div>
+    <div class="ans-body" style="margin-top:1rem;"><strong>Signals: "yes, now" â€” typically 50+ engineers, multiple product teams:</strong></div>
+    <div class="cmp-row"><span class="cmp-label">release blocking</span><span class="cmp-verdict ok">yes</span><span class="cmp-desc">Team A's broken PR is blocking Team B's hotfix weekly. The shared deployment pipeline is the bottleneck.</span></div>
+    <div class="cmp-row"><span class="cmp-label">team scale</span><span class="cmp-verdict ok">yes</span><span class="cmp-desc">5+ independent product teams, each with their own roadmap. Coordinating a shared frontend release across 5 teams is a project management nightmare.</span></div>
+    <div class="cmp-row"><span class="cmp-label">tech diversity</span><span class="cmp-verdict ok">yes</span><span class="cmp-desc">An acquired company's Angular app must be embedded in your React shell. Or one team legitimately needs to migrate frameworks while others stay on the old one.</span></div>
+    <div class="cmp-row"><span class="cmp-label">owned verticals</span><span class="cmp-verdict ok">yes</span><span class="cmp-desc">Teams own full vertical slices with different SLAs and deployment frequencies. Monolith coupling actively prevents this ownership.</span></div>
+    <div class="ans-body" style="margin-top:1rem;">
+      <strong>The correct path for 8 engineers:</strong><br>
+      1. Strong monorepo structure with clear package boundaries (<code>packages/checkout</code>, <code>packages/catalog</code>)<br>
+      2. Separate CI jobs per package with affected-only builds (Nx, Turborepo)<br>
+      3. Strict interface contracts between packages â€” import only from public API, never internals<br>
+      4. This gives you 80% of MFE's team-autonomy benefits with 10% of the operational complexity<br><br>
+      Revisit MFEs when the team triples and deployment coordination becomes a measurable productivity drag. The monorepo package boundaries make migration to MFEs straightforward â€” the interfaces are already defined.
+    </div>
+    <div class="warn">MFEs increase your operational surface area significantly: multiple build pipelines, a manifest service, shared dependency version negotiation, cross-MFE debugging, and local dev requiring multiple running servers. These costs are worth it at scale. They are not worth it for 8 engineers.</div>
   </div>
 </div>
 
-<div class="foot">
-  <span style="font-weight:500;color:var(--color-text-primary)">Score guide:</span> Q1 is the integration strategy foundation — vague answers here reveal pattern knowledge without production experience. Q2 is the Module Federation internals test — singleton sharing is the make-or-break detail. Q3 (cross-MFE communication) is the most architecturally nuanced question — the URL-as-state-store insight is a principal-level signal. Q4 (CSS isolation) catches engineers who've only read about MFEs but never debugged style leakage. Q5 (deployment pipeline) is where senior separates from staff — the manifest-driven versioning and caching problem are real production incidents. Q6 is the most important: knowing when NOT to use a pattern is the highest signal of architectural maturity.
-  <div style="margin-top:10px;display:flex;gap:16px;flex-wrap:wrap">
-    <button onclick="sendPrompt('Give me a senior-level assessment question on: SSR vs SSG vs CSR trade-offs (Next.js)')" style="font-size:12px;color:var(--color-text-info);background:none;border:none;cursor:pointer;padding:0">Next: SSR vs SSG vs CSR ↗</button>
-    <button onclick="sendPrompt('Give me a senior-level assessment question on: Security — XSS, CSRF, CORS, CSP headers')" style="font-size:12px;color:var(--color-text-info);background:none;border:none;cursor:pointer;padding:0">Or: Security — XSS, CSRF, CORS ↗</button>
-  </div>
-</div>
+<div class="footer">
+  <strong>Study tip:</strong> For each question, try answering out loud before revealing. Micro-frontend interviews at senior level test whether you've actually debugged the shared singleton problem and the remoteEntry caching incident â€” not just whether you've read the Webpack docs.
 </div>
 
 <script>
-function tog(id,btn){
-  var box=document.getElementById(id);
-  var open=box.classList.toggle('open');
-  btn.innerHTML=open
-    ?'<i class="ti ti-chevron-up" aria-hidden="true"></i>Hide answer'
-    :'<i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer';
-}
+  function tog(id, btn) {
+    var box = document.getElementById(id);
+    var isOpen = box.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+    btn.innerHTML = isOpen
+      ? '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>Hide answer'
+      : '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>Reveal answer';
+  }
 </script>
+</body>
+</html>

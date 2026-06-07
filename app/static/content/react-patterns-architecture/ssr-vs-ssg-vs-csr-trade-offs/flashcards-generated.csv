@@ -1,6 +1,13 @@
-"question","answer","level"
-"What is the primary objective of SSR vs SSG vs CSR trade-offs (Next.js)?","Define the mechanism and link it to reliability/performance impact.","foundational"
-"Which failure mode should be mentioned first for SSR vs SSG vs CSR trade-offs (Next.js)?","Name one realistic edge case and describe mitigation.","foundational"
-"How would you validate SSR vs SSG vs CSR trade-offs (Next.js) after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
-"What trade-off appears in SSR vs SSG vs CSR trade-offs (Next.js) decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
-"How do you explain react-patterns-architecture/ssr-vs-ssg-vs-csr-trade-offs to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"
+Question,Answer
+What is SSR in Next.js?,Server-Side Rendering: pages are rendered on the server at request time.
+What is SSG in Next.js?,Static Site Generation: pages are rendered at build time as static HTML.
+What is CSR in Next.js?,Client-Side Rendering: pages are rendered in the browser after JavaScript loads.
+When should you use SSR?,For dynamic, user-specific, or frequently updated content.
+When should you use SSG?,For static content that rarely changes, like blogs or docs.
+When should you use CSR?,For highly interactive, app-like pages where SEO is not a priority.
+What is a trade-off of SSR?,Higher server load and latency compared to SSG.
+What is a trade-off of SSG?,Not suitable for dynamic or user-specific content unless using ISR.
+Why is CSR bad for SEO?,Because content is rendered in the browser and may not be seen by search engines.
+How do you implement SSR in Next.js?,Use getServerSideProps in your page component.
+How do you implement SSG in Next.js?,Use getStaticProps in your page component.
+How do you implement CSR in Next.js?,Use useEffect to fetch data on the client side.

@@ -268,7 +268,8 @@
 		cursor: pointer;
 	}
 
-	@media (max-width: 980px) {
+	/* ── Tablet + smaller: single-column layout (≤ 1024px) ── */
+	@media (max-width: 1024px) {
 		.layout {
 			grid-template-columns: 1fr;
 		}
@@ -278,15 +279,41 @@
 		}
 	}
 
-	@media (max-width: 640px) {
+	/* ── Phablets & phones (≤ 768px): show mobile topbar & drawer ── */
+	@media (max-width: 768px) {
 		.app-shell {
-			padding: 0.75rem;
-			gap: 0.75rem;
+			padding: 0.9rem;
+			gap: 0.9rem;
 		}
 
 		.mobile-topbar {
 			display: flex;
 			align-items: center;
+		}
+	}
+
+	/* ── Small phones (≤ 480px) ── */
+	@media (max-width: 480px) {
+		.app-shell {
+			padding: 0.75rem;
+			gap: 0.75rem;
+		}
+
+		.mobile-menu-btn {
+			font-size: 0.88rem;
+		}
+	}
+
+	/* ── Extra small phones (≤ 360px) ── */
+	@media (max-width: 360px) {
+		.app-shell {
+			padding: 0.5rem;
+			gap: 0.5rem;
+		}
+
+		.mobile-menu-btn {
+			font-size: 0.82rem;
+			padding: 0.45rem 0.7rem;
 		}
 	}
 </style>

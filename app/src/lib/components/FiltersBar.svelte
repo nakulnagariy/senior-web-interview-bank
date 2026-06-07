@@ -50,7 +50,8 @@
 		border-color: #1a2437;
 	}
 
-	@media (max-width: 640px) {
+	/* ── Phablets & phones (≤ 768px): horizontal scroll ── */
+	@media (max-width: 768px) {
 		.filters {
 			flex-wrap: nowrap;
 			overflow-x: auto;
@@ -66,7 +67,24 @@
 		button {
 			padding: 0.4rem 0.75rem;
 			font-size: 0.85rem;
-			min-height: 36px;
+			min-height: 38px;
+		}
+	}
+
+	/* ── Small phones (≤ 480px) ── */
+	@media (max-width: 480px) {
+		button {
+			padding: 0.38rem 0.65rem;
+			font-size: 0.82rem;
+		}
+	}
+
+	/* ── Extra small phones (≤ 360px) ── */
+	@media (max-width: 360px) {
+		button {
+			padding: 0.35rem 0.55rem;
+			font-size: 0.78rem;
+			min-height: 34px;
 		}
 	}
 </style>
