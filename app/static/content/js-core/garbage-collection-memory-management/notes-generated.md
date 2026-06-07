@@ -1,27 +1,35 @@
-# Garbage collection & memory management
+# Garbage Collection & Memory Management
 
-## Interview Lens
-- Focus level: Applied
-- Route slug: js-core/garbage-collection-memory-management
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is Garbage Collection?
+- Garbage collection (GC) is the automatic process of reclaiming memory that is no longer reachable or needed by a program.
+- In JavaScript, the engine (e.g., V8, SpiderMonkey) handles GC, so developers don't manually free memory.
 
-## Core Mental Model
-Garbage collection & memory management should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## How Does It Work?
+- **Reachability:** An object is "reachable" if it can be accessed from the root (global object, stack, or current execution context).
+- **Mark-and-Sweep:** The most common algorithm. The GC marks all reachable objects, then sweeps and frees memory for unreachable ones.
+- **Generational GC:** Divides memory into "young" and "old" generations for more efficient collection.
 
-## Senior Discussion Anchors
-1. What breaks first when garbage collection & memory management is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Common Memory Leaks
+- **Global variables:** Accidentally keeping references in the global scope.
+- **Closures:** Retaining references to large objects in closures.
+- **Detached DOM nodes:** Keeping references to removed DOM elements.
+- **Timers/Intervals:** Not clearing setInterval or setTimeout.
+- **Event listeners:** Not removing listeners from DOM nodes.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Best Practices
+- Nullify references when no longer needed.
+- Remove event listeners and timers on cleanup.
+- Use tools (Chrome DevTools, heap snapshots) to detect leaks.
 
-## Whiteboard Drill
-1. Explain Garbage collection & memory management in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for garbage-collection-memory-management.
-3. List two metrics you would track to verify the approach in production.
+## Example
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Garbage collection & memory management.
+```js
+let obj = { data: new Array(1000000).fill('x') };
+obj = null; // Eligible for GC
+```
+
+### Summary
+- GC is crucial for memory management in JavaScript.
+- Understanding how it works helps prevent memory leaks and optimize performance.
+- GC is automatic, but developers must avoid patterns that keep objects alive unnecessarily.
+- Memory leaks can degrade performance and crash apps.

@@ -1,6 +1,9 @@
-"question","answer","level"
-"What is the primary objective of Arrow function vs regular function?","Define the mechanism and link it to reliability/performance impact.","applied"
-"Which failure mode should be mentioned first for Arrow function vs regular function?","Name one realistic edge case and describe mitigation.","applied"
-"How would you validate Arrow function vs regular function after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
-"What trade-off appears in Arrow function vs regular function decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
-"How do you explain js-core/arrow-function-vs-regular-function to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"
+Question,Answer
+Do arrow functions have their own this?,No, they inherit this from their lexical scope.
+Can arrow functions be used as constructors?,No, they throw an error if called with new.
+Do arrow functions have their own arguments object?,No, they do not.
+How is this determined in regular functions?,By how the function is called (default, implicit, explicit, new).
+When should you use arrow functions?,For callbacks, lexical this, and concise syntax.
+When should you use regular functions?,When you need your own this, as constructors, or as generators.
+Can arrow functions be generator functions?,No, only regular functions can be generators.
+Give an example where arrow and regular functions behave differently with this.,See object method example in notes.

@@ -1,27 +1,53 @@
-# Deep clone - structuredClone vs JSON vs lodash
+# Deep Clone: structuredClone vs JSON vs lodash
 
-## Interview Lens
-- Focus level: Foundational
-- Route slug: js-core/deep-clone-structuredclone-vs-json-vs-lodash
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is Deep Cloning?
+- Deep cloning creates a new object with all nested objects/arrays also cloned, not just references.
+- Used to avoid mutation bugs and ensure true data isolation.
 
-## Core Mental Model
-Deep clone - structuredClone vs JSON vs lodash should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Methods
 
-## Senior Discussion Anchors
-1. What breaks first when deep clone - structuredclone vs json vs lodash is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+### 1. structuredClone (Native)
+- Modern, built-in browser API.
+- Handles most types: objects, arrays, Dates, Maps, Sets, RegExps, circular references, and more.
+- Does **not** clone functions, DOM nodes, or objects with non-cloneable types.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+### 2. JSON.parse(JSON.stringify(obj))
+- Serializes to JSON and parses back.
+- Fast and simple, but:
+  - Loses functions, `undefined`, `Infinity`, `NaN`, Dates, Maps, Sets, RegExps, and circular references.
+  - Only works for JSON-safe data.
 
-## Whiteboard Drill
-1. Explain Deep clone - structuredClone vs JSON vs lodash in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for deep-clone-structuredclone-vs-json-vs-lodash.
-3. List two metrics you would track to verify the approach in production.
+### 3. lodash.cloneDeep
+- Handles most JS types, including arrays, objects, Dates, Maps, Sets, and RegExps.
+- Does **not** handle functions or DOM nodes.
+- Handles circular references.
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Deep clone - structuredClone vs JSON vs lodash.
+## Comparison Table
+
+| Feature           | structuredClone | JSON | lodash.cloneDeep |
+|-------------------|----------------|------|------------------|
+| Dates             | Yes            | No   | Yes              |
+| Maps/Sets         | Yes            | No   | Yes              |
+| RegExp            | Yes            | No   | Yes              |
+| Circular refs     | Yes            | No   | Yes              |
+| Functions         | No             | No   | No               |
+| Performance       | Fast           | Fast | Slower           |
+| Native            | Yes            | Yes  | No (library)     |
+
+## Example
+
+```js
+const obj = { a: 1, b: { c: 2 } };
+const clone1 = structuredClone(obj);
+const clone2 = JSON.parse(JSON.stringify(obj));
+const clone3 = _.cloneDeep(obj);
+```
+
+### Summary
+- Use `structuredClone` for modern, robust deep cloning of most types.
+- Use `JSON` for simple, JSON-safe data when performance is critical and loss of non
+-JSON types is acceptable.
+- Use `lodash.cloneDeep` for compatibility with older environments or when you need to clone complex
+- Use `structuredClone` if available and you need to handle complex/circular data.
+- Use `JSON` for simple, JSON-safe data.
+- Use `lodash.cloneDeep` for legacy support or when you need to handle more types than JSON.

@@ -1,27 +1,43 @@
-# Code splitting - React.lazy, Suspense, dynamic import
+# Code Splitting: React.lazy, Suspense, Dynamic Import
 
-## Interview Lens
-- Focus level: Applied
-- Route slug: react-patterns-architecture/code-splitting-react-lazy-suspense-dynamic-import
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is Code Splitting?
+- Code splitting is a technique to break up a large JavaScript bundle into smaller chunks that are loaded on demand.
+- Improves performance by reducing initial load time and only loading code when needed.
 
-## Core Mental Model
-Code splitting - React.lazy, Suspense, dynamic import should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## React.lazy
+- `React.lazy` enables dynamic import of components.
+- Components are loaded only when they are rendered, not at initial load.
 
-## Senior Discussion Anchors
-1. What breaks first when code splitting - react.lazy, suspense, dynamic import is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Suspense
+- `<Suspense>` is a React component that displays a fallback UI while a lazy-loaded component is being fetched.
+- Works with `React.lazy` and other data-fetching libraries that support Suspense.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Dynamic Import
+- `import()` is a JavaScript feature for loading modules asynchronously.
+- Used by `React.lazy` under the hood.
 
-## Whiteboard Drill
-1. Explain Code splitting - React.lazy, Suspense, dynamic import in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for code-splitting-react-lazy-suspense-dynamic-import.
-3. List two metrics you would track to verify the approach in production.
+## Example
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Code splitting - React.lazy, Suspense, dynamic import.
+```js
+const LazyComponent = React.lazy(() => import('./MyComponent'));
+
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LazyComponent />
+    </Suspense>
+  );
+}
+```
+
+### Trade-offs
+- Code splitting improves performance but adds complexity (loading states, error boundaries).
+- Not all components can be lazy-loaded (e.g., event handlers, SSR).
+
+### Summary
+- Code splitting improves performance by loading code on demand.
+- Use `React.lazy` to dynamically import components and `<Suspense>` to handle loading states
+- Dynamic imports allow for flexible and efficient code loading strategies in React applications.
+- Code splitting is essential for optimizing large applications and improving user experience by reducing initial load times.
+- Always consider the user experience when implementing code splitting, ensuring that loading states are handled gracefully and that critical content is prioritized for loading.
+- Monitor performance and user feedback after implementing code splitting to ensure it meets your application's needs and adjust as necessary.

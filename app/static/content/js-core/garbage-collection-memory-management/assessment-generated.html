@@ -3,32 +3,68 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Garbage collection & memory management - Assessment</title>
-  <!-- shared CSS injected by TopicViewer -->
+  <title>Garbage Collection & Memory Management - Assessment</title>
+  <!-- shared CSS injected by Topic
+Viewer -->
 </head>
 <body>
   <div class="wrap">
-    <h1>Garbage collection & memory management - Senior Assessment</h1>
-    <p class="meta">Topic slug: js-core/garbage-collection-memory-management | Variant seed: 13</p>
+    <h1>Garbage Collection & Memory Management - Senior Assessment</h1>
+    <p class="meta">Topic slug: js-core/garbage-collection-memory-management | Variant seed: 61</p>
 
     <div class="card">
-      <div class="q">Q1. How would you evaluate Garbage collection & memory management when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
+      <div class="q">Q1. Explain how the mark-and-sweep garbage collection algorithm works in JavaScript.</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Describes marking all reachable objects, then sweeping and freeing memory for unreachable ones.</p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q2. Which risk appears first if garbage-collection-memory-management is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
+      <div class="q">Q2. What is a memory leak? Give three common causes in JavaScript applications.</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Memory leak: memory that is no longer needed but not freed. Causes: global variables, closures holding references, detached DOM nodes, uncleared timers, event listeners.</p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in Garbage collection & memory management to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
+      <div class="q">Q3. How can you detect and debug memory leaks in a web application?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Use Chrome DevTools (heap snapshots, allocation instrumentation), monitor memory usage, look for detached DOM nodes, and check for unreleased references.</p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>garbage-collection-memory-management</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+      <div class="q">Q4. Provide a code sample that demonstrates a memory leak and how to fix it.</div>
+      <details><summary>Expected answer signal</summary>
+        <p>
+<pre>
+{`// Memory leak: event listener not removed
+function setup() {
+  const el = document.getElementById('btn');
+  function handler() { /* ... */ }
+  el.addEventListener('click', handler);
+  // el is removed from DOM, but handler keeps it in memory
+}
+
+// Fix:
+function setup() {
+  const el = document.getElementById('btn');
+  function handler() { /* ... */ }
+  el.addEventListener('click', handler);
+  // On cleanup:
+  el.removeEventListener('click', handler);
+}
+`}
+</pre>
+        </p>
+      </details>
+    </div>
+
+    <div class="card">
+      <div class="q">Q5. What is generational garbage collection and why is it used?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Divides memory into young and old generations; collects short-lived objects more frequently for efficiency.</p>
+      </details>
     </div>
   </div>
 </body>

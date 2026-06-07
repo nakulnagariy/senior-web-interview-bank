@@ -1,34 +1,18 @@
-/**
- * Generated drill snippet for: map / filter / reduce - chained output questions
- * Slug: arrays-objects/map-filter-reduce-chained-output-questions
- */
+// Example 1: Chaining map, filter, reduce
+const arr = [2, 5, 8, 11];
+const result = arr
+  .filter(x => x % 2 === 1)    // [5, 11]
+  .map(x => x * 2)             // [10, 22]
+  .reduce((a, b) => a + b, 0); // 32
 
-const scenario = {
-  topic: "map / filter / reduce - chained output questions",
-  slug: "arrays-objects/map-filter-reduce-chained-output-questions",
-  seed: 27
-};
+// Example 2: Order matters
+const arr2 = [1, 2, 3];
+const res1 = arr2.map(x => x * 2).filter(x => x > 3); // [4, 6]
+const res2 = arr2.filter(x => x > 1).map(x => x * 2); // [4, 6]
 
-function drillMapFilterReduceChainedOutputQuestions(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
-}
-
-const output = drillMapFilterReduceChainedOutputQuestions({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// Example 3: Another chain
+const arr3 = [1, 2, 3, 4];
+const result3 = arr3
+  .map(x => x + 1)             // [2, 3, 4, 5]
+  .filter(x => x % 2 === 0)    // [2, 4]
+  .reduce((a, b) => a * b, 1); // 8

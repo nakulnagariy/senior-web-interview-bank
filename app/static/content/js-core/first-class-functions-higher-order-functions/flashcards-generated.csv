@@ -1,6 +1,7 @@
-"question","answer","level"
-"What is the primary objective of First-class functions & higher-order functions?","Define the mechanism and link it to reliability/performance impact.","advanced"
-"Which failure mode should be mentioned first for First-class functions & higher-order functions?","Name one realistic edge case and describe mitigation.","advanced"
-"How would you validate First-class functions & higher-order functions after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
-"What trade-off appears in First-class functions & higher-order functions decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
-"How do you explain js-core/first-class-functions-higher-order-functions to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"
+Question,Answer
+What is a first-class function?,A function that can be assigned, passed, or returned like any other value.
+What is a higher-order function?,A function that takes or returns another function.
+Give two examples of higher-order functions in JS.,Array.prototype.map, setTimeout
+Why are higher-order functions important?,They enable abstraction, code reuse, and composition.
+Give an example of a higher-order function returning a function.,function makeAdder(x) { return function(y) { return x + y; }; }
+How do first-class functions enable middleware patterns?,They allow functions to be passed and composed, enabling flexible APIs.

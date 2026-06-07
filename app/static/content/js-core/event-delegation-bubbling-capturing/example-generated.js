@@ -1,34 +1,21 @@
-/**
- * Generated drill snippet for: Event delegation, bubbling, capturing
- * Slug: js-core/event-delegation-bubbling-capturing
- */
+// Event delegation for a list
+document.getElementById('list').addEventListener('click', function(e) {
+  if (e.target.matches('li')) {
+    console.log('List item clicked:', e.target.textContent);
+  }
+});
 
-const scenario = {
-  topic: "Event delegation, bubbling, capturing",
-  slug: "js-core/event-delegation-bubbling-capturing",
-  seed: 18
-};
+// Bubbling vs capturing
+const parent = document.getElementById('parent');
+const child = document.getElementById('child');
 
-function drillEventDelegationBubblingCapturing(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
+parent.addEventListener('click', () => console.log('Parent bubble'));
+parent.addEventListener('click', () => console.log('Parent capture'), true);
+child.addEventListener('click', () => console.log('Child bubble'));
+child.addEventListener('click', () => console.log('Child capture'), true);
 
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
-}
-
-const output = drillEventDelegationBubblingCapturing({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// Clicking child logs:
+// Parent capture
+// Child capture
+// Child bubble
+// Parent bubble

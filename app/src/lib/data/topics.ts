@@ -192,7 +192,8 @@ const RAW_DATA: RawCategory[] = [
 			{ n: 'Lazy loading - images, routes, components', p: 'high', type: 'concept' },
 			{ n: 'Virtualization - react-window, when/why', p: 'high', type: 'concept' },
 			{ n: 'Security - XSS, CSRF, CORS, CSP headers', p: 'must', type: 'concept' },
-			{ n: 'HTTP methods & REST constraints', p: 'must', type: 'concept' }
+			{ n: 'HTTP methods & REST constraints', p: 'must', type: 'concept' },
+			{ n: 'web app performance', p: 'must', type: 'concept' }
 		]
 	},
 	{
