@@ -1,34 +1,42 @@
-/**
- * Generated drill snippet for: Redux Toolkit - slices, thunks, RTK Query
- * Slug: react-patterns-architecture/redux-toolkit-slices-thunks-rtk-query
- */
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const scenario = {
-  topic: "Redux Toolkit - slices, thunks, RTK Query",
-  slug: "react-patterns-architecture/redux-toolkit-slices-thunks-rtk-query",
-  seed: 57
-};
+// Slice
+export const todosSlice = createSlice({
+  name: 'todos',
+  initialState: [],
+  reducers: {
+    addTodo: (state, action) => { state.push(action.payload); }
+  }
+});
 
-function drillReduxToolkitSlicesThunksRtkQuery(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
+// Thunk
+export const fetchTodos = createAsyncThunk('todos/fetch', async () => {
+  const res = await fetch('/api/todos');
+  return res.json();
+});
 
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+// RTK Query
+export const api = createApi({
+  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  endpoints: (builder) => ({
+    getTodos: builder.query({
+      query: () => 'todos'
+    })
+  })
+});
+
+// Usage in a component (RTK Query)
+import React from 'react';
+import { useGetTodosQuery } from './api';
+
+export function TodosList() {
+  const { data, error, isLoading } = useGetTodosQuery();
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error!</div>;
+  return (
+    <ul>
+      {data.map(todo => <li key={todo.id}>{todo.text}</li>)}
+    </ul>
+  );
 }
-
-const output = drillReduxToolkitSlicesThunksRtkQuery({ candidate: 'senior', mode: 'discussion' });
-console.log(output);

@@ -1,6 +1,10 @@
-"question","answer","level"
-"What is the primary objective of Deep clone - structuredClone vs JSON vs lodash?","Define the mechanism and link it to reliability/performance impact.","foundational"
-"Which failure mode should be mentioned first for Deep clone - structuredClone vs JSON vs lodash?","Name one realistic edge case and describe mitigation.","foundational"
-"How would you validate Deep clone - structuredClone vs JSON vs lodash after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
-"What trade-off appears in Deep clone - structuredClone vs JSON vs lodash decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
-"How do you explain js-core/deep-clone-structuredclone-vs-json-vs-lodash to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"
+Question,Answer
+What is deep cloning?,Creating a new object with all nested structures cloned, not just references.
+Does structuredClone handle circular references?,Yes.
+Does JSON.parse(JSON.stringify(obj)) handle Dates?,No, Dates become strings.
+Does lodash.cloneDeep handle Maps and Sets?,Yes.
+What happens to functions when using structuredClone or JSON?,They are not cloned; structuredClone throws, JSON omits.
+When should you use structuredClone?,For complex/circular data in modern environments.
+When should you use JSON for cloning?,For simple, JSON-safe data.
+When should you use lodash.cloneDeep?,For legacy support or when structuredClone is unavailable.
+Give an example of deep cloning with structuredClone.,const clone = structuredClone(obj);

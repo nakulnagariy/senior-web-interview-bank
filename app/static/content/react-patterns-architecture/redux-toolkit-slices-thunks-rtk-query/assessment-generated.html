@@ -9,26 +9,68 @@
 <body>
   <div class="wrap">
     <h1>Redux Toolkit - slices, thunks, RTK Query - Senior Assessment</h1>
-    <p class="meta">Topic slug: react-patterns-architecture/redux-toolkit-slices-thunks-rtk-query | Variant seed: 57</p>
+    <p class="meta">Topic slug: react-patterns-architecture/redux-toolkit-slices-thunks-rtk-query | Variant seed: 61</p>
 
     <div class="card">
-      <div class="q">Q1. How would you evaluate Redux Toolkit - slices, thunks, RTK Query when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
+      <div class="q">Q1. What is a slice in Redux Toolkit and how does it improve Redux code structure?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Explains that a slice groups state, reducers, and actions for a feature, reducing boilerplate and improving modularity.</p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q2. Which risk appears first if redux-toolkit-slices-thunks-rtk-query is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
+      <div class="q">Q2. How does <code>createAsyncThunk</code> simplify async logic compared to manual thunks?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Describes that <code>createAsyncThunk</code> generates pending/fulfilled/rejected actions, handles promise lifecycles, and integrates with slices via extraReducers.</p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in Redux Toolkit - slices, thunks, RTK Query to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
+      <div class="q">Q3. What is RTK Query and how does it differ from traditional Redux data fetching?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Explains that RTK Query is a data fetching and caching tool that generates endpoints and hooks, manages cache, and reduces the need for manual thunks/selectors.</p>
+      </details>
+
     </div>
 
     <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>redux-toolkit-slices-thunks-rtk-query</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+      <div class="q">Q4. Provide a code sample that demonstrates a slice, a thunk, and an RTK Query endpoint for a "todos" feature.</div>
+      <details><summary>Expected answer signal</summary>
+        <p>
+<pre>
+{`// Slice
+const todosSlice = createSlice({
+  name: 'todos',
+  initialState: [],
+  reducers: {
+    addTodo: (state, action) => { state.push(action.payload); }
+  }
+});
+
+// Thunk
+export const fetchTodos = createAsyncThunk('todos/fetch', async () => {
+  const res = await fetch('/api/todos');
+  return res.json();
+});
+
+// RTK Query
+const api = createApi({
+  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  endpoints: (builder) => ({
+    getTodos: builder.query({ query: () => 'todos' })
+  })
+});
+`}
+</pre>
+        </p>
+      </details>
+    </div>
+
+    <div class="card">
+      <div class="q">Q5. What are the trade-offs of using RTK Query compared to manual thunks and selectors?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Mentions that RTK Query reduces boilerplate and manages cache, but adds abstraction and may not fit all custom logic or non-CRUD workflows.</p>
+      </details>
     </div>
   </div>
 </body>

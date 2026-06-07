@@ -1,34 +1,19 @@
-/**
- * Generated drill snippet for: First-class functions & higher-order functions
- * Slug: js-core/first-class-functions-higher-order-functions
- */
+// First-class function: assign to variable
+const greet = function(name) { return 'Hello, ' + name; };
 
-const scenario = {
-  topic: "First-class functions & higher-order functions",
-  slug: "js-core/first-class-functions-higher-order-functions",
-  seed: 17
-};
-
-function drillFirstClassFunctionsHigherOrderFunctions(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+// Higher-order function: takes a function as argument
+function repeat(fn, n) {
+  for (let i = 0; i < n; i++) fn();
 }
+repeat(() => console.log('Hi'), 3);
 
-const output = drillFirstClassFunctionsHigherOrderFunctions({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// Higher-order function: returns a function
+function makeMultiplier(x) {
+  return function(y) { return x * y; };
+}
+const triple = makeMultiplier(3);
+console.log(triple(4)); // 12
+
+// Standard library examples
+[1, 2, 3].map(x => x * 2); // [2, 4, 6]
+setTimeout(() => console.log('Timeout!'), 1000);

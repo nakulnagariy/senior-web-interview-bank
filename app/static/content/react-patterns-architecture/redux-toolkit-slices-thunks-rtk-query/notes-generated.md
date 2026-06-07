@@ -1,27 +1,52 @@
-# Redux Toolkit - slices, thunks, RTK Query
+# Redux Toolkit: Slices, Thunks, RTK Query
 
-## Interview Lens
-- Focus level: Foundational
-- Route slug: react-patterns-architecture/redux-toolkit-slices-thunks-rtk-query
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## Slices
+- A "slice" is a collection of Redux reducer logic and actions for a single feature, created with `createSlice`.
+- Slices encapsulate state, reducers, and action creators, reducing boilerplate.
 
-## Core Mental Model
-Redux Toolkit - slices, thunks, RTK Query should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Thunks
+- Thunks are functions that handle async logic (side effects) in Redux.
+- With Redux Toolkit, use `createAsyncThunk` to generate thunks that handle pending/fulfilled/rejected states automatically.
+- Thunks are dispatched like actions and can update state via extra reducers.
 
-## Senior Discussion Anchors
-1. What breaks first when redux toolkit - slices, thunks, rtk query is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## RTK Query
+- RTK Query is a data fetching and caching tool built into Redux Toolkit.
+- It generates endpoints, hooks, and manages caching, invalidation, and background refetching.
+- Reduces the need for manual thunks/selectors for server data.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example
 
-## Whiteboard Drill
-1. Explain Redux Toolkit - slices, thunks, RTK Query in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for redux-toolkit-slices-thunks-rtk-query.
-3. List two metrics you would track to verify the approach in production.
+```js
+// Slice
+const todosSlice = createSlice({
+  name: 'todos',
+  initialState: [],
+  reducers: {
+    addTodo: (state, action) => { state.push(action.payload); }
+  }
+});
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Redux Toolkit - slices, thunks, RTK Query.
+// Thunk
+export const fetchTodos = createAsyncThunk('todos/fetch', async () => {
+  const res = await fetch('/api/todos');
+  return res.json();
+});
+
+// RTK Query
+const api = createApi({
+  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  endpoints: (builder) => ({
+    getTodos: builder.query({ query: () => 'todos' })
+  })
+});
+```
+
+### Summary
+- Redux Toolkit simplifies Redux development with slices, thunks, and RTK Query.
+- Slices reduce boilerplate by combining reducers and actions.
+- Thunks handle async logic and side effects in a structured way.
+- RTK Query provides powerful data fetching and caching capabilities, reducing the need for manual thunks
+- Use Redux Toolkit to write cleaner, more efficient Redux code with less boilerplate and better patterns for async logic and data fetching.
+- RTK Query is especially useful for managing server state, providing built-in caching and invalidation
+- Thunks are still useful for complex async logic that doesn't fit the RTK Query model, but RTK Query can handle most common data fetching scenarios with less code.
+- Overall, Redux Toolkit's features help improve developer experience and maintainability in Redux applications.

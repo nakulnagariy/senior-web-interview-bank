@@ -3,32 +3,80 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Deep clone - structuredClone vs JSON vs lodash - Assessment</title>
+  <title>Deep Clone - structuredClone vs JSON vs lodash - Assessment</title>
   <!-- shared CSS injected by TopicViewer -->
 </head>
 <body>
   <div class="wrap">
-    <h1>Deep clone - structuredClone vs JSON vs lodash - Senior Assessment</h1>
-    <p class="meta">Topic slug: js-core/deep-clone-structuredclone-vs-json-vs-lodash | Variant seed: 15</p>
+    <h1>Deep Clone - structuredClone vs JSON vs lodash - Senior Assessment</h1>
+    <p class="meta">Topic slug: js-core/deep-clone-structuredclone-json-lodash | Variant seed: 61</p>
 
     <div class="card">
-      <div class="q">Q1. How would you evaluate Deep clone - structuredClone vs JSON vs lodash when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
+      <div class="q">Q1. What is deep cloning and why is it important in JavaScript applications?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Deep cloning creates a new object with all nested structures cloned, preventing mutation bugs and ensuring data isolation.</p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q2. Which risk appears first if deep-clone-structuredclone-vs-json-vs-lodash is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
+      <div class="q">Q2. Compare <code>structuredClone</code>, <code>JSON.parse(JSON.stringify(obj))</code>, and <code>lodash.cloneDeep</code> in terms of features and limitations.</div>
+      <details><summary>Expected answer signal</summary>
+        <p>
+          <ul>
+           
+ <li><b>structuredClone:</b> Handles most types, supports circular refs, but not functions/DOM nodes.</li>
+            <li><b>JSON:</b> Fast, but loses functions, Dates, Maps, Sets, RegExps, and fails on circular refs.</li>
+            <li><b>lodash.cloneDeep:</b> Handles most types, supports circular refs, but not functions/DOM nodes, slower than native.</li>
+          </ul>
+        </p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in Deep clone - structuredClone vs JSON vs lodash to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
+      <div class="q">Q3. What happens if you try to deep clone an object with a Date, a function, and a circular reference using each method?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>
+          <ul>
+            <li><b>structuredClone:</b> Clones Date and circular refs, throws on functions.</li>
+            <li><b>JSON:</b> Loses Date (becomes string), omits function, throws on circular refs.</li>
+            <li><b>lodash.cloneDeep:</b> Clones Date and circular refs, skips function.</li>
+          </ul>
+        </p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>deep-clone-structuredclone-vs-json-vs-lodash</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+      <div class="q">Q4. Provide code samples for deep cloning an object using all three methods.</div>
+      <details><summary>Expected answer signal</summary>
+        <p>
+<pre>
+{`const obj = { a: 1, b: { c: 2 } };
+
+// structuredClone
+const clone1 = structuredClone(obj);
+
+// JSON
+const clone2 = JSON.parse(JSON.stringify(obj));
+
+// lodash
+const clone3 = _.cloneDeep(obj);
+`}
+</pre>
+        </p>
+      </details>
+    </div>
+
+    <div class="card">
+      <div class="q">Q5. When should you prefer each method for deep cloning?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>
+          <ul>
+            <li><b>structuredClone:</b> For complex/circular data in modern environments.</li>
+            <li><b>JSON:</b> For simple, JSON-safe data.</li>
+            <li><b>lodash.cloneDeep:</b> For legacy support or when structuredClone is unavailable.</li>
+          </ul>
+        </p>
+      </details>
     </div>
   </div>
 </body>

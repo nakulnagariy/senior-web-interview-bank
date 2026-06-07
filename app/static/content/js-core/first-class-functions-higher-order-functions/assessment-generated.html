@@ -9,26 +9,51 @@
 <body>
   <div class="wrap">
     <h1>First-class functions & higher-order functions - Senior Assessment</h1>
-    <p class="meta">Topic slug: js-core/first-class-functions-higher-order-functions | Variant seed: 17</p>
+    <p class="meta">Topic slug: js-core/first-class-higher-order-functions | Variant seed: 61</p>
 
     <div class="card">
-      <div class="q">Q1. How would you evaluate First-class functions & higher-order functions when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
+      <div class="q">Q1. What does it mean for functions to be "first-class citizens" in JavaScript?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Functions can be assigned to variables, passed as arguments, returned from other
+ functions, and stored in data structures.</p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q2. Which risk appears first if first-class-functions-higher-order-functions is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
+      <div class="q">Q2. Define a higher-order function and give two examples from the JavaScript standard library.</div>
+      <details><summary>Expected answer signal</summary>
+        <p>A function that takes one or more functions as arguments, returns a function, or both. Examples: <code>Array.prototype.map</code>, <code>Array.prototype.filter</code>, <code>setTimeout</code>.</p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in First-class functions & higher-order functions to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
+      <div class="q">Q3. Why are higher-order functions important in functional programming?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>They enable abstraction, code reuse, and composition by allowing functions to operate on other functions.</p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>first-class-functions-higher-order-functions</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+      <div class="q">Q4. Provide a code sample that demonstrates a higher-order function returning a function.</div>
+      <details><summary>Expected answer signal</summary>
+        <p>
+<pre>
+{`function makeMultiplier(x) {
+  return function(y) { return x * y; };
+}
+const double = makeMultiplier(2);
+console.log(double(5)); // 10
+`}
+</pre>
+        </p>
+      </details>
+    </div>
+
+    <div class="card">
+      <div class="q">Q5. How do first-class and higher-order functions enable patterns like middleware or event handling?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>They allow functions to be passed, composed, or wrapped, enabling flexible APIs like middleware chains or event listeners.</p>
+      </details>
     </div>
   </div>
 </body>

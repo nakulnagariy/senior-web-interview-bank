@@ -1,34 +1,22 @@
-/**
- * Generated drill snippet for: Deep clone - structuredClone vs JSON vs lodash
- * Slug: js-core/deep-clone-structuredclone-vs-json-vs-lodash
- */
+// Deep clone with structuredClone
+const obj = { a: 1, b: { c: 2 } };
+const clone1 = structuredClone(obj);
 
-const scenario = {
-  topic: "Deep clone - structuredClone vs JSON vs lodash",
-  slug: "js-core/deep-clone-structuredclone-vs-json-vs-lodash",
-  seed: 15
-};
+// Deep clone with JSON
+const clone2 = JSON.parse(JSON.stringify(obj));
 
-function drillDeepCloneStructuredcloneVsJsonVsLodash(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
+// Deep clone with lodash
+const _ = require('lodash');
+const clone3 = _.cloneDeep(obj);
 
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
-}
+// Edge cases
+const circular = {};
+circular.self = circular;
+// structuredClone(circular); // OK
+// JSON.parse(JSON.stringify(circular)); // Throws
+// _.cloneDeep(circular); // OK
 
-const output = drillDeepCloneStructuredcloneVsJsonVsLodash({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+const withDate = { d: new Date() };
+// structuredClone(withDate).d instanceof Date // true
+// JSON.parse(JSON.stringify(withDate)).d // string
+// _.cloneDeep(withDate).d instanceof Date // true

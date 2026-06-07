@@ -1,6 +1,8 @@
-"question","answer","level"
-"What is the primary objective of Garbage collection & memory management?","Define the mechanism and link it to reliability/performance impact.","applied"
-"Which failure mode should be mentioned first for Garbage collection & memory management?","Name one realistic edge case and describe mitigation.","applied"
-"How would you validate Garbage collection & memory management after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
-"What trade-off appears in Garbage collection & memory management decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
-"How do you explain js-core/garbage-collection-memory-management to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"
+Question,Answer
+What is garbage collection?,Automatic process of reclaiming memory that is no longer reachable.
+What is the mark-and-sweep algorithm?,Marks reachable objects, then sweeps and frees unreachable memory.
+Name three common causes of memory leaks.,Global variables, closures holding references, detached DOM nodes, uncleared timers, event listeners.
+How can you detect memory leaks?,Chrome DevTools heap snapshots, monitoring memory usage, checking for unreleased references.
+How do you fix a memory leak from event listeners?,Remove event listeners on cleanup.
+What is generational garbage collection?,Divides memory into young/old generations; collects short-lived objects more often.
+How do you make an object eligible for GC?,Remove all references to it (e.g., set to null).

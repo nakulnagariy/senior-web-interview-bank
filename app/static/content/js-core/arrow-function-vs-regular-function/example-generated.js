@@ -1,34 +1,24 @@
-/**
- * Generated drill snippet for: Arrow function vs regular function
- * Slug: js-core/arrow-function-vs-regular-function
- */
-
-const scenario = {
-  topic: "Arrow function vs regular function",
-  slug: "js-core/arrow-function-vs-regular-function",
-  seed: 7
+// Arrow vs Regular Function: this binding
+const obj = {
+  value: 42,
+  arrow: () => { console.log(this.value); }, // undefined
+  regular: function() { console.log(this.value); } // 42
 };
+obj.arrow();
+obj.regular();
 
-function drillArrowFunctionVsRegularFunction(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
+// Arrow function cannot be used as constructor
+const Arrow = () => {};
+// new Arrow(); // TypeError: Arrow is not a constructor
 
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+// Regular function as constructor
+function Regular() {
+  this.value = 100;
 }
+const instance = new Regular();
+console.log(instance.value); // 100
 
-const output = drillArrowFunctionVsRegularFunction({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// Arrow function does not have arguments object
+const arrowArgs = () => { console.log(arguments); }; // ReferenceError
+function regularArgs() { console.log(arguments); }
+regularArgs(1, 2, 3); // [1, 2, 3]

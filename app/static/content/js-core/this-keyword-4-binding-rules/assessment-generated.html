@@ -9,26 +9,70 @@
 <body>
   <div class="wrap">
     <h1>this keyword - 4 binding rules - Senior Assessment</h1>
-    <p class="meta">Topic slug: js-core/this-keyword-4-binding-rules | Variant seed: 6</p>
+    <p class="meta">Topic slug: js-core/this-keyword-4-binding-rules | Variant seed: 61</p>
 
     <div class="card">
-      <div class="q">Q1. How would you evaluate this keyword - 4 binding rules when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
+      <div class="q">Q1. List and explain the four binding rules for <code>this</code> in JavaScript, with an example for each.</div>
+      <details><summary>Expected answer signal</summary>
+        <p>
+          <ul>
+            <li><b>Default binding:</b> Function called standalone, <code>this</code> is global or undefined in strict mode.</li>
+            <li><b>Implicit binding:</b> Called as a method, <code>this</code> is the object before the dot.</li>
+            <li><b>Explicit binding:</b> <code>call</code>, <code>apply</code>, <code>bind</code> set <code>this</code> directly.</li>
+            <li><b>New binding:</b> Called with <code>new</code>, <code>this</code> is the new instance.</li>
+          </ul>
+        </p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q2. Which risk appears first if this-keyword-4-binding-rules is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
+      <div class="q">Q2. What is the order of precedence when multiple binding rules could apply?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>New binding &gt; Explicit binding &gt; Implicit binding &gt; Default binding.</p>
+      </details>
+    </
+div>
+
+    <div class="card">
+      <div class="q">Q3. How do arrow functions handle <code>this</code> binding?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Arrow functions do not have their own <code>this</code>; they inherit it from their lexical scope.</p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in this keyword - 4 binding rules to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
+      <div class="q">Q4. Provide a code sample that demonstrates all four binding rules in action.</div>
+      <details><summary>Expected answer signal</summary>
+        <p>
+<pre>
+{`function foo() { console.log(this.name); }
+const obj = { name: 'obj', foo };
+const obj2 = { name: 'obj2' };
+
+// Default binding
+foo(); // undefined (or 'window' in non-strict mode)
+
+// Implicit binding
+obj.foo(); // 'obj'
+
+// Explicit binding
+foo.call(obj2); // 'obj2'
+
+// New binding
+function Bar() { this.name = 'bar'; }
+const b = new Bar();
+console.log(b.name); // 'bar'
+`}
+</pre>
+        </p>
+      </details>
     </div>
 
     <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>this-keyword-4-binding-rules</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+      <div class="q">Q5. What is a common pitfall when using <code>this</code> in callbacks or event handlers, and how can it be avoided?</div>
+      <details><summary>Expected answer signal</summary>
+        <p>Callbacks lose their intended <code>this</code> binding. Fix with <code>bind</code>, arrow functions, or storing <code>this</code> in a variable.</p>
+      </details>
     </div>
   </div>
 </body>

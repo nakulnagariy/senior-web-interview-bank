@@ -1,27 +1,34 @@
-# First-class functions & higher-order functions
+# First-Class Functions & Higher-Order Functions
 
-## Interview Lens
-- Focus level: Advanced
-- Route slug: js-core/first-class-functions-higher-order-functions
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## First-Class Functions
+- Functions are treated as values: they can be assigned to variables, passed as arguments, returned from other functions, and stored in data structures.
+- Enables functional programming patterns and flexible APIs.
 
-## Core Mental Model
-First-class functions & higher-order functions should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Higher-Order Functions
+- A higher-order function is a function that takes one or more functions as arguments, returns a function, or both.
+- Examples: `map`, `filter`, `reduce`, event handlers, middleware.
 
-## Senior Discussion Anchors
-1. What breaks first when first-class functions & higher-order functions is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Why It Matters
+- Enables abstraction, code reuse, and composition.
+- Foundation for callbacks, promises, and functional programming.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example
 
-## Whiteboard Drill
-1. Explain First-class functions & higher-order functions in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for first-class-functions-higher-order-functions.
-3. List two metrics you would track to verify the approach in production.
+```js
+// First-class: assign to variable
+const greet = function(name) { return 'Hello, ' + name; };
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering First-class functions & higher-order functions.
+// Higher-order: takes a function as argument
+function repeat(fn, n) {
+  for (let i = 0; i < n; i++) fn();
+}
+
+// Higher-order: returns a function
+function makeMultiplier(x) {
+  return function(y) { return x * y; };
+}
+```
+
+### Summary
+- First-class functions are a core feature of JavaScript.
+- Higher-order functions enable powerful patterns and abstractions.

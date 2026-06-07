@@ -66,10 +66,14 @@
 		const dy = e.changedTouches[0].clientY - touchStartY;
 		if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 48) {
 			// Horizontal swipe — navigate
+			// preventDefault stops the trailing synthetic click from also firing flip()
+			e.preventDefault();
 			if (dx < 0) goNext();
 			else goPrev();
 		} else if (Math.abs(dx) < 12 && Math.abs(dy) < 12) {
 			// Tap — flip
+			// preventDefault stops the trailing synthetic click from double-flipping the card
+			e.preventDefault();
 			flip();
 		}
 	}
@@ -211,6 +215,9 @@
 		cursor: pointer;
 		outline: none;
 		border-radius: 18px;
+		/* Allow vertical page scroll; claim horizontal gestures for swipe nav.
+		   Also removes the 300ms tap delay on iOS. */
+		touch-action: pan-y;
 	}
 
 	.scene:focus-visible {

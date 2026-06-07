@@ -1,6 +1,9 @@
-"question","answer","level"
-"What is the primary objective of Event delegation, bubbling, capturing?","Define the mechanism and link it to reliability/performance impact.","foundational"
-"Which failure mode should be mentioned first for Event delegation, bubbling, capturing?","Name one realistic edge case and describe mitigation.","foundational"
-"How would you validate Event delegation, bubbling, capturing after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
-"What trade-off appears in Event delegation, bubbling, capturing decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
-"How do you explain js-core/event-delegation-bubbling-capturing to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"
+Question,Answer
+What is event bubbling?,Event flows from the target element up to the root.
+What is event capturing?,Event flows from the root down to the target element.
+How do you attach a handler for the capturing phase?,addEventListener('event', handler, true)
+What is event delegation?,Attaching a single handler to a parent to manage events from multiple children.
+Why use event delegation?,For dynamic lists, better performance, and less memory usage.
+Give a code example of event delegation.,document.getElementById('list').addEventListener('click', function(e) { if (e.target.matches('li')) { ... } });
+What is a pitfall of event delegation?,Doesn't work for non-bubbling events (e.g., focus, blur).
+How can you determine which child was clicked in event delegation?,Check e.target or use e.target.matches().

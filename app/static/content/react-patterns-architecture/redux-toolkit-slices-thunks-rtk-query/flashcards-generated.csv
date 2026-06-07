@@ -1,6 +1,10 @@
-"question","answer","level"
-"What is the primary objective of Redux Toolkit - slices, thunks, RTK Query?","Define the mechanism and link it to reliability/performance impact.","foundational"
-"Which failure mode should be mentioned first for Redux Toolkit - slices, thunks, RTK Query?","Name one realistic edge case and describe mitigation.","foundational"
-"How would you validate Redux Toolkit - slices, thunks, RTK Query after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
-"What trade-off appears in Redux Toolkit - slices, thunks, RTK Query decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
-"How do you explain react-patterns-architecture/redux-toolkit-slices-thunks-rtk-query to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"
+Question,Answer
+What is a slice in Redux Toolkit?,A collection of state, reducers, and actions for a feature, created with createSlice.
+How does createAsyncThunk simplify async logic?,It generates pending/fulfilled/rejected actions and handles promise lifecycles automatically.
+What is RTK Query?,A data fetching and caching tool built into Redux Toolkit that generates endpoints and hooks.
+How does RTK Query differ from manual thunks?,It manages cache, deduplication, and background updates, reducing boilerplate.
+Give an example of a slice.,const todosSlice = createSlice({ name: 'todos', initialState: [], reducers: { addTodo: ... } });
+Give an example of a thunk.,export const fetchTodos = createAsyncThunk('todos/fetch', async () => { ... });
+Give an example of an RTK Query endpoint.,const api = createApi({ endpoints: builder => ({ getTodos: builder.query({ query: () => 'todos' }) }) });
+What is a trade-off of RTK Query?,Less boilerplate but more abstraction; may not fit all custom logic.
+When should you use slices and thunks vs RTK Query?,Use slices/thunks for complex state logic; use RTK Query for standard data fetching needs.

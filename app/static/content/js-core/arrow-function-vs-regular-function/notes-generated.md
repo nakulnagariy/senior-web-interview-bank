@@ -1,27 +1,35 @@
-# Arrow function vs regular function
+# Arrow Function vs Regular Function
 
-## Interview Lens
-- Focus level: Applied
-- Route slug: js-core/arrow-function-vs-regular-function
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## Arrow Functions
+- Introduced in ES6.
+- Do **not** have their own `this`, `arguments`, `super`, or `new.target`.
+- `this` is lexically inherited from the enclosing scope.
+- Cannot be used as constructors (`new` will throw).
+- Cannot use `yield` (not generator functions).
+- Shorter syntax, especially for inline and callback functions.
 
-## Core Mental Model
-Arrow function vs regular function should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Regular Functions
+- Have their own `this`, `arguments`, `super`, and `new.target`.
+- `this` is determined by how the function is called (default, implicit, explicit, new).
+- Can be used as constructors.
+- Can be generator functions (with `function*`).
 
-## Senior Discussion Anchors
-1. What breaks first when arrow function vs regular function is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Use Cases
+- Arrow functions: Callbacks, methods that need lexical `this`, concise one-liners.
+- Regular functions: Methods needing their own `this`, constructors, generators.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example
 
-## Whiteboard Drill
-1. Explain Arrow function vs regular function in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for arrow-function-vs-regular-function.
-3. List two metrics you would track to verify the approach in production.
+```js
+const obj = {
+  value: 42,
+  arrow: () => console.log(this.value), // undefined
+  regular: function() { console.log(this.value); } // 42
+};
+obj.arrow();
+obj.regular();
+```
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Arrow function vs regular function.
+### Summary
+- Choose arrow functions for lexical this and concise syntax.
+- Use regular functions when you need your own this, as constructors, or as generators.

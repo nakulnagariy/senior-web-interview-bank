@@ -1,27 +1,31 @@
-# Event delegation, bubbling, capturing
+# Event Delegation, Bubbling, and Capturing
 
-## Interview Lens
-- Focus level: Foundational
-- Route slug: js-core/event-delegation-bubbling-capturing
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## Event Bubbling
+- When an event occurs on an element, it first runs handlers on that element, then on its parent, then up the DOM tree.
+- Default phase for most events in JavaScript.
+- Example: Clicking a button inside a div triggers the button's handler, then the div's handler.
 
-## Core Mental Model
-Event delegation, bubbling, capturing should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Event Capturing (Trickling)
+- The event starts from the root and goes down to the target element.
+- Handlers can be registered for the capturing phase by passing `true` as the third argument to `addEventListener`.
+- Example: `element.addEventListener('click', handler, true)`
 
-## Senior Discussion Anchors
-1. What breaks first when event delegation, bubbling, capturing is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Event Delegation
+- Attaching a single event handler to a parent element instead of multiple children.
+- Uses event bubbling to handle events from child elements.
+- Useful for dynamic lists, improved performance, and less memory usage.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example
 
-## Whiteboard Drill
-1. Explain Event delegation, bubbling, capturing in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for event-delegation-bubbling-capturing.
-3. List two metrics you would track to verify the approach in production.
-
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Event delegation, bubbling, capturing.
+```js
+// Delegation: handle all clicks on a list
+document.getElementById('list').addEventListener('click', function(e) {
+  if (e.target.matches('li')) {
+    console.log('List item clicked:', e.target.textContent);
+  }
+});
+```
+### Summary
+- Bubbling: Event flows up from target to root.
+- Capturing: Event flows down from root to target.
+- Delegation: Use bubbling to handle many child events with one parent handler.
