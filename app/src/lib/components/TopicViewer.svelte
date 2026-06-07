@@ -260,4 +260,44 @@
 		border-color: #e7b2b2;
 		color: #6e1f1f;
 	}
+
+	@media (max-width: 640px) {
+		.viewer {
+			padding: 0.75rem;
+			min-height: unset;
+		}
+
+		.viewer-head {
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.done-toggle {
+			width: 100%;
+			padding: 0.6rem 0.75rem;
+			font-size: 0.88rem;
+			min-height: 44px;
+		}
+
+		.topic-nav {
+			width: 100%;
+		}
+
+		.topic-nav button {
+			flex: 1;
+			padding: 0.55rem 0.5rem;
+			font-size: 0.85rem;
+			min-height: 44px;
+		}
+
+		.asset-tabs button {
+			padding: 0.45rem 0.7rem;
+			font-size: 0.82rem;
+			min-height: 38px;
+		}
+
+		.html-frame {
+			min-height: 45vh;
+		}
+	}
 </style>

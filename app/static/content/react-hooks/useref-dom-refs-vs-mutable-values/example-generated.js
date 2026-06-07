@@ -1,34 +1,38 @@
-/**
- * Generated drill snippet for: useRef - DOM refs vs mutable values
- * Slug: react-hooks/useref-dom-refs-vs-mutable-values
- */
+import React, { useRef, useEffect } from 'react';
 
-const scenario = {
-  topic: "useRef - DOM refs vs mutable values",
-  slug: "react-hooks/useref-dom-refs-vs-mutable-values",
-  seed: 47
-};
-
-function drillUserefDomRefsVsMutableValues(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+// DOM ref example
+export function FocusInput() {
+  const inputRef = useRef();
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
+  return <input ref={inputRef} />;
 }
 
-const output = drillUserefDomRefsVsMutableValues({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// Mutable value example
+export function TimerComponent() {
+  const timerId = useRef();
+  useEffect(() => {
+    timerId.current = setInterval(() => {
+      console.log('Tick');
+    }, 1000);
+    return () => clearInterval(timerId.current);
+  }, []);
+  return <div>Timer running...</div>;
+}
+
+// Both in one component
+export function CombinedExample() {
+  const inputRef = useRef();
+  const renderCount = useRef(0);
+  useEffect(() => {
+    inputRef.current.focus();
+    renderCount.current += 1;
+  });
+  return (
+    <div>
+      <input ref={inputRef} />
+      <div>Renders: {renderCount.current}</div>
+    </div>
+  );
+}

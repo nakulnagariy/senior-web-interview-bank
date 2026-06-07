@@ -1,27 +1,34 @@
-# Keys - why they matter, bad key patterns
+# React Keys: Why They Matter & Bad Key Patterns
 
-## Interview Lens
-- Focus level: Foundational
-- Route slug: react-fundamentals/keys-why-they-matter-bad-key-patterns
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## Why Keys Matter
+- Keys help React identify which items in a list have changed, been added, or removed.
+- They enable efficient reconciliation (diffing), minimizing DOM operations and preserving component state.
+- Without stable keys, React may unnecessarily re-render or lose state in child components.
 
-## Core Mental Model
-Keys - why they matter, bad key patterns should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Good Key Patterns
+- Use a unique, stable identifier for each item (e.g., a database ID).
+- Keys should not change between renders if the item’s identity hasn’t changed.
 
-## Senior Discussion Anchors
-1. What breaks first when keys - why they matter, bad key patterns is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Bad Key Patterns
+- Using array indexes as keys (e.g., `key={index}`) is problematic if the list can be reordered, filtered, or items can be inserted/removed.
+- Using non-unique or unstable values as keys (e.g., random numbers, object references that change).
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Consequences of Bad Keys
+- Loss of component state (e.g., input values reset unexpectedly).
+- Unnecessary re-renders or DOM operations.
+- Bugs that are hard to debug, especially in dynamic lists.
 
-## Whiteboard Drill
-1. Explain Keys - why they matter, bad key patterns in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for keys-why-they-matter-bad-key-patterns.
-3. List two metrics you would track to verify the approach in production.
+## Example
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Keys - why they matter, bad key patterns.
+**Good:**
+```jsx
+{items.map(item => <li key={item.id}>{item.text}</li>)}
+```
+**Bad:**
+```jsx
+{items.map((item, idx) => <li key={idx}>{item.text}</li>)}
+```
+
+## Summary
+- Always use stable, unique keys for list items.
+- Avoid using array indexes or unstable values as keys.

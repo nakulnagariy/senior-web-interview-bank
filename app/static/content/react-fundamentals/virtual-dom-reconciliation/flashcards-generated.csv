@@ -1,6 +1,8 @@
-"question","answer","level"
-"What is the primary objective of Virtual DOM & reconciliation (diffing algo)?","Define the mechanism and link it to reliability/performance impact.","applied"
-"Which failure mode should be mentioned first for Virtual DOM & reconciliation (diffing algo)?","Name one realistic edge case and describe mitigation.","applied"
-"How would you validate Virtual DOM & reconciliation (diffing algo) after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
-"What trade-off appears in Virtual DOM & reconciliation (diffing algo) decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
-"How do you explain react-fundamentals/virtual-dom-reconciliation to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"
+Question,Answer
+What is the Virtual DOM?,A lightweight JavaScript representation of the real DOM used for efficient UI updates.
+What is reconciliation in React?,The process of comparing old and new Virtual DOM trees to update the real DOM with minimal changes.
+Why are keys important in React lists?,Keys help React identify which items have changed- been added- or removed- enabling efficient updates.
+What is the time complexity of React's diffing algorithm for lists with keys?-O(n)- much faster than naive tree diffing.
+What happens if you omit keys in a React list?,React may re-render unnecessarily- lose component state- and cause bugs.
+How does React handle element type changes during reconciliation?,React destroys the old node and creates a new one if the element type changes.
+Give an example of using keys in a React list.,<ul>{items.map(item => <li key={item.id}>{item.text}</li>)}</ul>

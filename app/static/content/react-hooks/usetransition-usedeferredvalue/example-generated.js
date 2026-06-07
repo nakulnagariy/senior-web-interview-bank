@@ -1,34 +1,42 @@
-/**
- * Generated drill snippet for: useTransition & useDeferredValue (concurrent)
- * Slug: react-hooks/usetransition-usedeferredvalue
- */
+import React, { useState, useTransition, useDeferredValue } from 'react';
 
-const scenario = {
-  topic: "useTransition & useDeferredValue (concurrent)",
-  slug: "react-hooks/usetransition-usedeferredvalue",
-  seed: 52
-};
+// useTransition example
+export function SearchListTransition({ items }) {
+  const [input, setInput] = useState('');
+  const [filtered, setFiltered] = useState(items);
+  const [isPending, startTransition] = useTransition();
 
-function drillUsetransitionUsedeferredvalue(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
+  function handleChange(e) {
+    const value = e.target.value;
+    setInput(value);
+    startTransition(() => {
+      setFiltered(items.filter(item => item.includes(value)));
+    });
+  }
 
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+  return (
+    <>
+      <input value={input} onChange={handleChange} />
+      {isPending && <span>Loading...</span>}
+      <ul>
+        {filtered.map(item => <li key={item}>{item}</li>)}
+      </ul>
+    </>
+  );
 }
 
-const output = drillUsetransitionUsedeferredvalue({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// useDeferredValue example
+export function SearchListDeferred({ items }) {
+  const [input, setInput] = useState('');
+  const deferredInput = useDeferredValue(input);
+  const filtered = items.filter(item => item.includes(deferredInput));
+
+  return (
+    <>
+      <input value={input} onChange={e => setInput(e.target.value)} />
+      <ul>
+        {filtered.map(item => <li key={item}>{item}</li>)}
+      </ul>
+    </>
+  );
+}

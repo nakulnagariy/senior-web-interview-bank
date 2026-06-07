@@ -1,34 +1,23 @@
-/**
- * Generated drill snippet for: Custom hooks - design patterns & rules of hooks
- * Slug: react-hooks/custom-hooks-design-patterns-rules-of-hooks
- */
+import { useState, useEffect } from 'react';
 
-const scenario = {
-  topic: "Custom hooks - design patterns & rules of hooks",
-  slug: "react-hooks/custom-hooks-design-patterns-rules-of-hooks",
-  seed: 53
-};
-
-function drillCustomHooksDesignPatternsRulesOfHooks(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+// Custom hook: useFetch
+export function useFetch(url) {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch(url).then(res => res.json()).then(setData);
+  }, [url]);
+  return data;
 }
 
-const output = drillCustomHooksDesignPatternsRulesOfHooks({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// Custom hook: usePrevious
+export function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
+
+// Usage example:
+// const data = useFetch('/api/items');
+// const prevValue = usePrevious(currentValue);

@@ -1,45 +1,77 @@
-<!doctype html>
+
+---
+
+## 2. **Assessment Questions (assessment-generated.html)**
+
+```html
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Virtual DOM & reconciliation (diffing algo) - Assessment</title>
+  <meta charset="UTF-8">
+  <title>Virtual DOM & Reconciliation Assessment</title>
   <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f6f8fb;color:#1f2430}
-    .wrap{max-width:900px;margin:20px auto;padding:16px;background:#fff;border:1px solid #d7dfeb;border-radius:12px}
-    h1{margin:0 0 8px;font-size:22px}
-    p.meta{margin:0 0 14px;color:#5a667c;font-size:13px}
-    .card{border:1px solid #dde4ef;border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
-    .q{font-weight:600;margin-bottom:6px}
-    details{margin-top:6px}
-    code{background:#edf1f9;padding:1px 4px;border-radius:4px}
+    body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; }
+    .question { margin-bottom: 1.5em; padding: 1em; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px #eee; }
+    .reveal { display: none; margin-top: 0.5em; background: #e6f7ff; padding: 0.5em; border-radius: 6px; }
+    button { background: #007bff; color: #fff; border: none; padding: 0.5em 1em; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    h2 { color: #333; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Virtual DOM & reconciliation (diffing algo) - Senior Assessment</h1>
-    <p class="meta">Topic slug: react-fundamentals/virtual-dom-reconciliation | Variant seed: 37</p>
+  <h2>Virtual DOM & Reconciliation Assessment</h2>
 
-    <div class="card">
-      <div class="q">Q1. How would you evaluate Virtual DOM & reconciliation (diffing algo) when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q2. Which risk appears first if virtual-dom-reconciliation is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in Virtual DOM & reconciliation (diffing algo) to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>virtual-dom-reconciliation</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+  <div class="question">
+    <strong>1. What is the main advantage of using the Virtual DOM in React?</strong>
+    <button onclick="document.getElementById('a1').style.display='block'">Reveal Answer</button>
+    <div id="a1" class="reveal">
+      <b>Answer:</b> The Virtual DOM allows React to batch and optimize UI updates, minimizing direct DOM manipulations and improving performance.
     </div>
   </div>
+
+  <div class="question">
+    <strong>2. Explain how React's diffing algorithm works when updating a list of items.</strong>
+    <button onclick="document.getElementById('a2').style.display='block'">Reveal Answer</button>
+    <div id="a2" class="reveal">
+      <b>Answer:</b> React compares the previous and new Virtual DOM trees. If keys are used, it can efficiently identify which items have changed, been added, or removed, updating only the affected DOM nodes.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>3. Why are keys important in React lists, and what happens if you omit them?</strong>
+    <button onclick="document.getElementById('a3').style.display='block'">Reveal Answer</button>
+    <div id="a3" class="reveal">
+      <b>Answer:</b> Keys help React uniquely identify list items, enabling efficient updates. Omitting keys can cause unnecessary re-renders, bugs, and loss of component state.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>4. What is the time complexity of React's diffing algorithm for lists with keys?</strong>
+    <button onclick="document.getElementById('a4').style.display='block'">Reveal Answer</button>
+    <div id="a4" class="reveal">
+      <b>Answer:</b> O(n), where n is the number of items in the list. This is much faster than naive tree diffing algorithms.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>5. Coding: Given a list of items, write a React component that uses keys correctly for optimal reconciliation.</strong>
+    <button onclick="document.getElementById('a5').style.display='block'">Reveal Answer</button>
+    <div id="a5" class="reveal">
+      <b>Answer:</b>
+      <pre>
+        {`function ItemList({ items }) {
+          return (
+            <ul>
+              {items.map(item => (
+                <li key={item.id}>{item.text}</li>
+              ))}
+            </ul>
+          );
+        }`}
+      </pre>
+      <span>Using <code>key={item.id}</code> ensures React can efficiently update the list.</span>
+    </div>
+  </div>
+
 </body>
 </html>

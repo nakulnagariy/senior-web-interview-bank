@@ -1,45 +1,84 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Synthetic events & event pooling - Assessment</title>
+  <meta charset="UTF-8">
+  <title>React Synthetic Events & Event Pooling Assessment</title>
   <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f6f8fb;color:#1f2430}
-    .wrap{max-width:900px;margin:20px auto;padding:16px;background:#fff;border:1px solid #d7dfeb;border-radius:12px}
-    h1{margin:0 0 8px;font-size:22px}
-    p.meta{margin:0 0 14px;color:#5a667c;font-size:13px}
-    .card{border:1px solid #dde4ef;border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
-    .q{font-weight:600;margin-bottom:6px}
-    details{margin-top:6px}
-    code{background:#edf1f9;padding:1px 4px;border-radius:4px}
+    body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; }
+    .question { margin-bottom: 1.5em; padding: 1em; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px #eee; }
+    .reveal { display: none; margin-top: 0.5em; background: #e6f7ff; padding: 0.5em; border-radius: 6px; }
+    button { background: #007bff; color: #fff; border: none; padding: 0.5em 1em; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    h2 { color: #333; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Synthetic events & event pooling - Senior Assessment</h1>
-    <p class="meta">Topic slug: react-fundamentals/synthetic-events-event-pooling | Variant seed: 43</p>
+  <h2>React Synthetic Events & Event Pooling Assessment</h2>
 
-    <div class="card">
-      <div class="q">Q1. How would you evaluate Synthetic events & event pooling when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q2. Which risk appears first if synthetic-events-event-pooling is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in Synthetic events & event pooling to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>synthetic-events-event-pooling</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+  <div class="question">
+    <strong>1. What is a SyntheticEvent in React?</strong>
+    <button onclick="document.getElementById('a1').style.display='block'">Reveal Answer</button>
+    <div id="a1" class="reveal">
+      <b>Answer:</b> A cross-browser wrapper around native events, providing a consistent API for event handling in React.
     </div>
   </div>
+
+  <div class="question">
+    <strong>2. What is event pooling and why did React use it?</strong>
+    <button onclick="document.getElementById('a2').style.display='block'">Reveal Answer</button>
+    <div id="a2" class="reveal">
+      <b>Answer:</b> Event pooling is the reuse of SyntheticEvent objects for performance. React cleared and reused event objects to reduce memory usage.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>3. What problem can event pooling cause in asynchronous code?</strong>
+    <button onclick="document.getElementById('a3').style.display='block'">Reveal Answer</button>
+    <div id="a3" class="reveal">
+      <b>Answer:</b> If you access event properties asynchronously (e.g., in a setTimeout), they may be null or undefined because the event object has been cleared and reused.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>4. How do you prevent event pooling issues in React &lt;17?</strong>
+    <button onclick="document.getElementById('a4').style
+.display='block'">Reveal Answer</button>
+    <div id="a4" class="reveal">
+      <b>Answer:</b> Call <code>event.persist()</code> inside your event handler to remove the event from the pool and keep its properties available asynchronously.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>5. Coding: Show an example where event pooling causes a bug, and how to fix it.</strong>
+    <button onclick="document.getElementById('a5').style.display='block'">Reveal Answer</button>
+    <div id="a5" class="reveal">
+      <b>Answer:</b>
+      <pre>
+{`// Buggy (React <17)
+function MyButton() {
+  function handleClick(e) {
+    setTimeout(() => {
+      alert(e.type); // e.type may be null
+    }, 100);
+  }
+  return <button onClick={handleClick}>Click me</button>;
+}
+
+// Fixed
+function MyButton() {
+  function handleClick(e) {
+    e.persist();
+    setTimeout(() => {
+      alert(e.type); // e.type is preserved
+    }, 100);
+  }
+  return <button onClick={handleClick}>Click me</button>;
+}
+`}
+      </pre>
+    </div>
+  </div>
+
 </body>
 </html>

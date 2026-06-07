@@ -1,34 +1,13 @@
-/**
- * Generated drill snippet for: React Strict Mode behavior
- * Slug: react-fundamentals/react-strict-mode-behavior
- */
+// Example: Using React Strict Mode
 
-const scenario = {
-  topic: "React Strict Mode behavior",
-  slug: "react-fundamentals/react-strict-mode-behavior",
-  seed: 41
-};
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
 
-function drillReactStrictModeBehavior(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
-}
-
-const output = drillReactStrictModeBehavior({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// In development, App and its descendants will have extra checks and double invocations.

@@ -1,34 +1,22 @@
-/**
- * Generated drill snippet for: Virtual DOM & reconciliation (diffing algo)
- * Slug: react-fundamentals/virtual-dom-reconciliation
- */
+// Example: React list rendering with keys for optimal reconciliation
 
-const scenario = {
-  topic: "Virtual DOM & reconciliation (diffing algo)",
-  slug: "react-fundamentals/virtual-dom-reconciliation",
-  seed: 37
-};
+import React from 'react';
 
-function drillVirtualDomReconciliation(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+function ItemList({ items }) {
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>{item.text}</li>
+      ))}
+    </ul>
+  );
 }
 
-const output = drillVirtualDomReconciliation({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// Example usage:
+const items = [
+  { id: 1, text: 'Apple' },
+  { id: 2, text: 'Banana' },
+  { id: 3, text: 'Cherry' }
+];
+
+// <ItemList items={items} />

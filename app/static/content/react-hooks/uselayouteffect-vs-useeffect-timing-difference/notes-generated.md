@@ -1,27 +1,36 @@
-# useLayoutEffect vs useEffect - timing difference
+# useLayoutEffect vs useEffect: Timing Difference
 
-## Interview Lens
-- Focus level: Foundational
-- Route slug: react-hooks/uselayouteffect-vs-useeffect-timing-difference
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## useEffect
+- Runs **after** the browser has painted (committed) the DOM updates.
+- Non-blocking: does not delay the browser's paint.
+- Good for side effects that don't need to block the UI (data fetching, subscriptions, logging).
 
-## Core Mental Model
-useLayoutEffect vs useEffect - timing difference should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## useLayoutEffect
+- Runs **synchronously after all DOM mutations but before the browser paints**.
+- Blocking: the browser waits for all `useLayoutEffect` callbacks to finish before painting.
+- Good for reading layout, measuring DOM nodes, or synchronously triggering visual updates (e.g., animations, scroll position).
 
-## Senior Discussion Anchors
-1. What breaks first when uselayouteffect vs useeffect - timing difference is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Timing Difference
+- `useLayoutEffect` runs **before** the browser paints, so changes are visible immediately.
+- `useEffect` runs **after** paint, so the user may see a flash of unstyled or unmeasured content.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example Use Cases
+- **useLayoutEffect:** Measuring element size, synchronizing scroll position, fixing layout glitches.
+- **useEffect:** Fetching data, setting up subscriptions, logging.
 
-## Whiteboard Drill
-1. Explain useLayoutEffect vs useEffect - timing difference in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for uselayouteffect-vs-useeffect-timing-difference.
-3. List two metrics you would track to verify the approach in production.
+## Example
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering useLayoutEffect vs useEffect - timing difference.
+```js
+useLayoutEffect(() => {
+  // Read or write DOM here
+}, []);
+
+useEffect(() => {
+  // Non-blocking side effects here
+}, []);
+```
+
+### Summary
+- Use useLayoutEffect for DOM reads/writes that must happen before paint.
+- Use useEffect for side effects that can happen after paint.
+

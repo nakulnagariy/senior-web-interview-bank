@@ -1,27 +1,40 @@
-# useRef - DOM refs vs mutable values
+# useRef: DOM Refs vs Mutable Values
 
-## Interview Lens
-- Focus level: Advanced
-- Route slug: react-hooks/useref-dom-refs-vs-mutable-values
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is useRef?
+- `useRef` is a React hook that returns a mutable ref object: `{ current: ... }`.
+- The `.current` property persists for the lifetime of the component.
 
-## Core Mental Model
-useRef - DOM refs vs mutable values should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## DOM Refs
+- The most common use: referencing a DOM node.
+- Example: `<input ref={inputRef} />` lets you access the DOM node via `inputRef.current`.
+- Useful for focusing, measuring, or imperatively interacting with DOM elements.
 
-## Senior Discussion Anchors
-1. What breaks first when useref - dom refs vs mutable values is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Mutable Values
+- `useRef` can also store any mutable value that survives re-renders without causing re-renders when changed.
+- Example: storing a previous value, a timer ID, or any value you want to persist but not trigger a render.
+- Unlike state, updating `.current` does **not** cause a re-render.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Key Differences
+- **DOM refs:** Used as the `ref` prop on elements, React sets `.current` to the DOM node.
+- **Mutable values:** Used for storing values across renders, not tied to the DOM.
 
-## Whiteboard Drill
-1. Explain useRef - DOM refs vs mutable values in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for useref-dom-refs-vs-mutable-values.
-3. List two metrics you would track to verify the approach in production.
+## Example
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering useRef - DOM refs vs mutable values.
+```jsx
+function Example() {
+  const inputRef = useRef(); // DOM ref
+  const countRef = useRef(0); // Mutable value
+
+  useEffect(() => {
+    inputRef.current.focus();
+    countRef.current += 1;
+  });
+
+  return <input ref={inputRef} />;
+}
+```
+
+### Summary
+- useRef is for both DOM access and persisting mutable values.
+- Changing .current never triggers a re-render.
+- Use state for UI, useRef for non-UI, persistent values.

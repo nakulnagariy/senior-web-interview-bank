@@ -1,27 +1,34 @@
-# useTransition & useDeferredValue (concurrent)
+# useTransition & useDeferredValue (Concurrent Features)
 
-## Interview Lens
-- Focus level: Applied
-- Route slug: react-hooks/usetransition-usedeferredvalue
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is useTransition?
+- `useTransition` is a React hook for marking state updates as "transitions" (non-urgent).
+- It returns `[isPending, startTransition]`.
+- Transitions allow React to keep the UI responsive by interrupting, delaying, or batching non-urgent updates.
+- Example: Typing in a search box updates the input immediately (urgent), but filtering a large list is deferred (transition).
 
-## Core Mental Model
-useTransition & useDeferredValue (concurrent) should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## What is useDeferredValue?
+- `useDeferredValue` lets you defer a value until the browser is less busy.
+- It returns a "laggy" version of a value that updates less urgently.
+- Useful for passing expensive-to-render values to children without blocking urgent updates.
 
-## Senior Discussion Anchors
-1. What breaks first when usetransition & usedeferredvalue (concurrent) is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## When to Use
+- Use `useTransition` when you want to keep the UI responsive during expensive state updates (e.g., filtering, sorting, rendering large lists).
+- Use `useDeferredValue` when you want to defer a derived value (e.g., filtered results) but keep the input responsive.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example
 
-## Whiteboard Drill
-1. Explain useTransition & useDeferredValue (concurrent) in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for usetransition-usedeferredvalue.
-3. List two metrics you would track to verify the approach in production.
+```js
+const [isPending, startTransition] = useTransition();
+const [input, setInput] = useState('');
+const deferredInput = useDeferredValue(input);
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering useTransition & useDeferredValue (concurrent).
+function handleChange(e) {
+  setInput(e.target.value);
+  // or: startTransition(() => setExpensiveState(e.target.value));
+}
+```
+
+### Summary
+- Both hooks help manage UI responsiveness in concurrent React.
+- `useTransition` is for marking updates as non-urgent.
+- `useDeferredValue` is for deferring values, not updates.

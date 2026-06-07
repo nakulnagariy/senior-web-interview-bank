@@ -1,34 +1,37 @@
-/**
- * Generated drill snippet for: useReducer - when to choose over useState
- * Slug: react-hooks/usereducer-when-to-choose-over-usestate
- */
+import React, { useReducer, useState } from 'react';
 
-const scenario = {
-  topic: "useReducer - when to choose over useState",
-  slug: "react-hooks/usereducer-when-to-choose-over-usestate",
-  seed: 49
-};
-
-function drillUsereducerWhenToChooseOverUsestate(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+// useReducer example: multi-action counter
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'decrement':
+      return { count: state.count - 1 };
+    case 'reset':
+      return { count: 0 };
+    default:
+      return state;
+  }
 }
 
-const output = drillUsereducerWhenToChooseOverUsestate({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+export function CounterReducer() {
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  return (
+    <div>
+      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
+      <span>{state.count}</span>
+      <button onClick={() => dispatch({ type: 'increment' })}>+</button>
+      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>
+    </div>
+  );
+}
+
+// useState example: simple toggle
+export function Toggle() {
+  const [on, setOn] = useState(false);
+  return (
+    <button onClick={() => setOn(v => !v)}>
+      {on ? 'On' : 'Off'}
+    </button>
+  );
+}

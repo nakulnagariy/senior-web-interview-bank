@@ -1,45 +1,83 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>useLayoutEffect vs useEffect - timing difference - Assessment</title>
+  <meta charset="UTF-8">
+  <title>useLayoutEffect vs useEffect Assessment</title>
   <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f6f8fb;color:#1f2430}
-    .wrap{max-width:900px;margin:20px auto;padding:16px;background:#fff;border:1px solid #d7dfeb;border-radius:12px}
-    h1{margin:0 0 8px;font-size:22px}
-    p.meta{margin:0 0 14px;color:#5a667c;font-size:13px}
-    .card{border:1px solid #dde4ef;border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
-    .q{font-weight:600;margin-bottom:6px}
-    details{margin-top:6px}
-    code{background:#edf1f9;padding:1px 4px;border-radius:4px}
+    body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; }
+    .question { margin-bottom: 1.5em; padding: 1em; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px #eee; }
+    .reveal { display: none; margin-top: 0.5em; background: #e6f7ff; padding: 0.5em; border-radius: 6px; }
+    button { background: #007bff; color: #fff; border: none; padding: 0.5em 1em; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    h2 { color: #333; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>useLayoutEffect vs useEffect - timing difference - Senior Assessment</h1>
-    <p class="meta">Topic slug: react-hooks/uselayouteffect-vs-useeffect-timing-difference | Variant seed: 51</p>
+  <h2>useLayoutEffect vs useEffect Assessment</h2>
 
-    <div class="card">
-      <div class="q">Q1. How would you evaluate useLayoutEffect vs useEffect - timing difference when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q2. Which risk appears first if uselayouteffect-vs-useeffect-timing-difference is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in useLayoutEffect vs useEffect - timing difference to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>uselayouteffect-vs-useeffect-timing-difference</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+  <div class="question">
+    <strong>1. What is the main timing difference between <code>useEffect</code> and <code>useLayoutEffect</code>?</strong>
+    <button onclick="document.getElementById('a1').style.display='block'">Reveal Answer</button>
+    <div id="a1" class="reveal">
+      <b>Answer:</b> <code>useLayoutEffect</code> runs synchronously after DOM mutations but before the browser paints, while <code>useEffect</code> runs after the browser
+ has painted.
     </div>
   </div>
+
+  <div class="question">
+    <strong>2. Why might you see a "flash of unstyled" or "unmeasured" content when using <code>useEffect</code> instead of <code>useLayoutEffect</code>?</strong>
+    <button onclick="document.getElementById('a2').style.display='block'">Reveal Answer</button>
+    <div id="a2" class="reveal">
+      <b>Answer:</b> Because <code>useEffect</code> runs after paint, any DOM measurements or style changes happen after the user sees the initial render, causing a visible flash or layout jump.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>3. Give two use cases where <code>useLayoutEffect</code> is preferred over <code>useEffect</code>.</strong>
+    <button onclick="document.getElementById('a3').style.display='block'">Reveal Answer</button>
+    <div id="a3" class="reveal">
+      <b>Answer:</b>
+      <ul>
+        <li>Measuring or synchronizing layout (e.g., reading element size, setting scroll position).</li>
+        <li>Triggering animations that must start before the browser paints.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>4. Coding: Show a component that measures an element's width and explain why <code>useLayoutEffect</code> is necessary.</strong>
+    <button onclick="document.getElementById('a4').style.display='block'">Reveal Answer</button>
+    <div id="a4" class="reveal">
+      <b>Answer:</b>
+      <pre>
+{`function MeasureWidth() {
+  const ref = useRef();
+  const [width, setWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    setWidth(ref.current.offsetWidth);
+  }, []);
+
+  return (
+    <div ref={ref}>
+      Width: {width}
+    </div>
+  );
+}
+// useLayoutEffect ensures the width is measured before paint, preventing layout jumps.
+`}
+      </pre>
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>5. What are the performance implications of overusing <code>useLayoutEffect</code>?</strong>
+    <button onclick="document.getElementById('a5').style.display='block'">Reveal Answer</button>
+    <div id="a5" class="reveal">
+      <b>Answer:</b> Overusing <code>useLayoutEffect</code> can block the browser's paint, leading to jank and slower UI responsiveness. Use it only when necessary for layout reads/writes.
+    </div>
+  </div>
+
 </body>
 </html>

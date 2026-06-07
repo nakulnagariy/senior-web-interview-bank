@@ -1,27 +1,33 @@
-# Synthetic events & event pooling
+# React Synthetic Events & Event Pooling
 
-## Interview Lens
-- Focus level: Applied
-- Route slug: react-fundamentals/synthetic-events-event-pooling
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What are Synthetic Events?
+- React wraps native browser events in a cross-browser wrapper called a SyntheticEvent.
+- Synthetic events normalize event properties and behavior across browsers, providing a consistent API.
 
-## Core Mental Model
-Synthetic events & event pooling should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Event Pooling
+- For performance, React (before v17) reused SyntheticEvent objects via pooling.
+- After an event handler runs, the SyntheticEvent's properties are cleared and the object is reused for future events.
+- Accessing event properties asynchronously (e.g., inside a setTimeout or Promise) would return `null` or undefined values.
 
-## Senior Discussion Anchors
-1. What breaks first when synthetic events & event pooling is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## How to Persist Events
+- To access event properties asynchronously, call `event.persist()` to remove the event from the pool.
+- In React 17+, event pooling was removed, but understanding it is important for legacy code and interviews.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example
 
-## Whiteboard Drill
-1. Explain Synthetic events & event pooling in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for synthetic-events-event-pooling.
-3. List two metrics you would track to verify the approach in production.
+```jsx
+function MyButton() {
+  function handleClick(e) {
+    setTimeout(() => {
+      // e.type may be null unless e.persist() was called (React <17)
+      alert(e.type);
+    }, 100);
+  }
+  return <button onClick={handleClick}>Click me</button>;
+}
+```
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Synthetic events & event pooling.
+### Summary
+- Synthetic events provide a consistent API.
+- Event pooling can cause bugs if event properties are accessed asynchronously.
+- Use event.persist() in React <17 if you need to access event properties later.

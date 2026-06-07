@@ -1,6 +1,7 @@
-"question","answer","level"
-"What is the primary objective of React Fiber - what it solved, incremental rendering?","Define the mechanism and link it to reliability/performance impact.","advanced"
-"Which failure mode should be mentioned first for React Fiber - what it solved, incremental rendering?","Name one realistic edge case and describe mitigation.","advanced"
-"How would you validate React Fiber - what it solved, incremental rendering after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
-"What trade-off appears in React Fiber - what it solved, incremental rendering decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
-"How do you explain react-fundamentals/react-fiber-what-it-solved-incremental-rendering to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"
+Question,Answer
+What is React Fiber?,A rewrite of React's reconciliation algorithm enabling incremental, prioritized, and interruptible rendering.
+What problem did Fiber solve?,It solved UI freezes caused by synchronous, blocking updates in the old stack-based reconciler.
+How does Fiber enable incremental rendering?,By splitting work into units and yielding control to the browser between units.
+What are the benefits of incremental rendering?,Smoother UI, improved responsiveness, prioritization, and avoidance of main thread blocking.
+How does Fiber support prioritization?,By assigning priorities to updates and pausing lower-priority work for higher-priority tasks.
+How can you demonstrate incremental rendering in React?,Using Suspense and lazy loading to show parts of the UI as resources become available.

@@ -1,6 +1,8 @@
-"question","answer","level"
-"What is the primary objective of useReducer - when to choose over useState?","Define the mechanism and link it to reliability/performance impact.","applied"
-"Which failure mode should be mentioned first for useReducer - when to choose over useState?","Name one realistic edge case and describe mitigation.","applied"
-"How would you validate useReducer - when to choose over useState after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
-"What trade-off appears in useReducer - when to choose over useState decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
-"How do you explain react-hooks/usereducer-when-to-choose-over-usestate to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"
+Question,Answer
+What is useReducer?,A React hook for managing complex state logic with a reducer function and actions.
+When should you use useReducer over useState?,When state logic is complex, involves multiple actions, or state values are interdependent.
+What are the advantages of useReducer?,Predictable state transitions, centralized logic, easier debugging, better for complex/shared state.
+When is useState preferable?,For simple, independent state values.
+How does useReducer work?,It takes a reducer function and initial state, returns [state, dispatch].
+Give an example of useReducer.,const [state, dispatch] = useReducer(reducer, initialState);
+Give an example of useState.,const [value, setValue] = useState(initialValue);

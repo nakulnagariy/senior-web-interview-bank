@@ -1,6 +1,7 @@
-"question","answer","level"
-"What is the primary objective of Synthetic events & event pooling?","Define the mechanism and link it to reliability/performance impact.","applied"
-"Which failure mode should be mentioned first for Synthetic events & event pooling?","Name one realistic edge case and describe mitigation.","applied"
-"How would you validate Synthetic events & event pooling after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
-"What trade-off appears in Synthetic events & event pooling decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
-"How do you explain react-fundamentals/synthetic-events-event-pooling to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"
+Question,Answer
+What is a SyntheticEvent in React?,A cross-browser wrapper around native events providing a consistent API.
+What is event pooling?,The reuse of SyntheticEvent objects for performance; React clears and reuses event objects.
+Why can event pooling cause bugs in async code?,Event properties may be null or undefined if accessed asynchronously because the event object is reused.
+How do you prevent event pooling issues in React <17?,Call event.persist() to remove the event from the pool.
+How did React 17 change event pooling?,Event pooling was removed; SyntheticEvent objects are not reused.
+Show an example of fixing an event pooling bug.,Call event.persist() before using event properties asynchronously.
