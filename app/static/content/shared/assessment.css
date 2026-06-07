@@ -207,6 +207,22 @@ p.meta   { font-size: 0.82rem; color: var(--tx-sec); margin-bottom: 1.25rem; }
   border-radius: var(--r-lg); font-size: 0.78rem; color: var(--tx-sec); line-height: 1.75;
 }
 
+/* ── Legacy: .question / .reveal inline-onclick pattern ─ */
+.question {
+  border: 1px solid var(--bd); border-radius: var(--r-lg);
+  padding: 1rem 1.2rem; margin-bottom: 1rem; background: var(--bg);
+}
+.question strong { font-size: 0.9rem; font-weight: 500; color: var(--tx); line-height: 1.65; display: block; margin-bottom: 0.6rem; }
+.question button {
+  font-family: var(--font); font-size: 0.78rem; font-weight: 500; color: var(--tx-info);
+  cursor: pointer; background: none; border: none; padding: 0; display: block; margin-top: 0.4rem;
+}
+.question button:hover { opacity: 0.75; }
+.reveal {
+  display: none; margin-top: 0.75rem; border-top: 1px solid var(--bd); padding-top: 0.75rem;
+  font-size: 0.84rem; color: var(--tx-sec); line-height: 1.85;
+}
+
 /* ── Generated files: details / summary accordion ───── */
 details { margin-top: 0.5rem; }
 summary {
