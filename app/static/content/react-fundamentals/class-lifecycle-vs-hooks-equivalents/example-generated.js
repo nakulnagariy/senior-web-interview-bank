@@ -1,34 +1,31 @@
-/**
- * Generated drill snippet for: Class lifecycle vs hooks equivalents
- * Slug: react-fundamentals/class-lifecycle-vs-hooks-equivalents
- */
+// Class component lifecycle methods
+import React from 'react';
 
-const scenario = {
-  topic: "Class lifecycle vs hooks equivalents",
-  slug: "react-fundamentals/class-lifecycle-vs-hooks-equivalents",
-  seed: 40
-};
-
-function drillClassLifecycleVsHooksEquivalents(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+class ExampleClass extends React.Component {
+  componentDidMount() {
+    window.addEventListener('resize', this.handleResize);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+  handleResize = () => {
+    // handle resize logic
+  }
+  render() {
+    return <div>Class Example</div>;
+  }
 }
 
-const output = drillClassLifecycleVsHooksEquivalents({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// Equivalent with hooks
+import React, { useEffect } from 'react';
+
+function ExampleHook() {
+  useEffect(() => {
+    function handleResize() {
+      // handle resize logic
+    }
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return <div>Hook Example</div>;
+}

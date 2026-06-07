@@ -1,27 +1,38 @@
-# Controlled vs uncontrolled components
+# Controlled vs Uncontrolled Components in React
 
-## Interview Lens
-- Focus level: Foundational
-- Route slug: react-fundamentals/controlled-vs-uncontrolled-components
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## Controlled Components
+- Controlled components are React components where form data is handled by React state.
+- The value of the input is set via a prop, and changes are managed with an onChange handler.
+- React is always aware of the current value, enabling validation, formatting, and synchronization.
 
-## Core Mental Model
-Controlled vs uncontrolled components should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Uncontrolled Components
+- Uncontrolled components store their own state internally in the DOM.
+- React accesses the value using refs (e.g., `inputRef.current.value`).
+- Useful for simple forms, integrating with non-React code, or when you don't need to track every change.
 
-## Senior Discussion Anchors
-1. What breaks first when controlled vs uncontrolled components is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Fiber's Role
+- React Fiber doesn't change the controlled/uncontrolled distinction, but its incremental rendering and reconciliation can affect how updates propagate.
+- Controlled components are more predictable with Fiber, as state updates are scheduled and batched.
+- Uncontrolled components may not benefit from Fiber's scheduling, since their state is outside React.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Key Differences
+- Controlled: React state is source of truth, easier to validate and manipulate.
+- Uncontrolled: DOM state is source of truth, less React overhead, but harder to manage.
 
-## Whiteboard Drill
-1. Explain Controlled vs uncontrolled components in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for controlled-vs-uncontrolled-components.
-3. List two metrics you would track to verify the approach in production.
+## Example
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Controlled vs uncontrolled components.
+### Controlled
+```jsx
+const [value, setValue] = useState('');
+<input value={value} onChange={e => setValue(e.target.value)} />
+```
+
+### Uncontrolled
+```jsx
+const inputRef = useRef();
+<input ref={inputRef} />
+// Later: inputRef.current.value
+```
+## Summary
+- Use controlled components for complex forms, validation, and React-driven UI.
+- Use uncontrolled components for simple cases or when integrating with legacy code.

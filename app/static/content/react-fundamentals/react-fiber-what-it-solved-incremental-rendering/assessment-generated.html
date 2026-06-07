@@ -1,45 +1,74 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>React Fiber - what it solved, incremental rendering - Assessment</title>
+  <meta charset="UTF-8">
+  <title>React Fiber & Incremental Rendering Assessment</title>
   <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f6f8fb;color:#1f2430}
-    .wrap{max-width:900px;margin:20px auto;padding:16px;background:#fff;border:1px solid #d7dfeb;border-radius:12px}
-    h1{margin:0 0 8px;font-size:22px}
-    p.meta{margin:0 0 14px;color:#5a667c;font-size:13px}
-    .card{border:1px solid #dde4ef;border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
-    .q{font-weight:600;margin-bottom:6px}
-    details{margin-top:6px}
-    code{background:#edf1f9;padding:1px 4px;border-radius:4px}
+    body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; }
+    .question { margin-bottom: 1.5em; padding: 1em; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px #eee; }
+    .reveal { display: none; margin-top: 0.5em; background: #e6f7ff; padding: 0.5em; border-radius: 6px; }
+    button { background: #007bff; color: #fff; border: none; padding: 0.5em 1em; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    h2 { color: #333; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>React Fiber - what it solved, incremental rendering - Senior Assessment</h1>
-    <p class="meta">Topic slug: react-fundamentals/react-fiber-what-it-solved-incremental-rendering | Variant seed: 38</p>
+  <h2>React Fiber & Incremental Rendering Assessment</h2>
 
-    <div class="card">
-      <div class="q">Q1. How would you evaluate React Fiber - what it solved, incremental rendering when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q2. Which risk appears first if react-fiber-what-it-solved-incremental-rendering is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in React Fiber - what it solved, incremental rendering to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
-    </div>
-
-    <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>react-fiber-what-it-solved-incremental-rendering</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+  <div class="question">
+    <strong>1. What was the main limitation of React's stack-based reconciler before Fiber?</strong>
+    <button onclick="document.getElementById('a1').style.display='block'">Reveal Answer</button>
+    <div id="a1" class="reveal">
+      <b>Answer:</b> It was synchronous and blocked the main thread, causing UI freezes during large updates.
     </div>
   </div>
+
+  <div class="question">
+    <strong>2. How does React Fiber enable incremental rendering?</strong>
+    <button onclick="document.getElementById('a2').style.display='block'">Reveal Answer</button>
+    <div id="a2" class="reveal">
+      <b>Answer:</b> Fiber splits rendering work into units, allowing React to pause, resume, and yield control to the browser between units, making rendering incremental and interruptible.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>3. What are the benefits of incremental rendering in React Fiber?</strong>
+    <button onclick="document.getElementById('a3').style.display='block'">Reveal Answer</button>
+    <div id="a3" class="reveal">
+      <b>Answer:</b> Smoother UI, improved responsiveness, ability to prioritize updates, and avoidance of main thread blocking.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>4. How does Fiber support prioritization and concurrency in rendering?</strong>
+    <button onclick="document.getElementById('a4').style.display='block'">Reveal Answer</button>
+    <div id="a4" class="reveal">
+      <b>Answer:</b> Fiber assigns priorities to updates and can work on multiple tasks concurrently, pausing lower-priority work for higher-priority tasks.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>5. Coding: How would you demonstrate incremental rendering in React using Suspense or concurrent features?</strong>
+    <button onclick="document.getElementById('a5').style.display='block'">Reveal Answer</button>
+    <div id="a5" class="reveal">
+      <b>Answer:</b>
+      <pre>
+{`import React, { Suspense } from 'react';
+
+const LazyComponent = React.lazy(() => import('./HeavyComponent'));
+
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LazyComponent />
+    </Suspense>
+  );
+}
+`}
+      </pre>
+      <span>Suspense allows React to incrementally render parts of the UI as resources become available.</span>
+    </div>
+  </div>
+
 </body>
 </html>

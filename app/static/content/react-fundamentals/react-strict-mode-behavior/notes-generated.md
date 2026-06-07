@@ -1,27 +1,28 @@
-# React Strict Mode behavior
+# React Strict Mode Behavior
 
-## Interview Lens
-- Focus level: Advanced
-- Route slug: react-fundamentals/react-strict-mode-behavior
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is React Strict Mode?
+- `<React.StrictMode>` is a tool for highlighting potential problems in an application.
+- It does not render any visible UI, but activates additional checks and warnings for its descendants.
 
-## Core Mental Model
-React Strict Mode behavior should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Key Behaviors
+- **Double Invocations:** In development, React intentionally double-invokes certain lifecycle methods and functions (like component constructors, useEffect, useState initializers) to help catch side effects and bugs.
+- **Deprecation Warnings:** Warns about deprecated APIs and unsafe lifecycle methods.
+- **Detects Side Effects:** Helps identify side effects that should not occur during rendering.
+- **Strict Mode Only in Development:** These checks and behaviors are only active in development mode, not production.
 
-## Senior Discussion Anchors
-1. What breaks first when react strict mode behavior is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Common Gotchas
+- Functions and effects may run twice, leading to confusion if side effects are not idempotent.
+- Strict Mode does not affect production builds, so double invocations are only for development safety.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example
+```jsx
+<React.StrictMode>
+  <App />
+</React.StrictMode>
+```
 
-## Whiteboard Drill
-1. Explain React Strict Mode behavior in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for react-strict-mode-behavior.
-3. List two metrics you would track to verify the approach in production.
+All components under <StrictMode> are subject to extra checks.
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering React Strict Mode behavior.
+### Summary
+- Strict Mode is a development tool for catching bugs and unsafe patterns.
+- It encourages writing resilient, side-effect-free code.

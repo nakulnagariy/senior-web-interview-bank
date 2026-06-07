@@ -24,6 +24,16 @@
 	let loadingAsset = $state(false);
 	let doneTopicSlugs = $state<Record<string, boolean>>({});
 	let collapsedByCategory = $state<Record<string, boolean>>({});
+	let sidebarCollapsed = $state(false);
+	let mobileSidebarOpen = $state(false);
+
+	function toggleSidebar(): void {
+		sidebarCollapsed = !sidebarCollapsed;
+	}
+
+	function toggleMobileSidebar(): void {
+		mobileSidebarOpen = !mobileSidebarOpen;
+	}
 
 	const visibleCategories = $derived(
 		TOPIC_CATEGORIES.filter((category) => activeFilter === 'all' || category.cat === activeFilter)
@@ -51,6 +61,7 @@
 		selectedSlug = topicSlug;
 		selectedAssetIndex = 0;
 		setHashForTopic(topicSlug);
+		mobileSidebarOpen = false;
 	}
 
 	function selectPrevTopic(): void {
@@ -116,8 +127,23 @@
 			}
 		};
 
+		const onKeyDown = (e: KeyboardEvent) => {
+			const tag = (e.target as HTMLElement)?.tagName;
+			// Skip if typing inside an input/textarea
+			if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+			// [ key  OR  Ctrl/Cmd + B
+			if (e.key === '[' || ((e.ctrlKey || e.metaKey) && e.key === 'b')) {
+				e.preventDefault();
+				toggleSidebar();
+			}
+		};
+
 		window.addEventListener('hashchange', onHashChange);
-		return () => window.removeEventListener('hashchange', onHashChange);
+		window.addEventListener('keydown', onKeyDown);
+		return () => {
+			window.removeEventListener('hashchange', onHashChange);
+			window.removeEventListener('keydown', onKeyDown);
+		};
 	});
 
 	$effect(() => {
@@ -147,9 +173,17 @@
 		progressPct={progressPct}
 	/>
 
+	<div class="mobile-topbar">
+		<button class="mobile-menu-btn" onclick={toggleMobileSidebar}>☰ Topics</button>
+	</div>
+
 	<FiltersBar activeFilter={activeFilter} onChange={setFilter} />
 
-	<section class="layout">
+	{#if mobileSidebarOpen}
+		<div class="mobile-backdrop" onclick={toggleMobileSidebar} aria-hidden="true"></div>
+	{/if}
+
+	<section class="layout" class:sidebar-collapsed={sidebarCollapsed}>
 		<TopicSidebar
 			categories={visibleCategories}
 			selectedTopic={selectedTopic}
@@ -157,6 +191,10 @@
 			collapsedByCategory={collapsedByCategory}
 			onToggleCategory={toggleCategory}
 			onSelectTopic={selectTopic}
+			collapsed={sidebarCollapsed}
+			onToggleCollapse={toggleSidebar}
+			mobileOpen={mobileSidebarOpen}
+			onMobileClose={toggleMobileSidebar}
 		/>
 		<TopicViewer
 			topic={selectedTopic}
@@ -183,6 +221,7 @@
 			radial-gradient(circle at 5% 0%, rgba(239, 121, 27, 0.3), transparent 34%),
 			radial-gradient(circle at 100% 0%, rgba(35, 121, 185, 0.2), transparent 34%),
 			#f7f5f0;
+		overflow-x: hidden;
 	}
 
 	.app-shell {
@@ -197,11 +236,57 @@
 		display: grid;
 		grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
 		gap: 1rem;
+		transition: grid-template-columns 0.2s ease;
+	}
+
+	.layout.sidebar-collapsed {
+		grid-template-columns: 44px minmax(0, 1fr);
+		gap: 0.5rem;
+	}
+
+	.mobile-topbar {
+		display: none;
+	}
+
+	.mobile-menu-btn {
+		font-family: inherit;
+		background: #1a2437;
+		color: #fff;
+		border: none;
+		border-radius: 10px;
+		padding: 0.55rem 1rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.mobile-backdrop {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.45);
+		z-index: 800;
+		cursor: pointer;
 	}
 
 	@media (max-width: 980px) {
 		.layout {
 			grid-template-columns: 1fr;
+		}
+
+		.layout.sidebar-collapsed {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.app-shell {
+			padding: 0.75rem;
+			gap: 0.75rem;
+		}
+
+		.mobile-topbar {
+			display: flex;
+			align-items: center;
 		}
 	}
 </style>

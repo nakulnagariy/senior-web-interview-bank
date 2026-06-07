@@ -1,27 +1,25 @@
-# React Fiber - what it solved, incremental rendering
+# React Fiber & Incremental Rendering
 
-## Interview Lens
-- Focus level: Advanced
-- Route slug: react-fundamentals/react-fiber-what-it-solved-incremental-rendering
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is React Fiber?
+- React Fiber is a complete rewrite of React's reconciliation algorithm, introduced in React 16.
+- It represents the Virtual DOM as a linked list of "fiber" nodes, allowing React to pause, resume, and abort work.
 
-## Core Mental Model
-React Fiber - what it solved, incremental rendering should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## What Problem Did Fiber Solve?
+- The old stack-based reconciler was synchronous and blocked the main thread, causing jank in large updates.
+- Fiber enables React to split rendering work into units, making it possible to prioritize, interrupt, and schedule updates.
 
-## Senior Discussion Anchors
-1. What breaks first when react fiber - what it solved, incremental rendering is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Incremental Rendering
+- Fiber allows React to render components incrementally, yielding control back to the browser between units of work.
+- This enables features like time-slicing, concurrent rendering, and prioritization (e.g., updating visible UI before background tasks).
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Key Features
+- **Concurrency:** React can work on multiple tasks at once, pausing and resuming as needed.
+- **Prioritization:** Updates can be prioritized (e.g., user input vs. data fetching).
+- **Interruptibility:** Rendering can be interrupted for higher-priority tasks.
+- **Better User Experience:** Smoother UI, less blocking, improved responsiveness.
 
-## Whiteboard Drill
-1. Explain React Fiber - what it solved, incremental rendering in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for react-fiber-what-it-solved-incremental-rendering.
-3. List two metrics you would track to verify the approach in production.
+## Example
+- With Fiber, React can update a list of thousands of items without freezing the UI, by breaking the work into chunks and yielding between them.
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering React Fiber - what it solved, incremental rendering.
+## Summary
+- React Fiber enables incremental, prioritized, and interruptible rendering, solving performance and responsiveness issues in large or complex apps.

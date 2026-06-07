@@ -1,34 +1,24 @@
-/**
- * Generated drill snippet for: Error boundaries - class only, placement strategy
- * Slug: react-fundamentals/error-boundaries-class-only-placement-strategy
- */
+// Class error boundary
+import React from 'react';
 
-const scenario = {
-  topic: "Error boundaries - class only, placement strategy",
-  slug: "react-fundamentals/error-boundaries-class-only-placement-strategy",
-  seed: 44
-};
-
-function drillErrorBoundariesClassOnlyPlacementStrategy(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
-
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+  componentDidCatch(error, info) {
+    // Log error or send to monitoring service
+  }
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong.</div>;
+    }
+    return this.props.children;
+  }
 }
 
-const output = drillErrorBoundariesClassOnlyPlacementStrategy({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// Placement: Global
+// <ErrorBoundary><App /></ErrorBoundary>
+
+// Placement: Local
+// <ErrorBoundary><Widget /></ErrorBoundary>

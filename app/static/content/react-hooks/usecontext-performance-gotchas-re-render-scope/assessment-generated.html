@@ -1,45 +1,828 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>useContext - performance gotchas, re-render scope - Assessment</title>
-  <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f6f8fb;color:#1f2430}
-    .wrap{max-width:900px;margin:20px auto;padding:16px;background:#fff;border:1px solid #d7dfeb;border-radius:12px}
-    h1{margin:0 0 8px;font-size:22px}
-    p.meta{margin:0 0 14px;color:#5a667c;font-size:13px}
-    .card{border:1px solid #dde4ef;border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
-    .q{font-weight:600;margin-bottom:6px}
-    details{margin-top:6px}
-    code{background:#edf1f9;padding:1px 4px;border-radius:4px}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>useContext — Senior Assessment</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #0f1117;
+    --bg-card:     #1a1d27;
+    --bg-code:     #12151f;
+    --bg-exp:      #1e1a0f;
+    --bg-tip:      #0f1e2e;
+    --bg-warn:     #1e0f0f;
+    --border:      #2a2d3e;
+    --border-acc:  #3a3d50;
+    --text:        #e2e4ef;
+    --text-muted:  #8b8fa8;
+    --text-dim:    #5c6080;
+    --accent:      #7c82ff;
+    --accent-b:    #3b82f6;
+    --green:       #22c55e;
+    --red:         #ef4444;
+    --yellow:      #f59e0b;
+    --purple:      #a78bfa;
+    --teal:        #2dd4bf;
+    --radius:      10px;
+    --radius-sm:   6px;
+    --font-sans:   -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono:   'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 2rem 1rem;
+  }
+
+  /* ── Layout ── */
+  .container { max-width: 820px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .page-header { margin-bottom: 2.5rem; }
+  .page-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .page-header p { color: var(--text-muted); font-size: 13px; }
+
+  /* ── Stats bar ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+  .stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-num { font-size: 22px; font-weight: 600; color: var(--accent); }
+  .stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── Section label ── */
+  .section-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+
+  /* ── Reference grid ── */
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+  .ref-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .ref-card h3 {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .ref-row {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 6px;
+    line-height: 1.75;
+  }
+  .ref-key {
+    font-family: var(--font-mono);
+    color: var(--text);
+    font-size: 10px;
+    min-width: 52px;
+    flex-shrink: 0;
+  }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+  /* ── Question card ── */
+  .q-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    transition: border-color .2s;
+  }
+  .q-card:hover { border-color: var(--border-acc); }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .q-num {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: .05em;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .b-out   { background: rgba(59,130,246,.15); color: #60a5fa; }
+  .b-got   { background: rgba(239,68,68,.15);  color: #f87171; }
+  .b-cod   { background: rgba(245,158,11,.15); color: #fbbf24; }
+  .b-thy   { background: rgba(167,139,250,.15);color: #c4b5fd; }
+  .b-arc   { background: rgba(45,212,191,.15); color: #5eead4; }
+  .b-must  { background: rgba(255,255,255,.07);color: #cbd5e1; }
+
+  .q-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+
+  /* ── Code block ── */
+  .code-block {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: #c9d1d9;
+    line-height: 1.85;
+    overflow-x: auto;
+    white-space: pre;
+    margin-bottom: 12px;
+  }
+  .code-block .kw  { color: #ff79c6; }
+  .code-block .fn  { color: #50fa7b; }
+  .code-block .str { color: #f1fa8c; }
+  .code-block .cmt { color: #6272a4; font-style: italic; }
+  .code-block .bad { color: #ff5555; }
+  .code-block .ok  { color: #50fa7b; }
+
+  /* ── Reveal button ── */
+  .reveal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid var(--border-acc);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    font-size: 12px;
+    font-family: var(--font-sans);
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all .15s;
+    margin-top: 4px;
+  }
+  .reveal-btn:hover {
+    background: rgba(124,130,255,.1);
+    border-color: var(--accent);
+  }
+  .reveal-btn .arrow { transition: transform .2s; display: inline-block; }
+  .reveal-btn.open .arrow { transform: rotate(180deg); }
+
+  /* ── Answer panel ── */
+  .answer-panel {
+    display: none;
+    margin-top: 16px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+  .answer-panel.open { display: block; }
+
+  /* ── Expectation box ── */
+  .expectation {
+    background: var(--bg-exp);
+    border-left: 3px solid var(--yellow);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #fcd34d;
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  .expectation strong { color: #fde68a; }
+
+  /* ── Answer text ── */
+  .answer-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+  .answer-text strong { color: var(--text); }
+  .answer-text code {
+    font-family: var(--font-mono);
+    background: var(--bg-code);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+    color: #c9d1d9;
+  }
+
+  /* ── Tip / Warn boxes ── */
+  .tip, .warn {
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 12px;
+  }
+  .tip {
+    background: var(--bg-tip);
+    border-left: 3px solid var(--accent-b);
+    color: #93c5fd;
+  }
+  .tip code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: rgba(59,130,246,.1);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  .warn {
+    background: var(--bg-warn);
+    border-left: 3px solid var(--red);
+    color: #fca5a5;
+  }
+  .warn code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: rgba(239,68,68,.1);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+
+  /* ── Output rows ── */
+  .o-table { margin: 10px 0; }
+  .o-row {
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    align-items: flex-start;
+  }
+  .o-row:last-child { border: none; }
+  .o-label {
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    min-width: 100px;
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+  .o-result {
+    font-weight: 600;
+    min-width: 60px;
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+  .r-ok  { color: var(--green); }
+  .r-err { color: var(--red); }
+  .o-why { color: var(--text-muted); flex: 1; line-height: 1.6; }
+
+  /* ── Footer ── */
+  .footer {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-top: 2rem;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+  .footer strong { color: var(--text); }
+  .score-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .score-item { font-size: 12px; color: var(--text-muted); }
+  .score-item span { color: var(--accent); font-weight: 600; }
+
+  /* ── Progress bar ── */
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--teal));
+    border-radius: 2px;
+    width: 0%;
+    transition: width .4s ease;
+  }
+  .progress-label { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>useContext - performance gotchas, re-render scope - Senior Assessment</h1>
-    <p class="meta">Topic slug: react-hooks/usecontext-performance-gotchas-re-render-scope | Variant seed: 50</p>
+<div class="container">
 
-    <div class="card">
-      <div class="q">Q1. How would you evaluate useContext - performance gotchas, re-render scope when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
+  <!-- Header -->
+  <div class="page-header">
+    <h1>useContext — Performance Gotchas &amp; Re-render Scope</h1>
+    <p>Senior Engineer Assessment · 7 questions · All reveal buttons functional · Track your progress below</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">questions</div></div>
+    <div class="stat"><div class="stat-num" id="done-count">0</div><div class="stat-lbl">revealed</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-lbl">must-know</div></div>
+    <div class="stat"><div class="stat-num" id="pct">0%</div><div class="stat-lbl">progress</div></div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="progress-label" id="prog-label">0 of 7 revealed</div>
+  </div>
+
+  <!-- Mental model reference -->
+  <div class="section-lbl">Mental model reference</div>
+  <div class="ref-grid">
+    <div class="ref-card">
+      <h3>Subscription rule</h3>
+      <div class="ref-row"><span class="ref-key">trigger</span>Any value change re-renders ALL consumers</div>
+      <div class="ref-row"><span class="ref-key">compare</span>Object.is (referential equality)</div>
+      <div class="ref-row"><span class="ref-key">granularity</span>All-or-nothing — no built-in selectors</div>
     </div>
-
-    <div class="card">
-      <div class="q">Q2. Which risk appears first if usecontext-performance-gotchas-re-render-scope is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
+    <div class="ref-card">
+      <h3>Value stability</h3>
+      <div class="ref-row"><span class="ref-key">problem</span>Inline object literals create new refs every render</div>
+      <div class="ref-row"><span class="ref-key">fix</span>useMemo with correct deps</div>
+      <div class="ref-row"><span class="ref-key">primitives</span>Stable by default — safe in value</div>
     </div>
-
-    <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in useContext - performance gotchas, re-render scope to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
+    <div class="ref-card">
+      <h3>Splitting strategy</h3>
+      <div class="ref-row"><span class="ref-key">rule</span>One context per rate of change</div>
+      <div class="ref-row"><span class="ref-key">example</span>AuthCtx (low) + SearchCtx (high)</div>
+      <div class="ref-row"><span class="ref-key">limit</span>8+ split contexts → use Zustand</div>
     </div>
-
-    <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>usecontext-performance-gotchas-re-render-scope</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+    <div class="ref-card">
+      <h3>Guard hook</h3>
+      <div class="ref-row"><span class="ref-key">pattern</span>Wrap useContext in a named hook</div>
+      <div class="ref-row"><span class="ref-key">guard</span>if (!ctx) throw new Error(...)</div>
+      <div class="ref-row"><span class="ref-key">why</span>Self-documenting, prevents silent null</div>
     </div>
   </div>
+
+  <div class="divider"></div>
+  <div class="section-lbl">Questions</div>
+
+  <!-- ─── Q1 ─── -->
+  <div class="q-card">
+    <div class="q-meta">
+      <span class="q-num">Q1</span>
+      <span class="badge b-thy">theory</span>
+      <span class="badge b-must">must-know</span>
+    </div>
+    <div class="q-text">A React component renders every time a parent's state changes, even though it only reads one field from a large context object and that field hasn't changed. Explain exactly why this happens and give two different architectural solutions.</div>
+    <button class="reveal-btn" onclick="reveal('ans1', this)">
+      <span class="arrow">▼</span> Reveal answer
+    </button>
+    <div class="answer-panel" id="ans1">
+      <div class="expectation">
+        <strong>Senior expectation:</strong> Must explain referential equality — not just "context changed." Must know that useContext has no selector mechanism. Both solutions (context splitting and stable value with useMemo) must be explained with trade-offs.
+      </div>
+      <div class="answer-text">
+        <strong>Root cause — referential equality.</strong> <code>useContext</code> compares the previous and next context value using <code>Object.is</code>. When the Provider renders (because its parent's state changed), it evaluates its <code>value</code> prop. If that prop is an inline object literal <code>value={{ user, theme, query }}</code>, a brand-new object reference is produced every render — even if <code>user</code>, <code>theme</code>, and <code>query</code> are identical. <code>Object.is(prevValue, nextValue)</code> is false. Every consumer re-renders.<br><br>
+
+        <strong>Solution 1 — Stabilise the value with useMemo.</strong> Wrap the value object in <code>useMemo</code> with the actual data as deps. The reference only changes when data changes:
+      </div>
+      <div class="code-block"><span class="cmt">// ❌ New object every render</span>
+&lt;Context.Provider value={{ user, theme }}&gt;
+
+<span class="cmt">// ✅ Stable reference — only new when user/theme change</span>
+<span class="kw">const</span> value = useMemo(() => ({ user, theme }), [user, theme]);
+&lt;Context.Provider value={value}&gt;</div>
+      <div class="answer-text">
+        <strong>Solution 2 — Split contexts by update frequency.</strong> Separate the frequently-changing values from the rarely-changing ones into distinct contexts. A component subscribing to <code>AuthContext</code> won't re-render when <code>SearchContext</code> (updated on every keystroke) changes.
+      </div>
+      <div class="code-block"><span class="kw">const</span> AuthContext   = createContext(); <span class="cmt">// low frequency</span>
+<span class="kw">const</span> SearchContext = createContext(); <span class="cmt">// high frequency</span>
+
+<span class="cmt">// UserAvatar only subscribes to AuthContext</span>
+<span class="cmt">// → never re-renders from search keystrokes</span>
+<span class="kw">function</span> <span class="fn">UserAvatar</span>() {
+  <span class="kw">const</span> { user } = useContext(AuthContext);
+  <span class="kw">return</span> &lt;div&gt;{user?.name}&lt;/div&gt;;
+}</div>
+      <div class="tip">Context has no built-in selector mechanism — unlike Redux's <code>useSelector</code> which only re-renders when the selected slice changes. If you need per-consumer subscription granularity, use Zustand or Redux.</div>
+    </div>
+  </div>
+
+  <!-- ─── Q2 ─── -->
+  <div class="q-card">
+    <div class="q-meta">
+      <span class="q-num">Q2</span>
+      <span class="badge b-got">gotcha</span>
+      <span class="badge b-must">must-know</span>
+    </div>
+    <div class="q-text">Predict whether <code>ProductCard</code> re-renders on every keystroke in the search bar. Then identify every problem in this Provider and produce a corrected version.</div>
+    <div class="code-block"><span class="kw">const</span> AppContext = createContext();
+
+<span class="kw">function</span> <span class="fn">AppProvider</span>({ children }) {
+  <span class="kw">const</span> [cart, setCart]     = useState([]);
+  <span class="kw">const</span> [query, setQuery]   = useState('');
+
+  <span class="kw">return</span> (
+    &lt;AppContext.Provider value={{ cart, setCart, query, setQuery }}&gt;
+      {children}
+    &lt;/AppContext.Provider&gt;
+  );
+}
+
+<span class="kw">function</span> <span class="fn">ProductCard</span>({ id }) {
+  <span class="kw">const</span> { cart, setCart } = useContext(AppContext); <span class="cmt">// only uses cart</span>
+  <span class="kw">return</span> &lt;div&gt;...&lt;/div&gt;;
+}</div>
+    <button class="reveal-btn" onclick="reveal('ans2', this)">
+      <span class="arrow">▼</span> Reveal answer
+    </button>
+    <div class="answer-panel" id="ans2">
+      <div class="expectation">
+        <strong>Senior expectation:</strong> Yes, ProductCard re-renders on every keystroke. Must identify the inline object literal as the root cause, and produce a corrected version using either context splitting or useMemo — with the split-context approach as the preferred architectural solution.
+      </div>
+      <div class="answer-text">
+        <strong>Yes — ProductCard re-renders on every keystroke.</strong> Every time the user types, <code>setQuery</code> is called → <code>AppProvider</code> re-renders → a new <code>value</code> object is created → all consumers including <code>ProductCard</code> re-render, even though <code>cart</code> hasn't changed.<br><br>
+        <strong>Fix — split contexts:</strong>
+      </div>
+      <div class="code-block"><span class="kw">const</span> CartContext   = createContext(); <span class="cmt">// low frequency</span>
+<span class="kw">const</span> SearchContext = createContext(); <span class="cmt">// high frequency</span>
+
+<span class="kw">function</span> <span class="fn">AppProvider</span>({ children }) {
+  <span class="kw">const</span> [cart, setCart]   = useState([]);
+  <span class="kw">const</span> [query, setQuery] = useState('');
+
+  <span class="kw">const</span> cartVal   = useMemo(() => ({ cart, setCart }),   [cart]);
+  <span class="kw">const</span> searchVal = useMemo(() => ({ query, setQuery }), [query]);
+
+  <span class="kw">return</span> (
+    &lt;CartContext.Provider value={cartVal}&gt;
+      &lt;SearchContext.Provider value={searchVal}&gt;
+        {children}
+      &lt;/SearchContext.Provider&gt;
+    &lt;/CartContext.Provider&gt;
+  );
+}
+
+<span class="cmt">// Now only re-renders when cart changes — never on keystrokes</span>
+<span class="kw">function</span> <span class="fn">ProductCard</span>({ id }) {
+  <span class="kw">const</span> { cart, setCart } = useContext(CartContext);
+  <span class="kw">return</span> &lt;div&gt;...&lt;/div&gt;;
+}</div>
+      <div class="warn">A codebase with 10+ split contexts becomes harder to reason about than a single Zustand store. Context splitting solves the re-render problem for 3–5 related groups. Beyond that, adopt an external store with selector subscriptions.</div>
+    </div>
+  </div>
+
+  <!-- ─── Q3 ─── -->
+  <div class="q-card">
+    <div class="q-meta">
+      <span class="q-num">Q3</span>
+      <span class="badge b-cod">coding</span>
+      <span class="badge b-must">must-know</span>
+    </div>
+    <div class="q-text">Implement a production-quality <code>AuthContext</code> with login/logout async actions, correct TypeScript types, a guard hook, and no unnecessary re-renders. The context must handle loading and error states atomically.</div>
+    <button class="reveal-btn" onclick="reveal('ans3', this)">
+      <span class="arrow">▼</span> Reveal answer
+    </button>
+    <div class="answer-panel" id="ans3">
+      <div class="expectation">
+        <strong>Senior expectation:</strong> Must use useReducer for atomic state transitions (never three separate useState setters). Must useMemo to stabilise the context value. Must implement the guard hook pattern. Must type the discriminated union state correctly. Login/logout must be stable useCallback references.
+      </div>
+      <div class="code-block"><span class="cmt">// auth/AuthContext.tsx</span>
+<span class="kw">type</span> AuthState =
+  | { status: <span class="str">'idle'</span>;    user: <span class="kw">null</span>;  error: <span class="kw">null</span>  }
+  | { status: <span class="str">'loading'</span>; user: <span class="kw">null</span>;  error: <span class="kw">null</span>  }
+  | { status: <span class="str">'success'</span>; user: User; error: <span class="kw">null</span>  }
+  | { status: <span class="str">'error'</span>;   user: <span class="kw">null</span>;  error: string };
+
+<span class="kw">type</span> AuthAction =
+  | { type: <span class="str">'LOGIN_START'</span> }
+  | { type: <span class="str">'LOGIN_SUCCESS'</span>; payload: User }
+  | { type: <span class="str">'LOGIN_ERROR'</span>;   error: string }
+  | { type: <span class="str">'LOGOUT'</span> };
+
+<span class="kw">function</span> <span class="fn">authReducer</span>(state: AuthState, action: AuthAction): AuthState {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="str">'LOGIN_START'</span>:
+      <span class="kw">return</span> { status: <span class="str">'loading'</span>, user: null, error: null };
+    <span class="kw">case</span> <span class="str">'LOGIN_SUCCESS'</span>:
+      <span class="kw">return</span> { status: <span class="str">'success'</span>, user: action.payload, error: null };
+    <span class="kw">case</span> <span class="str">'LOGIN_ERROR'</span>:
+      <span class="kw">return</span> { status: <span class="str">'error'</span>, user: null, error: action.error };
+    <span class="kw">case</span> <span class="str">'LOGOUT'</span>:
+      <span class="kw">return</span> { status: <span class="str">'idle'</span>, user: null, error: null };
+    <span class="kw">default</span>: <span class="kw">return</span> state;
+  }
+}
+
+<span class="kw">const</span> AuthContext = createContext&lt;AuthContextValue | null&gt;(null);
+
+<span class="kw">export function</span> <span class="fn">AuthProvider</span>({ children }) {
+  <span class="kw">const</span> [state, dispatch] = useReducer(authReducer, {
+    status: <span class="str">'idle'</span>, user: null, error: null
+  });
+
+  <span class="kw">const</span> login = useCallback(<span class="kw">async</span> (credentials) => {
+    dispatch({ type: <span class="str">'LOGIN_START'</span> });
+    <span class="kw">try</span> {
+      <span class="kw">const</span> user = <span class="kw">await</span> api.login(credentials);
+      dispatch({ type: <span class="str">'LOGIN_SUCCESS'</span>, payload: user });
+    } <span class="kw">catch</span>(e) {
+      dispatch({ type: <span class="str">'LOGIN_ERROR'</span>, error: e.message });
+    }
+  }, []);
+
+  <span class="kw">const</span> logout = useCallback(() => {
+    dispatch({ type: <span class="str">'LOGOUT'</span> });
+  }, []);
+
+  <span class="kw">const</span> value = useMemo(
+    () => ({ ...state, login, logout }),
+    [state, login, logout] <span class="cmt">// login/logout are stable refs</span>
+  );
+
+  <span class="kw">return</span> &lt;AuthContext.Provider value={value}&gt;{children}&lt;/AuthContext.Provider&gt;;
+}
+
+<span class="cmt">// Guard hook — self-documenting errors</span>
+<span class="kw">export function</span> <span class="fn">useAuth</span>() {
+  <span class="kw">const</span> ctx = useContext(AuthContext);
+  <span class="kw">if</span> (!ctx) <span class="kw">throw new</span> Error(
+    <span class="str">'useAuth() must be used inside &lt;AuthProvider&gt;'</span>
+  );
+  <span class="kw">return</span> ctx;
+}</div>
+      <div class="tip">The discriminated union on <code>AuthState</code> makes impossible states unrepresentable. When <code>status === 'success'</code>, TypeScript knows <code>user</code> is non-null. This eliminates a whole class of null-check bugs downstream.</div>
+    </div>
+  </div>
+
+  <!-- ─── Q4 ─── -->
+  <div class="q-card">
+    <div class="q-meta">
+      <span class="q-num">Q4</span>
+      <span class="badge b-got">gotcha</span>
+      <span class="badge b-must">must-know</span>
+    </div>
+    <div class="q-text">A colleague reports that <code>useContext(AuthContext)</code> returns <code>undefined</code> intermittently in production — but never in development. Walk through every possible cause and how you would diagnose each.</div>
+    <button class="reveal-btn" onclick="reveal('ans4', this)">
+      <span class="arrow">▼</span> Reveal answer
+    </button>
+    <div class="answer-panel" id="ans4">
+      <div class="expectation">
+        <strong>Senior expectation:</strong> Must cover at minimum: missing default value, component renders before Provider mounts, Provider at wrong tree level, and the multiple React instances trap (the production-only cause). The last one is the principal-level answer.
+      </div>
+      <div class="answer-text">
+        <strong>Cause 1 — Missing default value.</strong> <code>createContext()</code> with no argument sets the default to <code>undefined</code>. Any consumer outside a Provider silently receives <code>undefined</code>. Fix: <code>createContext(null)</code> and guard with a null-check hook.<br><br>
+        <strong>Cause 2 — Provider at wrong tree level.</strong> The Provider is inside a sibling branch rather than an ancestor. Common when restructuring routes — the Provider moves but some consumers remain outside it.<br><br>
+        <strong>Cause 3 — Component renders before Provider mounts.</strong> In async/streaming SSR, a child can render before its Provider tree is established.<br><br>
+        <strong>Cause 4 (the production-only culprit) — Multiple React instances.</strong> In a monorepo, a library bundled with its own copy of React creates a separate context registry. The Provider from one React instance is invisible to consumers in the other.
+      </div>
+      <div class="code-block"><span class="cmt">// Diagnose: both must resolve to the SAME path</span>
+console.log(require.resolve(<span class="str">'react'</span>));
+<span class="cmt">// app:     /app/node_modules/react/index.js ✅</span>
+<span class="cmt">// library: /app/node_modules/react/index.js ✅</span>
+<span class="cmt">// library: /library/node_modules/react/index.js ❌ — two Reacts!</span>
+
+<span class="cmt">// Fix in Vite:</span>
+resolve: { dedupe: [<span class="str">'react'</span>, <span class="str">'react-dom'</span>] }
+
+<span class="cmt">// Fix in Webpack:</span>
+resolve: { alias: { react: path.resolve(<span class="str">'./node_modules/react'</span>) } }</div>
+      <div class="warn">This is why the bug appears only in production — dev builds often skip the deduplication optimisations that split the React instance. Always check peer dependencies in shared libraries.</div>
+    </div>
+  </div>
+
+  <!-- ─── Q5 ─── -->
+  <div class="q-card">
+    <div class="q-meta">
+      <span class="q-num">Q5</span>
+      <span class="badge b-cod">coding</span>
+    </div>
+    <div class="q-text">Implement the state + dispatch split context pattern. Explain why <code>CountControls</code> (which only dispatches actions) should never re-render after mount — and verify your implementation achieves this.</div>
+    <button class="reveal-btn" onclick="reveal('ans5', this)">
+      <span class="arrow">▼</span> Reveal answer
+    </button>
+    <div class="answer-panel" id="ans5">
+      <div class="expectation">
+        <strong>Senior expectation:</strong> Must use two separate contexts — one for state, one for dispatch. Must know that dispatch from useReducer is always the same reference (never changes). Must wrap CountControls in React.memo. Must explain why this pattern is structurally superior to passing both in one context.
+      </div>
+      <div class="code-block"><span class="kw">const</span> StateContext    = createContext(null);
+<span class="kw">const</span> DispatchContext = createContext(null);
+
+<span class="kw">function</span> <span class="fn">countReducer</span>(state, action) {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="str">'INC'</span>:   <span class="kw">return</span> { count: state.count + 1 };
+    <span class="kw">case</span> <span class="str">'DEC'</span>:   <span class="kw">return</span> { count: state.count - 1 };
+    <span class="kw">case</span> <span class="str">'RESET'</span>: <span class="kw">return</span> { count: 0 };
+    <span class="kw">default</span>:      <span class="kw">return</span> state;
+  }
+}
+
+<span class="kw">function</span> <span class="fn">CountProvider</span>({ children }) {
+  <span class="kw">const</span> [state, dispatch] = useReducer(countReducer, { count: 0 });
+
+  <span class="cmt">// dispatch is ALWAYS the same reference — DispatchContext</span>
+  <span class="cmt">// consumers will NEVER re-render from state changes</span>
+  <span class="kw">return</span> (
+    &lt;DispatchContext.Provider value={dispatch}&gt;
+      &lt;StateContext.Provider value={state}&gt;
+        {children}
+      &lt;/StateContext.Provider&gt;
+    &lt;/DispatchContext.Provider&gt;
+  );
+}
+
+<span class="cmt">// ✅ Re-renders ONLY when count changes</span>
+<span class="kw">const</span> CountDisplay = React.memo(<span class="kw">function</span>() {
+  <span class="kw">const</span> { count } = useContext(StateContext);
+  console.count(<span class="str">'CountDisplay render'</span>);
+  <span class="kw">return</span> &lt;p&gt;Count: {count}&lt;/p&gt;;
+});
+
+<span class="cmt">// ✅ Renders ONCE on mount — never again from count changes</span>
+<span class="kw">const</span> CountControls = React.memo(<span class="kw">function</span>() {
+  <span class="kw">const</span> dispatch = useContext(DispatchContext);
+  console.count(<span class="str">'CountControls render'</span>); <span class="cmt">// should only fire once</span>
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;button onClick={() =&gt; dispatch({ type: <span class="str">'DEC'</span> })}&gt;-&lt;/button&gt;
+      &lt;button onClick={() =&gt; dispatch({ type: <span class="str">'INC'</span> })}&gt;+&lt;/button&gt;
+      &lt;button onClick={() =&gt; dispatch({ type: <span class="str">'RESET'</span> })}&gt;Reset&lt;/button&gt;
+    &lt;/div&gt;
+  );
+});</div>
+      <div class="tip"><code>dispatch</code> from <code>useReducer</code> is guaranteed stable by React — it's the same function reference for the entire lifetime of the component. This makes it safe in an empty-deps <code>useCallback</code> or as a stable context value.</div>
+    </div>
+  </div>
+
+  <!-- ─── Q6 ─── -->
+  <div class="q-card">
+    <div class="q-meta">
+      <span class="q-num">Q6</span>
+      <span class="badge b-thy">theory</span>
+    </div>
+    <div class="q-text">Can <code>React.memo</code> prevent re-renders caused by <code>useContext</code>? A colleague wraps an expensive component in <code>React.memo</code> expecting it to bail out when context changes. What actually happens and why?</div>
+    <button class="reveal-btn" onclick="reveal('ans6', this)">
+      <span class="arrow">▼</span> Reveal answer
+    </button>
+    <div class="answer-panel" id="ans6">
+      <div class="expectation">
+        <strong>Senior expectation:</strong> No — React.memo cannot prevent context-driven re-renders. Must explain why precisely: React.memo only compares props, but useContext creates a direct subscription that bypasses prop comparison entirely. Must give the correct solutions.
+      </div>
+      <div class="answer-text">
+        <strong>No. <code>React.memo</code> cannot prevent re-renders caused by <code>useContext</code>.</strong><br><br>
+        <code>React.memo</code> wraps a component and bails out of re-rendering when its <em>props</em> haven't changed. But <code>useContext</code> creates a direct subscription to the Context — this subscription is independent of props. When the context value changes, React marks the component for re-render at the subscription level, before prop comparison ever happens. <code>React.memo</code>'s bailout never fires.<br><br>
+        Think of it this way: <code>React.memo</code> guards the component's <em>door</em> (props). <code>useContext</code> has a <em>direct phone line</em> into the component that bypasses the door entirely.
+      </div>
+      <div class="code-block"><span class="cmt">// This does NOT prevent context-driven re-renders:</span>
+<span class="kw">const</span> MyComponent = React.memo(<span class="kw">function</span>() {
+  <span class="kw">const</span> value = useContext(SomeContext); <span class="cmt">// direct subscription</span>
+  <span class="kw">return</span> &lt;div&gt;{value.data}&lt;/div&gt;;
+  <span class="cmt">// Re-renders whenever SomeContext value changes</span>
+  <span class="cmt">// regardless of React.memo wrapper</span>
+});
+
+<span class="cmt">// ✅ Correct approach: separate the subscribed component</span>
+<span class="cmt">// from the expensive rendering component</span>
+<span class="kw">function</span> <span class="fn">ContextReader</span>() {
+  <span class="kw">const</span> { data } = useContext(SomeContext);
+  <span class="kw">return</span> &lt;ExpensiveRenderer data={data} /&gt;; <span class="cmt">// passes primitive/stable ref</span>
+}
+
+<span class="kw">const</span> ExpensiveRenderer = React.memo(<span class="kw">function</span>({ data }) {
+  <span class="cmt">// Now React.memo works — only re-renders if data prop changes</span>
+  <span class="kw">return</span> &lt;div&gt;...expensive render...&lt;/div&gt;;
+});</div>
+      <div class="tip">The "container and presenter" split: a thin context-reading container passes stable primitive values as props to a <code>React.memo</code>-wrapped presenter. The presenter only re-renders when its specific props change — achieving the selector-like granularity that Context lacks natively.</div>
+    </div>
+  </div>
+
+  <!-- ─── Q7 ─── -->
+  <div class="q-card">
+    <div class="q-meta">
+      <span class="q-num">Q7</span>
+      <span class="badge b-arc">architecture</span>
+      <span class="badge b-must">must-know</span>
+    </div>
+    <div class="q-text">Your team proposes replacing Redux with <code>useReducer + useContext</code> across a 60-component e-commerce app (cart, user, product filters, real-time stock, notifications). Give a precise evaluation: which pieces work with this pattern, which will fail, and what the correct architecture is.</div>
+    <button class="reveal-btn" onclick="reveal('ans7', this)">
+      <span class="arrow">▼</span> Reveal answer
+    </button>
+    <div class="answer-panel" id="ans7">
+      <div class="expectation">
+        <strong>Senior expectation:</strong> Must not give a binary "yes" or "no." Must partition the state by characteristics and assign the right tool to each. Must identify real-time stock and notifications as unsuitable for Context. Must articulate why Context lacks selector subscriptions and what that means at 60+ components.
+      </div>
+      <div class="answer-text">
+        The pattern works for some pieces and fails for others. The evaluation by state type:
+      </div>
+      <div class="o-table">
+        <div class="o-row">
+          <span class="o-label">Auth / user</span>
+          <span class="o-result r-ok">Context ✅</span>
+          <span class="o-why">Low update frequency (login/logout). Small, bounded consumers. Atomic state transitions with useReducer. Ideal Context use case.</span>
+        </div>
+        <div class="o-row">
+          <span class="o-label">Cart state</span>
+          <span class="o-result r-ok">Context ✅</span>
+          <span class="o-why">Changes on add/remove/clear — not high frequency. Bounded consumers (cart icon, cart page, checkout). Works well with split CartContext.</span>
+        </div>
+        <div class="o-row">
+          <span class="o-label">Product filters</span>
+          <span class="o-result" style="color:var(--yellow)">Caution ⚠</span>
+          <span class="o-why">If filter state changes on every keystroke and 20+ components consume it, Context re-renders all of them. Splitting helps, but selector-based store is cleaner at this scale.</span>
+        </div>
+        <div class="o-row">
+          <span class="o-label">Real-time stock</span>
+          <span class="o-result r-err">Fails ❌</span>
+          <span class="o-why">Updates every few seconds from WebSocket. 60 components subscribing to one Context = 60 re-renders per WebSocket message. Use Zustand with selectors — each ProductCard selects only its own stock level.</span>
+        </div>
+        <div class="o-row">
+          <span class="o-label">Notifications</span>
+          <span class="o-result r-err">Fails ❌</span>
+          <span class="o-why">High frequency, cross-cutting concern. Needs middleware (persistence to localStorage, batching). Context has no middleware layer.</span>
+        </div>
+      </div>
+      <div class="answer-text" style="margin-top:12px">
+        <strong>Correct architecture:</strong> Use Context (with useReducer) for auth and cart — scoped, bounded, low-frequency. Use Zustand for product filters, real-time stock, and notifications — needs selector subscriptions and middleware. The two patterns coexist in the same app; the mistake is using one pattern for everything.
+      </div>
+      <div class="tip">The 10-consumer rule: Context with useMemo handles up to ~10 consumers cleanly. Beyond that, or whenever consumers need granular subscription (re-render only when their specific slice changes), reach for Zustand. It gives you Redux-style selectors with a fraction of the boilerplate.</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <strong>Score guide:</strong> Q1 is the re-render mechanism baseline. Q2 is the most common production bug — unstable value objects. Q3 proves you can implement production-quality Context with useReducer. Q4 (multiple React instances) is the principal-level debugging insight. Q5 is the state+dispatch split — the cleanest Context performance pattern. Q6 debunks the React.memo misconception. Q7 is the architectural synthesis — a dogmatic "replace Redux with Context" answer is a red flag.
+    <div class="score-legend">
+      <div class="score-item"><span>Q1–Q2</span> Senior baseline</div>
+      <div class="score-item"><span>Q3–Q4</span> Production depth</div>
+      <div class="score-item"><span>Q5–Q6</span> Advanced patterns</div>
+      <div class="score-item"><span>Q7</span> Principal signal</div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  var revealed = 0;
+  var total = 7;
+
+  function reveal(id, btn) {
+    var panel = document.getElementById(id);
+    var isOpen = panel.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+    btn.innerHTML = isOpen
+      ? '<span class="arrow">▲</span> Hide answer'
+      : '<span class="arrow">▼</span> Reveal answer';
+
+    // Count unique reveals
+    if (isOpen && !btn.dataset.counted) {
+      btn.dataset.counted = '1';
+      revealed++;
+      document.getElementById('done-count').textContent = revealed;
+      var pct = Math.round((revealed / total) * 100);
+      document.getElementById('pct').textContent = pct + '%';
+      document.getElementById('prog').style.width = pct + '%';
+      document.getElementById('prog-label').textContent =
+        revealed + ' of ' + total + ' revealed';
+    }
+  }
+</script>
 </body>
 </html>

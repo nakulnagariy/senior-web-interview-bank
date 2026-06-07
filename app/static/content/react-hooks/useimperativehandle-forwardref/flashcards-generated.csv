@@ -1,6 +1,8 @@
-"question","answer","level"
-"What is the primary objective of useImperativeHandle & forwardRef?","Define the mechanism and link it to reliability/performance impact.","foundational"
-"Which failure mode should be mentioned first for useImperativeHandle & forwardRef?","Name one realistic edge case and describe mitigation.","foundational"
-"How would you validate useImperativeHandle & forwardRef after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
-"What trade-off appears in useImperativeHandle & forwardRef decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
-"How do you explain react-hooks/useimperativehandle-forwardref to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"
+Question,Answer
+What does forwardRef do?,Allows a parent to pass a ref through to a child component.
+What does useImperativeHandle do?,Customizes the value exposed to the parent via the ref.
+When should you use useImperativeHandle?,When you want to expose only specific methods or properties to the parent, not the whole DOM node.
+Give an example method you might expose with useImperativeHandle.,focus, clear, scrollTo, reset.
+What is a risk of overusing useImperativeHandle?,It can break encapsulation and create tightly coupled components.
+How do you use forwardRef with a functional component?,Wrap the component with React.forwardRef and accept ref as the second argument.
+How do you use useImperativeHandle inside a component?,Call useImperativeHandle(ref, () => ({ ...methods })) inside the component.

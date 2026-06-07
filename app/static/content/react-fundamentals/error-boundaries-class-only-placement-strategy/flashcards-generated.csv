@@ -1,6 +1,8 @@
-"question","answer","level"
-"What is the primary objective of Error boundaries - class only, placement strategy?","Define the mechanism and link it to reliability/performance impact.","advanced"
-"Which failure mode should be mentioned first for Error boundaries - class only, placement strategy?","Name one realistic edge case and describe mitigation.","advanced"
-"How would you validate Error boundaries - class only, placement strategy after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
-"What trade-off appears in Error boundaries - class only, placement strategy decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
-"How do you explain react-fundamentals/error-boundaries-class-only-placement-strategy to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"
+Question,Answer
+Why are error boundaries class-only in React?,They rely on class lifecycle methods not available in function components or hooks.
+What methods must a class error boundary implement?,componentDidCatch and getDerivedStateFromError.
+What does getDerivedStateFromError do?,Updates state to show a fallback UI when an error is caught.
+What does componentDidCatch do?,Logs the error or sends it to monitoring.
+Why does placement strategy matter for error boundaries?,They only catch errors in their child tree, so placement determines which UI is isolated.
+Give two placement strategies for error boundaries.,Global (wrap App), Local (wrap Widget or section).
+What are the limitations of error boundaries?,Cannot catch errors in event handlers, async code, or themselves.

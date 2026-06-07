@@ -1,6 +1,8 @@
-"question","answer","level"
-"What is the primary objective of Custom hooks - design patterns & rules of hooks?","Define the mechanism and link it to reliability/performance impact.","advanced"
-"Which failure mode should be mentioned first for Custom hooks - design patterns & rules of hooks?","Name one realistic edge case and describe mitigation.","advanced"
-"How would you validate Custom hooks - design patterns & rules of hooks after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
-"What trade-off appears in Custom hooks - design patterns & rules of hooks decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
-"How do you explain react-hooks/custom-hooks-design-patterns-rules-of-hooks to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"
+Question,Answer
+What is a custom hook?,A reusable function that encapsulates logic using React hooks.
+What are the two main rules of hooks?,Only call hooks at the top level and only from React function components or other custom hooks.
+Why must custom hooks start with "use"?,So React and linting tools can identify and enforce hook rules.
+What design patterns are used in custom hooks?,Encapsulation, composition, parameterization, returning state/utilities.
+Give an example of a custom hook.,function useFetch(url) { ... }
+Can you call hooks inside loops or conditions?,No, hooks must be called at the top level.
+Can you call hooks from regular JS functions or classes?,No, only from function components or custom hooks.

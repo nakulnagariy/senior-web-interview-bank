@@ -1,34 +1,25 @@
-/**
- * Generated drill snippet for: useLayoutEffect vs useEffect - timing difference
- * Slug: react-hooks/uselayouteffect-vs-useeffect-timing-difference
- */
+import React, { useRef, useLayoutEffect, useEffect, useState } from 'react';
 
-const scenario = {
-  topic: "useLayoutEffect vs useEffect - timing difference",
-  slug: "react-hooks/uselayouteffect-vs-useeffect-timing-difference",
-  seed: 51
-};
+// useLayoutEffect: measure width before paint
+export function MeasureWidth() {
+  const ref = useRef();
+  const [width, setWidth] = useState(0);
 
-function drillUselayouteffectVsUseeffectTimingDifference(input) {
-  const base = {
-    ...scenario,
-    input,
-    timestamp: Date.now()
-  };
+  useLayoutEffect(() => {
+    setWidth(ref.current.offsetWidth);
+  }, []);
 
-  // Keep answers interview-oriented: explicit assumptions, trade-offs, and checks.
-  return {
-    summary:       'Explain baseline mechanism, highlight edge case, then provide mitigation and verification plan.',
-    assumptions: [
-      'Inputs can be malformed in production',
-      'Requirements may change after initial delivery',
-      'Monitoring is required to validate correctness'
-    ],
-    tradeOff: 'Prefer debuggability and predictability over clever but opaque shortcuts',
-    checkList: ['error path covered', 'fallback defined', 'runtime metric identified'],
-    context: base
-  };
+  return <div ref={ref}>Width: {width}</div>;
 }
 
-const output = drillUselayouteffectVsUseeffectTimingDifference({ candidate: 'senior', mode: 'discussion' });
-console.log(output);
+// useEffect: measurement happens after paint (may cause flash)
+export function MeasureWidthEffect() {
+  const ref = useRef();
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    setWidth(ref.current.offsetWidth);
+  }, []);
+
+  return <div ref={ref}>Width: {width}</div>;
+}

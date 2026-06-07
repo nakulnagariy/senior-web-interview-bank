@@ -1,6 +1,8 @@
-"question","answer","level"
-"What is the primary objective of React Strict Mode behavior?","Define the mechanism and link it to reliability/performance impact.","advanced"
-"Which failure mode should be mentioned first for React Strict Mode behavior?","Name one realistic edge case and describe mitigation.","advanced"
-"How would you validate React Strict Mode behavior after release?","Use observable metrics, regression checks, and rollback strategy.","advanced"
-"What trade-off appears in React Strict Mode behavior decisions?","Balance speed, correctness, and maintainability with explicit priorities.","advanced"
-"How do you explain react-fundamentals/react-strict-mode-behavior to a non-specialist?","Translate technical details into user impact and delivery risk.","advanced"
+Question,Answer
+What is React Strict Mode?,A development tool for highlighting potential problems and unsafe patterns in React apps.
+Does Strict Mode render visible UI?,No, it only activates extra checks and warnings for its descendants.
+What happens to functions and effects under Strict Mode?,They are intentionally invoked twice in development to catch side effects and bugs.
+Does Strict Mode affect production builds?,No, it only affects development builds.
+What issues can Strict Mode help catch?,Unsafe lifecycle methods, unexpected side effects, deprecated APIs, and non-idempotent code.
+How do you enable Strict Mode in a React app?,Wrap your component tree in <React.StrictMode>.
+What is a common gotcha with Strict Mode?,Side effects may run twice, so code must be idempotent.

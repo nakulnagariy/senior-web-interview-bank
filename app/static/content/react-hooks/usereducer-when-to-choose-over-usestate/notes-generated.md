@@ -1,27 +1,37 @@
-# useReducer - when to choose over useState
+# useReducer: When to Choose Over useState
 
-## Interview Lens
-- Focus level: Applied
-- Route slug: react-hooks/usereducer-when-to-choose-over-usestate
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is useReducer?
+- `useReducer` is a React hook for managing state with a reducer function, similar to Redux.
+- It takes a reducer, initial state, and returns `[state, dispatch]`.
 
-## Core Mental Model
-useReducer - when to choose over useState should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## When to Use useReducer
+- Prefer `useReducer` when:
+  - State logic is complex (multiple sub-values, interdependent updates).
+  - State transitions depend on previous state or involve multiple actions.
+  - You want to centralize state updates and make them predictable.
+  - You need to share dispatch logic across deeply nested components (with context).
 
-## Senior Discussion Anchors
-1. What breaks first when usereducer - when to choose over usestate is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+- Prefer `useState` when:
+  - State is simple (single value or independent values).
+  - Updates are straightforward and not interdependent.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example
 
-## Whiteboard Drill
-1. Explain useReducer - when to choose over useState in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for usereducer-when-to-choose-over-usestate.
-3. List two metrics you would track to verify the approach in production.
+```js
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'reset':
+      return { count: 0 };
+    default:
+      return state;
+  }
+}
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering useReducer - when to choose over useState.
+const [state, dispatch] = useReducer(reducer, { count: 0 });
+```
+
+### Summary
+- Use useReducer for complex state logic, multiple actions, or when you want predictable state transitions.
+- Use useState for simple, independent state values.

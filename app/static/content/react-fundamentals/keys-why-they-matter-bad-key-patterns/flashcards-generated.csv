@@ -1,6 +1,8 @@
-"question","answer","level"
-"What is the primary objective of Keys - why they matter, bad key patterns?","Define the mechanism and link it to reliability/performance impact.","foundational"
-"Which failure mode should be mentioned first for Keys - why they matter, bad key patterns?","Name one realistic edge case and describe mitigation.","foundational"
-"How would you validate Keys - why they matter, bad key patterns after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
-"What trade-off appears in Keys - why they matter, bad key patterns decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
-"How do you explain react-fundamentals/keys-why-they-matter-bad-key-patterns to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"
+Question,Answer
+Why are keys important in React lists?,They help React identify which items have changed, been added, or removed, enabling efficient updates and preserving state.
+What is a bad key pattern in React?,Using array indexes or unstable values as keys.
+What can happen if you use array indexes as keys in a dynamic list?,Component state may be lost, inputs may reset, and unnecessary re-renders can occur.
+What is a good key pattern?,Using a unique, stable identifier like a database ID.
+Give an example of a good key usage.,{items.map(item => <li key={item.id}>{item.text}</li>)}
+Give an example of a bad key usage.,{items.map((item, idx) => <li key={idx}>{item.text}</li>)}
+How do bad keys affect user experience?,Inputs may lose focus or reset unexpectedly when the list changes.

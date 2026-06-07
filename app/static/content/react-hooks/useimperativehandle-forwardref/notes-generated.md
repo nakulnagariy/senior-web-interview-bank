@@ -1,27 +1,36 @@
 # useImperativeHandle & forwardRef
 
-## Interview Lens
-- Focus level: Foundational
-- Route slug: react-hooks/useimperativehandle-forwardref
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## What is forwardRef?
+- `forwardRef` is a React API that lets you pass a ref from a parent component to a child component.
+- Useful for exposing a child’s DOM node or imperative methods to the parent.
 
-## Core Mental Model
-useImperativeHandle & forwardRef should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## What is useImperativeHandle?
+- `useImperativeHandle` is a React hook used with `forwardRef` to customize the instance value exposed to parent refs.
+- Lets you control what methods or properties the parent can access, instead of exposing the entire child component or DOM node.
 
-## Senior Discussion Anchors
-1. What breaks first when useimperativehandle & forwardref is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Why Use Them?
+- Encapsulate imperative logic (e.g., focus, scroll, animations) inside a component, but allow parent components to trigger it.
+- Hide internal details and expose only a controlled API.
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+## Example
 
-## Whiteboard Drill
-1. Explain useImperativeHandle & forwardRef in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for useimperativehandle-forwardref.
-3. List two metrics you would track to verify the approach in production.
+```js
+const FancyInput = React.forwardRef((props, ref) => {
+  const inputRef = useRef();
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current.focus(),
+    clear: () => (inputRef.current.value = '')
+  }));
+  return <input ref={inputRef} />;
+});
 
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering useImperativeHandle & forwardRef.
+// Usage:
+const ref = useRef();
+<FancyInput ref={ref} />
+ref.current.focus();
+ref.current.clear();
+```
+
+### Summary
+- Use forwardRef to pass refs through components.
+- Use useImperativeHandle to expose a custom, controlled API to parent components.

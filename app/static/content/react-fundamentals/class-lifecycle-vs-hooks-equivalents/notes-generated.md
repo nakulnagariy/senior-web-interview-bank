@@ -1,27 +1,36 @@
-# Class lifecycle vs hooks equivalents
+# React Class Lifecycle Methods vs Hooks Equivalents
 
-## Interview Lens
-- Focus level: Applied
-- Route slug: react-fundamentals/class-lifecycle-vs-hooks-equivalents
-- What interviewers are probing: design judgement, edge-case awareness, and production trade-offs.
+## Class Lifecycle Methods
+- **constructor:** Initialization logic, state setup, binding methods.
+- **componentDidMount:** Runs once after the component mounts (good for data fetching, subscriptions).
+- **componentDidUpdate:** Runs after every update (can compare prev/next props/state).
+- **componentWillUnmount:** Runs before the component is removed (cleanup, unsubscribe).
+- **shouldComponentUpdate:** Controls whether a re-render should occur.
+- **getDerivedStateFromProps:** Sync state with props before rendering.
+- **getSnapshotBeforeUpdate:** Capture info from the DOM before it changes.
 
-## Core Mental Model
-Class lifecycle vs hooks equivalents should be explained as a decision model, not a definition. Start from the baseline mechanism, then explain failure modes, and finally describe the production-safe pattern.
+## Hooks Equivalents
+- **useState:** State management (replaces constructor state).
+- **useEffect:** Handles side effects. By changing the dependency array, you can mimic mount, update, and unmount behaviors.
+  - `useEffect(fn, [])` → componentDidMount
+  - `useEffect(fn, [deps])` → componentDidUpdate (for those deps)
+  - Cleanup function in `useEffect` → componentWillUnmount
+- **useMemo/useCallback:** Memoization, similar to optimizing with shouldComponentUpdate.
+- **useRef:** Accessing DOM nodes or persisting values across renders.
+- **Custom hooks:** Encapsulate reusable logic.
 
-## Senior Discussion Anchors
-1. What breaks first when class lifecycle vs hooks equivalents is implemented naively?
-2. How does this topic affect observability, maintainability, and debugging speed?
-3. Which trade-off do you pick when latency and correctness are in tension?
+## Example Mapping
 
-## Pitfalls to Mention
-- Overconfidence in happy-path behavior while ignoring edge inputs.
-- Missing rollback or fallback strategy in runtime error scenarios.
-- Coupling API shape to current UI assumptions.
+| Class Method              | Hooks Equivalent                |
+|--------------------------|---------------------------------|
+| constructor              | useState                        |
+| componentDidMount        | useEffect(() => {...}, [])      |
+| componentDidUpdate       | useEffect(() => {...}, [deps])  |
+| componentWillUnmount     | useEffect(() => { return ... }, []) |
+| shouldComponentUpdate    | React.memo, useMemo, useCallback|
+| getDerivedStateFromProps | useEffect/useMemo (rarely)      |
+| getSnapshotBeforeUpdate  | useLayoutEffect                 |
 
-## Whiteboard Drill
-1. Explain Class lifecycle vs hooks equivalents in 45 seconds using one real production example.
-2. Show one anti-pattern and the corrected pattern for class-lifecycle-vs-hooks-equivalents.
-3. List two metrics you would track to verify the approach in production.
-
-## Compact Recap
-Use the format: "Problem -> Constraint -> Choice -> Trade-off -> Monitoring" when answering Class lifecycle vs hooks equivalents.
+## Summary
+- Hooks provide more granular and flexible control over side effects and state.
+- Understanding the mapping helps migrate class components to function components.

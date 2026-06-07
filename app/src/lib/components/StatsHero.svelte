@@ -82,4 +82,23 @@
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
+
+	@media (max-width: 640px) {
+		.hero {
+			padding: 0.8rem;
+		}
+
+		.hero h1 {
+			font-size: 1.05rem;
+		}
+
+		.hero p {
+			font-size: 0.82rem;
+			margin-bottom: 0.6rem;
+		}
+
+		.stat span {
+			font-size: 1rem;
+		}
+	}
 </style>

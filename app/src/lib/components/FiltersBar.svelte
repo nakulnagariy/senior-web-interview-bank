@@ -41,11 +41,32 @@
 		border-radius: 999px;
 		padding: 0.35rem 0.8rem;
 		cursor: pointer;
+		white-space: nowrap;
 	}
 
 	button.active {
 		background: #1a2437;
 		color: #fff;
 		border-color: #1a2437;
+	}
+
+	@media (max-width: 640px) {
+		.filters {
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+			scrollbar-width: none;
+			padding-bottom: 0.15rem;
+		}
+
+		.filters::-webkit-scrollbar {
+			display: none;
+		}
+
+		button {
+			padding: 0.4rem 0.75rem;
+			font-size: 0.85rem;
+			min-height: 36px;
+		}
 	}
 </style>

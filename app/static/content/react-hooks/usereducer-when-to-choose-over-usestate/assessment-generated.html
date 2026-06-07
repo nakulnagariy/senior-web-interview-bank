@@ -1,45 +1,982 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>useReducer - when to choose over useState - Assessment</title>
-  <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f6f8fb;color:#1f2430}
-    .wrap{max-width:900px;margin:20px auto;padding:16px;background:#fff;border:1px solid #d7dfeb;border-radius:12px}
-    h1{margin:0 0 8px;font-size:22px}
-    p.meta{margin:0 0 14px;color:#5a667c;font-size:13px}
-    .card{border:1px solid #dde4ef;border-radius:10px;padding:12px;margin-bottom:10px;background:#fbfcfe}
-    .q{font-weight:600;margin-bottom:6px}
-    details{margin-top:6px}
-    code{background:#edf1f9;padding:1px 4px;border-radius:4px}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>useReducer - when to choose over useState - Senior Assessment</h1>
-    <p class="meta">Topic slug: react-hooks/usereducer-when-to-choose-over-usestate | Variant seed: 49</p>
+<style>
+  :root {
+    --font-sans: "Space Grotesk", "Segoe UI", Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", "Consolas", "Courier New", monospace;
 
-    <div class="card">
-      <div class="q">Q1. How would you evaluate useReducer - when to choose over useState when requirements change mid-sprint?</div>
-      <details><summary>Expected answer signal</summary><p>Shows constraint mapping, identifies migration risks, and proposes phased rollout with guardrails.</p></details>
+    --color-text-primary: #20202a;
+    --color-text-secondary: #4f5464;
+    --color-text-tertiary: #707587;
+    --color-text-info: #1b5da5;
+    --color-text-warning: #7f4a00;
+    --color-text-danger: #a32d2d;
+
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f4f1;
+    --color-background-info: #eaf2fb;
+    --color-background-warning: #fff4e2;
+    --color-background-danger: #fdecec;
+
+    --color-border-tertiary: #d9dbe2;
+    --color-border-info: #1b5da5;
+    --color-border-danger: #a32d2d;
+
+    --border-radius-md: 10px;
+    --border-radius-lg: 14px;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #f7f5f0;
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .w {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    font-family: var(--font-sans);
+  }
+
+  @media (max-width: 720px) {
+    .w {
+      padding: 1rem;
+    }
+
+    .q {
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .rg {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .rc {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 12px;
+  }
+
+  .rc h3 {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 6px;
+  }
+
+  .rr {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    line-height: 1.75;
+    display: flex;
+    gap: 5px;
+  }
+
+  .rk {
+    font-family: var(--font-mono);
+    color: var(--color-text-primary);
+    font-size: 10px;
+    min-width: 56px;
+    flex-shrink: 0;
+  }
+
+  .div {
+    height: 0.5px;
+    background: var(--color-border-tertiary);
+    margin: 1.25rem 0;
+  }
+
+  .slbl {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.07em;
+    margin-bottom: 1rem;
+  }
+
+  .q {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .qm {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 9px;
+    flex-wrap: wrap;
+  }
+
+  .qn {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.05em;
+  }
+
+  .b {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  .b1 {
+    background: #eeedfe;
+    color: #3c3489;
+  }
+
+  .b2 {
+    background: #fcebeb;
+    color: #791f1f;
+  }
+
+  .b3 {
+    background: #faeeda;
+    color: #633806;
+  }
+
+  .b4 {
+    background: #e6f1fb;
+    color: #0c447c;
+  }
+
+  .b5 {
+    background: #e1f5ee;
+    color: #085041;
+  }
+
+  .b6 {
+    background: #f1efe8;
+    color: #444441;
+  }
+
+  .qt {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    margin-bottom: 11px;
+  }
+
+  .cd {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-primary);
+    line-height: 1.8;
+    margin-bottom: 10px;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .rbtn {
+    font-size: 12px;
+    color: var(--color-text-info);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+
+  .ans {
+    display: none;
+    margin-top: 13px;
+    border-top: 0.5px solid var(--color-border-tertiary);
+    padding-top: 13px;
+  }
+
+  .ans.open {
+    display: block;
+  }
+
+  .exp {
+    background: var(--color-background-warning);
+    border-radius: var(--border-radius-md);
+    padding: 9px 12px;
+    font-size: 12px;
+    color: var(--color-text-warning);
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+
+  .at {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+  }
+
+  .at code {
+    font-family: var(--font-mono);
+    background: var(--color-background-secondary);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 11px;
+    color: var(--color-text-primary);
+  }
+
+  .tip {
+    border-left: 2px solid var(--color-border-info);
+    padding: 8px 11px;
+    background: var(--color-background-info);
+    font-size: 12px;
+    color: var(--color-text-info);
+    line-height: 1.6;
+    margin-top: 10px;
+    border-radius: 0;
+  }
+
+  .tip code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: rgba(24, 95, 165, 0.1);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+
+  .warn {
+    border-left: 2px solid var(--color-border-danger);
+    padding: 8px 11px;
+    background: var(--color-background-danger);
+    font-size: 12px;
+    color: var(--color-text-danger);
+    line-height: 1.6;
+    margin-top: 10px;
+    border-radius: 0;
+  }
+
+  .warn code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: rgba(163, 45, 45, 0.1);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+
+  .orow {
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    font-size: 12px;
+  }
+
+  .orow:last-child {
+    border: none;
+  }
+
+  .ol {
+    font-family: var(--font-mono);
+    color: var(--color-text-tertiary);
+    min-width: 90px;
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+
+  .or {
+    font-weight: 500;
+    min-width: 52px;
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+
+  .ok {
+    color: #0f6e56;
+  }
+
+  .er {
+    color: #a32d2d;
+  }
+
+  .ow {
+    color: var(--color-text-secondary);
+    font-size: 11px;
+    flex: 1;
+    line-height: 1.6;
+  }
+
+  .foot {
+    margin-top: 1.5rem;
+    padding: 12px 14px;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+</style>
+
+<div class="w">
+  <h2
+    style="
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    "
+  >
+    Senior React assessment on useReducer — when to choose over useState. 6
+    questions covering theory, implementation, patterns and architecture with
+    working reveal buttons.
+  </h2>
+
+  <div style="margin-bottom: 1.5rem">
+    <h1
+      style="
+        font-size: 19px;
+        font-weight: 500;
+        color: var(--color-text-primary);
+        margin-bottom: 4px;
+      "
+    >
+      useReducer — when to choose over useState
+    </h1>
+    <p
+      style="
+        font-size: 13px;
+        color: var(--color-text-secondary);
+        line-height: 1.6;
+      "
+    >
+      6 questions. Most engineers know useReducer exists — few can articulate
+      precisely when it earns its complexity cost, or implement it correctly
+      under interview conditions.
+    </p>
+  </div>
+
+  <div class="slbl">MENTAL MODEL</div>
+  <div class="rg">
+    <div class="rc">
+      <h3>useReducer signature</h3>
+      <div class="rr">
+        <span class="rk">usage</span>const [state, dispatch] =
+        useReducer(reducer, initialState)
+      </div>
+      <div class="rr">
+        <span class="rk">reducer</span>(state, action) => newState — must be
+        pure
+      </div>
+      <div class="rr">
+        <span class="rk">dispatch</span>Sends an action object to the reducer
+      </div>
     </div>
-
-    <div class="card">
-      <div class="q">Q2. Which risk appears first if usereducer-when-to-choose-over-usestate is implemented without tests?</div>
-      <details><summary>Expected answer signal</summary><p>Identifies regression class, defines monitoring, and sets minimal reproducible checks.</p></details>
+    <div class="rc">
+      <h3>vs useState</h3>
+      <div class="rr">
+        <span class="rk">useState</span>One value, one setter — caller decides
+        next value
+      </div>
+      <div class="rr">
+        <span class="rk">useReducer</span>State machine — reducer decides next
+        value from action
+      </div>
+      <div class="rr">
+        <span class="rk">key diff</span>Logic lives in reducer, not at the call
+        site
+      </div>
     </div>
-
-    <div class="card">
-      <div class="q">Q3. How do you communicate trade-offs in useReducer - when to choose over useState to non-frontend stakeholders?</div>
-      <details><summary>Expected answer signal</summary><p>Frames impact in terms of reliability, delivery speed, and measurable outcomes.</p></details>
+    <div class="rc">
+      <h3>When reducer wins</h3>
+      <div class="rr">
+        <span class="rk">fields</span>Multiple related state fields updated
+        atomically
+      </div>
+      <div class="rr">
+        <span class="rk">actions</span>Many distinct user actions → same state
+        shape
+      </div>
+      <div class="rr">
+        <span class="rk">testing</span>Logic needs unit tests without mounting
+        React
+      </div>
     </div>
-
-    <div class="card">
-      <div class="q">Q4. Provide one anti-pattern and one corrected pattern for <code>usereducer-when-to-choose-over-usestate</code>.</div>
-      <details><summary>Expected answer signal</summary><p>Demonstrates specific failure mode and a pragmatic alternative with clear boundaries.</p></details>
+    <div class="rc">
+      <h3>Reducer rules</h3>
+      <div class="rr">
+        <span class="rk">pure</span>No side effects — same input always same
+        output
+      </div>
+      <div class="rr">
+        <span class="rk">immutable</span>Never mutate state — always return new
+        object
+      </div>
+      <div class="rr">
+        <span class="rk">default</span>Always return current state for unknown
+        actions
+      </div>
     </div>
   </div>
-</body>
-</html>
+
+  <div class="div"></div>
+  <div class="slbl">QUESTIONS</div>
+
+  <div class="q">
+    <div class="qm">
+      <span class="qn">Q1</span><span class="b b4">theory</span
+      ><span class="b b6">must-know</span>
+    </div>
+    <div class="qt">
+      A tech lead asks: "Give me the exact decision criteria you use to choose
+      useReducer over useState. Not 'when state is complex' — give me specific,
+      testable signals that tell you it's time to switch." What do you say?
+    </div>
+    <button class="rbtn" onclick="tog('a1', this)">
+      <i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer
+    </button>
+    <div class="ans" id="a1">
+      <div class="exp">
+        Senior expectation: Must give 4–5 specific, concrete signals — not vague
+        adjectives like "complex" or "large." Must explain the core insight:
+        useState puts transition logic at the call site (scattered), useReducer
+        centralises it in the reducer (co-located, named, testable).
+      </div>
+      <div class="at">
+        The core mental model shift: <code>useState</code> asks "what is the new
+        value?" — the caller decides. <code>useReducer</code> asks "what
+        happened?" — the reducer decides the new value from the action. When you
+        find yourself answering "what happened?" rather than "what is the next
+        value?", that is the signal to switch.<br /><br />The specific signals:
+      </div>
+      <div class="orow">
+        <span class="ol">signal 1</span
+        ><span
+          class="or"
+          style="color: var(--color-text-primary); font-size: 11px"
+          >atomic fields</span
+        ><span class="ow"
+          >You have 3+ state fields that must change together. Setting them via
+          multiple useState setters risks partially-updated state between
+          renders. One dispatch = one atomic transition.</span
+        >
+      </div>
+      <div class="orow">
+        <span class="ol">signal 2</span
+        ><span
+          class="or"
+          style="color: var(--color-text-primary); font-size: 11px"
+          >named actions</span
+        ><span class="ow"
+          >The same state shape is produced by 5+ distinct user actions. Named
+          action types (FETCH_START, FETCH_SUCCESS, SUBMIT_FORM, RESET) are
+          self-documenting. Anonymous setters are not.</span
+        >
+      </div>
+      <div class="orow">
+        <span class="ol">signal 3</span
+        ><span
+          class="or"
+          style="color: var(--color-text-primary); font-size: 11px"
+          >next depends on current</span
+        ><span class="ow"
+          >The new state value requires reading and branching on the current
+          state — not just accumulating it. Complex conditional logic belongs in
+          a reducer, not inline at a call site.</span
+        >
+      </div>
+      <div class="orow">
+        <span class="ol">signal 4</span
+        ><span
+          class="or"
+          style="color: var(--color-text-primary); font-size: 11px"
+          >testability</span
+        ><span class="ow"
+          >You want to unit-test state transitions without mounting a component.
+          A reducer is a pure function — test it directly with input/output
+          assertions.</span
+        >
+      </div>
+      <div class="orow">
+        <span class="ol">signal 5</span
+        ><span
+          class="or"
+          style="color: var(--color-text-primary); font-size: 11px"
+          >shared dispatch</span
+        ><span class="ow"
+          >Multiple deeply nested child components need to trigger state
+          changes. Pass dispatch down (stable reference — never changes) instead
+          of 5 separate callback props.</span
+        >
+      </div>
+      <div class="at" style="margin-top: 8px">
+        The practical threshold: if you have more than two
+        <code>useState</code> setters being called together in the same handler,
+        that is the first signal. If you write the same state-reset logic in
+        three different handlers, that is the second. At that point a reducer
+        almost always produces cleaner code.
+      </div>
+      <div class="tip">
+        useReducer does not replace useState — it complements it. Simple,
+        independent values (a modal open flag, a search string, a toggle) stay
+        as useState. Related state with named transitions moves to useReducer.
+        Both patterns live in the same component.
+      </div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qm">
+      <span class="qn">Q2</span><span class="b b3">coding</span
+      ><span class="b b6">must-know</span>
+    </div>
+    <div class="qt">
+      Refactor this useState-based fetch state into useReducer. The useState
+      version has three problems — identify them, then implement the correct
+      reducer version with proper TypeScript action types.
+    </div>
+    <div class="cd">
+      // useState version — 3 problems function useUserData(userId) { const
+      [isLoading, setIsLoading] = useState(false); const [data, setData] =
+      useState(null); const [error, setError] = useState(null); async function
+      fetchUser() { setIsLoading(true); try { const d = await
+      api.getUser(userId); setData(d); // isLoading still true here momentarily
+      } catch(e) { setError(e); // data not reset } finally {
+      setIsLoading(false); } } return { isLoading, data, error, fetchUser }; }
+    </div>
+    <button class="rbtn" onclick="tog('a2', this)">
+      <i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer
+    </button>
+    <div class="ans" id="a2">
+      <div class="exp">
+        Senior expectation: Must identify all 3 problems — inconsistent
+        intermediate state between setter calls, error doesn't reset data,
+        success doesn't reset error. Must produce a typed reducer with
+        discriminated union action types. Must show that one dispatch = one
+        atomic, consistent transition.
+      </div>
+      <div class="at">
+        The 3 problems in the useState version:<br />1. Between
+        <code>setData(d)</code> and <code>setIsLoading(false)</code>, React 17
+        renders with <code>data=result, isLoading=true</code> — inconsistent
+        state visible to consumers.<br />2. On error:
+        <code>setError(e)</code> is called but <code>setData(null)</code> is not
+        — stale data remains alongside a new error.<br />3. On success:
+        <code>setData(d)</code> is called but <code>setError(null)</code> is not
+        — stale error remains alongside new data.<br /><br />Reducer version:
+      </div>
+      <div class="cd">
+        type State&lt;T&gt; = | { status: 'idle'; data: null; error: null } | {
+        status: 'loading'; data: null; error: null } | { status: 'success';
+        data: T; error: null } | { status: 'error'; data: null; error: Error };
+        type Action&lt;T&gt; = | { type: 'FETCH_START' } | { type:
+        'FETCH_SUCCESS'; payload: T } | { type: 'FETCH_ERROR'; error: Error } |
+        { type: 'RESET' }; function fetchReducer&lt;T&gt;( state:
+        State&lt;T&gt;, action: Action&lt;T&gt; ): State&lt;T&gt; { switch
+        (action.type) { case 'FETCH_START': return { status: 'loading', data:
+        null, error: null }; case 'FETCH_SUCCESS': return { status: 'success',
+        data: action.payload, error: null }; case 'FETCH_ERROR': return {
+        status: 'error', data: null, error: action.error }; case 'RESET': return
+        { status: 'idle', data: null, error: null }; default: return state; } }
+        function useUserData&lt;T&gt;(userId: string) { const [state, dispatch]
+        = useReducer( fetchReducer&lt;T&gt;, { status: 'idle', data: null,
+        error: null } ); async function fetchUser() { dispatch({ type:
+        'FETCH_START' }); try { const d = await api.getUser(userId); dispatch({
+        type: 'FETCH_SUCCESS', payload: d }); } catch(e) { dispatch({ type:
+        'FETCH_ERROR', error: e as Error }); } } return { ...state, fetchUser };
+        }
+      </div>
+      <div class="at">
+        Each dispatch produces one atomic state transition — no intermediate
+        inconsistent states. The discriminated union on <code>State</code> means
+        TypeScript enforces exhaustive handling: in a component, if
+        <code>status === 'success'</code>, TypeScript knows <code>data</code> is
+        non-null. This eliminates a whole class of null-check bugs.
+      </div>
+      <div class="tip">
+        The discriminated union state type is the TypeScript killer feature that
+        pairs with useReducer. Instead of
+        <code>data: T | null, error: Error | null, isLoading: boolean</code> (7
+        possible combinations, most invalid), you get exactly 4 valid states.
+        The impossible states become unrepresentable.
+      </div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qm">
+      <span class="qn">Q3</span><span class="b b2">gotcha</span
+      ><span class="b b6">must-know</span>
+    </div>
+    <div class="qt">
+      This reducer has three bugs that will cause silent failures in production.
+      Find all of them.
+    </div>
+    <div class="cd">
+      function cartReducer(state, action) { switch (action.type) { case
+      'ADD_ITEM': state.items.push(action.item); // bug? return state; case
+      'REMOVE_ITEM': return { ...state, items: state.items.filter(i => i.id !==
+      action.id) }; case 'CLEAR': return { items: [] }; case 'UPDATE_QTY': const
+      item = state.items.find(i => i.id === action.id); item.qty = action.qty;
+      return { ...state }; } }
+    </div>
+    <button class="rbtn" onclick="tog('a3', this)">
+      <i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer
+    </button>
+    <div class="ans" id="a3">
+      <div class="exp">
+        Senior expectation: Must find all three — direct mutation in ADD_ITEM
+        (React won't re-render), direct mutation in UPDATE_QTY (same problem,
+        shallow spread doesn't help), and missing default case (throws on
+        unknown actions instead of returning current state). Must explain why
+        shallow spread doesn't fix nested mutation.
+      </div>
+      <div class="at">
+        <strong>Bug 1 — <code>ADD_ITEM</code> mutates state directly.</strong>
+        <code>state.items.push()</code> modifies the existing array in place,
+        then returns the same <code>state</code> reference. React uses
+        referential equality to detect changes — same reference means no
+        re-render is scheduled. The item is added to the array in memory but the
+        component never updates. Additionally, this corrupts React's ability to
+        compare previous vs next state for debugging and Strict Mode checks.<br /><br /><strong
+          >Bug 2 — <code>UPDATE_QTY</code> mutates a nested object.</strong
+        >
+        <code>item.qty = action.qty</code> mutates an object inside
+        <code>state.items</code>. The shallow spread
+        <code>{ ...state }</code> creates a new top-level object, but
+        <code>items</code> still points to the same array containing the same
+        mutated item objects. React sees a new state reference and re-renders —
+        but any component using <code>React.memo</code> or doing its own item
+        equality checks will see the same item reference and bail out
+        incorrectly.<br /><br /><strong
+          >Bug 3 — Missing <code>default</code> case.</strong
+        >
+        If any action type is dispatched that isn't handled (a typo, a future
+        action, middleware actions), the function returns
+        <code>undefined</code>. React replaces the entire state with
+        <code>undefined</code>, breaking the app. Every reducer must have a
+        default that returns the current state.<br /><br />Fixed reducer:
+      </div>
+      <div class="cd">
+        function cartReducer(state, action) { switch (action.type) { case
+        'ADD_ITEM': return { ...state, items: [...state.items, action.item] };
+        case 'REMOVE_ITEM': return { ...state, items: state.items.filter(i =>
+        i.id !== action.id) }; case 'CLEAR': return { ...state, items: [] };
+        case 'UPDATE_QTY': return { ...state, items: state.items.map(i => i.id
+        === action.id ? { ...i, qty: action.qty } : i ) }; default: return
+        state; // always return current state for unknown actions } }
+      </div>
+      <div class="warn">
+        The shallow spread false-security trap:
+        <code>return { ...state }</code> after mutating a nested value is the
+        most dangerous reducer bug — it creates a new top-level reference
+        (satisfying React's change detection) while leaving nested objects
+        mutated. Components that do deep equality checks or use React.memo on
+        nested data will behave incorrectly in hard-to-diagnose ways.
+      </div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qm">
+      <span class="qn">Q4</span><span class="b b3">coding</span>
+    </div>
+    <div class="qt">
+      Implement a multi-step form wizard (3 steps: personal info → address →
+      review) using useReducer. The state must track current step, all field
+      values, per-field validation errors, and submission status. Show the
+      complete reducer and explain why this is better than managing it with
+      useState.
+    </div>
+    <button class="rbtn" onclick="tog('a4', this)">
+      <i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer
+    </button>
+    <div class="ans" id="a4">
+      <div class="exp">
+        Senior expectation: Must model the full state shape as a single object.
+        Must show named action types for every meaningful transition (NEXT_STEP,
+        PREV_STEP, SET_FIELD, SET_ERRORS, SUBMIT_START, SUBMIT_SUCCESS,
+        SUBMIT_ERROR, RESET). Must explain why centralised logic beats scattered
+        useState calls for a flow this complex.
+      </div>
+      <div class="cd">
+        const STEPS = ['personal', 'address', 'review']; const initialState = {
+        step: 0, fields: { name: '', email: '', // personal street: '', city:
+        '', // address }, errors: {}, submitStatus: 'idle', // idle | submitting
+        | success | error submitError: null, }; function wizardReducer(state,
+        action) { switch (action.type) { case 'NEXT_STEP': return { ...state,
+        step: Math.min(state.step + 1, STEPS.length - 1), errors: {}, // clear
+        errors when advancing }; case 'PREV_STEP': return { ...state, step:
+        Math.max(state.step - 1, 0), errors: {}, }; case 'SET_FIELD': return {
+        ...state, fields: { ...state.fields, [action.field]: action.value },
+        errors: { ...state.errors, [action.field]: undefined }, }; case
+        'SET_ERRORS': return { ...state, errors: action.errors }; case
+        'SUBMIT_START': return { ...state, submitStatus: 'submitting',
+        submitError: null }; case 'SUBMIT_SUCCESS': return { ...state,
+        submitStatus: 'success' }; case 'SUBMIT_ERROR': return { ...state,
+        submitStatus: 'error', submitError: action.error }; case 'RESET': return
+        initialState; default: return state; } } // Usage in component: function
+        WizardForm() { const [state, dispatch] = useReducer(wizardReducer,
+        initialState); function handleNext() { const errors =
+        validateStep(state.step, state.fields); if (Object.keys(errors).length)
+        { dispatch({ type: 'SET_ERRORS', errors }); return; } dispatch({ type:
+        'NEXT_STEP' }); } async function handleSubmit() { dispatch({ type:
+        'SUBMIT_START' }); try { await api.submit(state.fields); dispatch({
+        type: 'SUBMIT_SUCCESS' }); } catch(e) { dispatch({ type: 'SUBMIT_ERROR',
+        error: e.message }); } } }
+      </div>
+      <div class="at">
+        Why useReducer beats useState here: the wizard has 15+ state-affecting
+        user actions. With useState you'd have 6+ setters called in combination
+        across every handler — step transitions must also clear errors, field
+        changes must clear that field's error, submit must set loading and clear
+        previous errors atomically. Each handler becomes a complex sequence of
+        setter calls with easy-to-miss combinations. The reducer consolidates
+        every rule in one place: "advancing a step always clears errors" is
+        enforced in NEXT_STEP, not duplicated across every button handler.<br /><br />Bonus:
+        the entire reducer is a pure function — you can test every transition
+        with a simple
+        <code>expect(wizardReducer(state, action)).toEqual(expectedState)</code>
+        without mounting a single component.
+      </div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qm">
+      <span class="qn">Q5</span><span class="b b2">gotcha</span>
+    </div>
+    <div class="qt">
+      A colleague combines useReducer with useContext to replace Redux in a
+      medium-scale app. Six months later, the app has serious performance
+      issues. Explain precisely why this pattern fails at scale and what the
+      correct architectural boundary is between "useReducer + Context" and a
+      proper state manager.
+    </div>
+    <button class="rbtn" onclick="tog('a5', this)">
+      <i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer
+    </button>
+    <div class="ans" id="a5">
+      <div class="exp">
+        Senior expectation: Must explain that useReducer solves the logic
+        problem but Context solves the prop-drilling problem — neither solves
+        the re-render problem. Any state change re-renders every Context
+        consumer regardless of whether they use that slice. Must know the
+        specific threshold where this breaks down and what the alternatives are.
+      </div>
+      <div class="at">
+        The pattern works initially because it solves two real problems
+        elegantly: useReducer centralises state logic, Context distributes it
+        without prop drilling. But it has a fundamental performance ceiling that
+        Redux (with <code>useSelector</code>) doesn't have.<br /><br /><strong
+          >The re-render problem:</strong
+        >
+        every time <code>dispatch</code> is called and the reducer returns a new
+        state object, the Context value changes. React re-renders every
+        component that calls <code>useContext(AppContext)</code> — regardless of
+        whether the slice of state they consume actually changed. A component
+        that only reads <code>state.user.name</code> re-renders when
+        <code>state.cart.items</code> changes. With 40+ consumers this becomes a
+        significant performance problem on any frequent update (typing, drag,
+        real-time data).<br /><br />Redux's <code>useSelector</code> solves this
+        with a subscription model: each selector runs after every dispatch and
+        only triggers a re-render if its selected value changed.
+        <code>useContext</code> has no equivalent mechanism — it's
+        all-or-nothing.<br /><br />The architectural boundary:
+      </div>
+      <div class="orow">
+        <span class="ol">use reducer+ctx</span><span class="or ok">correct</span
+        ><span class="ow"
+          >Scoped state for a compound component or a specific feature subtree.
+          Consumers are bounded and known. Update frequency is low. Example: a
+          wizard form, a multi-select dropdown, a canvas editor's tool
+          state.</span
+        >
+      </div>
+      <div class="orow">
+        <span class="ol">use Redux/Zustand</span
+        ><span class="or ok">correct</span
+        ><span class="ow"
+          >Truly global state with 10+ consumers across the app. High update
+          frequency (search, real-time). Middleware needed (logging,
+          persistence). Fine-grained subscription control required.</span
+        >
+      </div>
+      <div class="orow">
+        <span class="ol">reducer+ctx as Redux</span
+        ><span class="or er">wrong</span
+        ><span class="ow"
+          >Replacing Redux with useReducer+Context at app scale. Solves logic
+          organisation but introduces worse re-render behaviour than the Redux
+          it replaced.</span
+        >
+      </div>
+      <div class="at" style="margin-top: 8px">
+        The practical mitigation if you're stuck with this pattern: split the
+        context into multiple contexts by update frequency (see compound
+        components session). But at a certain scale, that workaround becomes
+        harder to reason about than just adopting Zustand, which gives you a
+        Redux-style subscription model with a fraction of the boilerplate.
+      </div>
+      <div class="warn">
+        The "useReducer + Context replaces Redux" pattern is well-intentioned
+        but architecturally limited. It's a common source of performance
+        regressions in mid-sized React apps that started small. Know this
+        trade-off before recommending it to a team.
+      </div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qm">
+      <span class="qn">Q6</span><span class="b b1">architecture</span>
+    </div>
+    <div class="qt">
+      You're building a real-time collaborative document editor (think Google
+      Docs light). Users can type, select text, apply formatting, undo/redo, and
+      see other users' cursors. Design the state management architecture —
+      specifically which pieces use useState, which use useReducer, and which
+      need an external store. Justify every decision.
+    </div>
+    <button class="rbtn" onclick="tog('a6', this)">
+      <i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer
+    </button>
+    <div class="ans" id="a6">
+      <div class="exp">
+        Senior expectation: This is an architecture synthesis question. Must
+        partition state by characteristics: update frequency, scope, transition
+        complexity, undo requirements. Must not put everything in one bucket.
+        Should identify undo/redo as a classic reducer use case
+        (past/present/future state). Should identify real-time cursor positions
+        as needing external store or ref-based approach to avoid re-render
+        cascades.
+      </div>
+      <div class="at">
+        <strong>Document content + undo/redo history → useReducer</strong
+        ><br />Document content transitions are the clearest useReducer use case
+        in existence: every keystroke, format operation, and selection is a
+        named action with well-defined state transitions. Undo/redo is natively
+        modelled as a reducer managing past/present/future stacks:
+      </div>
+      <div class="cd">
+        const docState = { past: [], // array of previous content snapshots
+        present: { content, selection, formatting }, future: [], }; // UNDO:
+        move present to future, pop past into present // REDO: move present to
+        past, pop future into present // Any edit: push present to past, clear
+        future, apply change
+      </div>
+      <div class="at">
+        This is the canonical undo/redo pattern — impossible to implement
+        cleanly with useState, natural with useReducer.<br /><br /><strong
+          >UI state → useState</strong
+        ><br />Toolbar open/closed, active modal, selected formatting tool,
+        sidebar visibility — simple independent values with no complex
+        transitions. useState, kept close to the component that owns them. No
+        global sharing needed.<br /><br /><strong
+          >Collaboration cursors → useRef + external subscription</strong
+        ><br />Other users' cursor positions update at very high frequency
+        (every mouse move or keystroke from every collaborator). Putting this in
+        React state causes a re-render cascade on every update — unacceptable.
+        Use a ref to store cursor positions and update the DOM directly via
+        canvas/overlay, bypassing React's render cycle entirely for cursor
+        painting. The WebSocket subscription lives outside React state.<br /><br /><strong
+          >User presence + permissions → External store (Zustand or
+          Redux)</strong
+        ><br />Who is online, their display names, their permission levels —
+        this is genuinely global, consumed across many components (toolbar shows
+        user avatars, sidebar shows presence, document title shows collaborator
+        count), and updated by WebSocket events. An external store with
+        fine-grained selectors prevents presence updates from re-rendering the
+        document editor itself.
+      </div>
+      <div class="at" style="margin-top: 8px">
+        The architectural principle: match the state management tool to the
+        state's characteristics — not to a single pattern applied everywhere. A
+        document editor using only useState would have stale closure bugs and no
+        undo. One using only useReducer+Context would have cursor-update
+        re-render cascades. The right architecture uses all the tools for what
+        they're each best at.
+      </div>
+      <div class="tip">
+        This partitioned architecture is how production collaborative editors
+        are actually built. ProseMirror and Slate.js use reducer-like
+        transaction models for document state. Cursor/presence data is kept out
+        of the main render cycle entirely. Interview signal: showing you've
+        thought about which state needs React's render cycle and which doesn't.
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span style="font-weight: 500; color: var(--color-text-primary)"
+      >Score guide:</span
+    >
+    Q1 is the decision criteria foundation — a vague answer here undermines
+    everything else. Q2 is the implementation proof — typed discriminated unions
+    with useReducer is a senior-level pattern. Q3 catches the three most common
+    reducer bugs (mutation, nested mutation with false-security spread, missing
+    default). Q4 tests if you can architect a real feature with a reducer. Q5 is
+    the critical architectural warning that "useReducer + Context = Redux
+    replacement" is a performance trap. Q6 is the synthesis — partitioning a
+    complex real system across the right tools.
+    <div style="margin-top: 10px; display: flex; gap: 16px; flex-wrap: wrap">
+      <button
+        onclick="
+          sendPrompt(
+            'Give me a senior-level assessment question on: Redux Toolkit — slices, thunks, RTK Query',
+          )
+        "
+        style="
+          font-size: 12px;
+          color: var(--color-text-info);
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 0;
+        "
+      >
+        Next: Redux Toolkit ↗
+      </button>
+      <button
+        onclick="
+          sendPrompt(
+            'Give me a senior-level assessment question on: this keyword — 4 binding rules',
+          )
+        "
+        style="
+          font-size: 12px;
+          color: var(--color-text-info);
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 0;
+        "
+      >
+        Or: this keyword ↗
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function tog(id, btn) {
+    var box = document.getElementById(id);
+    var open = box.classList.toggle("open");
+    btn.innerHTML = open
+      ? '<i class="ti ti-chevron-up" aria-hidden="true"></i>Hide answer'
+      : '<i class="ti ti-chevron-down" aria-hidden="true"></i>Reveal answer';
+  }
+</script>
