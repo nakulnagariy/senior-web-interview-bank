@@ -26,6 +26,7 @@
 	let collapsedByCategory = $state<Record<string, boolean>>({});
 	let sidebarCollapsed = $state(false);
 	let mobileSidebarOpen = $state(false);
+	let showBackToTop = $state(false);
 
 	function toggleSidebar(): void {
 		sidebarCollapsed = !sidebarCollapsed;
@@ -33,6 +34,10 @@
 
 	function toggleMobileSidebar(): void {
 		mobileSidebarOpen = !mobileSidebarOpen;
+	}
+
+	function scrollToTop(): void {
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
 
 	const visibleCategories = $derived(
@@ -138,11 +143,17 @@
 			}
 		};
 
+		const onScroll = () => {
+			showBackToTop = window.scrollY > 400;
+		};
+
 		window.addEventListener('hashchange', onHashChange);
 		window.addEventListener('keydown', onKeyDown);
+		window.addEventListener('scroll', onScroll, { passive: true });
 		return () => {
 			window.removeEventListener('hashchange', onHashChange);
 			window.removeEventListener('keydown', onKeyDown);
+			window.removeEventListener('scroll', onScroll);
 		};
 	});
 
@@ -152,10 +163,29 @@
 </script>
 
 <svelte:head>
-	<title>Interview Topic Navigator</title>
+	<title>Frontend Interview Prep — JavaScript, React, TypeScript & System Design</title>
 	<meta
 		name="description"
-		content="Connected interview preparation navigator with all roadmap topics, existing content, and placeholders."
+		content="A structured frontend interview preparation tool covering JavaScript, React, TypeScript, CSS, System Design, and more. Track your progress across 100+ must-know topics."
+	/>
+	<meta name="keywords" content="frontend interview, JavaScript interview, React interview, TypeScript interview, system design, web developer interview prep, coding interview" />
+	<meta name="robots" content="index, follow" />
+
+	<!-- Open Graph -->
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="Frontend Interview Prep — JS, React, TypeScript & System Design" />
+	<meta
+		property="og:description"
+		content="Structured interview preparation covering JavaScript, React, TypeScript, CSS, System Design, and more. Track progress across 100+ must-know topics."
+	/>
+	<meta property="og:site_name" content="Frontend Interview Prep" />
+
+	<!-- Twitter Card -->
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="Frontend Interview Prep — JS, React, TypeScript & System Design" />
+	<meta
+		name="twitter:description"
+		content="Structured interview preparation covering JavaScript, React, TypeScript, CSS, System Design, and more."
 	/>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
@@ -177,7 +207,9 @@
 		<button class="mobile-menu-btn" onclick={toggleMobileSidebar}>☰ Topics</button>
 	</div>
 
-	<FiltersBar activeFilter={activeFilter} onChange={setFilter} />
+	<div class="filters-sticky">
+		<FiltersBar activeFilter={activeFilter} onChange={setFilter} />
+	</div>
 
 	{#if mobileSidebarOpen}
 		<div class="mobile-backdrop" onclick={toggleMobileSidebar} aria-hidden="true"></div>
@@ -211,6 +243,10 @@
 		/>
 	</section>
 </main>
+
+{#if showBackToTop}
+	<button class="back-to-top" onclick={scrollToTop} aria-label="Back to top">↑</button>
+{/if}
 
 <style>
 	:global(body) {
@@ -260,12 +296,51 @@
 		cursor: pointer;
 	}
 
+	.filters-sticky {
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		background: rgba(247, 245, 240, 0.94);
+		backdrop-filter: blur(8px);
+		border-radius: 20px;
+		padding: 0.5rem;
+		margin: -0.5rem 0;
+	}
+
 	.mobile-backdrop {
 		position: fixed;
 		inset: 0;
 		background: rgba(0, 0, 0, 0.45);
 		z-index: 800;
 		cursor: pointer;
+	}
+
+	.back-to-top {
+		position: fixed;
+		bottom: 1.75rem;
+		right: 1.75rem;
+		z-index: 500;
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		border: none;
+		background: #1a2437;
+		color: #fff;
+		font-size: 1.4rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+		transition:
+			background 0.15s,
+			transform 0.15s;
+		line-height: 1;
+	}
+
+	.back-to-top:hover {
+		background: #ef791b;
+		transform: translateY(-3px);
 	}
 
 	/* ── Tablet + smaller: single-column layout (≤ 1024px) ── */

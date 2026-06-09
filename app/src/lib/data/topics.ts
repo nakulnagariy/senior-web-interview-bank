@@ -226,6 +226,17 @@ const RAW_DATA: RawCategory[] = [
 		]
 	},
 	{
+		id: 'practical-js',
+		label: 'Practical JavaScript',
+		cat: 'js',
+		topics: [
+			{ n: 'Array & Object practice', p: 'high', type: 'code' },
+			{ n: 'Part 1 - JavaScript fundamentals', p: 'must', type: 'concept' },
+			{ n: 'Part 2 - TypeScript & React', p: 'must', type: 'concept' },
+			{ n: 'Part 3 - Data structures & algorithms', p: 'high', type: 'code' }
+		]
+	},
+	{
 		id: 'system-design',
 		label: 'System Design',
 		cat: 'design',
@@ -334,6 +345,18 @@ const EXISTING_ASSET_MAP: Record<string, TopicAsset[]> = {
 	],
 	'react-angular/90-second-intro-pitch': [
 		{ label: 'Notes', type: 'markdown', path: '/content/react-angular/scor-rup-90-second-intro/notes.md' }
+	],
+	'practical-js/array-object-practice': [
+		{ label: 'Practice problems', type: 'markdown', path: '/content/practical-js/array-object-practice.md' }
+	],
+	'practical-js/part-1-javascript-fundamentals': [
+		{ label: 'Notes', type: 'markdown', path: '/content/practical-js/part1-javascript.md' }
+	],
+	'practical-js/part-2-typescript-react': [
+		{ label: 'Notes', type: 'markdown', path: '/content/practical-js/part2-typescript-react.md' }
+	],
+	'practical-js/part-3-data-structures-algorithms': [
+		{ label: 'Notes', type: 'markdown', path: '/content/practical-js/part3-dsa.md' }
 	]
 };
 
