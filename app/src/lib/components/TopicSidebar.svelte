@@ -268,6 +268,22 @@
 		border-radius: 999px;
 	}
 
+	/* ── Desktop: sticky sidebar ── */
+	@media (min-width: 1025px) {
+		.sidebar {
+			position: sticky;
+			top: 3.5rem;
+			align-self: start;
+			max-height: calc(100vh - 5rem);
+		}
+
+		.sidebar-slim {
+			position: sticky;
+			top: 3.5rem;
+			align-self: start;
+		}
+	}
+
 	/* ── Tablet: limit sidebar height when stacked (769px–1024px) ── */
 	@media (min-width: 769px) and (max-width: 1024px) {
 		.sidebar {
