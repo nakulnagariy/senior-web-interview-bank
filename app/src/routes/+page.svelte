@@ -265,7 +265,11 @@
 		margin: 0 auto;
 		padding: 1.2rem;
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: 1rem;
+		min-width: 0;
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	.layout {
@@ -273,6 +277,8 @@
 		grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
 		gap: 1rem;
 		transition: grid-template-columns 0.2s ease;
+		align-items: start;
+		min-width: 0;
 	}
 
 	.layout.sidebar-collapsed {
@@ -364,6 +370,11 @@
 		.mobile-topbar {
 			display: flex;
 			align-items: center;
+		}
+
+		/* sidebar is position:fixed on mobile — remove phantom grid gap */
+		.layout {
+			gap: 0;
 		}
 	}
 
