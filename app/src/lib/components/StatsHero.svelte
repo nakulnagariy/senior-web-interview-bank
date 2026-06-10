@@ -25,6 +25,9 @@
 		color: #fff;
 		border-radius: 16px;
 		padding: 1rem 1.2rem;
+		min-width: 0;
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	.hero h1 {

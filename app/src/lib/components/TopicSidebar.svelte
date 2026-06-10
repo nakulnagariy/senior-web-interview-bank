@@ -79,7 +79,9 @@
 		gap: 0.8rem;
 		max-height: 75vh;
 		overflow: auto;
+		overflow-x: hidden;
 		padding-right: 0.2rem;
+		min-width: 0;
 	}
 
 	/* ── Collapse header ─────────────────────────────── */

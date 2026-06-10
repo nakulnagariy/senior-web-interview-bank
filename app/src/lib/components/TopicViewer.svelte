@@ -192,7 +192,7 @@
 
 	.markdown {
 		min-width: 0;
-		overflow-x: hidden;
+		overflow-x: auto;
 	}
 
 	.markdown :global(pre),
@@ -210,6 +210,34 @@
 		font-size: 0.84rem;
 		white-space: pre;
 		word-wrap: normal;
+	}
+
+	/* ── Tablet (≤ 1024px): constrain code block width ── */
+	@media (max-width: 1024px) {
+		.markdown :global(pre),
+		pre {
+			max-width: calc(100vw - 4rem);
+		}
+	}
+
+	/* ── Phablets & phones (≤ 768px) ── */
+	@media (max-width: 768px) {
+		.markdown :global(pre),
+		pre {
+			max-width: calc(100vw - 3rem);
+			font-size: 0.8rem;
+			padding: 0.6rem;
+		}
+	}
+
+	/* ── Small phones (≤ 480px) ── */
+	@media (max-width: 480px) {
+		.markdown :global(pre),
+		pre {
+			max-width: calc(100vw - 2.5rem);
+			font-size: 0.76rem;
+			padding: 0.5rem;
+		}
 	}
 
 	.markdown :global(code:not(pre > code)) {
@@ -331,6 +359,7 @@
 		pre {
 			font-size: 0.78rem;
 			padding: 0.55rem;
+			max-width: calc(100vw - 1.5rem);
 		}
 	}
 </style>
