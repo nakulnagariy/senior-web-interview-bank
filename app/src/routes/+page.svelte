@@ -15,6 +15,7 @@
 	import ClientInterviews from '$lib/components/ClientInterviews.svelte';
 	import McqPractice from '$lib/components/McqPractice.svelte';
 	import InterviewBank from '$lib/components/InterviewBank.svelte';
+	import Footer from '$lib/components/Footer.svelte';
 
 	type FilterValue = 'all' | 'js' | 'react' | 'ts' | 'css' | 'perf' | 'test' | 'angular' | 'design';
 
@@ -302,6 +303,8 @@
 	{:else}
 		<ClientInterviews />
 	{/if}
+
+	<Footer />
 </main>
 
 {#if showBackToTop}
