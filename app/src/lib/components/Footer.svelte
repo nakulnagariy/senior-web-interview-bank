@@ -11,19 +11,35 @@
 			<span class="title">Full-Stack Developer, 11 years in the trenches</span>
 		</p>
 	</div>
-	<a
-		class="linkedin-btn"
-		href="https://www.linkedin.com/in/nakul-nagariya-1422087b/"
-		target="_blank"
-		rel="noopener noreferrer"
-	>
-		<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-			<path
-				d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"
+	<div class="actions">
+		<a
+			class="linkedin-btn"
+			href="https://www.linkedin.com/in/nakul-nagariya-1422087b/"
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+				<path
+					d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"
+				/>
+			</svg>
+			Say hi on LinkedIn
+		</a>
+		<a
+			class="bmc-btn"
+			href="https://www.buymeacoffee.com/nakulnagariya"
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			<img
+				src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+				alt="Buy me a coffee"
+				width="180"
+				height="50"
+				loading="lazy"
 			/>
-		</svg>
-		Say hi on LinkedIn
-	</a>
+		</a>
+	</div>
 </footer>
 
 <style>
@@ -84,8 +100,15 @@
 		opacity: 0.5;
 	}
 
-	.linkedin-btn {
+	.actions {
 		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		flex-wrap: wrap;
+	}
+
+	.linkedin-btn {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -107,6 +130,24 @@
 		transform: translateY(-2px);
 	}
 
+	.bmc-btn {
+		display: inline-flex;
+		line-height: 0;
+		border-radius: 10px;
+		overflow: hidden;
+		transition: transform 0.15s;
+	}
+
+	.bmc-btn img {
+		display: block;
+		width: 180px;
+		height: 50px;
+	}
+
+	.bmc-btn:hover {
+		transform: translateY(-2px);
+	}
+
 	/* ── Tablet + smaller (≤ 1024px) ── */
 	@media (max-width: 1024px) {
 		.signoff {
@@ -114,9 +155,22 @@
 			align-items: flex-start;
 		}
 
-		.linkedin-btn {
+		.actions {
 			width: 100%;
+		}
+
+		.linkedin-btn {
+			flex: 1;
 			justify-content: center;
+		}
+
+		.bmc-btn {
+			flex: 1;
+		}
+
+		.bmc-btn img {
+			width: 100%;
+			height: auto;
 		}
 	}
 
