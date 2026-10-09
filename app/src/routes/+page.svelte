@@ -12,6 +12,9 @@
 	import FiltersBar from '$lib/components/FiltersBar.svelte';
 	import TopicSidebar from '$lib/components/TopicSidebar.svelte';
 	import TopicViewer from '$lib/components/TopicViewer.svelte';
+	import ClientInterviews from '$lib/components/ClientInterviews.svelte';
+	import McqPractice from '$lib/components/McqPractice.svelte';
+	import InterviewBank from '$lib/components/InterviewBank.svelte';
 
 	type FilterValue = 'all' | 'js' | 'react' | 'ts' | 'css' | 'perf' | 'test' | 'angular' | 'design';
 
@@ -27,6 +30,7 @@
 	let sidebarCollapsed = $state(false);
 	let mobileSidebarOpen = $state(false);
 	let showBackToTop = $state(false);
+	let activeView = $state<'topics' | 'mcq' | 'bank' | 'interviews'>('topics');
 
 	function toggleSidebar(): void {
 		sidebarCollapsed = !sidebarCollapsed;
@@ -100,14 +104,23 @@
 		activeFilter = next;
 	}
 
+	let loadToken = 0;
+
 	async function loadSelectedAsset(topic: Topic, assetIndex: number): Promise<void> {
-		if (!topic.assets[assetIndex]) {
+		const asset = topic.assets[assetIndex];
+		if (!asset) {
 			loadedAsset = null;
 			return;
 		}
 
+		// Keep showing the previous asset while this one loads (TopicViewer just dims it) —
+		// a stale-while-revalidate token guard so a slower, superseded fetch can't clobber
+		// a newer selection if the user switches topics again before it resolves.
+		const token = ++loadToken;
 		loadingAsset = true;
-		loadedAsset = await loadAsset(topic.assets[assetIndex]);
+		const result = await loadAsset(asset);
+		if (token !== loadToken) return;
+		loadedAsset = result;
 		loadingAsset = false;
 	}
 
@@ -203,45 +216,86 @@
 		progressPct={progressPct}
 	/>
 
-	<div class="mobile-topbar">
-		<button class="mobile-menu-btn" onclick={toggleMobileSidebar}>☰ Topics</button>
+	<!-- Top-level view switcher -->
+	<div class="view-tabs">
+		<button
+			class="view-tab"
+			class:active={activeView === 'topics'}
+			onclick={() => (activeView = 'topics')}
+		>
+			📚 Study Topics
+		</button>
+		<button
+			class="view-tab"
+			class:active={activeView === 'mcq'}
+			onclick={() => (activeView = 'mcq')}
+		>
+			📝 MCQ Practice
+		</button>
+		<button
+			class="view-tab"
+			class:active={activeView === 'bank'}
+			onclick={() => (activeView = 'bank')}
+		>
+			🧠 Interview Bank
+		</button>
+		<button
+			class="view-tab view-tab-premium"
+			class:active={activeView === 'interviews'}
+			onclick={() => (activeView = 'interviews')}
+		>
+			💼 Interview Log
+			<span class="tab-badge">❖ Premium</span>
+		</button>
 	</div>
 
-	<div class="filters-sticky">
-		<FiltersBar activeFilter={activeFilter} onChange={setFilter} />
-	</div>
+	{#if activeView === 'topics'}
+		<div class="mobile-topbar">
+			<button class="mobile-menu-btn" onclick={toggleMobileSidebar}>&#9776; Topics</button>
+		</div>
 
-	{#if mobileSidebarOpen}
-		<div class="mobile-backdrop" onclick={toggleMobileSidebar} aria-hidden="true"></div>
+		<div class="filters-sticky">
+			<FiltersBar activeFilter={activeFilter} onChange={setFilter} />
+		</div>
+
+		{#if mobileSidebarOpen}
+			<div class="mobile-backdrop" onclick={toggleMobileSidebar} aria-hidden="true"></div>
+		{/if}
+
+		<section class="layout" class:sidebar-collapsed={sidebarCollapsed}>
+			<TopicSidebar
+				categories={visibleCategories}
+				selectedTopic={selectedTopic}
+				doneTopicSlugs={doneTopicSlugs}
+				collapsedByCategory={collapsedByCategory}
+				onToggleCategory={toggleCategory}
+				onSelectTopic={selectTopic}
+				collapsed={sidebarCollapsed}
+				onToggleCollapse={toggleSidebar}
+				mobileOpen={mobileSidebarOpen}
+				onMobileClose={toggleMobileSidebar}
+			/>
+			<TopicViewer
+				topic={selectedTopic}
+				done={Boolean(doneTopicSlugs[selectedTopic.slug])}
+				loading={loadingAsset}
+				loadedAsset={loadedAsset}
+				selectedAssetIndex={selectedAssetIndex}
+				onSelectAsset={(index) => (selectedAssetIndex = index)}
+				onToggleDone={() => toggleDone(selectedTopic.slug)}
+				onPrev={selectPrevTopic}
+				onNext={selectNextTopic}
+				hasPrev={hasPrevTopic}
+				hasNext={hasNextTopic}
+			/>
+		</section>
+	{:else if activeView === 'mcq'}
+		<McqPractice />
+	{:else if activeView === 'bank'}
+		<InterviewBank />
+	{:else}
+		<ClientInterviews />
 	{/if}
-
-	<section class="layout" class:sidebar-collapsed={sidebarCollapsed}>
-		<TopicSidebar
-			categories={visibleCategories}
-			selectedTopic={selectedTopic}
-			doneTopicSlugs={doneTopicSlugs}
-			collapsedByCategory={collapsedByCategory}
-			onToggleCategory={toggleCategory}
-			onSelectTopic={selectTopic}
-			collapsed={sidebarCollapsed}
-			onToggleCollapse={toggleSidebar}
-			mobileOpen={mobileSidebarOpen}
-			onMobileClose={toggleMobileSidebar}
-		/>
-		<TopicViewer
-			topic={selectedTopic}
-			done={Boolean(doneTopicSlugs[selectedTopic.slug])}
-			loading={loadingAsset}
-			loadedAsset={loadedAsset}
-			selectedAssetIndex={selectedAssetIndex}
-			onSelectAsset={(index) => (selectedAssetIndex = index)}
-			onToggleDone={() => toggleDone(selectedTopic.slug)}
-			onPrev={selectPrevTopic}
-			onNext={selectNextTopic}
-			hasPrev={hasPrevTopic}
-			hasNext={hasNextTopic}
-		/>
-	</section>
 </main>
 
 {#if showBackToTop}
@@ -349,6 +403,72 @@
 		transform: translateY(-3px);
 	}
 
+	/* ── View tab switcher ── */
+	.view-tabs {
+		display: flex;
+		gap: 0.5rem;
+		padding: 0.3rem;
+		background: rgba(255, 255, 255, 0.7);
+		border: 1px solid #d8dee7;
+		border-radius: 16px;
+		width: fit-content;
+	}
+
+	.view-tab {
+		font-family: inherit;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: transparent;
+		border: none;
+		border-radius: 12px;
+		padding: 0.55rem 1.1rem;
+		font-size: 0.92rem;
+		font-weight: 600;
+		color: #657389;
+		cursor: pointer;
+		transition: background 0.18s, color 0.18s;
+		white-space: nowrap;
+	}
+
+	.view-tab:hover {
+		background: rgba(26, 36, 55, 0.06);
+		color: #1a2437;
+	}
+
+	.view-tab.active {
+		background: #1a2437;
+		color: #fff;
+		box-shadow: 0 2px 10px rgba(26, 36, 55, 0.25);
+	}
+
+	.view-tab-premium .tab-badge {
+		display: inline-flex;
+		align-items: center;
+		background: linear-gradient(135deg, #bf9b30, #f2d060, #bf9b30);
+		background-size: 200% 200%;
+		color: #3a2800;
+		font-size: 0.65rem;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		padding: 0.15rem 0.5rem;
+		border-radius: 999px;
+		animation: tab-shimmer 3s ease infinite;
+	}
+
+	.view-tab-premium.active .tab-badge {
+		background: linear-gradient(135deg, #f2d060, #fff8dc, #f2d060);
+		background-size: 200% 200%;
+		animation: tab-shimmer 3s ease infinite;
+	}
+
+	@keyframes tab-shimmer {
+		0% { background-position: 0% 50%; }
+		50% { background-position: 100% 50%; }
+		100% { background-position: 0% 50%; }
+	}
+
 	/* ── Tablet + smaller: single-column layout (≤ 1024px) ── */
 	@media (max-width: 1024px) {
 		.layout {
@@ -376,6 +496,18 @@
 		.layout {
 			gap: 0;
 		}
+
+		.view-tabs {
+			width: 100%;
+			justify-content: stretch;
+		}
+
+		.view-tab {
+			flex: 1;
+			justify-content: center;
+			font-size: 0.85rem;
+			padding: 0.5rem 0.6rem;
+		}
 	}
 
 	/* ── Small phones (≤ 480px) ── */
@@ -387,6 +519,29 @@
 
 		.mobile-menu-btn {
 			font-size: 0.88rem;
+		}
+
+		.view-tabs {
+			gap: 0.25rem;
+			padding: 0.25rem;
+			flex-wrap: wrap;
+		}
+
+		.view-tab {
+			flex: 1 1 calc(50% - 0.25rem);
+			flex-direction: column;
+			gap: 0.2rem;
+			min-width: 0;
+			padding: 0.45rem 0.4rem;
+			font-size: 0.8rem;
+			white-space: normal;
+			text-align: center;
+			line-height: 1.2;
+		}
+
+		.view-tab-premium .tab-badge {
+			font-size: 0.58rem;
+			padding: 0.1rem 0.4rem;
 		}
 	}
 
