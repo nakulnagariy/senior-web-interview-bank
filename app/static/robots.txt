@@ -1,3 +1,5 @@
 # allow crawling everything by default
 User-agent: *
 Disallow:
+
+Sitemap: https://senior-web-interview-bank.vercel.app/sitemap.xml

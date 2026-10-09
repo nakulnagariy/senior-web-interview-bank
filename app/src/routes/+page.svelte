@@ -183,18 +183,24 @@
 	/>
 	<meta name="keywords" content="frontend interview, JavaScript interview, React interview, TypeScript interview, system design, web developer interview prep, coding interview" />
 	<meta name="robots" content="index, follow" />
+	<link rel="canonical" href="https://senior-web-interview-bank.vercel.app/" />
 
 	<!-- Open Graph -->
 	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://senior-web-interview-bank.vercel.app/" />
 	<meta property="og:title" content="Frontend Interview Prep — JS, React, TypeScript & System Design" />
 	<meta
 		property="og:description"
 		content="Structured interview preparation covering JavaScript, React, TypeScript, CSS, System Design, and more. Track progress across 100+ must-know topics."
 	/>
 	<meta property="og:site_name" content="Frontend Interview Prep" />
+	<meta property="og:image" content="https://senior-web-interview-bank.vercel.app/icons/icon-512.png" />
+	<meta property="og:image:width" content="512" />
+	<meta property="og:image:height" content="512" />
 
 	<!-- Twitter Card -->
 	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:image" content="https://senior-web-interview-bank.vercel.app/icons/icon-512.png" />
 	<meta name="twitter:title" content="Frontend Interview Prep — JS, React, TypeScript & System Design" />
 	<meta
 		name="twitter:description"
