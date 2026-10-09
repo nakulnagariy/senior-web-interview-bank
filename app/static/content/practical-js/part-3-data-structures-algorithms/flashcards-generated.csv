@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Part 3 - Data structures & algorithms?","Define the mechanism and link it to reliability/performance impact.","applied"
+"Which failure mode should be mentioned first for Part 3 - Data structures & algorithms?","Name one realistic edge case and describe mitigation.","applied"
+"How would you validate Part 3 - Data structures & algorithms after release?","Use observable metrics, regression checks, and rollback strategy.","applied"
+"What trade-off appears in Part 3 - Data structures & algorithms decisions?","Balance speed, correctness, and maintainability with explicit priorities.","applied"
+"How do you explain practical-js/part-3-data-structures-algorithms to a non-specialist?","Translate technical details into user impact and delivery risk.","applied"
