@@ -65,18 +65,18 @@
 			{/each}
 		</div>
 
-		{#if loading}
-			<p class="placeholder">Loading content...</p>
-		{:else if loadedAsset?.error}
+		{#if loadedAsset?.error}
 			<p class="placeholder error">{loadedAsset.error}</p>
 		{:else if loadedAsset?.asset.type === 'markdown' && loadedAsset.html}
-			<div class="markdown">{@html loadedAsset.html}</div>
+			<div class="markdown" class:is-loading={loading}>{@html loadedAsset.html}</div>
 		{:else if loadedAsset?.asset.type === 'html' && loadedAsset.html}
-			<iframe title="assessment" class="html-frame" srcdoc={loadedAsset.html}></iframe>
+			<iframe title="assessment" class="html-frame" class:is-loading={loading} srcdoc={loadedAsset.html}></iframe>
 		{:else if loadedAsset?.asset.type === 'csv' && loadedAsset.rows}
 			<Flashcard rows={loadedAsset.rows} />
 		{:else if loadedAsset?.text}
-			<pre><code>{loadedAsset.text}</code></pre>
+			<pre class:is-loading={loading}><code>{loadedAsset.text}</code></pre>
+		{:else if loading}
+			<p class="placeholder">Loading content...</p>
 		{/if}
 	{:else}
 		<div class="placeholder">
@@ -193,6 +193,19 @@
 	.markdown {
 		min-width: 0;
 		overflow-x: auto;
+		opacity: 1;
+		transition: opacity 0.12s ease;
+	}
+
+	.markdown.is-loading,
+	.html-frame.is-loading,
+	pre.is-loading {
+		opacity: 0.45;
+	}
+
+	.html-frame,
+	pre {
+		transition: opacity 0.12s ease;
 	}
 
 	.markdown :global(pre),
