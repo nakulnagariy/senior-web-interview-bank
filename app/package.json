@@ -14,6 +14,8 @@
 		"content:migrate": "tsx scripts/migrate-assessment-html.ts",
 		"placeholders:sync": "npm run content:generate",
 		"validate:manifest": "tsx scripts/validate-manifest.ts",
+		"validate:mcq": "tsx scripts/validate-mcq.ts",
+		"bank:index": "tsx scripts/interview-bank-index.ts",
 		"report:coverage": "tsx scripts/coverage-report.ts",
 		"check:all": "npm run content:generate && npm run validate:manifest && npm run check"
 	},

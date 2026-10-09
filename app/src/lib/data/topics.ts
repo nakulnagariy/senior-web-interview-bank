@@ -177,7 +177,9 @@ const RAW_DATA: RawCategory[] = [
 			{ n: 'Stacking context & z-index gotchas', p: 'high', type: 'gotcha' },
 			{ n: 'Semantic HTML - why it matters, SEO & a11y', p: 'must', type: 'concept' },
 			{ n: 'HTML meta tags - viewport, OG, charset', p: 'med', type: 'concept' },
-			{ n: 'Accessibility - ARIA roles, focus management', p: 'high', type: 'concept' }
+			{ n: 'Accessibility - ARIA roles, focus management', p: 'high', type: 'concept' },
+			{ n: 'Script loading - async, defer, module', p: 'high', type: 'gotcha' },
+			{ n: 'Web Components - lifecycle, theming, forms', p: 'med', type: 'concept' }
 		]
 	},
 	{
@@ -357,6 +359,65 @@ const EXISTING_ASSET_MAP: Record<string, TopicAsset[]> = {
 	],
 	'practical-js/part-3-data-structures-algorithms': [
 		{ label: 'Notes', type: 'markdown', path: '/content/practical-js/part3-dsa.md' }
+	],
+	'css-html/html-meta-tags-viewport-og-charset': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/html-meta-tags-viewport-og-charset/notes.md' }
+	],
+	'css-html/box-model-content-padding-border-margin': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/box-model-content-padding-border-margin/notes.md' }
+	],
+	'css-html/flexbox-vs-grid-when-to-use-which': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/flexbox-vs-grid-when-to-use-which/notes.md' }
+	],
+	'css-html/css-grid-areas-auto-fill-vs-auto-fit-minmax': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/css-grid-areas-auto-fill-vs-auto-fit-minmax/notes.md' }
+	],
+	'css-html/responsive-design-media-queries-container-queries': [
+		{
+			label: 'Notes',
+			type: 'markdown',
+			path: '/content/css-html/responsive-design-media-queries-container-queries/notes.md'
+		}
+	],
+	'css-html/pseudo-classes-vs-pseudo-elements': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/pseudo-classes-vs-pseudo-elements/notes.md' }
+	],
+	'css-html/css-custom-properties-theming': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/css-custom-properties-theming/notes.md' }
+	],
+	'css-html/scss-nesting-mixins-functions-extends': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/scss-nesting-mixins-functions-extends/notes.md' }
+	],
+	'css-html/specificity-calculation-important-pitfalls': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/specificity-calculation-important-pitfalls/notes.md' }
+	],
+	'css-html/stacking-context-z-index-gotchas': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/stacking-context-z-index-gotchas/notes.md' }
+	],
+	'css-html/semantic-html-why-it-matters-seo-a11y': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/semantic-html-why-it-matters-seo-a11y/notes.md' }
+	],
+	'css-html/accessibility-aria-roles-focus-management': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/accessibility-aria-roles-focus-management/notes.md' }
+	],
+	'css-html/script-loading-async-defer-module': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/script-loading-async-defer-module/notes.md' }
+	],
+	'css-html/web-components-lifecycle-theming-forms': [
+		{ label: 'Notes', type: 'markdown', path: '/content/css-html/web-components-lifecycle-theming-forms/notes.md' }
+	],
+	'performance-tooling/browser-rendering-pipeline-parse-layout-paint-composite': [
+		{
+			label: 'Notes',
+			type: 'markdown',
+			path: '/content/performance-tooling/browser-rendering-pipeline-parse-layout-paint-composite/notes.md'
+		}
+	],
+	'performance-tooling/core-web-vitals-lcp-fid-inp-cls': [
+		{ label: 'Notes', type: 'markdown', path: '/content/performance-tooling/core-web-vitals-lcp-fid-inp-cls/notes.md' }
+	],
+	'performance-tooling/lazy-loading-images-routes-components': [
+		{ label: 'Notes', type: 'markdown', path: '/content/performance-tooling/lazy-loading-images-routes-components/notes.md' }
 	]
 };
 

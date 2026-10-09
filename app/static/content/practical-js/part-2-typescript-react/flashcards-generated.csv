@@ -1,0 +1,6 @@
+"question","answer","level"
+"What is the primary objective of Part 2 - TypeScript & React?","Define the mechanism and link it to reliability/performance impact.","foundational"
+"Which failure mode should be mentioned first for Part 2 - TypeScript & React?","Name one realistic edge case and describe mitigation.","foundational"
+"How would you validate Part 2 - TypeScript & React after release?","Use observable metrics, regression checks, and rollback strategy.","foundational"
+"What trade-off appears in Part 2 - TypeScript & React decisions?","Balance speed, correctness, and maintainability with explicit priorities.","foundational"
+"How do you explain practical-js/part-2-typescript-react to a non-specialist?","Translate technical details into user impact and delivery risk.","foundational"
