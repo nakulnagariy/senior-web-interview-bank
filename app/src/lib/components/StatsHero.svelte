@@ -8,8 +8,8 @@
 </script>
 
 <header class="hero">
-	<h1>Bench Interview Preparation Navigator</h1>
-	<p>All roadmap topics are connected. Existing materials render now, missing topics are routed as placeholders.</p>
+	<h1>Frontend &amp; Web Developer Interview Prep</h1>
+	<p>Practice JavaScript, React, TypeScript, CSS, and system design with topic guides, quizzes, and progress tracking.</p>
 	<div class="stats">
 		<div class="stat"><span>{totalTopics}</span><small>Total topics</small></div>
 		<div class="stat"><span>{doneCount}</span><small>Covered</small></div>

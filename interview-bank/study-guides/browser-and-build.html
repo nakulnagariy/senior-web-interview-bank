@@ -1,0 +1,845 @@
+<title>Browser, Tooling and Build Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"Browser, Tooling and Build Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"Browser, Tooling and Build Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · Browser and build tooling · Expert level</div>
+  <h1>Browser, Tooling and Build Study Guide</h1>
+  <p>How browsers turn code into pixels, how to write for many browsers, and how the build pipeline turns source into a fast, cache-friendly production bundle: the critical rendering path, reflow and compositing, browser architecture and cross-browser strategy, bundlers and dev servers (webpack, Vite, esbuild, Rollup, Turbopack), tree shaking and code splitting, transpilation with Babel and SWC, package managers and monorepos, code quality tooling, developer environment, DevTools debugging, and production build pipelines. The interview is theoretical, so every topic is something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> tooling changes fast: check current docs and versions</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · The browser</h3>
+    <ol>
+      <li><b>B1</b><a href="#b1">The critical rendering path</a></li>
+      <li><b>B2</b><a href="#b2">Layout, paint and compositing</a></li>
+      <li><b>B3</b><a href="#b3">Browser architecture and cross-browser strategy</a></li>
+      <li><b>B4</b><a href="#b4">DevTools and debugging workflows</a></li>
+    </ol>
+    <h3 style="margin-top:16px">2 · Building and bundling</h3>
+    <ol>
+      <li><b>B5</b><a href="#b5">What bundlers do: webpack, Vite, esbuild, Rollup</a></li>
+      <li><b>B6</b><a href="#b6">Tree shaking, code splitting, bundle optimisation</a></li>
+      <li><b>B7</b><a href="#b7">Transpilation: Babel, SWC, polyfills, PostCSS</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>3 · Tooling and delivery</h3>
+    <ol>
+      <li><b>B8</b><a href="#b8">Package managers, semver, monorepos</a></li>
+      <li><b>B9</b><a href="#b9">Code quality tooling and developer environment</a></li>
+      <li><b>B10</b><a href="#b10">The production build pipeline</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">B1 and B2 explain why pages are slow or janky and are asked as “what happens when…” questions. B5 and B6 are the standard tooling questions. B10 is lead-level pipeline thinking.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Related guides: Performance and PWA (measuring and optimising), Web protocols (HTTP and caching), Architecture and DevOps (CI/CD and deployment).</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · The browser</h1>
+
+<!-- ============ B1 ============ -->
+<section class="q" id="b1">
+<header class="qh">
+  <div class="qrow"><span class="qid">B1</span><span class="tag added">Added</span></div>
+  <h2>The critical rendering path</h2>
+  <p class="qtext">“What happens when you type a URL and press Enter? Explain how the browser turns HTML, CSS and JavaScript into pixels. What blocks rendering? What do <code>async</code> and <code>defer</code> do?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The browser resolves DNS, opens a TCP and TLS connection, sends an HTTP request and receives HTML. It parses the HTML incrementally into the DOM. When it meets stylesheets it builds the CSSOM; CSS is render-blocking because the browser needs it to know what elements look like. The DOM and CSSOM combine into a render tree of visible boxes, then the browser calculates layout, paints, and composites layers on the GPU. Scripts are parser-blocking by default: the parser stops to download and run them, and they wait for pending CSS because they may query styles. <code>defer</code> downloads in parallel and runs after parsing in order; <code>async</code> runs as soon as it arrives, in any order. The first paint can only happen after the critical CSS is ready, so I keep the critical path short.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="The pipeline: network (DNS, TCP, TLS, request, response) then parse HTML to DOM, parse CSS to CSSOM, combine into render tree, layout, paint, composite. Below: how script, async script and defer script behave relative to HTML parsing.">
+  <text x="10" y="18" class="bd">From URL to pixels</text>
+  <rect x="10" y="30" width="110" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">Network</text><text x="18" y="66" class="sm">DNS · TCP · TLS</text>
+  <rect x="140" y="30" width="100" height="46" rx="5" class="h"/><text x="148" y="50" class="bd">HTML → DOM</text><text x="148" y="66" class="sm">incremental</text>
+  <rect x="260" y="30" width="100" height="46" rx="5" class="w"/><text x="268" y="50" class="bd">CSS → CSSOM</text><text x="268" y="66" class="sm">render-blocking</text>
+  <rect x="380" y="30" width="100" height="46" rx="5" class="g"/><text x="388" y="50" class="bd">Render tree</text><text x="388" y="66" class="sm">visible boxes</text>
+  <rect x="500" y="30" width="80" height="46" rx="5" class="g"/><text x="508" y="50" class="bd">Layout</text><text x="508" y="66" class="sm">sizes, pos</text>
+  <rect x="600" y="30" width="70" height="46" rx="5" class="g"/><text x="608" y="50" class="bd">Paint</text><text x="608" y="66" class="sm">pixels</text>
+  <rect x="680" y="30" width="70" height="46" rx="5" class="g"/><text x="686" y="50" class="bd">Composite</text><text x="686" y="66" class="sm">GPU layers</text>
+  <path class="a" d="M120 53H138"/><path class="a" d="M240 53H258"/><path class="a" d="M360 53H378"/><path class="a" d="M480 53H498"/><path class="a" d="M580 53H598"/><path class="a" d="M670 53H678"/>
+  <text x="10" y="100" class="sm">First paint waits for HTML up to that point and ALL render-blocking CSS. JavaScript can modify both DOM and CSSOM, so the browser is careful.</text>
+  <text x="10" y="126" class="bd">Script loading modes (HTML parsing = blue bar)</text>
+  <text x="10" y="150" class="mono" style="font-size:10.5px">&lt;script&gt;</text><rect x="110" y="136" width="120" height="20" class="b"/><rect x="230" y="136" width="70" height="20" class="x"/><text x="236" y="150" class="sm">fetch</text><rect x="300" y="136" width="60" height="20" class="w"/><text x="304" y="150" class="sm">run</text><rect x="360" y="136" width="140" height="20" class="b"/><text x="520" y="150" class="sm">parser blocked while it downloads and runs</text>
+  <text x="10" y="186" class="mono" style="font-size:10.5px">async</text><rect x="110" y="172" width="260" height="20" class="b"/><rect x="190" y="196" width="90" height="12" class="g"/><text x="196" y="206" class="sm" style="font-size:10px">fetch (parallel)</text><rect x="280" y="170" width="50" height="24" class="w"/><text x="284" y="186" class="sm">run</text><text x="520" y="186" class="sm">runs when ready; order not kept</text>
+  <text x="10" y="236" class="mono" style="font-size:10.5px">defer</text><rect x="110" y="222" width="260" height="20" class="b"/><rect x="150" y="246" width="110" height="12" class="g"/><text x="156" y="256" class="sm" style="font-size:10px">fetch (parallel)</text><rect x="370" y="222" width="60" height="20" class="w"/><text x="374" y="236" class="sm">run</text><text x="520" y="236" class="sm">runs after parsing, in order</text>
+  <text x="10" y="282" class="mono" style="font-size:10.5px">type=module</text><text x="110" y="282" class="sm">deferred by default; ES module graph is fetched in parallel; async also allowed</text>
+  <text x="10" y="310" class="sm">Use defer for app scripts that need the DOM; async for independent scripts (analytics); inline critical CSS; put non-critical CSS off the path.</text>
+</svg></div>
+<figcaption><b>Key distinction.</b> CSS blocks rendering; synchronous JavaScript blocks parsing; <code>defer</code> and <code>async</code> remove the parser block.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>URL to page, step by step:</b> URL parsing and HSTS check; service worker and cache lookup; DNS resolution (browser, OS, resolver caches); TCP handshake (or QUIC for HTTP/3); TLS handshake; HTTP request; server work; response streamed to the parser; subresource requests discovered by the preload scanner; render and paint; JavaScript execution and hydration; further requests. Each step has optimisations (DNS prefetch, preconnect, keep-alive, CDN, caching).</li>
+<li><b>HTML parsing:</b> incremental, error-tolerant tokeniser and tree builder. A <em>preload scanner</em> looks ahead to start downloading images, scripts and styles while the main parser is blocked. DOM is built progressively and can be rendered before the document ends (streaming HTML).</li>
+<li><b>CSSOM and render blocking:</b> external stylesheets block rendering (to avoid a flash of unstyled content) and block script execution that follows them. Reduce by inlining critical CSS, splitting by media (<code>media="print"</code> is not blocking), and loading the rest asynchronously (preload then swap). Avoid <code>@import</code> chains (serial requests).</li>
+<li><b>Render tree:</b> includes visible nodes only: <code>display: none</code> is excluded; <code>visibility: hidden</code> is included (takes space); pseudo-elements are included.</li>
+<li><b>Events:</b> <code>DOMContentLoaded</code> fires when HTML is parsed and deferred scripts have run; <code>load</code> after all resources; <code>readystatechange</code> for document states. First Contentful Paint and LCP are separate timing marks.</li>
+<li><b>Resource hints:</b> <code>preload</code> (fetch a needed resource early), <code>preconnect</code> (open connection), <code>dns-prefetch</code>, <code>prefetch</code> (next navigation), <code>modulepreload</code>, and <code>fetchpriority</code> to tune; use sparingly because over-preloading steals bandwidth (performance guide).</li>
+<li><b>Fonts:</b> text is hidden or swapped while fonts load; <code>font-display: swap</code> or <code>optional</code>, preload key fonts, subset and use WOFF2 to limit layout shift and delay.</li>
+<li><b>Images:</b> discovered by the preload scanner; set dimensions to avoid layout shift; the LCP image should not be lazy-loaded or hidden behind JavaScript.</li>
+<li><b>Single-page app rendering:</b> the HTML is nearly empty, so FCP waits for JavaScript to download, parse, execute and fetch data; this is why SSR/SSG or streaming improves first paint (Next.js guide).</li>
+<li><b>Main thread:</b> parsing, style, layout, paint recording and JavaScript share the main thread; long scripts delay everything, including input handling (J18).</li>
+<li><b>Measuring:</b> DevTools Performance panel (parse, style, layout, paint), Lighthouse, the Network waterfall (critical chain), <code>PerformanceObserver</code> for paint timing entries.</li>
+<li><b>Streaming and early flush:</b> servers should send the head early (with links to critical CSS and preloads) before slow work finishes; 103 Early Hints lets the browser start fetching before the final response <span class="verify">verify support</span>.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying scripts are always blocking. Modern attributes and modules change that.</li>
+<li>Believing <code>async</code> preserves execution order. Only <code>defer</code> does.</li>
+<li>Forgetting that CSS delays script execution, so a slow stylesheet delays interactivity too.</li>
+<li>Lazy-loading or JS-injecting the LCP image, so the preload scanner cannot find it.</li>
+<li>Describing only network steps and ignoring parse, style, layout and paint.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you reduce time to first paint?</dt><dd>Smaller critical CSS and HTML, deferred scripts, fewer round trips (CDN, preconnect, HTTP/2 or 3), server rendering, compressed responses, and preloading the LCP resource.</dd>
+<dt><code>defer</code> versus <code>async</code> versus module scripts?</dt><dd>Defer: ordered, after parsing. Async: unordered, as soon as ready. Modules: deferred by default and support imports.</dd>
+<dt>What is the preload scanner?</dt><dd>A lightweight secondary parser that finds resources ahead of the main parser so downloads start early even when the main parser is blocked.</dd>
+<dt>What triggers <code>DOMContentLoaded</code> versus <code>load</code>?</dt><dd>The first after parsing and deferred scripts; the second after all subresources such as images have finished.</dd>
+</dl></div>
+</section>
+
+<!-- ============ B2 ============ -->
+<section class="q" id="b2">
+<header class="qh">
+  <div class="qrow"><span class="qid">B2</span><span class="tag added">Added</span></div>
+  <h2>Layout, paint and compositing</h2>
+  <p class="qtext">“What are reflow and repaint? What is layout thrashing? Why are <code>transform</code> and <code>opacity</code> cheap to animate? What are compositor layers and <code>will-change</code>?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“After style calculation, the browser runs layout, also called reflow, to compute the size and position of every box; then paint to draw them into layers; then composite to assemble layers on the GPU. Changing a property that affects geometry, such as width, top or font size, triggers layout and everything after it. Changing only appearance, such as colour, triggers paint. Changing <code>transform</code> or <code>opacity</code> can often be handled by the compositor alone, with no layout or paint, which is why those are the right properties to animate. Layout thrashing happens when code alternates reading layout values, such as <code>offsetHeight</code>, with writing styles, forcing the browser to recalculate synchronously on every read. I batch reads before writes and animate on the compositor.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: the rendering pipeline stages Style, Layout, Paint, Composite and which CSS properties trigger from which stage onwards. Right: layout thrashing, interleaved read and write versus batched read then write.">
+  <text x="10" y="18" class="bd">Where a change enters the pipeline</text>
+  <rect x="10" y="30" width="80" height="34" rx="4" class="b"/><text x="18" y="52" class="sm">Style</text>
+  <rect x="100" y="30" width="80" height="34" rx="4" class="w"/><text x="108" y="52" class="sm">Layout</text>
+  <rect x="190" y="30" width="80" height="34" rx="4" class="w"/><text x="198" y="52" class="sm">Paint</text>
+  <rect x="280" y="30" width="90" height="34" rx="4" class="g"/><text x="288" y="52" class="sm">Composite</text>
+  <path class="a" d="M90 47H98"/><path class="a" d="M180 47H188"/><path class="a" d="M270 47H278"/>
+  <rect x="10" y="78" width="360" height="46" rx="5" class="x"/><text x="18" y="96" class="bd">Layout + paint + composite (expensive)</text><text x="18" y="112" class="sm">width, height, margin, padding, top/left, font-size, display</text>
+  <rect x="10" y="132" width="360" height="46" rx="5" class="w"/><text x="18" y="150" class="bd">Paint + composite (medium)</text><text x="18" y="166" class="sm">color, background, box-shadow, border-radius, visibility</text>
+  <rect x="10" y="186" width="360" height="46" rx="5" class="g"/><text x="18" y="204" class="bd">Composite only (cheap)</text><text x="18" y="220" class="sm">transform, opacity (and filter in many cases), on their own layer</text>
+  <text x="10" y="256" class="sm">csstriggers-style tables list this per property and engine.</text><text x="10" y="272" class="sm">Animate transform and opacity; avoid animating layout properties.</text><text x="10" y="294" class="sm">Containment (contain, content-visibility) limits how far work spreads.</text>
+  <text x="400" y="18" class="bd">Layout thrashing</text>
+  <rect x="400" y="30" width="350" height="94" rx="5" class="x"/><text x="408" y="48" class="bd">Interleaved (slow)</text><text x="408" y="66" class="mono" style="font-size:10.5px">for (el of items) {</text><text x="408" y="82" class="mono" style="font-size:10.5px">  const h = el.offsetHeight;   // read: forces layout</text><text x="408" y="98" class="mono" style="font-size:10.5px">  el.style.height = h + 10 + 'px'; // write: invalidates</text><text x="408" y="114" class="mono" style="font-size:10.5px">}</text>
+  <rect x="400" y="134" width="350" height="94" rx="5" class="g"/><text x="408" y="152" class="bd">Batched (fast)</text><text x="408" y="170" class="mono" style="font-size:10.5px">const hs = items.map(el =&gt; el.offsetHeight); // reads</text><text x="408" y="186" class="mono" style="font-size:10.5px">items.forEach((el, i) =&gt;</text><text x="408" y="202" class="mono" style="font-size:10.5px">  el.style.height = hs[i] + 10 + 'px');       // writes</text><text x="408" y="220" class="sm">one layout instead of N forced layouts</text>
+  <text x="400" y="252" class="sm">Properties that force layout when read: offsetWidth/Height,</text><text x="400" y="268" class="sm">clientHeight, getBoundingClientRect(), scrollTop, getComputedStyle.</text><text x="400" y="288" class="sm">Libraries: FastDOM, or do writes inside requestAnimationFrame.</text>
+</svg></div>
+<figcaption><b>Rule.</b> Know which stage a change starts at, avoid forcing synchronous layout, and push animation work to the compositor.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Style recalculation:</b> matching selectors to elements and computing styles. Cost grows with the number of elements affected and selector complexity; keep DOM size moderate (under about 1,500 nodes is a common guideline) and avoid expensive selectors in hot paths.</li>
+<li><b>Layout (reflow):</b> computing geometry; changes can cascade to children, siblings and ancestors. Global layout is costly on large DOMs. Flexbox and grid are efficient but deep nesting adds cost.</li>
+<li><b>Paint:</b> recording drawing instructions for each layer, then rasterising tiles (on raster threads/GPU). Large box shadows, filters, gradients and big layers cost more.</li>
+<li><b>Compositing:</b> layers (promoted by <code>transform</code>, <code>opacity</code> animations, <code>will-change</code>, video, canvas, fixed positioning in some cases) are drawn and combined by the compositor thread, which can scroll and animate without the main thread. This is why compositor animations stay smooth even when JavaScript is busy.</li>
+<li><b><code>will-change</code> and layers:</b> a hint to promote an element ahead of animation. Overuse creates many layers, consuming GPU memory and slowing compositing; apply just before animation and remove after. <code>transform: translateZ(0)</code> hacks are outdated.</li>
+<li><b>Containment:</b> <code>contain: layout paint style</code> and <code>content-visibility: auto</code> let the browser skip rendering off-screen content, big wins on long pages; provide <code>contain-intrinsic-size</code> to avoid scroll jumps (CSS guide).</li>
+<li><b>Smoothness target:</b> 60 frames per second means about 16.7 ms per frame for all work; modern devices run at 90 to 120 Hz. Janky frames come from long JavaScript, forced layout and heavy paints. <code>requestAnimationFrame</code> aligns visual updates with the frame (J22).</li>
+<li><b>Scrolling performance:</b> passive event listeners, avoid heavy scroll handlers, use <code>position: sticky</code>, <code>IntersectionObserver</code>, and virtualisation of long lists.</li>
+<li><b>Layout shift:</b> late-loading content moving things around (CLS); reserve space with dimensions, aspect-ratio and skeletons, avoid inserting content above existing content, and prefer transforms for movement.</li>
+<li><b>Diagnosing:</b> DevTools Performance (purple layout, green paint), the Rendering panel (paint flashing, layout shift regions, layer borders), Layers panel, and long animation frame (LoAF) attribution <span class="verify">verify</span>.</li>
+<li><b>Fonts and text:</b> text layout is expensive; avoid changing fonts after load; use <code>font-display</code> and size-adjust fallbacks.</li>
+<li><b>Animation libraries:</b> prefer CSS transitions and the Web Animations API for compositor-friendly properties; JavaScript-driven animation of layout properties should be a last resort.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Animating <code>top</code>, <code>left</code> or <code>width</code> instead of <code>transform</code>.</li>
+<li>Putting <code>will-change</code> on dozens of elements permanently.</li>
+<li>Reading layout properties inside loops that also write styles.</li>
+<li>Saying “repaint and reflow are the same”. Reflow recomputes geometry; repaint redraws pixels.</li>
+<li>Assuming <code>opacity</code> is always free; it needs its own layer and memory.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why is <code>transform</code> smoother than <code>left</code>?</dt><dd><code>transform</code> changes how an existing layer is composited without recomputing layout or repainting; <code>left</code> triggers layout and paint every frame.</dd>
+<dt>How do you find layout thrashing?</dt><dd>The Performance panel shows repeated forced reflow warnings with the stack that triggered them.</dd>
+<dt>What does <code>content-visibility: auto</code> do?</dt><dd>It skips layout and paint for off-screen sections until they approach the viewport, reducing initial render cost.</dd>
+<dt>Is layout the same on every browser?</dt><dd>The model is standardised, but engines optimise differently; test on real devices and across engines.</dd>
+</dl></div>
+</section>
+
+<!-- ============ B3 ============ -->
+<section class="q" id="b3">
+<header class="qh">
+  <div class="qrow"><span class="qid">B3</span><span class="tag added">Added</span></div>
+  <h2>Browser architecture and cross-browser strategy</h2>
+  <p class="qtext">“How is a modern browser built? What is site isolation? How do you handle cross-browser compatibility, polyfills and progressive enhancement? How do you decide which browsers to support?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Modern browsers are multi-process: a browser process manages UI and coordination, renderer processes run each site’s pages with the JavaScript engine and layout, a GPU process handles compositing, and a network process handles requests. Site isolation puts different sites in different processes to contain security bugs. There are three engine families: Blink in Chrome and Edge, WebKit in Safari, and Gecko in Firefox, and on iOS all browsers use WebKit. For compatibility I define a support matrix from analytics, write standards-based code, feature-detect instead of sniffing user agents, use progressive enhancement so the core works everywhere, add polyfills only for what my targets lack, set <code>browserslist</code> to drive transpilation and prefixing, and test on real devices and services like BrowserStack.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: multi-process browser architecture with browser process, renderer processes per site, GPU process, network process and utility processes. Right: the cross-browser workflow: analytics define the support matrix, browserslist drives tooling, feature detection and progressive enhancement, polyfills only when needed, testing on real devices.">
+  <text x="10" y="18" class="bd">Multi-process browser</text>
+  <rect x="10" y="30" width="360" height="62" rx="5" class="h"/><text x="18" y="50" class="bd">Browser process</text><text x="18" y="68" class="sm">UI, tabs, navigation, permissions, storage coordination,</text><text x="18" y="84" class="sm">cookies; the “manager”</text>
+  <rect x="10" y="102" width="110" height="62" rx="5" class="g"/><text x="18" y="122" class="bd">Renderer</text><text x="18" y="138" class="sm">site A: DOM,</text><text x="18" y="152" class="sm">JS, layout</text>
+  <rect x="130" y="102" width="110" height="62" rx="5" class="g"/><text x="138" y="122" class="bd">Renderer</text><text x="138" y="138" class="sm">site B (sandbox,</text><text x="138" y="152" class="sm">no direct OS)</text>
+  <rect x="250" y="102" width="120" height="62" rx="5" class="b"/><text x="258" y="122" class="bd">GPU process</text><text x="258" y="138" class="sm">compositing,</text><text x="258" y="152" class="sm">rasterisation</text>
+  <rect x="10" y="174" width="175" height="46" rx="5" class="b"/><text x="18" y="194" class="bd">Network service</text><text x="18" y="210" class="sm">HTTP, cache, DNS</text>
+  <rect x="195" y="174" width="175" height="46" rx="5" class="b"/><text x="203" y="194" class="bd">Utility / storage</text><text x="203" y="210" class="sm">audio, workers, etc.</text>
+  <text x="10" y="246" class="sm">Benefits: a crash or exploit in one tab does not take down the</text><text x="10" y="262" class="sm">browser; site isolation separates origins (Spectre mitigation).</text><text x="10" y="284" class="sm">Engines: Blink (Chrome, Edge, Opera) · WebKit (Safari, all iOS</text><text x="10" y="300" class="sm">browsers) · Gecko (Firefox).</text>
+  <text x="400" y="18" class="bd">A cross-browser workflow</text>
+  <rect x="400" y="30" width="350" height="36" rx="4" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">1 Support matrix</tspan>  from analytics + contracts</text>
+  <rect x="400" y="70" width="350" height="36" rx="4" class="b"/><text x="408" y="92" class="sm"><tspan class="bd">2 browserslist</tspan>  drives Babel, autoprefixer, lint</text>
+  <rect x="400" y="110" width="350" height="36" rx="4" class="h"/><text x="408" y="132" class="sm"><tspan class="bd">3 Feature detection</tspan>  'api' in window, @supports</text>
+  <rect x="400" y="150" width="350" height="36" rx="4" class="h"/><text x="408" y="172" class="sm"><tspan class="bd">4 Progressive enhancement</tspan>  core works, extras improve</text>
+  <rect x="400" y="190" width="350" height="36" rx="4" class="g"/><text x="408" y="212" class="sm"><tspan class="bd">5 Polyfill only the gap</tspan>  conditional, core-js, services</text>
+  <rect x="400" y="230" width="350" height="36" rx="4" class="g"/><text x="408" y="252" class="sm"><tspan class="bd">6 Test</tspan>  real devices, BrowserStack, Playwright</text>
+  <text x="400" y="288" class="sm">Baseline (web.dev/MDN) says which features work in all</text><text x="400" y="304" class="sm">current major browsers.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Standards first, detection over sniffing, enhancement over breakage, and measured support targets.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Processes and threads:</b> each renderer has a main thread (JavaScript, DOM, style, layout), compositor thread, and raster workers. Web Workers run in the renderer on separate threads (J23). Out-of-process iframes isolate cross-site frames.</li>
+<li><b>Same-origin policy and sandboxing:</b> origins (scheme, host, port) isolate data; renderers are sandboxed and cannot access files directly; IPC goes through the browser process. This underpins CORS, cookies and CSP (protocols guide).</li>
+<li><b>Engines and JS engines:</b> Blink+V8, WebKit+JavaScriptCore, Gecko+SpiderMonkey (J26). They differ in feature timing, bugs and performance characteristics; Safari historically lags on some features and has stricter storage and autoplay policies. On iOS all browsers use WebKit (some regions differ <span class="verify">verify</span>).</li>
+<li><b>Support matrix:</b> decide from real traffic (analytics) and business needs (corporate IE-like constraints, older Android WebViews, smart TVs). Use “defaults” or a percentage target in <code>browserslist</code> (<code>&gt; 0.5%, last 2 versions, not dead</code>) and document unsupported browsers with a graceful message.</li>
+<li><b>Feature detection:</b> <code>'IntersectionObserver' in window</code>, <code>CSS.supports('display','grid')</code>, <code>@supports</code> in CSS, Modernizr (legacy). Avoid user-agent sniffing: fragile and wrong. For bugs that detection cannot catch, use targeted workarounds documented with the browser version.</li>
+<li><b>Progressive enhancement versus graceful degradation:</b> start from a working baseline (semantic HTML, basic CSS) and layer enhancements; degradation starts from the full experience and tries to fall back. Progressive enhancement is more robust.</li>
+<li><b>Polyfills and transpilation:</b> transpile syntax with Babel/SWC for your targets; polyfill missing APIs with core-js (selective <code>useBuiltIns: 'usage'</code>), or load polyfills conditionally with a script that detects need (differential loading with <code>type=module</code>/<code>nomodule</code> is largely obsolete). Polyfills cannot emulate everything (layout features, CSS). See B7.</li>
+<li><b>CSS compatibility:</b> Autoprefixer adds vendor prefixes based on <code>browserslist</code>; use <code>@supports</code> and fallbacks; check <code>caniuse</code> and MDN compatibility data; PostCSS plugins down-level modern syntax (nesting, custom media) when needed.</li>
+<li><b>Common cross-browser issues:</b> date and time input differences, scroll behaviour and <code>100vh</code> on mobile (use <code>dvh</code>), form control styling, flexbox/grid gaps in old versions, <code>:has()</code> and container query support, storage eviction in Safari, autoplay and permissions policies, webfont rendering, and touch versus pointer events.</li>
+<li><b>Testing:</b> automated cross-browser runs with Playwright (Chromium, Firefox, WebKit) and cloud grids (BrowserStack, Sauce Labs, LambdaTest); real device labs for key phones; visual regression per browser; manual smoke tests on Safari/iOS before releases.</li>
+<li><b>Interop and standards:</b> the Interop project aligns engines on test suites; web-platform-tests define conformance; features reach “Baseline widely available” after about 30 months of cross-browser support <span class="verify">verify the definition</span>.</li>
+<li><b>Mobile and WebViews:</b> embedded browsers (Android WebView, iOS WKWebView, in-app browsers like social apps) lag behind and have quirks; test inside them if users arrive from apps.</li>
+<li><b>Accessibility and assistive tech:</b> screen reader and browser combinations behave differently (VoiceOver with Safari, NVDA with Firefox/Chrome); include them in test plans (R13).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Detecting browsers by user agent string.</li>
+<li>Targeting “the latest Chrome” without checking the actual audience (Safari on iOS is often large).</li>
+<li>Shipping all polyfills to all users instead of conditionally.</li>
+<li>Assuming a feature works everywhere because it works in Chrome DevTools.</li>
+<li>Believing polyfills fix CSS or layout differences.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you decide when to drop a browser?</dt><dd>When usage falls below an agreed threshold and the maintenance cost or blocked features outweigh the audience, communicated in advance with a graceful fallback.</dd>
+<dt>What does Autoprefixer need?</dt><dd>A <code>browserslist</code> configuration; it reads it and adds only the prefixes those browsers require.</dd>
+<dt>What is site isolation?</dt><dd>Putting each site in its own renderer process so a compromised page cannot read other sites’ memory.</dd>
+<dt>Why test on real iOS devices?</dt><dd>All iOS browsers use WebKit with its own storage, viewport and media quirks that desktop emulation does not reproduce.</dd>
+</dl></div>
+</section>
+
+<!-- ============ B4 ============ -->
+<section class="q" id="b4">
+<header class="qh">
+  <div class="qrow"><span class="qid">B4</span><span class="tag added">Added</span></div>
+  <h2>DevTools and debugging workflows</h2>
+  <p class="qtext">“How do you debug performance, layout, network and memory problems in the browser? Which DevTools panels do you use and what do you look for? How do you debug production issues?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I pick the panel by symptom. For slow loads I use the Network panel with throttling to read the waterfall and critical chain, and Lighthouse for a first diagnosis. For jank or slow interactions I record in the Performance panel and read the flame chart for long tasks, forced layouts and expensive scripts. For layout bugs I use Elements, the computed styles and box model, and the Rendering tab’s layout shift and paint flashing. For leaks I use Memory heap snapshots. For storage and service workers, the Application panel. In production I rely on error tracking with source maps, real-user monitoring and logs, because I cannot attach a debugger there.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="A symptom to panel map: slow load to Network and Lighthouse, jank to Performance, layout bug to Elements and Rendering, memory growth to Memory, offline and storage issues to Application, JavaScript bugs to Sources and Console, accessibility to Accessibility tree and Lighthouse.">
+  <text x="10" y="18" class="bd">Symptom → panel → what to look at</text>
+  <rect x="10" y="30" width="150" height="38" rx="4" class="x"/><text x="18" y="48" class="bd">Slow page load</text><text x="18" y="62" class="sm">first paint late</text>
+  <path class="a" d="M160 49H178"/><rect x="180" y="30" width="150" height="38" rx="4" class="h"/><text x="188" y="48" class="bd">Network</text><text x="188" y="62" class="sm">throttle, waterfall</text>
+  <rect x="340" y="30" width="410" height="38" rx="4" class="b"/><text x="348" y="48" class="sm">blocking requests, large payloads, no compression, cache misses (Size, Time,</text><text x="348" y="62" class="sm">Initiator, Priority), HTTP version, third parties; Lighthouse for a summary</text>
+  <rect x="10" y="76" width="150" height="38" rx="4" class="x"/><text x="18" y="94" class="bd">Jank / slow input</text><text x="18" y="108" class="sm">INP, dropped frames</text>
+  <path class="a" d="M160 95H178"/><rect x="180" y="76" width="150" height="38" rx="4" class="h"/><text x="188" y="94" class="bd">Performance</text><text x="188" y="108" class="sm">record + flame chart</text>
+  <rect x="340" y="76" width="410" height="38" rx="4" class="b"/><text x="348" y="94" class="sm">long tasks (red corners), forced reflow warnings, scripting vs rendering time,</text><text x="348" y="108" class="sm">interaction track, CPU throttling (4x) to emulate phones</text>
+  <rect x="10" y="122" width="150" height="38" rx="4" class="x"/><text x="18" y="140" class="bd">Layout / CSS bug</text><text x="18" y="154" class="sm">wrong size, shift</text>
+  <path class="a" d="M160 141H178"/><rect x="180" y="122" width="150" height="38" rx="4" class="h"/><text x="188" y="140" class="bd">Elements + Rendering</text><text x="188" y="154" class="sm">computed, layers</text>
+  <rect x="340" y="122" width="410" height="38" rx="4" class="b"/><text x="348" y="140" class="sm">box model, specificity and overridden rules, flex/grid overlays, layout shift</text><text x="348" y="154" class="sm">regions, paint flashing, forced states (:hover, :focus), media emulation</text>
+  <rect x="10" y="168" width="150" height="38" rx="4" class="x"/><text x="18" y="186" class="bd">Memory keeps growing</text><text x="18" y="200" class="sm">leak, crash</text>
+  <path class="a" d="M160 187H178"/><rect x="180" y="168" width="150" height="38" rx="4" class="h"/><text x="188" y="186" class="bd">Memory</text><text x="188" y="200" class="sm">snapshots, timeline</text>
+  <rect x="340" y="168" width="410" height="38" rx="4" class="b"/><text x="348" y="186" class="sm">three-snapshot technique, detached nodes, retainers,</text><text x="348" y="200" class="sm">allocation sampling, Performance monitor (J25)</text>
+  <rect x="10" y="214" width="150" height="38" rx="4" class="x"/><text x="18" y="232" class="bd">State / SW / storage</text><text x="18" y="246" class="sm">stale cache, offline</text>
+  <path class="a" d="M160 233H178"/><rect x="180" y="214" width="150" height="38" rx="4" class="h"/><text x="188" y="232" class="bd">Application</text><text x="188" y="246" class="sm">SW, cache, storage</text>
+  <rect x="340" y="214" width="410" height="38" rx="4" class="b"/><text x="348" y="232" class="sm">service worker status, cache storage, cookies, IndexedDB,</text><text x="348" y="246" class="sm">localStorage, bfcache test, manifest and installability</text>
+  <rect x="10" y="260" width="150" height="38" rx="4" class="x"/><text x="18" y="278" class="bd">Logic bug</text><text x="18" y="292" class="sm">wrong value</text>
+  <path class="a" d="M160 279H178"/><rect x="180" y="260" width="150" height="38" rx="4" class="h"/><text x="188" y="278" class="bd">Sources + Console</text><text x="188" y="292" class="sm">breakpoints</text>
+  <rect x="340" y="260" width="410" height="38" rx="4" class="b"/><text x="348" y="278" class="sm">conditional and logpoints, call stack, async stack traces, blackboxing, XHR and</text><text x="348" y="292" class="sm">event listener breakpoints, source maps to original code</text>
+</svg></div>
+<figcaption><b>Method.</b> Reproduce, narrow with the right panel, form a hypothesis, change one thing, measure again.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Network panel:</b> filter by type, disable cache, throttle (Fast 3G, Slow 3G, offline), view timing breakdown (queueing, DNS, connect, TLS, TTFB, download), initiator chains, request priority, response headers (cache, compression, CORS), copy as cURL/fetch, HAR export for sharing.</li>
+<li><b>Performance panel:</b> record page load or an interaction; read the main thread flame chart (yellow scripting, purple layout and style, green paint); identify long tasks (over 50 ms), what called them, and forced synchronous layouts; use the Interactions track for INP; CPU throttling and network throttling reflect mobile reality; the Insights panel summarises issues <span class="verify">verify</span>.</li>
+<li><b>Lighthouse and the Performance Insights:</b> lab audits for performance, accessibility, SEO and best practices with prioritised suggestions; lab data is a starting point, not user reality (performance guide).</li>
+<li><b>Elements, Computed, Layout:</b> inspect applied and overridden rules; toggle classes and states; grid and flex overlays; animations panel; accessibility tree and contrast checks.</li>
+<li><b>Sources:</b> breakpoints (line, conditional, logpoint, DOM change, XHR, event listener, exception), watch expressions, call stack with async frames, blackboxing libraries, workspaces and local overrides (try fixes against production assets), snippets.</li>
+<li><b>Console:</b> <code>console.table</code>, <code>console.time</code>, <code>console.trace</code>, <code>console.assert</code>, <code>$0</code> (selected element), <code>monitorEvents</code>, <code>copy()</code>; the live expression feature; do not leave debug logs in production.</li>
+<li><b>Application:</b> storage inspection and clearing, service worker lifecycle controls (update on reload, bypass for network), Cache Storage, background services, back/forward cache test, Manifest and installability checks.</li>
+<li><b>Source maps in production:</b> upload to error trackers (Sentry) rather than publishing them publicly; use <code>hidden-source-map</code> style options; match maps to releases; map minified stack traces for readable errors (J21).</li>
+<li><b>Framework tools:</b> React DevTools (component tree, props and hooks, Profiler with “why did this render”), Redux DevTools (actions, time travel), TanStack Query devtools, Angular DevTools, Vue DevTools.</li>
+<li><b>Remote debugging:</b> Chrome <code>chrome://inspect</code> for Android, Safari Web Inspector for iOS devices, WebView debugging; essential for mobile-only bugs.</li>
+<li><b>Debugging workflow:</b> reproduce reliably, gather environment (browser, device, network, feature flags), bisect (git bisect, toggle flags), check console and network first, isolate in a minimal case, fix, add a regression test, and describe the root cause.</li>
+<li><b>Production debugging:</b> session replay (with privacy controls), breadcrumbs of user actions, release tagging, feature flag state in error context, structured logs, trace ids correlating frontend and backend, and sampled RUM traces (DevOps guide).</li>
+<li><b>Performance profiling in Node:</b> <code>--inspect</code> with DevTools, CPU profiles and flame graphs (clinic.js, 0x), heap snapshots (Node guide).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Judging performance on a fast laptop with cache enabled and no throttling.</li>
+<li>Trusting a single Lighthouse score as the truth for users.</li>
+<li>Shipping unminified source maps publicly, exposing source code.</li>
+<li>Debugging production by guessing instead of adding observability.</li>
+<li>Leaving the Network panel on “Disable cache” and missing cache-related bugs.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you find what is making the main thread busy?</dt><dd>Record a profile, inspect the longest tasks and their call trees, and look for scripting, forced layout or style recalculation.</dd>
+<dt>How do you debug an issue only on iPhone?</dt><dd>Safari remote inspector with a connected device, or a cloud device lab, plus logging and error tracking with device context.</dd>
+<dt>What is a logpoint?</dt><dd>A breakpoint that logs an expression without pausing or editing code, useful in production-like scenarios.</dd>
+<dt>How do you test slow networks?</dt><dd>DevTools network and CPU throttling, plus real devices on throttled networks and WebPageTest profiles.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Building and bundling</h1>
+
+<!-- ============ B5 ============ -->
+<section class="q" id="b5">
+<header class="qh">
+  <div class="qrow"><span class="qid">B5</span><span class="tag added">Added</span></div>
+  <h2>What bundlers do: webpack, Vite, esbuild, Rollup</h2>
+  <p class="qtext">“What does a bundler do and why do we need one? Compare webpack, Vite, Rollup, esbuild, Parcel and Turbopack. How does Vite’s dev server differ from webpack’s? What is HMR?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A bundler starts from entry points, resolves the module graph of imports, transforms files such as TypeScript, JSX, CSS and images, and emits optimised static assets: bundled, minified, tree-shaken, code-split and content-hashed for caching. We need it because source is split into many modules and uses syntax and formats that browsers or npm packages do not consume directly. Webpack is the long-standing, highly configurable bundler with a huge plugin ecosystem, bundling during development too. Vite takes a different approach: in development it serves source as native ES modules on demand and pre-bundles dependencies with esbuild, so startup is near instant and hot module replacement is fast, and for production it bundles with Rollup. esbuild and SWC are very fast compilers written in Go and Rust, and Turbopack and Rspack are Rust-based bundlers.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Top: bundler pipeline from entry through module graph, transform, optimise to hashed output chunks. Bottom: a comparison of the webpack dev server which bundles everything before serving and the Vite dev server which serves modules on demand over native ESM.">
+  <text x="10" y="18" class="bd">Bundler pipeline</text>
+  <rect x="10" y="30" width="100" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">Entry</text><text x="18" y="66" class="sm">src/main.tsx</text>
+  <rect x="130" y="30" width="120" height="46" rx="5" class="h"/><text x="138" y="50" class="bd">Resolve graph</text><text x="138" y="66" class="sm">imports, aliases</text>
+  <rect x="270" y="30" width="120" height="46" rx="5" class="w"/><text x="278" y="50" class="bd">Transform</text><text x="278" y="66" class="sm">TS, JSX, CSS, assets</text>
+  <rect x="410" y="30" width="150" height="46" rx="5" class="w"/><text x="418" y="50" class="bd">Optimise</text><text x="418" y="66" class="sm">tree shake, split, minify</text>
+  <rect x="580" y="30" width="170" height="46" rx="5" class="g"/><text x="588" y="50" class="bd">Output</text><text x="588" y="66" class="sm">app.4f2a.js · vendor.9c1b.js</text>
+  <path class="a" d="M110 53H128"/><path class="a" d="M250 53H268"/><path class="a" d="M390 53H408"/><path class="a" d="M560 53H578"/>
+  <text x="10" y="106" class="bd">Dev server models</text>
+  <rect x="10" y="118" width="360" height="104" rx="5" class="x"/><text x="18" y="138" class="bd">Bundle-based dev (webpack, older tools)</text><text x="18" y="156" class="sm">1 bundle the WHOLE app before serving</text><text x="18" y="172" class="sm">2 serve the bundle; rebuild on change (incremental)</text><text x="18" y="188" class="sm">startup and HMR slow down as the app grows</text><text x="18" y="206" class="sm">production build uses the same pipeline (consistent)</text>
+  <rect x="390" y="118" width="360" height="104" rx="5" class="g"/><text x="398" y="138" class="bd">Unbundled dev (Vite)</text><text x="398" y="156" class="sm">1 pre-bundle dependencies once (esbuild)</text><text x="398" y="172" class="sm">2 serve source files as native ES modules on request</text><text x="398" y="188" class="sm">3 transform only the file requested; HMR swaps one module</text><text x="398" y="206" class="sm">production: Rollup (or Rolldown) bundles for real</text>
+  <rect x="10" y="236" width="740" height="76" rx="5" class="b"/><text x="18" y="256" class="bd">Tool landscape (verify current status)</text><text x="18" y="274" class="sm">webpack: mature, flexible, slower · Vite: fast DX, Rollup builds, huge plugin ecosystem · Rollup: library bundling, clean ESM output</text><text x="18" y="290" class="sm">esbuild: Go, very fast, fewer features · SWC: Rust compiler · Turbopack (Next.js) and Rspack (webpack-compatible): Rust bundlers</text><text x="18" y="306" class="sm">Parcel: zero-config · tsup/unbuild: library builds on esbuild/Rollup · Rolldown: Rust Rollup-compatible bundler for Vite</text>
+</svg></div>
+<figcaption><b>Why Vite feels fast.</b> It avoids bundling during development and lets the browser load modules on demand, doing work only for what is requested.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Why bundle at all?</b> Fewer requests (less relevant with HTTP/2 and 3), resolve <code>node_modules</code> bare imports, transform non-standard syntax and file types, tree shake, minify, split code, add content hashes for long-term caching, inline small assets, and produce consistent output for many browsers.</li>
+<li><b>Core concepts:</b> entry points; module resolution (<code>resolve.alias</code>, extensions, <code>exports</code> field); loaders or plugins (transform files: babel-loader, css-loader, asset modules in webpack; plugins in Vite and Rollup); chunks (units of output); output naming with content hashes; source maps; mode (development or production).</li>
+<li><b>Webpack:</b> configuration-heavy, loaders and plugins, Module Federation for micro-frontends (architecture guide), persistent caching in v5, asset modules, <code>splitChunks</code> optimisation, <code>DefinePlugin</code> for env constants. Strengths: flexibility, maturity. Weaknesses: complexity, slower builds, config sprawl.</li>
+<li><b>Vite:</b> uses native ESM in dev, esbuild for dependency pre-bundling and TypeScript transforms, Rollup for production. Config is small (<code>vite.config.ts</code>), strong defaults for CSS modules, PostCSS, assets, env variables (<code>import.meta.env.VITE_*</code>), SSR support, library mode, and a plugin API compatible with Rollup plugins. Caveat: differences between dev (unbundled) and prod (bundled) can surface edge cases; test the production build. Rolldown aims to unify the two <span class="verify">verify status</span>.</li>
+<li><b>Rollup:</b> ES module-focused, excellent tree shaking and clean library output (ESM, CJS, UMD); the base of Vite’s production build and many libraries.</li>
+<li><b>esbuild and SWC:</b> compilers and minifiers that are 10 to 100 times faster than JavaScript tools; esbuild has limited type-checking (none) and plugin ability; SWC powers Next.js and many toolchains. Neither type-checks TypeScript (T1).</li>
+<li><b>Turbopack and Rspack:</b> Rust-based; Turbopack is the Next.js bundler with incremental computation; Rspack is webpack-API compatible for easier migration. Maturity varies <span class="verify">verify</span>.</li>
+<li><b>Hot Module Replacement (HMR):</b> after an edit, the dev server sends the changed module to the browser, which swaps it without a full reload and preserves state where possible. React Fast Refresh preserves component state when only components change. HMR boundaries accept updates; if none, a full reload occurs.</li>
+<li><b>Dev proxy and server features:</b> proxying API calls to avoid CORS in development, HTTPS, middleware, history API fallback, and mock servers.</li>
+<li><b>Assets and CSS:</b> imports of images and fonts become URLs or inlined data URIs under a size threshold; CSS is extracted to files in production, minified with Lightning CSS or cssnano; CSS Modules scope class names.</li>
+<li><b>Environment variables and defines:</b> replaced at build time; only prefixed variables are exposed to client code; never put secrets in them; the same artifact for all environments requires runtime config (B10).</li>
+<li><b>Choosing:</b> new apps: Vite (or a framework’s default: Next.js with Turbopack/webpack). Libraries: Rollup/tsup. Large webpack apps: stay, or migrate to Rspack for speed. Evaluate on build time, ecosystem, plugin needs, SSR, and team familiarity.</li>
+<li><b>Legacy:</b> Create React App is deprecated; Gulp/Grunt are task runners, not module bundlers; Browserify predates ES modules.</li>
+<li><b>Native ESM and import maps:</b> browsers can load modules without bundling; import maps map bare specifiers to URLs; for production, bundling still wins for request count, tree shaking and compatibility.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“Vite does not bundle.” It does in production (Rollup); only the dev server is unbundled.</li>
+<li>Assuming esbuild or SWC type-check TypeScript.</li>
+<li>Exposing secrets via client-prefixed environment variables.</li>
+<li>Testing only the dev server and shipping a production build that behaves differently.</li>
+<li>Migrating bundlers without measuring the build-time benefit.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why is Vite’s dev server fast to start?</dt><dd>It does not bundle the app; it serves modules on demand and pre-bundles only dependencies with a fast compiler.</dd>
+<dt>What is a loader versus a plugin in webpack?</dt><dd>Loaders transform individual files by type; plugins hook into the whole build lifecycle (emit assets, optimise, define constants).</dd>
+<dt>How does HMR keep state?</dt><dd>It replaces only the changed module and re-runs it; framework integrations (React Fast Refresh) re-render components without remounting when possible.</dd>
+<dt>Why content hashes in file names?</dt><dd>They enable immutable, long-lived caching; a changed file gets a new URL, unchanged files stay cached.</dd>
+</dl></div>
+</section>
+
+<!-- ============ B6 ============ -->
+<section class="q" id="b6">
+<header class="qh">
+  <div class="qrow"><span class="qid">B6</span><span class="tag added">Added</span></div>
+  <h2>Tree shaking, code splitting, bundle optimisation</h2>
+  <p class="qtext">“What is tree shaking and what makes code tree-shakable? How does code splitting work? How do you analyse and reduce bundle size and improve caching?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Tree shaking removes unused exports from the final bundle. It relies on ES modules having static import and export statements, so the bundler can analyse which exports are used without running code; CommonJS is dynamic and cannot be shaken reliably. Code must also be side-effect free, which packages declare with <code>sideEffects: false</code>. Code splitting breaks the bundle into chunks loaded on demand with dynamic <code>import()</code>, typically per route and for heavy widgets, so users download only what they need. To optimise I analyse the bundle with a visualiser, remove or replace heavy dependencies, split vendor and shared code sensibly, compress with Brotli, use content hashes for long-term caching, and set performance budgets in CI.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: tree shaking where a module exports four functions, the app imports two, and the bundle contains only those two. Right: code splitting where the main chunk loads first and route chunks and a heavy chart chunk load on demand through dynamic import.">
+  <text x="10" y="18" class="bd">Tree shaking (static analysis of ESM)</text>
+  <rect x="10" y="30" width="170" height="104" rx="5" class="b"/><text x="18" y="50" class="bd">utils.js exports</text><text x="18" y="70" class="mono" style="font-size:10.5px">debounce</text><text x="18" y="86" class="mono" style="font-size:10.5px">throttle</text><text x="18" y="102" class="mono" style="font-size:10.5px">deepClone</text><text x="18" y="118" class="mono" style="font-size:10.5px">formatDate</text>
+  <rect x="200" y="30" width="170" height="40" rx="5" class="h"/><text x="208" y="48" class="mono" style="font-size:10px">import { debounce,</text><text x="208" y="62" class="mono" style="font-size:10px">  formatDate } from './utils'</text>
+  <path class="a" d="M180 50H198"/>
+  <rect x="200" y="84" width="170" height="50" rx="5" class="g"/><text x="208" y="102" class="bd">Bundle contains</text><text x="208" y="120" class="sm">debounce + formatDate only</text>
+  <path class="a" d="M285 70V82"/>
+  <text x="10" y="160" class="bd">Requirements</text><text x="10" y="178" class="sm">ES modules (static import/export), not require()</text><text x="10" y="194" class="sm">no side effects at import time; package.json "sideEffects": false</text><text x="10" y="210" class="sm">import named members, not whole namespace objects of CJS libs</text><text x="10" y="226" class="sm">production mode minifier removes the dead code</text>
+  <rect x="10" y="244" width="360" height="66" rx="5" class="x"/><text x="18" y="264" class="bd">Defeated by</text><text x="18" y="282" class="sm">CommonJS libraries, barrel files re-exporting everything with side</text><text x="18" y="298" class="sm">effects, import * as _ from 'lodash', polyfills, top-level side effects</text>
+  <text x="400" y="18" class="bd">Code splitting</text>
+  <rect x="400" y="30" width="350" height="36" rx="5" class="g"/><text x="408" y="52" class="sm"><tspan class="bd">main.js</tspan>  shell, router, shared UI: loads first</text>
+  <path class="a" d="M480 66V84"/><path class="a" d="M575 66V84"/><path class="a" d="M680 66V84"/>
+  <rect x="400" y="86" width="110" height="40" rx="5" class="h"/><text x="408" y="104" class="sm">route /home</text><text x="408" y="118" class="sm">on navigation</text>
+  <rect x="520" y="86" width="110" height="40" rx="5" class="h"/><text x="528" y="104" class="sm">route /admin</text><text x="528" y="118" class="sm">only for admins</text>
+  <rect x="640" y="86" width="110" height="40" rx="5" class="w"/><text x="648" y="104" class="sm">chart lib</text><text x="648" y="118" class="sm">when visible</text>
+  <rect x="400" y="140" width="350" height="50" rx="5" class="b"/><text x="408" y="158" class="mono" style="font-size:10.5px">const Admin = lazy(() =&gt; import('./Admin'));</text><text x="408" y="176" class="sm">dynamic import() returns a promise; bundler creates a chunk</text>
+  <rect x="400" y="204" width="350" height="106" rx="5" class="b"/><text x="408" y="224" class="bd">Split on</text><text x="408" y="242" class="sm">routes · rarely used features (admin, editor) · heavy libraries</text><text x="408" y="258" class="sm">(charts, PDF, maps) · modals and tabs · locale data · polyfills</text><text x="408" y="278" class="sm">Prefetch likely next chunks on hover or idle to hide latency.</text><text x="408" y="294" class="sm">Avoid dozens of tiny chunks: waterfalls and request overhead.</text>
+</svg></div>
+<figcaption><b>Two levers.</b> Ship less code (tree shaking, lighter dependencies) and ship it later (splitting, lazy loading).</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Tree shaking mechanics:</b> the bundler marks exports as used or unused across the module graph (“mark and sweep”); the minifier drops the unused code. It needs ESM; libraries must publish ESM builds (<code>module</code>/<code>exports</code> fields) and declare <code>sideEffects</code> accurately, otherwise the bundler must keep modules that might have side effects (CSS imports need to be listed as side effects).</li>
+<li><b>Barrel files:</b> <code>index.ts</code> re-exporting everything can pull in whole directories during development and defeat shaking in some setups; import from specific paths or enable library-specific optimisations (<code>optimizePackageImports</code>).</li>
+<li><b>Splitting strategies:</b> entry-based (multiple entries), dynamic import (on demand), and vendor/common chunking by <code>splitChunks</code> (webpack) or <code>manualChunks</code> (Rollup/Vite). Group stable libraries (React) into a vendor chunk that changes rarely and caches well; avoid over-splitting.</li>
+<li><b>Route-based splitting in frameworks:</b> Next.js splits per route automatically; React Router uses <code>lazy</code>; Angular uses lazy-loaded routes. Component-level splitting uses <code>React.lazy</code>/<code>next/dynamic</code> with Suspense (R9).</li>
+<li><b>Analysis:</b> <code>rollup-plugin-visualizer</code>, <code>webpack-bundle-analyzer</code>, <code>source-map-explorer</code>, Next.js bundle analyser, Bundlephobia for packages. Look for duplicate packages (two versions of lodash), moment locales, large JSON, polyfills, and unexpected libraries pulled into the main chunk.</li>
+<li><b>Reduction tactics:</b> replace heavy libraries (moment → date-fns/Intl, lodash → native or per-function imports), remove unused dependencies, lazy-load below-the-fold or admin features, use smaller UI libraries or headless, avoid shipping both ESM and CJS, set precise <code>browserslist</code> to avoid unnecessary transpilation and polyfills, compress images (separate from JS), and move work to the server (Server Components).</li>
+<li><b>Compression:</b> Brotli (better than gzip, precompressed at build or by CDN) for text assets; measure transfer size and parse/execute time, because bytes are only part of the cost on slow CPUs.</li>
+<li><b>Long-term caching:</b> content hashes in filenames, <code>Cache-Control: public, max-age=31536000, immutable</code>, stable chunk ids (so unchanged chunks keep their hash), a small runtime or manifest that changes often, and HTML with short or no caching referencing the hashed assets.</li>
+<li><b>Preloading and prefetching:</b> <code>&lt;link rel="modulepreload"&gt;</code> for critical chunks, prefetch for likely next routes (framework <code>Link</code> does this), and magic comments (<code>/* webpackPrefetch: true */</code>) <span class="verify">verify syntax per bundler</span>.</li>
+<li><b>Source maps:</b> separate files generated in production, not served publicly, uploaded to error tracking.</li>
+<li><b>Performance budgets:</b> set limits per route (for example 170 KB gzip of JavaScript for key pages) enforced by <code>size-limit</code> or bundle analysers in CI; fail PRs that exceed.</li>
+<li><b>Runtime cost beyond bytes:</b> parse and compile time, hydration, and main-thread execution; a 300 KB bundle can cost seconds on low-end phones; measure with CPU throttling.</li>
+<li><b>Library authors:</b> publish ESM with <code>exports</code>, mark <code>sideEffects</code>, avoid top-level side effects, ship types separately, and keep dependencies minimal (T9).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Expecting tree shaking to work on CommonJS packages or modules with side effects.</li>
+<li>Splitting into too many chunks and creating request waterfalls.</li>
+<li>Importing a whole utility library for one function.</li>
+<li>Changing vendor chunk contents on every release, destroying caching.</li>
+<li>Measuring only gzip size and ignoring execution time on slow devices.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why does <code>import _ from 'lodash'</code> bloat the bundle?</dt><dd>The CommonJS build is not tree-shakable, so the whole library is included; use <code>lodash-es</code> or per-function imports.</dd>
+<dt>How do you find the biggest contributors?</dt><dd>Generate a bundle visualisation of the production build, sort by size, and check duplicates and unintended inclusions.</dd>
+<dt>What does <code>sideEffects: false</code> promise?</dt><dd>That importing the package’s modules does nothing except define exports, so unused modules can be dropped safely.</dd>
+<dt>How do you decide what to lazy-load?</dt><dd>Not needed for first render or interaction: routes, modals, admin tools, editors, charts; measure impact on LCP and INP.</dd>
+</dl></div>
+</section>
+
+<!-- ============ B7 ============ -->
+<section class="q" id="b7">
+<header class="qh">
+  <div class="qrow"><span class="qid">B7</span><span class="tag added">Added</span></div>
+  <h2>Transpilation: Babel, SWC, polyfills, PostCSS</h2>
+  <p class="qtext">“What is the difference between transpiling and polyfilling? What do Babel and SWC do? How does <code>browserslist</code> influence the output? What is PostCSS?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Transpiling rewrites newer syntax into older syntax that target browsers understand, such as arrow functions or optional chaining; polyfilling adds missing runtime APIs, such as <code>Promise.allSettled</code> or <code>Array.prototype.at</code>, by implementing them in JavaScript. Syntax cannot be polyfilled and APIs cannot be transpiled, so both are needed depending on targets. Babel is the established JavaScript compiler with a huge plugin ecosystem; SWC is a much faster Rust equivalent used by Next.js; esbuild also transforms but with fewer features. <code>browserslist</code> declares the target browsers and drives which transforms and polyfills are applied. PostCSS does the same for CSS: it parses CSS into an AST that plugins transform, for example Autoprefixer for vendor prefixes. The goal is to ship the least code that supports the real audience.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="Left: source with modern syntax and APIs passes through transpiler for syntax and polyfills for APIs, controlled by browserslist. Right: PostCSS pipeline where plugins transform the CSS AST.">
+  <text x="10" y="18" class="bd">Two different problems</text>
+  <rect x="10" y="30" width="170" height="64" rx="5" class="b"/><text x="18" y="50" class="bd">Modern source</text><text x="18" y="68" class="mono" style="font-size:10px">a?.b ?? c</text><text x="18" y="82" class="mono" style="font-size:10px">arr.at(-1)</text>
+  <path class="a" d="M180 62H218"/>
+  <rect x="220" y="30" width="150" height="30" rx="5" class="h"/><text x="228" y="50" class="sm"><tspan class="bd">Transpile</tspan> syntax</text>
+  <rect x="220" y="64" width="150" height="30" rx="5" class="w"/><text x="228" y="84" class="sm"><tspan class="bd">Polyfill</tspan> runtime APIs</text>
+  <rect x="10" y="108" width="360" height="62" rx="5" class="g"/><text x="18" y="128" class="bd">browserslist drives both</text><text x="18" y="146" class="mono" style="font-size:10.5px">["&gt; 0.5%", "last 2 versions", "not dead"]</text><text x="18" y="162" class="sm">newer targets → fewer transforms, smaller and faster output</text>
+  <rect x="10" y="184" width="360" height="62" rx="5" class="b"/><text x="18" y="204" class="bd">Syntax: cannot be polyfilled</text><text x="18" y="222" class="sm">optional chaining, classes, async/await, JSX, TypeScript:</text><text x="18" y="238" class="sm">must be rewritten by Babel, SWC, esbuild or tsc</text>
+  <rect x="10" y="256" width="360" height="46" rx="5" class="b"/><text x="18" y="276" class="bd">APIs: cannot be transpiled</text><text x="18" y="292" class="sm">Promise, Map, Intl, fetch: add via core-js or a polyfill service</text>
+  <text x="400" y="18" class="bd">PostCSS</text>
+  <rect x="400" y="30" width="110" height="46" rx="5" class="b"/><text x="408" y="50" class="bd">CSS source</text><text x="408" y="66" class="sm">nesting, vars</text>
+  <rect x="530" y="30" width="110" height="46" rx="5" class="h"/><text x="538" y="50" class="bd">AST + plugins</text><text x="538" y="66" class="sm">transform nodes</text>
+  <rect x="660" y="30" width="90" height="46" rx="5" class="g"/><text x="668" y="50" class="bd">CSS out</text><text x="668" y="66" class="sm">prefixed</text>
+  <path class="a" d="M510 53H528"/><path class="a" d="M640 53H658"/>
+  <text x="400" y="104" class="sm">Common plugins: autoprefixer · postcss-preset-env (future CSS)</text><text x="400" y="120" class="sm">· cssnano (minify) · tailwindcss · nesting · custom media</text><text x="400" y="136" class="sm">Lightning CSS (Rust) combines parsing, prefixing, minifying.</text>
+  <rect x="400" y="154" width="350" height="92" rx="5" class="w"/><text x="408" y="174" class="bd">Who compiles what</text><text x="408" y="192" class="sm">Babel: plugins, presets, widest compatibility, slower</text><text x="408" y="208" class="sm">SWC: Rust, fast, Next.js and Jest transforms</text><text x="408" y="224" class="sm">esbuild: Go, fastest, limited down-levelling</text><text x="408" y="240" class="sm">tsc: types + emit; usually only for checking and d.ts</text>
+  <text x="400" y="272" class="sm">None of the fast tools type-check TypeScript; run tsc --noEmit</text><text x="400" y="288" class="sm">in CI and the editor.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Target what your users really run. Over-compatible output is slower to download, parse and execute.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Babel:</b> parses code to an AST, plugins transform it, a generator emits code. <code>@babel/preset-env</code> picks transforms by target; <code>@babel/preset-react</code>, <code>@babel/preset-typescript</code> (strips types, does not check). Plugins for decorators, class properties, and custom macros. Slower than SWC but the most extensible; used by many Jest, Storybook and legacy setups.</li>
+<li><b>SWC:</b> Rust-based, compatible with many Babel transforms, built into Next.js and used in Vite plugins (<code>plugin-react-swc</code>), Jest transforms and Rspack. Also minifies. Custom plugins are written in Rust or WASM, so extension is harder than Babel.</li>
+<li><b>Polyfill strategies:</b> <code>core-js</code> with <code>useBuiltIns: 'usage'</code> (Babel includes only what the code uses and targets need) or <code>'entry'</code>; a polyfill service served by user agent (polyfill.io-style; note the 2024 supply-chain compromise of a popular domain, so self-host or use trusted providers <span class="verify">verify</span>); feature-detect and load conditionally. Avoid polyfills for features your support matrix already covers.</li>
+<li><b>Runtime helpers and size:</b> repeated helper code per file inflates bundles; <code>@babel/plugin-transform-runtime</code> and <code>importHelpers</code> (tsc, with <code>tslib</code>) share helpers. Loose mode trades spec compliance for size.</li>
+<li><b>JSX transform:</b> the automatic runtime (<code>react/jsx-runtime</code>) removes the need to import React; compile-time transforms replace <code>createElement</code> calls.</li>
+<li><b>TypeScript compilation:</b> Babel/SWC/esbuild strip types per file (so <code>isolatedModules</code> constraints apply); enums and <code>const enum</code> need care; decorators and metadata need specific plugins (T8, T9).</li>
+<li><b>Targets and modern output:</b> modern evergreen targets (ES2020+) avoid most transforms; the old “modern/legacy double bundle” (<code>module</code>/<code>nomodule</code>) is rarely worth it now. Libraries should ship modern ESM and let applications transpile for their own targets.</li>
+<li><b>PostCSS and CSS tooling:</b> PostCSS parses CSS into an AST and runs plugins; Autoprefixer reads <code>browserslist</code>; <code>postcss-preset-env</code> converts modern CSS features; cssnano minifies; Sass/Less preprocessors compile before PostCSS; Lightning CSS is a faster alternative integrated in Vite and Parcel. CSS Modules and Tailwind run as PostCSS plugins.</li>
+<li><b>Source maps:</b> each transform chain must preserve mappings so errors and debugging point to original files (B4).</li>
+<li><b>Sass (SCSS) in brief:</b> variables, nesting, mixins and modules compile to CSS; modern CSS has custom properties and nesting, so reassess whether you need it (CSS Part 5).</li>
+<li><b>Verification:</b> test the production bundle in the lowest supported browser; check that no untranspiled syntax slips from <code>node_modules</code> (some packages ship ES2020+ and must be included in the transform).</li>
+<li><b>Compiler plugins in React:</b> the React Compiler is a Babel/SWC-integrated transform (R5).</li>
+<li><b>Build-time constants:</b> <code>process.env.NODE_ENV</code> replacement enables dead-code elimination of development-only branches in libraries.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Believing polyfills can add new syntax such as optional chaining.</li>
+<li>Transpiling to ES5 for everyone out of habit, inflating bundles and slowing parse.</li>
+<li>Loading a polyfill from a third-party CDN without integrity or trust.</li>
+<li>Forgetting that Babel and SWC strip TypeScript types without checking them.</li>
+<li>Not transpiling a dependency that ships modern syntax to a target that cannot run it.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Transpiler versus polyfill?</dt><dd>A transpiler rewrites syntax at build time; a polyfill implements missing APIs at run time. Different problems, often both needed.</dd>
+<dt>How does <code>browserslist</code> reach Autoprefixer and Babel?</dt><dd>Both read the same configuration (<code>package.json</code> or <code>.browserslistrc</code>) and compute the needed transforms and prefixes.</dd>
+<dt>Why move from Babel to SWC?</dt><dd>Much faster builds and tests with a similar feature set; give up some plugin extensibility.</dd>
+<dt>How do you reduce polyfill size?</dt><dd>Tighten targets, use usage-based inclusion, and rely on native features, loading extra polyfills only when detection fails.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Tooling and delivery</h1>
+
+<!-- ============ B8 ============ -->
+<section class="q" id="b8">
+<header class="qh">
+  <div class="qrow"><span class="qid">B8</span><span class="tag added">Added</span></div>
+  <h2>Package managers, semver, monorepos</h2>
+  <p class="qtext">“Compare npm, Yarn and pnpm. How does semantic versioning work? What are peer dependencies and lockfiles? How do you manage a monorepo with workspaces, Turborepo or Nx? How do you publish packages?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A package manager installs dependencies from a registry into <code>node_modules</code> and records exact versions in a lockfile so installs are reproducible. npm is the default, Yarn added workspaces and Plug’n’Play, and pnpm uses a content-addressable store with symlinks, which saves disk space, installs faster and prevents accessing undeclared dependencies. Semantic versioning, major.minor.patch, signals compatibility: patch for fixes, minor for backward-compatible features, major for breaking changes; ranges like <code>^1.2.3</code> allow minor and patch updates. In a monorepo, workspaces link local packages, and tools like Turborepo and Nx cache and orchestrate tasks across them using the dependency graph. For publishing I use Changesets or semantic-release to version and generate changelogs, with provenance and lockfile discipline for supply-chain safety.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: dependency layout, with npm flat node_modules versus pnpm store and symlinks. Middle: semver ranges. Right: monorepo with apps and packages and a task graph where Turborepo or Nx runs tasks in order with caching.">
+  <text x="10" y="18" class="bd">node_modules layouts</text>
+  <rect x="10" y="30" width="170" height="106" rx="5" class="w"/><text x="18" y="48" class="bd">npm / Yarn classic</text><text x="18" y="66" class="sm">hoisted, flat tree</text><text x="18" y="82" class="sm">undeclared packages are</text><text x="18" y="98" class="sm">importable (“phantom</text><text x="18" y="114" class="sm">dependencies”)</text>
+  <rect x="190" y="30" width="180" height="106" rx="5" class="g"/><text x="198" y="48" class="bd">pnpm</text><text x="198" y="66" class="sm">one global content store,</text><text x="198" y="82" class="sm">hard links + symlinks per</text><text x="198" y="98" class="sm">project; strict: only</text><text x="198" y="114" class="sm">declared deps resolve</text>
+  <text x="10" y="162" class="bd">Semver</text>
+  <rect x="10" y="172" width="360" height="62" rx="5" class="b"/><text x="18" y="192" class="mono" style="font-size:10.5px">MAJOR . MINOR . PATCH      2 . 4 . 1</text><text x="18" y="210" class="sm">breaking · new, compatible · fix      ^2.4.1 → 2.x.y (≥2.4.1)</text><text x="18" y="226" class="sm">~2.4.1 → 2.4.x · exact 2.4.1 · 0.x versions: minors may break</text>
+  <rect x="10" y="244" width="360" height="66" rx="5" class="h"/><text x="18" y="264" class="bd">Lockfile</text><text x="18" y="282" class="sm">package-lock.json, yarn.lock, pnpm-lock.yaml: exact tree and</text><text x="18" y="298" class="sm">hashes. Commit it; use npm ci in CI.</text>
+  <text x="400" y="18" class="bd">Monorepo task graph</text>
+  <rect x="400" y="30" width="110" height="40" rx="5" class="h"/><text x="408" y="48" class="bd">apps/web</text><text x="408" y="62" class="sm">depends on ui</text>
+  <rect x="400" y="86" width="110" height="40" rx="5" class="g"/><text x="408" y="104" class="bd">packages/ui</text><text x="408" y="118" class="sm">depends on utils</text>
+  <rect x="400" y="142" width="110" height="40" rx="5" class="g"/><text x="408" y="160" class="bd">packages/utils</text><text x="408" y="174" class="sm">no deps</text>
+  <path class="a" d="M455 70V84"/><path class="a" d="M455 126V140"/>
+  <rect x="540" y="30" width="210" height="152" rx="5" class="b"/><text x="548" y="50" class="bd">Turborepo / Nx</text><text x="548" y="68" class="sm">build utils → ui → web in order</text><text x="548" y="84" class="sm">run independent tasks in parallel</text><text x="548" y="100" class="sm">cache outputs by input hash</text><text x="548" y="116" class="sm">remote cache shared with CI</text><text x="548" y="132" class="sm">only rebuild “affected” projects</text><text x="548" y="148" class="sm">pnpm workspaces link packages</text><text x="548" y="164" class="sm">(workspace:* protocol)</text>
+  <rect x="400" y="198" width="350" height="112" rx="5" class="w"/><text x="408" y="218" class="bd">Publishing and release</text><text x="408" y="236" class="sm">Changesets: contributors add change files; CI versions and</text><text x="408" y="252" class="sm">publishes, writes changelogs. semantic-release automates</text><text x="408" y="268" class="sm">from commit messages. Enable npm provenance, 2FA, scoped</text><text x="408" y="284" class="sm">packages, and exports map with types for ESM/CJS.</text>
+</svg></div>
+<figcaption><b>Ideas.</b> Reproducible installs, honest version ranges, and a task graph that avoids rebuilding what did not change.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>npm, Yarn, pnpm, Bun:</b> npm (bundled with Node; workspaces since v7), Yarn Classic (v1) and Yarn Berry (v2+ with Plug’n’Play, zero-installs, constraints), pnpm (strict, fast, disk-efficient, great for monorepos), Bun (runtime and package manager, very fast). Choose by team convention and monorepo needs; do not mix managers in one repo.</li>
+<li><b>Dependency types:</b> <code>dependencies</code> (needed at runtime), <code>devDependencies</code> (build and test), <code>peerDependencies</code> (the host app must provide, for plugins and UI libs such as React), <code>optionalDependencies</code>. For apps the split matters less; for libraries it defines what consumers install.</li>
+<li><b>Semver in practice:</b> <code>^</code> and <code>~</code> ranges allow automatic updates, so the lockfile is what pins reality. Pre-release tags (<code>1.0.0-beta.2</code>). 0.x versions treat minor bumps as breaking by convention. Breaking changes should be signalled by a major version and migration notes; types are part of the API (T13).</li>
+<li><b>Lockfile discipline:</b> commit it; install with <code>npm ci</code>/<code>--frozen-lockfile</code> in CI; review lockfile diffs in PRs for suspicious changes; run <code>npm audit</code> and automated update bots (Dependabot, Renovate); use <code>overrides</code>/<code>resolutions</code> for forced versions of transitive dependencies.</li>
+<li><b>Peer dependency conflicts:</b> “ERESOLVE” errors arise when versions do not satisfy each other; fix by aligning versions, using <code>overrides</code>, or upgrading; avoid blanket <code>--force</code>/<code>--legacy-peer-deps</code> without understanding.</li>
+<li><b>Scripts and lifecycle:</b> <code>scripts</code> in <code>package.json</code>, <code>npx</code>/<code>pnpm dlx</code> for one-off tools, pre/post hooks, <code>postinstall</code> scripts (a supply-chain risk; consider <code>--ignore-scripts</code> with allowlists).</li>
+<li><b>Monorepo benefits:</b> atomic cross-package changes, shared tooling and configuration, easier refactoring, single dependency policy, simpler code sharing. Costs: tooling complexity, longer CI without caching, access control, large repo size. Alternatives: polyrepo with published packages (clear ownership, version overhead).</li>
+<li><b>Workspaces:</b> <code>workspaces</code> field links packages; internal dependencies referenced with <code>workspace:*</code>; hoisting rules; TypeScript project references (T9) and path aliases need to match.</li>
+<li><b>Turborepo and Nx:</b> compute a task graph from package dependencies; cache outputs keyed by hash of inputs (source, env, dependencies); run in parallel; “affected” commands for CI; remote caching shares results across developers and CI. Nx adds generators, module boundary lint rules, and plugin-based project detection.</li>
+<li><b>Publishing libraries:</b> build ESM (and CJS if needed) with <code>exports</code> and <code>types</code>; <code>files</code> allowlist; <code>sideEffects</code>; peer dependencies for frameworks; verify with <code>publint</code> and <code>arethetypeswrong</code>; version with Changesets; publish with CI using provenance (<code>--provenance</code>) and trusted publishing; private registries (Verdaccio, GitHub Packages, Artifactory) for internal packages.</li>
+<li><b>Security:</b> typosquatting, dependency confusion (scope internal packages and configure registries), malicious maintainers and compromised accounts, install scripts; mitigations: lockfiles, integrity checks, 2FA, scoped registries, review of new dependencies, SBOMs (J29).</li>
+<li><b>Node version management:</b> <code>.nvmrc</code>/<code>engines</code>, Volta or fnm, Corepack to pin the package manager version; same Node version locally, in CI and in production.</li>
+<li><b>Dedupe and size:</b> <code>npm dedupe</code>, check duplicates in the bundle, remove unused packages (Knip), prefer fewer dependencies.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Not committing the lockfile, or running <code>npm install</code> instead of <code>npm ci</code> in CI.</li>
+<li>Forcing past peer-dependency errors without understanding the conflict.</li>
+<li>Putting build tools in <code>dependencies</code> of a library (consumers install them) or React there instead of <code>peerDependencies</code>.</li>
+<li>Assuming minor and patch updates never break things.</li>
+<li>Choosing a monorepo without caching, so CI time grows with every package.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What are phantom dependencies?</dt><dd>Packages your code imports without declaring them, working only because a flat <code>node_modules</code> hoisted them; pnpm’s strict layout exposes these bugs.</dd>
+<dt>What does <code>^1.2.3</code> mean?</dt><dd>Any version at least 1.2.3 and below 2.0.0 (minor and patch updates).</dd>
+<dt>Monorepo or polyrepo?</dt><dd>Monorepo for tightly related packages with shared tooling and frequent cross-cutting changes; polyrepo when teams and release cycles are independent.</dd>
+<dt>How does remote caching speed up CI?</dt><dd>Task outputs are keyed by input hash and stored remotely, so an unchanged package’s build or test is restored instead of re-run.</dd>
+</dl></div>
+</section>
+
+<!-- ============ B9 ============ -->
+<section class="q" id="b9">
+<header class="qh">
+  <div class="qrow"><span class="qid">B9</span><span class="tag added">Added</span></div>
+  <h2>Code quality tooling and developer environment</h2>
+  <p class="qtext">“Which tools do you use to keep a codebase consistent and healthy? ESLint, Prettier, Husky, lint-staged, commit conventions. How do you set up environment variables, local development and a good developer experience?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I automate consistency so reviews focus on design. Prettier formats code with no debate; ESLint finds bugs and enforces rules, with plugins for React hooks, accessibility, imports and type-aware TypeScript checks; Stylelint does the same for CSS. Git hooks via Husky and lint-staged run fast checks on staged files, while CI runs the full set as the authoritative gate. Conventional Commits give structured messages that drive changelogs and releases. For developer experience, a single command sets up and starts the project, environment variables follow a typed, documented schema with <code>.env.example</code>, Node and package manager versions are pinned, and fast feedback comes from HMR and tests that run in seconds. The aim is that a new developer is productive on day one.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="Quality tooling layers: editor feedback, pre-commit hooks on staged files, CI as the authoritative gate, and release automation from commits. Right: environment configuration layers.">
+  <text x="10" y="18" class="bd">Feedback loops from fastest to authoritative</text>
+  <rect x="10" y="30" width="360" height="46" rx="5" class="g"/><text x="18" y="50" class="bd">1 · Editor (milliseconds)</text><text x="18" y="66" class="sm">TypeScript language server, ESLint and Prettier on save, EditorConfig</text>
+  <rect x="10" y="84" width="360" height="46" rx="5" class="h"/><text x="18" y="104" class="bd">2 · Pre-commit (seconds)</text><text x="18" y="120" class="sm">Husky + lint-staged on staged files, commitlint</text>
+  <rect x="10" y="138" width="360" height="46" rx="5" class="w"/><text x="18" y="158" class="bd">3 · CI (minutes, authoritative)</text><text x="18" y="174" class="sm">tsc, ESLint, Stylelint, tests, build, bundle size, audit: required checks</text>
+  <rect x="10" y="192" width="360" height="46" rx="5" class="b"/><text x="18" y="212" class="bd">4 · Release automation</text><text x="18" y="228" class="sm">Conventional Commits → changelog, version, tag, publish</text>
+  <text x="10" y="262" class="sm">Hooks can be skipped (--no-verify), so CI must repeat every check.</text><text x="10" y="278" class="sm">Keep hooks fast (staged files only) or developers will bypass them.</text>
+  <text x="400" y="18" class="bd">Environment configuration</text>
+  <rect x="400" y="30" width="350" height="62" rx="5" class="b"/><text x="408" y="48" class="mono" style="font-size:10.5px">.env.example      committed, documents variables</text><text x="408" y="64" class="mono" style="font-size:10.5px">.env.local        developer secrets, git-ignored</text><text x="408" y="80" class="mono" style="font-size:10.5px">platform secrets  CI and production (not in git)</text>
+  <rect x="400" y="102" width="350" height="62" rx="5" class="g"/><text x="408" y="120" class="bd">Validate at startup</text><text x="408" y="138" class="sm">parse env with a schema (Zod, envalid, t3-env); fail fast with a</text><text x="408" y="154" class="sm">clear message; typed config object; no scattered process.env.</text>
+  <rect x="400" y="174" width="350" height="64" rx="5" class="w"/><text x="408" y="192" class="bd">Client versus server</text><text x="408" y="210" class="sm">only prefixed vars (VITE_, NEXT_PUBLIC_) reach the browser;</text><text x="408" y="226" class="sm">inlined at build time: never secrets.</text>
+  <rect x="400" y="248" width="350" height="52" rx="5" class="h"/><text x="408" y="268" class="bd">One-command onboarding</text><text x="408" y="286" class="sm">pinned Node/pnpm, setup script, seeded mocks (MSW)</text>
+</svg></div>
+<figcaption><b>Principle.</b> Automate what a machine can decide, keep feedback fast, and make the CI gate the source of truth.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>ESLint:</b> pluggable linter with rules for errors and style; modern “flat config” (<code>eslint.config.js</code>); plugins: <code>react</code>, <code>react-hooks</code> (rules of hooks and exhaustive-deps), <code>jsx-a11y</code>, <code>@typescript-eslint</code> (type-aware: <code>no-floating-promises</code>, <code>no-misused-promises</code>), <code>import</code>, <code>unicorn</code>, <code>testing-library</code>, framework configs (<code>next/core-web-vitals</code>). Use shared configs across repos; treat warnings as errors in CI.</li>
+<li><b>Prettier:</b> opinionated formatter; stops style debates; integrate in the editor and CI (<code>prettier --check</code>); avoid ESLint stylistic rules that conflict (<code>eslint-config-prettier</code>). Biome and oxlint are faster Rust alternatives that combine formatting and linting <span class="verify">verify feature parity</span>.</li>
+<li><b>Stylelint and other linters:</b> Stylelint for CSS/SCSS (property order, no duplicate selectors, token usage), markdownlint, <code>actionlint</code> for GitHub Actions, <code>commitlint</code> for messages, secret scanners (gitleaks) in pre-commit and CI.</li>
+<li><b>Git hooks:</b> Husky manages hooks in the repo; lint-staged runs commands only on staged files; keep them under a few seconds; run type checks and tests in pre-push or CI, not pre-commit.</li>
+<li><b>Conventional Commits:</b> <code>feat:</code>, <code>fix:</code>, <code>chore:</code>, <code>BREAKING CHANGE:</code> in messages; enable automated version bumps and changelogs (semantic-release, Changesets via PR files); also improves history readability. Squash merges with a good title are an alternative.</li>
+<li><b>EditorConfig and editor setup:</b> <code>.editorconfig</code> for indentation and line endings; recommended extensions and settings committed in <code>.vscode</code>; format on save.</li>
+<li><b>Static analysis beyond lint:</b> TypeScript strict mode, dead code and unused dependency detection (Knip), circular dependency checks (madge, dependency-cruiser), architectural boundary rules (ESLint boundaries, Nx), bundle size limits, SonarQube for code smells and duplication, accessibility linting.</li>
+<li><b>Environment variables:</b> configuration separate from code (twelve-factor); <code>.env</code> files loaded by tools (Vite, Next.js, dotenv); never commit secrets; provide <code>.env.example</code>; validate with a schema; different values per environment; understand build-time inlining versus runtime reads.</li>
+<li><b>Developer experience (DX):</b> fast install and start, HMR, helpful error overlays, consistent scripts (<code>dev</code>, <code>build</code>, <code>test</code>, <code>lint</code>), a README with prerequisites and troubleshooting, dev containers or Docker Compose for dependencies (databases), mock APIs, seed data, and shared VS Code tasks. Track DX with surveys and CI/install times.</li>
+<li><b>Local HTTPS and proxies:</b> dev proxy for API calls to avoid CORS (<code>server.proxy</code>), local certificates (mkcert) for features needing secure contexts (service workers, clipboard, geolocation).</li>
+<li><b>Path aliases:</b> <code>@/components</code> configured in <code>tsconfig</code> and the bundler/test runner consistently (T9).</li>
+<li><b>Documentation and templates:</b> project templates or generators (plop, Nx generators, create-* scripts), PR and issue templates, CODEOWNERS, contribution guide.</li>
+<li><b>Standardising across teams:</b> shared config packages (<code>@company/eslint-config</code>, <code>tsconfig</code> bases), a platform or tooling team, and versioned updates via Renovate.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Slow pre-commit hooks that run the entire test suite, so people bypass them.</li>
+<li>Relying only on hooks; they can be skipped, so CI must enforce.</li>
+<li>Conflicting ESLint style rules and Prettier causing endless auto-fix loops.</li>
+<li>Reading <code>process.env</code> everywhere without validation, discovering missing variables in production.</li>
+<li>Putting secrets in client-exposed variables or committing <code>.env</code> files.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>ESLint versus Prettier?</dt><dd>Prettier formats layout; ESLint analyses code for bugs and patterns. Use both, with the Prettier config disabling conflicting ESLint rules.</dd>
+<dt>How do you introduce lint rules to a legacy codebase?</dt><dd>Start with warnings, auto-fix what is safe, enforce on changed files (lint-staged or diff-only), and ratchet to errors over time.</dd>
+<dt>Where do you keep secrets for local development?</dt><dd>Git-ignored <code>.env.local</code> files, or a secrets manager with a developer CLI; never in the repository.</dd>
+<dt>How do you onboard a new developer quickly?</dt><dd>One-command setup, pinned toolchain versions, seeded mocks, clear README, and a first-day “hello world” PR with CI feedback.</dd>
+</dl></div>
+</section>
+
+<!-- ============ B10 ============ -->
+<section class="q" id="b10">
+<header class="qh">
+  <div class="qrow"><span class="qid">B10</span><span class="tag added">Added</span></div>
+  <h2>The production build pipeline</h2>
+  <p class="qtext">“Walk through how you take a frontend app from source to production. How do you handle environment config, caching, source maps, build speed and reproducible builds? How do you serve and invalidate static assets?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The pipeline installs dependencies from the lockfile, runs static checks and tests, builds once into immutable artifacts, and promotes the same artifact through environments instead of rebuilding for each. The build outputs content-hashed assets served from a CDN with long immutable caching, while the HTML entry point is cached briefly or revalidated so new releases are picked up. Source maps are generated but uploaded to the error tracker rather than served publicly. Environment-specific values are injected at deploy or run time rather than baked into the artifact, or built per environment if they must be inlined. I speed up builds with dependency and build caches, incremental builds and affected-only tasks, and I keep builds reproducible with pinned Node and package versions.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="A build and release pipeline from commit to production: install and cache, check, test, build, artifact with hashed assets, upload to CDN and release metadata, deploy to staging, smoke tests, promote to production. Below: cache behaviour of hashed assets versus HTML.">
+  <text x="10" y="18" class="bd">Source to production</text>
+  <rect x="10" y="30" width="100" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">Commit</text><text x="18" y="66" class="sm">PR or merge</text>
+  <rect x="125" y="30" width="110" height="46" rx="5" class="h"/><text x="133" y="50" class="bd">Install</text><text x="133" y="66" class="sm">lockfile + cache</text>
+  <rect x="250" y="30" width="110" height="46" rx="5" class="h"/><text x="258" y="50" class="bd">Check + test</text><text x="258" y="66" class="sm">tsc, lint, unit</text>
+  <rect x="375" y="30" width="110" height="46" rx="5" class="w"/><text x="383" y="50" class="bd">Build</text><text x="383" y="66" class="sm">once, hashed</text>
+  <rect x="500" y="30" width="120" height="46" rx="5" class="g"/><text x="508" y="50" class="bd">Artifact</text><text x="508" y="66" class="sm">versioned, immutable</text>
+  <rect x="635" y="30" width="115" height="46" rx="5" class="g"/><text x="643" y="50" class="bd">Sourcemaps</text><text x="643" y="66" class="sm">to error tracker</text>
+  <path class="a" d="M110 53H123"/><path class="a" d="M235 53H248"/><path class="a" d="M360 53H373"/><path class="a" d="M485 53H498"/><path class="a" d="M620 53H633"/>
+  <rect x="10" y="96" width="170" height="46" rx="5" class="b"/><text x="18" y="116" class="bd">Deploy staging</text><text x="18" y="132" class="sm">same artifact</text>
+  <rect x="195" y="96" width="170" height="46" rx="5" class="b"/><text x="203" y="116" class="bd">E2E + smoke</text><text x="203" y="132" class="sm">Playwright, Lighthouse CI</text>
+  <rect x="380" y="96" width="170" height="46" rx="5" class="w"/><text x="388" y="116" class="bd">Promote</text><text x="388" y="132" class="sm">canary / blue-green</text>
+  <rect x="565" y="96" width="185" height="46" rx="5" class="g"/><text x="573" y="116" class="bd">Production + monitor</text><text x="573" y="132" class="sm">RUM, errors, rollback</text>
+  <path class="a" d="M180 119H193"/><path class="a" d="M365 119H378"/><path class="a" d="M550 119H563"/><path class="a" d="M560 76V94"/>
+  <text x="10" y="170" class="bd">Caching rules for static hosting</text>
+  <rect x="10" y="180" width="360" height="62" rx="5" class="g"/><text x="18" y="200" class="bd">/assets/app.4f2a9c.js</text><text x="18" y="218" class="mono" style="font-size:10px">Cache-Control: public, max-age=31536000, immutable</text><text x="18" y="234" class="sm">filename changes when content changes: cache forever</text>
+  <rect x="390" y="180" width="360" height="62" rx="5" class="w"/><text x="398" y="200" class="bd">/index.html</text><text x="398" y="218" class="mono" style="font-size:10px">Cache-Control: no-cache  (or short max-age + ETag)</text><text x="398" y="234" class="sm">always revalidated so a release is seen immediately</text>
+  <rect x="10" y="256" width="740" height="56" rx="5" class="b"/><text x="18" y="276" class="bd">Deployment skew</text><text x="18" y="294" class="sm">Keep previous assets for a while: old HTML pages still request old chunk names; deleting them causes ChunkLoadError.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Build once, promote the same artifact, cache assets forever by content hash, and keep HTML fresh.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Build once, deploy many:</b> rebuilding per environment risks differences (different dependency resolution, timestamps). Produce one immutable artifact (a folder, tarball or container image) tagged with the commit SHA, and promote it dev → staging → production, injecting configuration at deploy time.</li>
+<li><b>Environment configuration:</b> server-side variables read at run time; for static SPAs, inject a <code>config.js</code> or fetch <code>/config.json</code> at startup so the same bundle serves all environments; <code>VITE_*</code>/<code>NEXT_PUBLIC_*</code> values are inlined at build time and require a rebuild per environment. Feature flags decouple release from deploy (DevOps guide).</li>
+<li><b>Reproducible builds:</b> pinned Node and package manager versions (<code>.nvmrc</code>, Corepack), lockfile installs, deterministic build tools, no network fetches at build time beyond the registry, container builds with fixed base images (by digest), and build provenance.</li>
+<li><b>Build caching and speed:</b> cache the package manager store and build caches (<code>.next/cache</code>, Vite/webpack persistent cache), use Turborepo/Nx remote caching, incremental TypeScript (<code>tsc -b</code>), parallel jobs (lint, test, typecheck) and sharded tests, and faster tools (SWC, esbuild, Rspack). Measure and track build time as a team metric.</li>
+<li><b>Asset hashing and CDN:</b> content hashes (<code>[contenthash]</code>) in file names; CDN in front with Brotli; versioned asset paths; separate asset domain optional (cookieless; but adds a connection); invalidate only HTML or the manifest on release; purge mistakes with cache-busting rather than relying on invalidation.</li>
+<li><b>Deployment skew and chunk errors:</b> when a new release deletes old chunks, users with an open tab fail to load lazy routes (“ChunkLoadError”, “Failed to fetch dynamically imported module”). Mitigate by retaining previous assets for days, retry then force a reload on chunk errors, versioned deployments (skew protection), and service worker update strategies (performance guide).</li>
+<li><b>Source maps:</b> generate in the build (<code>hidden-source-map</code>), upload to Sentry/Datadog with the release id, and do not publish them to the public CDN; restrict access if you must host them.</li>
+<li><b>Quality gates in the pipeline:</b> type check, lint, unit and integration tests, bundle size budgets, accessibility checks, Lighthouse CI for key pages, dependency audit and licence checks, secret scanning, container scanning if applicable.</li>
+<li><b>Environments and previews:</b> ephemeral preview deployments per pull request with unique URLs for review and e2e; staging mirrors production; production-like data safe for testing; protect with auth where needed.</li>
+<li><b>Release strategy:</b> progressive delivery with canary or blue-green, feature flags for dark launches, automatic rollback on error-rate or latency regression, and fast manual rollback (redeploy the previous artifact) (DevOps guide).</li>
+<li><b>Static hosting setups:</b> S3 + CloudFront, Netlify, Vercel, Cloudflare Pages, nginx in a container. Configure SPA fallback to <code>index.html</code>, security headers, compression, HTTP/2 or 3, and correct MIME types.</li>
+<li><b>Monorepo builds:</b> build only affected projects; share packages built once; consistent versions; publish internal packages before apps.</li>
+<li><b>Observability of releases:</b> tag errors and RUM with the release id; dashboards compare versions; alert on regressions after deploy; keep a changelog and release notes.</li>
+<li><b>Failure handling:</b> pipeline retries for flaky infrastructure only, clear logs, artifacts and traces from failed e2e, notifications, and ownership of the pipeline.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Rebuilding for each environment and shipping something different from what was tested.</li>
+<li>Caching <code>index.html</code> for a year, so users never receive new releases.</li>
+<li>Deleting old assets at deploy time and breaking users with open tabs.</li>
+<li>Publishing source maps publicly with sensitive comments or logic.</li>
+<li>Letting build time grow unchecked until developers avoid running the pipeline.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you handle different API URLs per environment in a static SPA?</dt><dd>Runtime configuration loaded at startup (a config file or endpoint) so one artifact works everywhere, or a per-environment build if values must be inlined.</dd>
+<dt>How do you invalidate a CDN safely on release?</dt><dd>Hashed assets never need invalidation; only HTML or a manifest is revalidated or purged.</dd>
+<dt>What causes <code>ChunkLoadError</code> and how do you fix it?</dt><dd>Old HTML referencing deleted chunks; keep previous assets, handle the error by reloading, and use skew protection.</dd>
+<dt>How do you speed up a 20-minute pipeline?</dt><dd>Profile stages, cache dependencies and builds, parallelise and shard tests, run only affected packages, and move slow tests to later stages.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>30 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>What blocks first render?</td><td>The HTML received so far and all render-blocking CSS.</td><td>B1</td></tr>
+<tr><td>2</td><td><code>async</code> versus <code>defer</code>?</td><td>Async runs when ready, unordered; defer runs after parsing, in order.</td><td>B1</td></tr>
+<tr><td>3</td><td>What is the preload scanner?</td><td>A lookahead parser that finds resources early while the main parser is blocked.</td><td>B1</td></tr>
+<tr><td>4</td><td>Why does CSS delay scripts?</td><td>Scripts may read styles, so they wait for pending stylesheets.</td><td>B1</td></tr>
+<tr><td>5</td><td>Reflow versus repaint?</td><td>Reflow recomputes geometry; repaint redraws pixels.</td><td>B2</td></tr>
+<tr><td>6</td><td>Why animate <code>transform</code> and <code>opacity</code>?</td><td>They can be composited on the GPU without layout or paint.</td><td>B2</td></tr>
+<tr><td>7</td><td>What is layout thrashing?</td><td>Alternating layout reads and style writes, forcing repeated synchronous layout.</td><td>B2</td></tr>
+<tr><td>8</td><td>What does <code>will-change</code> do?</td><td>Hints the browser to promote a layer; overuse wastes GPU memory.</td><td>B2</td></tr>
+<tr><td>9</td><td>What is site isolation?</td><td>Different sites run in separate renderer processes.</td><td>B3</td></tr>
+<tr><td>10</td><td>Which engines exist?</td><td>Blink (Chrome, Edge), WebKit (Safari, iOS), Gecko (Firefox).</td><td>B3</td></tr>
+<tr><td>11</td><td>Feature detection versus UA sniffing?</td><td>Detect capabilities directly; user-agent strings are unreliable.</td><td>B3</td></tr>
+<tr><td>12</td><td>What drives Autoprefixer and Babel targets?</td><td><code>browserslist</code>.</td><td>B3</td></tr>
+<tr><td>13</td><td>Which panel finds long tasks?</td><td>Performance: record and read the flame chart.</td><td>B4</td></tr>
+<tr><td>14</td><td>How do you find a leak?</td><td>Memory panel heap snapshots, compare, check detached nodes and retainers.</td><td>B4</td></tr>
+<tr><td>15</td><td>What does a bundler do?</td><td>Resolves the module graph, transforms, optimises and emits hashed chunks.</td><td>B5</td></tr>
+<tr><td>16</td><td>Why is Vite’s dev server fast?</td><td>Serves native ES modules on demand, pre-bundling only dependencies.</td><td>B5</td></tr>
+<tr><td>17</td><td>What bundles Vite for production?</td><td>Rollup (Rolldown in newer versions).</td><td>B5</td></tr>
+<tr><td>18</td><td>What is HMR?</td><td>Swapping changed modules in the browser without a full reload.</td><td>B5</td></tr>
+<tr><td>19</td><td>What makes code tree-shakable?</td><td>ES modules with no side effects, plus <code>sideEffects: false</code>.</td><td>B6</td></tr>
+<tr><td>20</td><td>How does code splitting work?</td><td>Dynamic <code>import()</code> creates chunks loaded on demand.</td><td>B6</td></tr>
+<tr><td>21</td><td>Why content hashes in file names?</td><td>Allow immutable long-term caching; changes get new URLs.</td><td>B6</td></tr>
+<tr><td>22</td><td>Transpile versus polyfill?</td><td>Rewrite syntax at build versus add missing APIs at run time.</td><td>B7</td></tr>
+<tr><td>23</td><td>Do Babel and SWC type-check?</td><td>No, they strip types; use <code>tsc --noEmit</code>.</td><td>B7</td></tr>
+<tr><td>24</td><td>What is PostCSS?</td><td>A CSS AST processor running plugins like Autoprefixer.</td><td>B7</td></tr>
+<tr><td>25</td><td>What does <code>^1.2.3</code> allow?</td><td>1.2.3 up to below 2.0.0.</td><td>B8</td></tr>
+<tr><td>26</td><td>What is a phantom dependency?</td><td>An undeclared package importable only because it was hoisted.</td><td>B8</td></tr>
+<tr><td>27</td><td>CI install command?</td><td><code>npm ci</code> or <code>pnpm install --frozen-lockfile</code>.</td><td>B8</td></tr>
+<tr><td>28</td><td>Hooks versus CI?</td><td>Hooks give fast local feedback; CI is the authoritative, unskippable gate.</td><td>B9</td></tr>
+<tr><td>29</td><td>Cache rule for <code>index.html</code> versus hashed assets?</td><td>HTML revalidated; hashed assets immutable for a year.</td><td>B10</td></tr>
+<tr><td>30</td><td>What is deployment skew?</td><td>Old pages requesting chunks removed by a new release; keep old assets.</td><td>B10</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer browser and tooling questions at L4</h4>
+<ul>
+<li>For “what happens when…” questions, walk the pipeline in order and say where each optimisation applies (DNS, connection, parse, render, hydrate).</li>
+<li>Always link tools to outcomes: tree shaking and splitting reduce bytes and parse time; hashing enables caching; browserslist reduces transpilation and polyfills.</li>
+<li>Show you measure: bundle analyser, Performance panel with throttling, Lighthouse plus real-user data.</li>
+<li>Be pragmatic about tools: choose by team, ecosystem and migration cost, and avoid rewriting build tooling for novelty.</li>
+<li>Mention supply-chain and reproducibility concerns when discussing packages and pipelines.</li>
+<li>The interview is theoretical: expect “explain”, “compare”, “how would you debug” and “what are the trade-offs”, not live coding.</li>
+</ul></div>
+</section>
+
+</div>

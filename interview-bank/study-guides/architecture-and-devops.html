@@ -1,0 +1,1007 @@
+<title>Architecture, Deployment and DevOps Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"Architecture, Deployment and DevOps Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"Architecture, Deployment and DevOps Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · Architecture and DevOps · Lead level</div>
+  <h1>Architecture, Deployment and DevOps Study Guide</h1>
+  <p>How a lead frontend engineer designs and ships systems: frontend architecture and system design, micro-frontends, monorepos, CI/CD pipelines, deployment strategies (rolling, blue-green, canary), feature flags, Docker and containers, Kubernetes and cloud basics, infrastructure as code, observability and SLOs, incident management and resilience, and security and cost in the delivery pipeline. The level is interview-ready working depth. Every topic is something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> platform features change: check current docs</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Architecture</h3>
+    <ol>
+      <li><b>A1</b><a href="#a1">Frontend architecture and system design</a></li>
+      <li><b>A2</b><a href="#a2">Micro-frontends</a></li>
+      <li><b>A3</b><a href="#a3">Monorepos, shared code, ownership</a></li>
+      <li><b>A4</b><a href="#a4">Architecture decisions and trade-offs</a></li>
+    </ol>
+    <h3 style="margin-top:16px">2 · Delivery</h3>
+    <ol>
+      <li><b>A5</b><a href="#a5">CI/CD pipelines and branching</a></li>
+      <li><b>A6</b><a href="#a6">Deployment strategies</a></li>
+      <li><b>A7</b><a href="#a7">Feature flags and configuration</a></li>
+      <li><b>A8</b><a href="#a8">Docker and containers</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>3 · Operations</h3>
+    <ol>
+      <li><b>A9</b><a href="#a9">Kubernetes, cloud and infrastructure as code</a></li>
+      <li><b>A10</b><a href="#a10">Observability, SLOs and alerting</a></li>
+      <li><b>A11</b><a href="#a11">Incident management and resilience</a></li>
+      <li><b>A12</b><a href="#a12">DevSecOps, cost and platform thinking</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">A1, A2, A5 and A6 are asked most often (“design the frontend architecture”, “canary versus blue-green”). A10 and A11 show operational maturity.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Related: Browser and build (the build pipeline), Next.js (deployment), Node and databases (scaling services), Engineering practices (process).</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Architecture</h1>
+
+<!-- ============ A1 ============ -->
+<section class="q" id="a1">
+<header class="qh">
+  <div class="qrow"><span class="qid">A1</span><span class="tag added">Added</span></div>
+  <h2>Frontend architecture and system design</h2>
+  <p class="qtext">“How do you architect a large frontend application? How do you structure layers and modules, manage dependencies, choose a rendering approach, and answer a frontend system design question such as ‘design a news feed’ or ‘design a dashboard’?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I architect a frontend around business domains, not technical file types: feature modules with clear public interfaces, layered so that UI components depend on hooks and domain logic, which depend on an API client, never the reverse. Shared design-system components and utilities sit below the features, and boundaries are enforced with lint rules so teams do not tangle. I choose the rendering model from the content: static or server rendering for SEO and first load, client rendering for rich interaction, usually a hybrid. For a system design question I clarify requirements and scale, define the API and data model, design the component tree and state, then cover rendering, caching, performance, accessibility, error handling, security and observability, and I state trade-offs and what I would measure.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: a layered frontend architecture from app shell and routes, to feature modules, to shared domain and data, to design system and platform utilities, with dependency direction downward. Right: a frame for answering a frontend system design question.">
+  <text x="10" y="18" class="bd">Layers and dependency direction</text>
+  <rect x="10" y="30" width="360" height="40" rx="5" class="h"/><text x="18" y="48" class="bd">App shell</text><text x="18" y="62" class="sm">routing, layouts, providers, error boundaries, config</text>
+  <path class="a" d="M190 70V80"/>
+  <rect x="10" y="82" width="360" height="62" rx="5" class="g"/><text x="18" y="100" class="bd">Features (vertical slices)</text><text x="18" y="118" class="sm">checkout/ · search/ · account/ : UI + hooks + state + tests</text><text x="18" y="134" class="sm">expose a small public API (index.ts); no deep imports</text>
+  <path class="a" d="M190 144V154"/>
+  <rect x="10" y="156" width="360" height="46" rx="5" class="w"/><text x="18" y="174" class="bd">Shared domain and data</text><text x="18" y="190" class="sm">API client, schemas, domain types, auth, i18n, analytics</text>
+  <path class="a" d="M190 202V212"/>
+  <rect x="10" y="214" width="360" height="46" rx="5" class="b"/><text x="18" y="232" class="bd">Design system and platform</text><text x="18" y="248" class="sm">components, tokens, hooks, utilities, build and test tooling</text>
+  <text x="10" y="284" class="sm">Rules: dependencies point down only; features do not import each</text><text x="10" y="300" class="sm">other (communicate via shared state, events or URL); enforce with</text><text x="10" y="316" class="sm">eslint boundaries or Nx module boundaries.</text>
+  <text x="400" y="18" class="bd">Frame for a system design answer</text>
+  <rect x="400" y="30" width="350" height="32" rx="4" class="b"/><text x="408" y="51" class="sm"><tspan class="bd">1 Clarify</tspan>  users, devices, scale, SEO, offline, i18n</text>
+  <rect x="400" y="66" width="350" height="32" rx="4" class="b"/><text x="408" y="87" class="sm"><tspan class="bd">2 Data and API</tspan>  entities, pagination, realtime needs</text>
+  <rect x="400" y="102" width="350" height="32" rx="4" class="h"/><text x="408" y="123" class="sm"><tspan class="bd">3 Components</tspan>  tree, state ownership, interfaces</text>
+  <rect x="400" y="138" width="350" height="32" rx="4" class="h"/><text x="408" y="159" class="sm"><tspan class="bd">4 Rendering</tspan>  CSR, SSR, SSG, streaming, caching</text>
+  <rect x="400" y="174" width="350" height="32" rx="4" class="g"/><text x="408" y="195" class="sm"><tspan class="bd">5 Performance</tspan>  budgets, lazy loading, virtualisation</text>
+  <rect x="400" y="210" width="350" height="32" rx="4" class="g"/><text x="408" y="231" class="sm"><tspan class="bd">6 Quality</tspan>  a11y, errors, security, testing, observability</text>
+  <rect x="400" y="246" width="350" height="32" rx="4" class="w"/><text x="408" y="267" class="sm"><tspan class="bd">7 Trade-offs</tspan>  alternatives, risks, metrics, next steps</text>
+  <text x="400" y="304" class="sm">Draw boxes and arrows; narrate decisions; ask before assuming.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Structure by domain, control dependency direction, and make decisions visible with their trade-offs.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Architecture goals:</b> changeability (small blast radius), team autonomy, performance, reliability, accessibility, security, testability, and onboarding speed. Choose the simplest structure that meets today’s scale and leaves room to evolve; avoid over-engineering for hypothetical scale.</li>
+<li><b>Modular monolith first:</b> one deployable frontend with strong internal module boundaries is easier to build, test and deploy than micro-frontends, and can later be split along the same seams (A2). Boundaries matter more than deployment topology.</li>
+<li><b>Layering and clean architecture for UI:</b> presentation (components), application logic (hooks, state, use cases), domain (types and rules), infrastructure (API clients, storage). Keep business rules out of components so they are testable without rendering; adapters isolate vendors and APIs (J28).</li>
+<li><b>Feature-sliced and domain-driven structure:</b> organise by feature or bounded context (<code>features/checkout</code>) with internal layers; share only genuinely common code; apply the “rule of three” before abstracting; avoid a dumping-ground <code>utils</code> or <code>common</code> folder.</li>
+<li><b>State architecture:</b> server state in a query library, URL for shareable state, local state by default, a small global store for genuinely global client state (E1). Document where each kind lives.</li>
+<li><b>Rendering architecture:</b> SPA, MPA, SSR, SSG, ISR, islands, streaming, edge; pick per route (N1). Consider SEO, time to first byte, personalisation, caching and operational complexity.</li>
+<li><b>Data layer:</b> typed API client, schema validation at the boundary, error normalisation, auth handling, caching; optionally a backend-for-frontend to aggregate and shape APIs, hide tokens and tailor payloads to the UI (E9).</li>
+<li><b>Cross-cutting concerns:</b> authentication and authorisation, i18n, theming, feature flags, analytics, error reporting, logging, accessibility, performance budgets; provide them through well-defined providers and hooks rather than ad hoc imports.</li>
+<li><b>Scalability of the codebase:</b> build times (caching, incremental), test speed, ownership (CODEOWNERS), consistent conventions, code generation and templates, dependency governance, documentation (ADRs).</li>
+<li><b>Example: design a news feed:</b> requirements (infinite scroll, personalised, realtime updates, images); API with cursor pagination and ETags; client store keyed by feed id; virtualised list with stable keys; IntersectionObserver for loading; optimistic likes; image CDN with responsive images; skeletons; prefetch next page; offline cache; analytics for impressions; error and retry states; accessibility for feed pattern; metrics: LCP, INP, scroll jank.</li>
+<li><b>Example: design a dashboard:</b> widget grid with independent data sources and error boundaries; per-widget query caching and polling or WebSocket updates; virtualised tables; lazy-loaded chart libraries; layout persistence; role-based widgets; export; performance budgets; observability of widget load times.</li>
+<li><b>Non-functional requirements:</b> state targets (p75 LCP, availability, supported browsers, accessibility level WCAG 2.2 AA, i18n locales) so decisions are testable.</li>
+<li><b>Evolutionary architecture:</b> fitness functions (automated checks for bundle size, dependency rules, accessibility) keep architecture from eroding; strangler pattern to replace legacy pieces incrementally.</li>
+<li><b>Communication:</b> architecture diagrams (C4 model: context, containers, components), ADRs for decisions, RFCs for cross-team changes; keep them short and current.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Starting with technologies (“I would use React and Redux”) before requirements and constraints.</li>
+<li>Over-engineering with micro-frontends or heavy abstractions for a small team.</li>
+<li>Folders organised only by type (components, hooks, utils) so features are scattered and coupled.</li>
+<li>Business logic buried in components, making it untestable.</li>
+<li>Ignoring non-functional requirements such as accessibility, performance and observability in the design.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you prevent a codebase from turning into a big ball of mud?</dt><dd>Enforced module boundaries, one-directional dependencies, ownership, architectural lint rules in CI, regular refactoring and ADRs.</dd>
+<dt>How do you decide between SSR and CSR for a new product?</dt><dd>From SEO needs, first-load performance, personalisation, team skills and operational cost; often hybrid with static public pages and client-rendered authenticated areas.</dd>
+<dt>Where does business logic live in a React app?</dt><dd>In plain TypeScript modules and hooks (domain and application layers), with components focusing on presentation.</dd>
+<dt>What is a backend-for-frontend?</dt><dd>A server layer owned by the frontend team that aggregates and adapts backend APIs for a specific client, hiding complexity and credentials.</dd>
+</dl></div>
+</section>
+
+<!-- ============ A2 ============ -->
+<section class="q" id="a2">
+<header class="qh">
+  <div class="qrow"><span class="qid">A2</span><span class="tag added">Added</span></div>
+  <h2>Micro-frontends</h2>
+  <p class="qtext">“What are micro-frontends? When are they worth it? Compare composition approaches: iframes, Module Federation, web components, build-time packages, server-side composition. How do you handle routing, shared dependencies, state and styling?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Micro-frontends split a large web application into independently developed, tested and deployed pieces owned by different teams, usually along business domains, composed into one experience for the user. The benefit is team autonomy and independent releases for big organisations; the costs are complexity, duplicated dependencies, inconsistent UX, harder performance and harder cross-app communication. Composition can happen at build time through packages, at runtime in the browser with Module Federation, single-spa or web components, with iframes for strong isolation, or on the server or edge. I treat them as an organisational scaling tool and avoid them for small teams; a well-structured modular monolith usually delivers more value with less cost.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: a shell application loading remote micro-frontends owned by different teams at runtime, with a shared design system. Right: a comparison of composition approaches.">
+  <text x="10" y="18" class="bd">Shell + remotes (runtime composition)</text>
+  <rect x="10" y="30" width="360" height="40" rx="5" class="h"/><text x="18" y="48" class="bd">Shell / container</text><text x="18" y="62" class="sm">routing, auth, layout, loads remotes by manifest</text>
+  <path class="a" d="M70 70V90"/><path class="a" d="M190 70V90"/><path class="a" d="M310 70V90"/>
+  <rect x="10" y="92" width="110" height="64" rx="5" class="g"/><text x="18" y="112" class="bd">Search</text><text x="18" y="128" class="sm">team A</text><text x="18" y="144" class="sm">own pipeline</text>
+  <rect x="135" y="92" width="110" height="64" rx="5" class="g"/><text x="143" y="112" class="bd">Checkout</text><text x="143" y="128" class="sm">team B</text><text x="143" y="144" class="sm">own pipeline</text>
+  <rect x="260" y="92" width="110" height="64" rx="5" class="g"/><text x="268" y="112" class="bd">Account</text><text x="268" y="128" class="sm">team C</text><text x="268" y="144" class="sm">own pipeline</text>
+  <rect x="10" y="168" width="360" height="40" rx="5" class="w"/><text x="18" y="186" class="bd">Shared contracts</text><text x="18" y="202" class="sm">design system, auth, events/URL, shared libs (singletons)</text>
+  <text x="10" y="232" class="sm">Each remote deploys independently; the shell picks versions from a</text><text x="10" y="248" class="sm">manifest. Risks: version skew, duplicated React, inconsistent UX,</text><text x="10" y="264" class="sm">waterfalls loading remotes, harder debugging and end-to-end tests.</text><text x="10" y="288" class="sm">Contracts, shared UI kit and governance matter more than the tech.</text>
+  <text x="400" y="18" class="bd">Composition options</text>
+  <rect x="400" y="30" width="350" height="52" rx="4" class="b"/><text x="408" y="48" class="bd">Build-time packages</text><text x="408" y="64" class="sm">npm packages assembled in one build; simple, consistent</text><text x="408" y="78" class="sm">performance; teams coupled by release train</text>
+  <rect x="400" y="86" width="350" height="52" rx="4" class="h"/><text x="408" y="104" class="bd">Module Federation / single-spa</text><text x="408" y="120" class="sm">runtime loading of separately deployed bundles; shared deps;</text><text x="408" y="134" class="sm">framework-aware; most common for SPAs</text>
+  <rect x="400" y="142" width="350" height="52" rx="4" class="h"/><text x="408" y="160" class="bd">Web Components</text><text x="408" y="176" class="sm">framework-agnostic custom elements; good isolation of API;</text><text x="408" y="190" class="sm">SSR and styling quirks (shadow DOM)</text>
+  <rect x="400" y="198" width="350" height="52" rx="4" class="w"/><text x="408" y="216" class="bd">iframes</text><text x="408" y="232" class="sm">strong isolation and independence; poor UX integration,</text><text x="408" y="246" class="sm">routing, sizing, accessibility, performance</text>
+  <rect x="400" y="254" width="350" height="56" rx="4" class="g"/><text x="408" y="272" class="bd">Server / edge composition</text><text x="408" y="288" class="sm">SSI, ESI, edge workers or a gateway stitch HTML fragments;</text><text x="408" y="302" class="sm">good first paint and SEO; needs infrastructure</text>
+</svg></div>
+<figcaption><b>Reminder.</b> Micro-frontends solve an organisational problem. If you do not have that problem, they only add cost.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Why teams adopt them:</b> many teams working on one product, long release trains, merge conflicts and fragile shared builds, desire for independent deployment and technology evolution, and acquisitions of separate products to unify. Typically 50+ engineers across several teams.</li>
+<li><b>Split by business domain, not technical layer:</b> vertical slices (search, checkout, account) owned end to end by a team including backend; horizontal splits (header, footer, buttons) produce coordination overhead.</li>
+<li><b>Module Federation:</b> webpack 5 (and Rspack, Vite plugins) lets an app expose and consume modules at runtime; configure <code>shared</code> singletons (React, router, design system) with version ranges to avoid duplicates; remotes loaded from URLs published by CI; fallback UI for failed loads; versioning via manifests <span class="verify">verify tooling status</span>.</li>
+<li><b>Routing:</b> the shell owns top-level routes and delegates subpaths to remotes; deep links must work; avoid two routers fighting over history; coordinate navigation through the shell or custom events.</li>
+<li><b>Communication:</b> prefer loose coupling: URL and query params, custom events (<code>CustomEvent</code>, <code>BroadcastChannel</code>), a small shared event bus or store contract with versioned payloads, and props from the shell. Avoid direct imports between remotes.</li>
+<li><b>Shared dependencies and bundle size:</b> duplicating React or UI libraries in each remote bloats pages; share singletons carefully but accept version coupling; measure total JavaScript per page and set budgets.</li>
+<li><b>Design system and styling:</b> a shared component library and tokens give a consistent look; isolate CSS (CSS Modules, scoped naming, shadow DOM) to prevent leakage; version the design system and plan upgrades across teams.</li>
+<li><b>Authentication and state:</b> shell handles auth and passes tokens or a session; avoid sharing mutable global state; each remote owns its data fetching and caching.</li>
+<li><b>Independent deployment:</b> each micro-frontend has its pipeline and can release without the others; contract tests and integration environments ensure compatibility; feature flags and canaries reduce risk; consider version pinning and rollbacks per remote (A6).</li>
+<li><b>Testing:</b> unit and component tests per remote; contract tests between shell and remotes; end-to-end tests of key journeys across remotes in an integration environment; visual regression of the composed page.</li>
+<li><b>Performance:</b> avoid waterfalls (load shell then remote manifests then bundles), preload remote entries, SSR or edge composition for first paint, shared caching, and monitor Core Web Vitals per route and per team.</li>
+<li><b>Alternatives that often suffice:</b> modular monolith in a monorepo with enforced boundaries, per-package ownership (CODEOWNERS), independent versioned packages released together, and path-based deployment of separate apps behind one domain (multi-zone in Next.js).</li>
+<li><b>Organisational prerequisites:</b> platform team providing templates and shared tooling, clear domain ownership, governance of shared contracts, observability, and willingness to accept duplication and inconsistency risks.</li>
+<li><b>Migration use:</b> micro-frontends are a strangler tool for replacing a legacy app piece by piece, running old and new frameworks side by side behind a shell.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Adopting micro-frontends for a three-team product because it sounds modern.</li>
+<li>Splitting by UI component instead of business capability.</li>
+<li>Letting each team choose a different framework and design, harming UX and performance.</li>
+<li>Remotes importing each other, recreating a distributed monolith.</li>
+<li>No strategy for shared dependency versions, error handling when a remote fails, or end-to-end testing.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you share state between micro-frontends?</dt><dd>Minimise it: use URL, events and a small versioned contract; each remote owns its data; shared auth comes from the shell.</dd>
+<dt>How do you keep the UI consistent?</dt><dd>A shared design system with tokens, versioned and governed, plus visual regression tests and design reviews.</dd>
+<dt>What happens if a remote fails to load?</dt><dd>The shell shows a fallback and error boundary around the remote, reports the error, and remains usable.</dd>
+<dt>What would you do instead for a mid-size team?</dt><dd>A modular monolith in a monorepo with enforced boundaries and CODEOWNERS.</dd>
+</dl></div>
+</section>
+
+<!-- ============ A3 ============ -->
+<section class="q" id="a3">
+<header class="qh">
+  <div class="qrow"><span class="qid">A3</span><span class="tag added">Added</span></div>
+  <h2>Monorepos, shared code, ownership</h2>
+  <p class="qtext">“Monorepo or polyrepo? How do you structure shared libraries, versioning, ownership and tooling at scale? How do you prevent dependency hell and keep builds fast?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A monorepo keeps many projects in one repository, which makes cross-project changes atomic, shares tooling and dependencies, and simplifies refactoring; the costs are tooling for build speed, access control and discipline about boundaries. A polyrepo gives clear ownership and independent lifecycles but makes sharing code and coordinated changes harder, with version drift. For frontend platforms I usually prefer a monorepo with pnpm workspaces and Turborepo or Nx for task caching and affected-only builds, CODEOWNERS for review routing, module-boundary lint rules, and shared packages for the design system, utilities and configs, versioned with Changesets when published.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: monorepo layout with apps and packages and ownership. Right: monorepo versus polyrepo trade-offs and a boundary rule graph.">
+  <text x="10" y="18" class="bd">Typical layout</text>
+  <rect x="10" y="30" width="360" height="190" rx="5" class="b"/>
+  <text x="18" y="50" class="mono" style="font-size:10.5px">repo/</text>
+  <text x="30" y="68" class="mono" style="font-size:10.5px">apps/web        (Next.js)       owner: storefront</text>
+  <text x="30" y="84" class="mono" style="font-size:10.5px">apps/admin      (React SPA)     owner: back-office</text>
+  <text x="30" y="100" class="mono" style="font-size:10.5px">apps/docs       (Storybook)</text>
+  <text x="30" y="122" class="mono" style="font-size:10.5px">packages/ui       design system     owner: platform</text>
+  <text x="30" y="138" class="mono" style="font-size:10.5px">packages/api-client  typed SDK</text>
+  <text x="30" y="154" class="mono" style="font-size:10.5px">packages/config   eslint, tsconfig</text>
+  <text x="30" y="170" class="mono" style="font-size:10.5px">packages/utils    pure helpers</text>
+  <text x="30" y="192" class="mono" style="font-size:10.5px">CODEOWNERS  turbo.json  pnpm-workspace.yaml</text>
+  <text x="18" y="212" class="sm">apps depend on packages; packages never depend on apps</text>
+  <rect x="10" y="232" width="360" height="78" rx="5" class="w"/><text x="18" y="252" class="bd">Keeping it healthy</text><text x="18" y="270" class="sm">boundary lint rules · affected-only CI · remote cache · single</text><text x="18" y="286" class="sm">version policy for key deps · code generators · codemods for</text><text x="18" y="302" class="sm">breaking changes · clear internal package READMEs</text>
+  <text x="400" y="18" class="bd">Monorepo versus polyrepo</text>
+  <rect x="400" y="30" width="170" height="130" rx="5" class="g"/><text x="408" y="50" class="bd">Monorepo +</text><text x="408" y="68" class="sm">atomic changes</text><text x="408" y="84" class="sm">one toolchain</text><text x="408" y="100" class="sm">easy code sharing</text><text x="408" y="116" class="sm">consistent versions</text><text x="408" y="132" class="sm">discoverability</text><text x="408" y="148" class="sm">shared CI and rules</text>
+  <rect x="580" y="30" width="170" height="130" rx="5" class="x"/><text x="588" y="50" class="bd">Monorepo −</text><text x="588" y="68" class="sm">tooling complexity</text><text x="588" y="84" class="sm">CI time without cache</text><text x="588" y="100" class="sm">coarse permissions</text><text x="588" y="116" class="sm">big clones, IDE load</text><text x="588" y="132" class="sm">blast radius of</text><text x="588" y="148" class="sm">bad changes</text>
+  <rect x="400" y="170" width="350" height="62" rx="5" class="h"/><text x="408" y="190" class="bd">Polyrepo</text><text x="408" y="208" class="sm">clear ownership, independent releases, simple permissions;</text><text x="408" y="224" class="sm">hard cross-repo changes, drift, duplicated config and tooling</text>
+  <rect x="400" y="242" width="350" height="68" rx="5" class="b"/><text x="408" y="262" class="bd">Boundary rule (Nx or eslint)</text><text x="408" y="280" class="mono" style="font-size:10px">scope:web → scope:ui, scope:shared (allowed)</text><text x="408" y="296" class="mono" style="font-size:10px">scope:ui  → scope:web  (forbidden)</text>
+</svg></div>
+<figcaption><b>Balance.</b> A monorepo gives leverage only with the tooling and rules that keep it fast and modular.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Tooling:</b> pnpm or npm/yarn workspaces for linking; Turborepo (simple pipeline, remote cache), Nx (project graph, generators, boundaries, affected commands, plugins), Rush, Lerna (now Nx-backed), Bazel for very large polyglot repos. Choose by size and needs; start simple.</li>
+<li><b>Task graph and caching:</b> declare task dependencies (<code>build</code> depends on dependencies’ <code>build</code>); caches keyed by file hashes, env vars and dependency versions; remote cache shares outputs between developers and CI; run only affected projects on pull requests (B8, B10).</li>
+<li><b>Dependency management:</b> a single version of critical libraries (React, TypeScript) across the repo to avoid duplicates; tools such as syncpack enforce consistency; Renovate groups upgrades; use catalogues or <code>overrides</code>; avoid phantom dependencies by using pnpm.</li>
+<li><b>Internal packages:</b> “just-in-time” packages consumed as TypeScript source (fast iteration, bundler compiles them) or built packages (publishable); use TypeScript project references and path aliases consistently (T9); keep public APIs small with <code>exports</code>.</li>
+<li><b>Versioning and publishing:</b> internal-only packages can share one version via workspace protocol; published libraries use Changesets (version PRs, changelogs) or semantic-release with provenance; consider fixed versus independent versioning; keep a deprecation policy.</li>
+<li><b>Ownership:</b> <code>CODEOWNERS</code> routes reviews to the owning team; required reviewers for shared packages; labels and notifications; defined contribution process for platform packages; avoid “everyone owns it, so no one does”.</li>
+<li><b>Boundaries and architecture rules:</b> tags per project (type: app/feature/ui/util; scope: team) with allowed dependency matrices enforced by lint; ban deep imports; detect circular dependencies (madge, dependency-cruiser); keep apps thin and packages cohesive.</li>
+<li><b>CI scaling:</b> affected-only builds and tests, test sharding, caching, parallel jobs, per-project pipelines triggered by path filters, preview deployments per app, and flaky test management; track CI duration as a metric (B10).</li>
+<li><b>Source control practices:</b> trunk-based development with short-lived branches, feature flags, merge queues to keep the main branch green, sparse checkout or partial clones for large repos, and protected branches (A5).</li>
+<li><b>Code sharing patterns:</b> extract to a package after repeated use (rule of three); prefer composition and clear interfaces; avoid shared mutable singletons; document and test shared packages thoroughly because many apps depend on them.</li>
+<li><b>Migration to a monorepo:</b> import history (subtree/filter-repo), move one app at a time, unify tooling gradually, set up CI with caching first, and train teams; do not attempt a big bang.</li>
+<li><b>Access and compliance:</b> monorepos expose all code to everyone by default; use CODEOWNERS and, where required, separate repos for restricted code; audit trails and secrets scanning.</li>
+<li><b>When a polyrepo is better:</b> unrelated products, strict isolation requirements, different languages and toolchains, independent open-source projects, or teams that rarely change shared code.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Adopting a monorepo without caching or affected-only builds, so CI becomes slower for everyone.</li>
+<li>Letting packages import apps or each other freely, creating cycles.</li>
+<li>Multiple versions of React in one repo causing subtle bugs.</li>
+<li>A giant <code>shared</code> package that every team edits without ownership.</li>
+<li>No policy for breaking changes in shared packages.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you keep CI fast in a monorepo?</dt><dd>Task caching, remote cache, affected-only commands, parallelism and test sharding, and path-based triggers.</dd>
+<dt>How do you roll out a breaking change to a shared package?</dt><dd>Provide a codemod, migrate all consumers in the same PR (the monorepo advantage), or deprecate with a compatibility layer and a deadline.</dd>
+<dt>What goes into CODEOWNERS?</dt><dd>Path patterns mapped to teams so reviews are automatically requested from the people responsible for that code.</dd>
+<dt>Monorepo and micro-frontends: same thing?</dt><dd>No: repository structure and deployment topology are independent; you can have micro-frontends in a monorepo or a modular monolith in a monorepo.</dd>
+</dl></div>
+</section>
+
+<!-- ============ A4 ============ -->
+<section class="q" id="a4">
+<header class="qh">
+  <div class="qrow"><span class="qid">A4</span><span class="tag added">Added</span></div>
+  <h2>Architecture decisions and trade-offs</h2>
+  <p class="qtext">“How do you make and document architectural decisions? What is an ADR? How do you evaluate technology choices, manage technical debt, handle legacy migration and communicate trade-offs to stakeholders?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I make architecture decisions explicit: define the problem and the constraints, list realistic options, evaluate them against criteria such as cost, risk, team skills, performance and reversibility, decide, and record it in a short Architecture Decision Record with the context, decision and consequences so future teams understand why. I separate reversible two-way-door decisions, which we make fast, from irreversible ones, which deserve more analysis and a proof of concept. I involve the people affected, prototype risky parts, and communicate in business terms. For legacy systems I prefer incremental migration with the strangler pattern over rewrites, and I manage technical debt by making it visible, prioritising by risk and cost, and allocating regular capacity.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a decision process from problem to options to evaluation matrix to decision to ADR to review. Right: a sample ADR structure and the strangler migration pattern.">
+  <text x="10" y="18" class="bd">Decision process</text>
+  <rect x="10" y="30" width="110" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">Problem</text><text x="18" y="62" class="sm">and constraints</text>
+  <rect x="130" y="30" width="110" height="40" rx="5" class="b"/><text x="138" y="48" class="bd">Options</text><text x="138" y="62" class="sm">2 to 4 real ones</text>
+  <rect x="250" y="30" width="120" height="40" rx="5" class="h"/><text x="258" y="48" class="bd">Evaluate</text><text x="258" y="62" class="sm">criteria + spike</text>
+  <path class="a" d="M120 50H128"/><path class="a" d="M240 50H248"/>
+  <rect x="10" y="84" width="110" height="40" rx="5" class="g"/><text x="18" y="102" class="bd">Decide</text><text x="18" y="116" class="sm">owner + date</text>
+  <rect x="130" y="84" width="110" height="40" rx="5" class="g"/><text x="138" y="102" class="bd">Record (ADR)</text><text x="138" y="116" class="sm">in the repo</text>
+  <rect x="250" y="84" width="120" height="40" rx="5" class="w"/><text x="258" y="102" class="bd">Review</text><text x="258" y="116" class="sm">revisit if assumptions</text>
+  <path class="a" d="M310 70V82"/><path class="a" d="M120 104H128"/><path class="a" d="M240 104H248"/>
+  <rect x="10" y="140" width="360" height="86" rx="5" class="b"/><text x="18" y="160" class="bd">Evaluation criteria (weighted)</text><text x="18" y="178" class="sm">fit to requirements · team skills and hiring · ecosystem and</text><text x="18" y="194" class="sm">maintenance · performance · security and compliance · cost</text><text x="18" y="210" class="sm">(build, run, migrate) · lock-in and reversibility · risk</text>
+  <text x="10" y="250" class="sm">Two-way doors (easy to reverse): decide fast, small group.</text><text x="10" y="266" class="sm">One-way doors (costly to reverse): analyse, prototype, consult.</text><text x="10" y="290" class="sm">Time-box. “Good decision now” beats “perfect decision never”.</text>
+  <text x="400" y="18" class="bd">ADR template</text>
+  <rect x="400" y="30" width="350" height="122" rx="5" class="g"/><text x="408" y="48" class="mono" style="font-size:10px">ADR-014: Adopt TanStack Query for server state</text><text x="408" y="66" class="mono" style="font-size:10px">Status: accepted   Date: 2026-01-12   Owner: …</text><text x="408" y="84" class="mono" style="font-size:10px">Context: loading flags duplicated; stale data bugs</text><text x="408" y="100" class="mono" style="font-size:10px">Options: Redux thunks · RTK Query · TanStack Query</text><text x="408" y="116" class="mono" style="font-size:10px">Decision: TanStack Query</text><text x="408" y="132" class="mono" style="font-size:10px">Consequences: less code, new concepts</text>
+  <text x="400" y="176" class="bd">Strangler pattern for legacy</text>
+  <rect x="400" y="186" width="350" height="124" rx="5" class="b"/><text x="408" y="206" class="sm">1 put a facade (router or proxy) in front of the legacy app</text><text x="408" y="224" class="sm">2 build new features and migrate one route at a time behind it</text><text x="408" y="242" class="sm">3 route traffic gradually, compare, keep rollback</text><text x="408" y="260" class="sm">4 retire legacy parts when traffic reaches zero</text><text x="408" y="282" class="sm">Avoid big-bang rewrites: they stall feature work, hide risk,</text><text x="408" y="298" class="sm">and often recreate the old problems.</text>
+</svg></div>
+<figcaption><b>Habit.</b> Write down the why. Decisions without context get relitigated or blindly followed.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>ADRs:</b> short markdown files (<code>docs/adr/0014-…md</code>) stored with the code, immutable once accepted (superseded by new ADRs rather than edited), covering status, context, decision, alternatives considered and consequences. They create institutional memory and speed onboarding.</li>
+<li><b>RFCs:</b> broader proposals for cross-team changes with a comment period, an owner, and a decision date; use for design systems, major dependencies, migrations and standards; keep them time-boxed to avoid endless debate.</li>
+<li><b>Evaluating technology:</b> define must-haves, run a time-boxed spike on the hardest use case, assess maintenance health and community, security posture, licence, hiring market, migration cost and exit strategy; involve a sceptic; avoid résumé-driven development and hype.</li>
+<li><b>Build versus buy versus adopt open source:</b> buy or adopt commodity capabilities (auth, payments, analytics, UI primitives); build what differentiates the product; weigh total cost of ownership including maintenance and integration.</li>
+<li><b>Technical debt:</b> deliberate (conscious shortcut with a plan) versus accidental; inventory in a debt register with impact, interest (how much it slows work) and fix cost; prioritise by risk to users and delivery speed; allocate capacity (for example 15 to 20% per sprint), attach cleanup to feature work (boy-scout rule), and use metrics (change failure rate, lead time, defect hotspots) to justify investment.</li>
+<li><b>Legacy modernisation:</b> assess value and risk, establish tests around existing behaviour (characterisation tests), apply the strangler pattern, migrate by vertical slice, keep both systems running, use feature flags and parallel runs, and communicate progress and benefits; rewrites only for small or truly broken systems.</li>
+<li><b>Reversibility and lock-in:</b> isolate vendors behind interfaces; prefer open standards; estimate exit cost; avoid irreversible commitments without a trial; keep data portable.</li>
+<li><b>Trade-off articulation:</b> state what you gain and give up, for whom and over what time frame; use concrete numbers (build time, bundle size, cost) and scenarios; acknowledge uncertainty; propose experiments to reduce it.</li>
+<li><b>Stakeholder communication:</b> translate technical concerns into business impact (risk, cost, time to market, customer experience); present options with a recommendation; show a roadmap with milestones and value at each step; keep an honest view of risks and dependencies.</li>
+<li><b>Governance without bureaucracy:</b> lightweight architecture reviews for impactful decisions, a guild or community of practice, golden paths (paved roads) that make the recommended choice easiest, and autonomy within guardrails.</li>
+<li><b>Fitness functions:</b> automated checks encoding architectural goals (bundle budgets, dependency rules, accessibility, security scans) so architecture is verified continuously.</li>
+<li><b>Cognitive load and team topology:</b> design architecture and boundaries around team ownership (Conway’s law); reduce cross-team dependencies; platform teams provide self-service capabilities.</li>
+<li><b>Learning from decisions:</b> review outcomes after a period, record lessons, and update ADRs; celebrate reversed decisions as learning, not failure.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Decisions made in meetings or chat with no record, then forgotten or contested.</li>
+<li>Analysis paralysis on reversible choices, or snap decisions on irreversible ones.</li>
+<li>Choosing technology for novelty rather than fit and team capability.</li>
+<li>Proposing a full rewrite without evidence or a migration path.</li>
+<li>Presenting technical debt as technical purity instead of business risk and cost.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you justify paying down technical debt?</dt><dd>Quantify its interest: slower delivery, incidents, onboarding cost, and show a plan with measurable outcomes and incremental steps.</dd>
+<dt>How do you handle disagreement on an architecture choice?</dt><dd>Clarify criteria, run a time-boxed spike, document the options, decide with the accountable owner, and commit while recording the dissent and a review date.</dd>
+<dt>When is a rewrite justified?</dt><dd>When the system is small, the technology is end-of-life with no migration path, or the cost of change is truly unsustainable; even then, migrate in slices.</dd>
+<dt>What is Conway’s law and why does it matter?</dt><dd>Systems mirror the communication structure of the organisations that build them; align team boundaries with desired architecture.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Delivery</h1>
+
+<!-- ============ A5 ============ -->
+<section class="q" id="a5">
+<header class="qh">
+  <div class="qrow"><span class="qid">A5</span><span class="tag added">Added</span></div>
+  <h2>CI/CD pipelines and branching</h2>
+  <p class="qtext">“Explain continuous integration, continuous delivery and continuous deployment. How do you design a pipeline? Trunk-based development versus Git Flow? What quality gates and environments do you use? Which CI tools have you used?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Continuous integration means developers merge small changes into the main branch frequently, and every change is automatically built and tested. Continuous delivery means every passing change is releasable and can be deployed at any time with a click; continuous deployment goes further and releases every passing change automatically. A good pipeline is fast and staged: install with caching, static checks, unit and integration tests, build once, publish an immutable artifact, deploy to a preview or staging environment, run end-to-end and smoke tests, then promote the same artifact to production with a progressive rollout and automatic rollback. I favour trunk-based development with short-lived branches and feature flags, because long-lived branches create painful merges and delay feedback.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="A pipeline with stages from commit through build and test to artifact, staging, approval and production, with feedback times and gates. Below: trunk-based development with short-lived branches compared to long-lived Git Flow branches.">
+  <text x="10" y="18" class="bd">Pipeline stages and gates</text>
+  <rect x="10" y="30" width="80" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">Commit</text><text x="18" y="66" class="sm">PR opened</text>
+  <rect x="100" y="30" width="100" height="46" rx="5" class="h"/><text x="108" y="50" class="bd">Verify</text><text x="108" y="66" class="sm">lint, types, unit</text>
+  <rect x="210" y="30" width="90" height="46" rx="5" class="h"/><text x="218" y="50" class="bd">Build</text><text x="218" y="66" class="sm">once, hashed</text>
+  <rect x="310" y="30" width="100" height="46" rx="5" class="w"/><text x="318" y="50" class="bd">Preview</text><text x="318" y="66" class="sm">e2e, a11y, perf</text>
+  <rect x="420" y="30" width="90" height="46" rx="5" class="g"/><text x="428" y="50" class="bd">Merge</text><text x="428" y="66" class="sm">required checks</text>
+  <rect x="520" y="30" width="110" height="46" rx="5" class="g"/><text x="528" y="50" class="bd">Staging</text><text x="528" y="66" class="sm">smoke + approval</text>
+  <rect x="640" y="30" width="110" height="46" rx="5" class="g"/><text x="648" y="50" class="bd">Production</text><text x="648" y="66" class="sm">canary + monitor</text>
+  <path class="a" d="M90 53H98"/><path class="a" d="M200 53H208"/><path class="a" d="M300 53H308"/><path class="a" d="M410 53H418"/><path class="a" d="M510 53H518"/><path class="a" d="M630 53H638"/>
+  <text x="10" y="100" class="sm">Fail fast: cheap checks first (minutes); slow checks later or in parallel. Same artifact moves right.</text>
+  <text x="10" y="128" class="bd">Branching models</text>
+  <rect x="10" y="138" width="360" height="82" rx="5" class="g"/><text x="18" y="158" class="bd">Trunk-based (recommended)</text><text x="18" y="176" class="sm">short-lived branches (&lt; 1 to 2 days), merge to main often,</text><text x="18" y="192" class="sm">feature flags hide unfinished work, main always releasable,</text><text x="18" y="208" class="sm">release from main (tags) or release branches only if needed</text>
+  <rect x="390" y="138" width="360" height="82" rx="5" class="w"/><text x="398" y="158" class="bd">Git Flow</text><text x="398" y="176" class="sm">develop, feature, release, hotfix branches; suits scheduled</text><text x="398" y="192" class="sm">versioned releases (mobile, packaged software); heavy for web:</text><text x="398" y="208" class="sm">long branches, big merges, delayed feedback</text>
+  <rect x="10" y="234" width="740" height="76" rx="5" class="b"/><text x="18" y="254" class="bd">Quality gates</text><text x="18" y="272" class="sm">type check · lint · unit/integration tests · coverage on changed code · bundle size budget · accessibility checks · dependency and secret scan</text><text x="18" y="290" class="sm">· visual regression · Lighthouse CI · e2e smoke · approvals for production (when policy requires) · deployment health checks and auto-rollback</text>
+</svg></div>
+<figcaption><b>Principle.</b> Small changes, merged often, verified automatically, released through the same path every time.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Definitions:</b> CI = integrate and verify frequently. Continuous delivery = always releasable with a manual release decision. Continuous deployment = automatic release to production after passing gates. Choose by risk appetite, regulation and test confidence; many teams deploy continuously to production for web apps behind flags.</li>
+<li><b>Pipeline design principles:</b> fast feedback (target under 10 minutes for the PR check), deterministic, idempotent, parallel where possible, cached dependencies and build outputs, fail early, clear logs, ownership by the team, pipeline as code (versioned YAML), and reusable templates for consistency.</li>
+<li><b>Build once, promote:</b> the artifact built in CI is what runs in every environment; configuration is injected per environment; no rebuilds between staging and production (B10).</li>
+<li><b>Environments:</b> ephemeral preview per pull request, shared development/integration, staging mirroring production, and production; manage data, secrets and access per environment; keep staging representative; consider testing in production safely with flags and canaries.</li>
+<li><b>Testing in the pipeline:</b> unit and component tests on every PR; integration tests with service containers; e2e against the preview; smoke tests after deploy; synthetic checks in production; flaky test policy (quarantine and fix) (R12, E10).</li>
+<li><b>Trunk-based development details:</b> small PRs, branch by abstraction, feature flags, pair/mob to reduce review delay, merge queues to avoid broken main, rebase or squash merges, protected main with required checks, and code review within hours (G1).</li>
+<li><b>Release versioning and tags:</b> semantic versions for libraries; for apps use build ids or commit SHAs plus release tags; generate changelogs from Conventional Commits; keep release notes for stakeholders.</li>
+<li><b>Pipeline security:</b> least-privilege tokens, short-lived credentials via OIDC to the cloud instead of stored keys, pinned third-party actions by commit SHA, secret masking, protected environments with approvals, dependency and image scanning, signed artifacts (A12).</li>
+<li><b>Tools:</b> GitHub Actions, GitLab CI, Azure DevOps Pipelines, Jenkins (self-hosted, plugin-heavy), CircleCI, Bitbucket Pipelines, Buildkite, Argo CD/Flux for GitOps deployment; choose by existing platform, scale and compliance. Concepts transfer: stages, jobs, runners/agents, caches, artifacts, secrets, environments, approvals.</li>
+<li><b>GitOps:</b> desired state of environments stored in Git; a controller (Argo CD, Flux) reconciles clusters to match; deployments are pull requests to config repos; gives auditability and easy rollback.</li>
+<li><b>Metrics (DORA):</b> deployment frequency, lead time for changes, change failure rate, time to restore service; track and improve them, avoid using them to rank individuals (G4, G11).</li>
+<li><b>Handling failures:</b> automatic rollback on failed health checks or SLO burn, fix-forward versus rollback policy, post-deploy verification, notifications to the right channel, and blameless review of failed deployments.</li>
+<li><b>Monorepo pipelines:</b> affected-only builds, remote caching, path filters, per-app deployments (A3).</li>
+<li><b>Database and dependency changes:</b> backward-compatible migrations (expand, migrate, contract) so application and schema versions can differ during rollout (A6).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Confusing continuous delivery with continuous deployment.</li>
+<li>Slow pipelines that developers bypass or batch changes around.</li>
+<li>Rebuilding for production, so what is tested differs from what ships.</li>
+<li>Long-lived feature branches with big-bang merges.</li>
+<li>Long-lived cloud credentials stored as CI secrets, or unpinned third-party actions.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you merge unfinished work to main?</dt><dd>Behind a feature flag, or by branch by abstraction, so main stays releasable.</dd>
+<dt>How do you keep a pipeline under ten minutes?</dt><dd>Cache, parallelise, run affected-only, shard tests and push slow tests to later stages or nightly runs.</dd>
+<dt>Where do manual approvals belong?</dt><dd>Only where policy requires them, typically before production; automate everything else and make approvals fast.</dd>
+<dt>What is a merge queue?</dt><dd>A system that tests the combination of queued PRs against the latest main before merging, preventing a broken main.</dd>
+</dl></div>
+</section>
+
+<!-- ============ A6 ============ -->
+<section class="q" id="a6">
+<header class="qh">
+  <div class="qrow"><span class="qid">A6</span><span class="tag added">Added</span></div>
+  <h2>Deployment strategies</h2>
+  <p class="qtext">“Compare rolling, blue-green and canary deployments. What about recreate, A/B testing, shadow traffic and dark launches? How do you roll back? How do you handle database migrations and deployment skew for frontends?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Deployment strategies trade speed, risk and cost. Recreate stops the old version and starts the new, simple but with downtime. Rolling replaces instances gradually, so capacity stays up but two versions coexist briefly. Blue-green runs two full environments: I deploy to the idle one, test it, then switch traffic instantly, with instant rollback by switching back, at the price of double capacity. Canary sends a small percentage of real traffic to the new version, watches metrics, and increases gradually or rolls back automatically, which limits the blast radius and is my default for risky changes. Feature flags separate deploying code from releasing features, and database migrations must be backward-compatible so both versions can run at once.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Three strategies visualised: rolling replaces instances one by one, blue-green switches traffic between two environments, canary sends a small percentage of traffic to the new version and increases it. Bottom: expand and contract database migration.">
+  <text x="10" y="18" class="bd">Rolling</text>
+  <rect x="10" y="30" width="230" height="72" rx="5" class="b"/>
+  <rect x="18" y="40" width="40" height="22" class="b"/><text x="24" y="55" class="sm">v1</text><rect x="62" y="40" width="40" height="22" class="b"/><text x="68" y="55" class="sm">v1</text><rect x="106" y="40" width="40" height="22" class="g"/><text x="112" y="55" class="sm">v2</text><rect x="150" y="40" width="40" height="22" class="g"/><text x="156" y="55" class="sm">v2</text>
+  <text x="18" y="84" class="sm">instances updated in batches; capacity</text><text x="18" y="98" class="sm">stays; both versions run for a while</text>
+  <text x="270" y="18" class="bd">Blue-green</text>
+  <rect x="270" y="30" width="230" height="72" rx="5" class="b"/>
+  <rect x="278" y="40" width="100" height="22" class="b"/><text x="284" y="55" class="sm">blue v1 (live)</text><rect x="390" y="40" width="100" height="22" class="g"/><text x="396" y="55" class="sm">green v2 (idle)</text>
+  <text x="278" y="84" class="sm">test green, flip the router; rollback =</text><text x="278" y="98" class="sm">flip back; needs double capacity</text>
+  <text x="530" y="18" class="bd">Canary</text>
+  <rect x="530" y="30" width="220" height="72" rx="5" class="b"/>
+  <rect x="538" y="40" width="150" height="22" class="b"/><text x="544" y="55" class="sm">v1: 95% of traffic</text><rect x="692" y="40" width="50" height="22" class="g"/><text x="696" y="55" class="sm">v2 5%</text>
+  <text x="538" y="84" class="sm">watch errors and latency, ramp up</text><text x="538" y="98" class="sm">→100%; auto-rollback on regression</text>
+  <text x="10" y="132" class="bd">Choosing</text>
+  <rect x="10" y="142" width="740" height="108" rx="5" class="w"/>
+  <text x="18" y="162" class="sm"><tspan class="bd">Recreate</tspan> simplest, downtime · <tspan class="bd">Rolling</tspan> default on Kubernetes, low cost, slower rollback</text>
+  <text x="18" y="182" class="sm"><tspan class="bd">Blue-green</tspan> instant switch and rollback, easy testing of the full stack, higher cost, DB must serve both</text>
+  <text x="18" y="202" class="sm"><tspan class="bd">Canary</tspan> lowest risk for big changes, needs traffic splitting and good metrics (Argo Rollouts, Flagger, CDN rules)</text>
+  <text x="18" y="222" class="sm"><tspan class="bd">A/B and dark launch</tspan> experiments and shadow traffic validate behaviour without or before full release</text>
+  <text x="18" y="242" class="sm">Combine: deploy by canary, release features by flag, verify with synthetic checks and RUM.</text>
+  <text x="10" y="276" class="bd">Backward-compatible database change</text>
+  <rect x="10" y="286" width="170" height="34" rx="4" class="b"/><text x="18" y="307" class="sm">1 expand: add new column</text>
+  <rect x="190" y="286" width="180" height="34" rx="4" class="h"/><text x="198" y="307" class="sm">2 deploy code using both</text>
+  <rect x="380" y="286" width="180" height="34" rx="4" class="h"/><text x="388" y="307" class="sm">3 migrate and backfill data</text>
+  <rect x="570" y="286" width="180" height="34" rx="4" class="g"/><text x="578" y="307" class="sm">4 contract: drop old column</text>
+</svg></div>
+<figcaption><b>Idea.</b> Limit the blast radius, observe, and keep an instant way back.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Rolling updates:</b> Kubernetes default: <code>maxSurge</code> and <code>maxUnavailable</code> control pace; readiness probes gate traffic; rollback with <code>kubectl rollout undo</code>. Both versions serve concurrently, so APIs and schemas must be compatible.</li>
+<li><b>Blue-green:</b> two production-identical environments; deploy and smoke test the idle one with real configuration; switch the load balancer, DNS or CDN origin; keep the old environment for fast rollback, then tear down or reuse. Challenges: state (databases, sessions, caches), cost, and long-lived connections.</li>
+<li><b>Canary:</b> start with internal users or 1 to 5% of traffic by percentage, region, cookie or header; compare canary and baseline on error rate, latency, business metrics and web vitals; automate promotion and rollback with analysis (Argo Rollouts, Flagger, Spinnaker, cloud deployment services). Sticky routing ensures users see one version during a session.</li>
+<li><b>Frontend specifics:</b> static assets are immutable and versioned; the HTML entry point decides which version loads; canary by routing a percentage of HTML requests (edge worker, CDN rule, cookie) to the new build; keep old assets available for open tabs (deployment skew) (B10).</li>
+<li><b>A/B testing versus canary:</b> A/B tests compare variants for product metrics with statistical rigour; canaries check safety of a new build; both route subsets of users but have different goals and analysis.</li>
+<li><b>Dark launches and shadow traffic:</b> run new code paths invisibly (mirror requests to the new service, compare results) to validate behaviour at real load before exposing users; ensure shadowed calls do not cause side effects.</li>
+<li><b>Feature flags with deployment:</b> deploy dark, enable for staff, then percentage rollout, then everyone; kill switches for instant disable without redeploy (A7).</li>
+<li><b>Rollback versus roll forward:</b> rollback is fast when the change is reversible; data migrations and external side effects make it harder, so prefer expand/contract and forward-fixable designs; practise rollbacks; keep previous artifacts and configuration versions.</li>
+<li><b>Database migrations in deployments:</b> expand (additive, nullable), deploy code that handles both, migrate data in the background in batches, switch reads and writes, then contract (remove old) in a later release; avoid renaming columns in one step; test migrations on production-size data; use online schema change tools for large tables (D6).</li>
+<li><b>API and contract compatibility:</b> tolerate unknown fields, add rather than change, version when breaking, and support old clients through a deprecation window; frontends and backends deploy independently so assume skew.</li>
+<li><b>Health and verification:</b> readiness/liveness probes, automated smoke tests after deploy, SLO-based gates, real user monitoring by version, and alerts tied to the release; progressive delivery pauses automatically when metrics degrade.</li>
+<li><b>Zero-downtime requirements:</b> graceful shutdown and connection draining, backward-compatible changes, sufficient capacity during rollout, warm caches, and avoiding long migrations holding locks.</li>
+<li><b>Release windows and change management:</b> in regulated settings, combine progressive delivery with change records, approvals and freeze periods; automate evidence collection.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Blue-green with a database change that breaks the old version, so rollback is impossible.</li>
+<li>Canary without meaningful metrics or automatic rollback, so “canary” is just a slow release.</li>
+<li>Rolling out incompatible API changes while both versions are live.</li>
+<li>Deleting old static assets immediately and breaking open tabs.</li>
+<li>Equating deployment with release, instead of separating them with flags.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Canary versus blue-green: when each?</dt><dd>Canary for gradual risk reduction with real traffic and good metrics; blue-green for fast, all-or-nothing switches and easy rollback when you can afford duplicate capacity.</dd>
+<dt>How do you roll back a bad frontend release?</dt><dd>Point the entry HTML back to the previous build (or redeploy the previous artifact), keep both asset sets, and flip flags off.</dd>
+<dt>How do you ship a database column rename safely?</dt><dd>Add the new column, write to both, backfill, switch reads, then drop the old column in a later release.</dd>
+<dt>What metrics gate a canary?</dt><dd>Error rate, latency percentiles, saturation, key business events and Core Web Vitals compared with the baseline.</dd>
+</dl></div>
+</section>
+
+<!-- ============ A7 ============ -->
+<section class="q" id="a7">
+<header class="qh">
+  <div class="qrow"><span class="qid">A7</span><span class="tag added">Added</span></div>
+  <h2>Feature flags and configuration</h2>
+  <p class="qtext">“What are feature flags and how do you use them? Types of flags, rollout strategies, kill switches, evaluating flags on client versus server, flag debt, testing with flags, and tools such as LaunchDarkly or Unleash.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A feature flag is a runtime switch that turns behaviour on or off without redeploying, which decouples deployment from release. I use flags for trunk-based development of unfinished work, gradual percentage rollouts, targeting specific users or segments, A/B experiments, and kill switches that disable a risky feature instantly. Flags have different lifetimes: release flags are temporary and must be removed after rollout, ops flags and permission flags can be long-lived. They need discipline: naming and ownership, defaults that are safe if the flag service is unavailable, evaluating on the server for security-sensitive features, tests for both states, and a cleanup process, because stale flags become hidden complexity and bugs.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: flag types by lifetime, release, experiment, ops, permission. Right: flag evaluation architecture with SDK, local cache, streaming updates, and targeting rules.">
+  <text x="10" y="18" class="bd">Flag types</text>
+  <rect x="10" y="30" width="360" height="50" rx="5" class="g"/><text x="18" y="48" class="bd">Release flag (days to weeks)</text><text x="18" y="64" class="sm">hide unfinished work, progressive rollout; remove after 100%</text>
+  <rect x="10" y="84" width="360" height="50" rx="5" class="h"/><text x="18" y="102" class="bd">Experiment flag (weeks)</text><text x="18" y="118" class="sm">A/B variants with metrics and stats; end with a decision</text>
+  <rect x="10" y="138" width="360" height="50" rx="5" class="w"/><text x="18" y="156" class="bd">Ops / kill switch (long-lived)</text><text x="18" y="172" class="sm">disable expensive or risky paths under load or incident</text>
+  <rect x="10" y="192" width="360" height="50" rx="5" class="b"/><text x="18" y="210" class="bd">Permission / entitlement (permanent)</text><text x="18" y="226" class="sm">plans and tiers; really product configuration, not a toggle</text>
+  <text x="10" y="266" class="sm">Give each flag an owner, description, type, creation date and expiry;</text><text x="10" y="282" class="sm">alert on flags older than their expected lifetime; remove code paths.</text><text x="10" y="302" class="sm">Naming: team.feature.purpose; avoid reusing a flag key for a new meaning.</text>
+  <text x="400" y="18" class="bd">Evaluation architecture</text>
+  <rect x="400" y="30" width="350" height="36" rx="4" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">Flag service</tspan>  rules: segments, % rollout, schedules</text>
+  <path class="a" d="M575 66V78"/><text x="582" y="76" class="sm">stream / poll</text>
+  <rect x="400" y="80" width="350" height="36" rx="4" class="h"/><text x="408" y="102" class="sm"><tspan class="bd">SDK</tspan>  in-memory cache; evaluates locally; safe defaults</text>
+  <path class="a" d="M575 116V128"/>
+  <rect x="400" y="130" width="170" height="52" rx="4" class="g"/><text x="408" y="148" class="bd">Server-side</text><text x="408" y="164" class="sm">authoritative, secure,</text><text x="408" y="178" class="sm">sees user context</text>
+  <rect x="580" y="130" width="170" height="52" rx="4" class="w"/><text x="588" y="148" class="bd">Client-side</text><text x="588" y="164" class="sm">UI toggles; values are</text><text x="588" y="178" class="sm">visible to users</text>
+  <rect x="400" y="194" width="350" height="116" rx="5" class="b"/><text x="408" y="214" class="bd">Rules of thumb</text><text x="408" y="232" class="sm">consistent bucketing: hash(user id + flag key) → same variant</text><text x="408" y="248" class="sm">never gate security on a client flag; enforce on the server</text><text x="408" y="264" class="sm">avoid UI flicker: evaluate before render (SSR/bootstrapped values)</text><text x="408" y="280" class="sm">log exposures for experiments; cap the number of live flags</text><text x="408" y="296" class="sm">keep a fallback if the flag service is down (cached last values)</text>
+</svg></div>
+<figcaption><b>Discipline.</b> Flags are powerful and dangerous: every flag is a branch in production behaviour that someone must own and eventually delete.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Use cases:</b> trunk-based development, progressive delivery (1%, 10%, 50%, 100%), targeted betas (internal staff, region, plan), A/B and multivariate experiments, operational controls (rate limits, degrade modes), and entitlement management. Flags let you release on a business schedule while deploying continuously.</li>
+<li><b>Rollout strategies:</b> percentage by user id hash (sticky), ring-based (staff, beta, everyone), geography or tenant-based, time-based schedules, and automatic rollout with guardrail metrics that pause or revert on regression.</li>
+<li><b>Kill switches:</b> pre-built toggles around risky dependencies and heavy features that can be disabled in seconds during an incident without a deploy (A11); include in runbooks and test them.</li>
+<li><b>Implementation approaches:</b> simple config or environment variables (static, need redeploy), database-backed flags, open-source services (Unleash, Flagsmith, GrowthBook, OpenFeature standard), and SaaS (LaunchDarkly, Statsig, Split, Optimizely). OpenFeature provides a vendor-neutral API to avoid lock-in <span class="verify">verify adoption</span>.</li>
+<li><b>Server versus client evaluation:</b> server evaluation keeps rules private and is secure; client SDKs receive evaluated values for the user (not the rules) and are visible in the browser, so never hide sensitive functionality behind them. For SSR, evaluate on the server and hydrate values to avoid flicker; for static pages use edge evaluation or client-side after load with a placeholder.</li>
+<li><b>React integration:</b> a provider with a hook (<code>useFlag('checkout.newPayment')</code>); keep flag checks at the boundary (route or component), not scattered; use dependency injection so tests can set flag values; avoid conditional hooks driven by flags in unsafe ways (hooks rules apply).</li>
+<li><b>Testing:</b> unit tests for both flag states; integration tests for combinations that matter; avoid the combinatorial explosion by limiting the number of simultaneous flags and removing old ones; use flag overrides in e2e tests; test the “flag service down” default.</li>
+<li><b>Flag debt:</b> stale flags cause dead code, confusing behaviour and risk (a famous trading firm lost hundreds of millions through a repurposed flag). Mitigate: expiry dates, ownership, automatic cleanup tickets, lint rules or code scanners (Piranha), regular flag reviews, and deleting both the flag and the losing code path.</li>
+<li><b>Configuration management beyond flags:</b> typed configuration per environment, remote config for non-code settings, secrets in a vault, runtime configuration for SPAs (A6, B10), and validation at startup. Distinguish configuration (operational parameters) from flags (behaviour switches).</li>
+<li><b>Data and analytics:</b> record flag exposure with user and variant for experiments; ensure consent and privacy; use statistical methods (sample size, significance, guardrail metrics) to interpret results; avoid peeking early.</li>
+<li><b>Operational concerns:</b> latency and availability of the flag service (local evaluation, streaming with fallbacks), audit logs of changes, access control and approvals for production changes, environment parity, and rate of changes.</li>
+<li><b>Performance:</b> keep rule evaluation local and fast; avoid synchronous network calls on the critical path; bootstrap initial values in HTML.</li>
+<li><b>Ethical and product aspects:</b> do not use flags to degrade experience unfairly; communicate changes to support teams; keep documentation of what is live for whom.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Leaving release flags in the code for years until nobody knows what they do.</li>
+<li>Protecting a paid feature only with a client-side flag.</li>
+<li>No default when the flag service is unreachable, so the app breaks or flips unpredictably.</li>
+<li>Nesting many flags and creating untested combinations.</li>
+<li>Reusing an old flag key for a different feature.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you ensure a user sees the same variant every time?</dt><dd>Deterministic bucketing: hash the stable user or device id with the flag key to a percentage bucket.</dd>
+<dt>How do you avoid UI flicker with client flags?</dt><dd>Evaluate on the server or edge and send resolved values with the HTML, or hold rendering of the flagged region until values are ready.</dd>
+<dt>Flag versus configuration?</dt><dd>Flags switch behaviour and are usually temporary; configuration tunes parameters and is long-lived; both need ownership and validation.</dd>
+<dt>How do you clean up flags?</dt><dd>Track expiry and owner, create removal tickets automatically at 100% rollout, and delete code, flag and tests together.</dd>
+</dl></div>
+</section>
+
+<!-- ============ A8 ============ -->
+<section class="q" id="a8">
+<header class="qh">
+  <div class="qrow"><span class="qid">A8</span><span class="tag added">Added</span></div>
+  <h2>Docker and containers</h2>
+  <p class="qtext">“What is Docker and how do containers differ from virtual machines? Explain images, layers, Dockerfile best practices, multi-stage builds, volumes, networking, Docker Compose, registries and securing containers. How do you containerise a Node or Next.js app?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A container packages an application with its dependencies into an isolated process that shares the host operating system kernel, using namespaces and cgroups, so it is lightweight and starts in seconds compared with a virtual machine that includes a whole guest OS. An image is a layered, immutable template built from a Dockerfile; a container is a running instance of it. For a Node app I use a multi-stage Dockerfile: one stage installs dependencies and builds, and a small final stage copies only the production output and runs as a non-root user, with a <code>.dockerignore</code>, pinned base image, health check and graceful shutdown. I tag images by commit SHA, store them in a registry, scan them for vulnerabilities, and run them through an orchestrator such as Kubernetes or ECS.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: containers versus virtual machines architecture. Middle: image layers with cache. Right: a multi-stage Dockerfile for a Node app with build stage and runtime stage.">
+  <text x="10" y="18" class="bd">Containers versus VMs</text>
+  <rect x="10" y="30" width="170" height="130" rx="5" class="b"/><text x="18" y="48" class="bd">Virtual machines</text><rect x="18" y="56" width="70" height="30" class="w"/><text x="22" y="76" class="sm">App A+OS</text><rect x="94" y="56" width="76" height="30" class="w"/><text x="98" y="76" class="sm">App B+OS</text><rect x="18" y="92" width="152" height="22" class="h"/><text x="24" y="108" class="sm">hypervisor</text><rect x="18" y="118" width="152" height="22" class="g"/><text x="24" y="134" class="sm">host OS + hardware</text>
+  <rect x="200" y="30" width="170" height="130" rx="5" class="b"/><text x="208" y="48" class="bd">Containers</text><rect x="208" y="56" width="70" height="30" class="g"/><text x="212" y="76" class="sm">App A</text><rect x="284" y="56" width="76" height="30" class="g"/><text x="288" y="76" class="sm">App B</text><rect x="208" y="92" width="152" height="22" class="h"/><text x="214" y="108" class="sm">container runtime</text><rect x="208" y="118" width="152" height="22" class="g"/><text x="214" y="134" class="sm">host OS kernel (shared)</text>
+  <text x="10" y="182" class="sm">Containers: MBs, start in seconds, process-level isolation</text><text x="10" y="198" class="sm">(namespaces, cgroups). VMs: GBs, boot minutes, stronger isolation.</text>
+  <rect x="10" y="212" width="360" height="108" rx="5" class="w"/><text x="18" y="232" class="bd">Layers and caching</text><text x="18" y="250" class="sm">each Dockerfile instruction makes a read-only layer; unchanged</text><text x="18" y="266" class="sm">layers are cached. Copy package.json and install BEFORE copying</text><text x="18" y="282" class="sm">source so dependency layers are reused. Pin base image tags or</text><text x="18" y="298" class="sm">digests; use small bases (alpine, distroless, slim).</text>
+  <text x="400" y="18" class="bd">Multi-stage Dockerfile (Node)</text>
+  <rect x="400" y="30" width="350" height="204" rx="5" class="b"/>
+  <text x="408" y="48" class="mono" style="font-size:10px">FROM node:22-alpine AS build</text>
+  <text x="408" y="64" class="mono" style="font-size:10px">WORKDIR /app</text>
+  <text x="408" y="80" class="mono" style="font-size:10px">COPY package*.json ./</text>
+  <text x="408" y="96" class="mono" style="font-size:10px">RUN npm ci</text>
+  <text x="408" y="112" class="mono" style="font-size:10px">COPY . .</text>
+  <text x="408" y="128" class="mono" style="font-size:10px">RUN npm run build</text>
+  <text x="408" y="150" class="mono" style="font-size:10px">FROM node:22-alpine</text>
+  <text x="408" y="166" class="mono" style="font-size:10px">ENV NODE_ENV=production</text>
+  <text x="408" y="182" class="mono" style="font-size:10px">COPY --from=build /app/dist ./dist</text>
+  <text x="408" y="198" class="mono" style="font-size:10px">USER node</text>
+  <text x="408" y="214" class="mono" style="font-size:10px">CMD ["node", "dist/server.js"]</text>
+  <rect x="400" y="244" width="350" height="76" rx="5" class="g"/><text x="408" y="264" class="bd">Result</text><text x="408" y="282" class="sm">final image has no compilers, dev dependencies or source;</text><text x="408" y="298" class="sm">smaller, faster to pull and with a smaller attack surface;</text><text x="408" y="312" class="sm">runs as non-root; add HEALTHCHECK and .dockerignore.</text>
+</svg></div>
+<figcaption><b>Key points.</b> Layers are cached, images are immutable, and multi-stage builds keep production images small and safe.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Core concepts:</b> image (layers + metadata), container (running process with its own filesystem, network and PID namespaces), registry (Docker Hub, GHCR, ECR, ACR), tag versus digest (<code>image@sha256:…</code> is immutable), Dockerfile instructions (<code>FROM</code>, <code>RUN</code>, <code>COPY</code>, <code>ENV</code>, <code>EXPOSE</code>, <code>USER</code>, <code>CMD</code> versus <code>ENTRYPOINT</code>, <code>HEALTHCHECK</code>), build context and <code>.dockerignore</code>, BuildKit caching.</li>
+<li><b>Dockerfile best practices:</b> small pinned base images; multi-stage builds; order instructions from least to most frequently changing; combine related <code>RUN</code> commands and clean caches; <code>npm ci --omit=dev</code> in the runtime stage; avoid <code>latest</code>; use exec-form <code>CMD</code> so signals reach the process (graceful shutdown with <code>SIGTERM</code>); run as non-root; do not bake secrets into layers; one process per container; add a health check.</li>
+<li><b>Node and Next.js in containers:</b> <code>output: 'standalone'</code> in Next.js produces a minimal server; copy <code>.next/static</code> and <code>public</code>; set <code>NODE_ENV=production</code>; configure memory limits and <code>--max-old-space-size</code>; use a process manager like <code>tini</code> or Node’s signal handling; serve static assets from a CDN (N12).</li>
+<li><b>Volumes and persistence:</b> containers are ephemeral; use volumes for persistent data (databases in development), bind mounts for local source in dev, and external managed services or object storage in production; never rely on container filesystem state.</li>
+<li><b>Networking:</b> bridge networks, port mapping (<code>-p 3000:3000</code>), container DNS by service name in Compose, host networking (rare), overlay networks across hosts; expose only needed ports.</li>
+<li><b>Docker Compose:</b> declarative multi-container setups for local development and testing (app, database, cache, mocks); <code>depends_on</code> with health conditions; profiles; override files; not the production orchestrator for large systems.</li>
+<li><b>Security:</b> minimal base images, non-root user, drop capabilities, read-only root filesystem, no secrets in images (use runtime secrets), scan images (Trivy, Grype, Snyk), sign images (Cosign), keep base images patched, avoid privileged containers and the Docker socket mount, limit resources, and use trusted registries (A12).</li>
+<li><b>Build optimisation:</b> BuildKit cache mounts for package managers, layer ordering, remote cache in CI (<code>--cache-from</code>), multi-platform builds (<code>buildx</code> for amd64 and arm64), and smaller contexts.</li>
+<li><b>Resource management:</b> CPU and memory limits and requests (cgroups); a Node process in a limited container needs memory-aware heap settings; OOM kills show as exit code 137.</li>
+<li><b>Dev containers:</b> reproducible development environments defined in <code>devcontainer.json</code> for consistent onboarding (B9).</li>
+<li><b>Alternatives and standards:</b> OCI image and runtime standards; Podman (daemonless), containerd, BuildKit, Buildpacks (build images without Dockerfiles), serverless containers (Cloud Run, Fargate, Azure Container Apps).</li>
+<li><b>Frontend relevance:</b> containerise SSR servers, BFFs and build/test environments (Playwright images), run consistent CI environments, and serve static builds with nginx or Caddy in a small image with correct cache headers and SPA fallback.</li>
+<li><b>Common issues:</b> large images from copying <code>node_modules</code> or build tools, slow builds due to poor layer order, wrong signals (container not stopping), zombie processes, timezone and locale differences, file permission problems with bind mounts, and architecture mismatches (arm Mac versus amd64 servers).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying containers are “lightweight VMs”; they share the host kernel and isolate processes.</li>
+<li>Copying the whole project before installing dependencies, invalidating the cache on every change.</li>
+<li>Using the <code>latest</code> tag in production, so builds are not reproducible.</li>
+<li>Running as root and baking secrets or <code>.env</code> files into the image.</li>
+<li>Using shell-form <code>CMD</code> so <code>SIGTERM</code> never reaches Node and shutdown is not graceful.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is the difference between an image and a container?</dt><dd>An image is the immutable layered template; a container is a running instance with a writable layer on top.</dd>
+<dt><code>CMD</code> versus <code>ENTRYPOINT</code>?</dt><dd><code>ENTRYPOINT</code> defines the executable; <code>CMD</code> provides default arguments that can be overridden.</dd>
+<dt>How do you pass configuration and secrets to a container?</dt><dd>Environment variables or mounted files injected at runtime by the orchestrator or secret manager, never baked into the image.</dd>
+<dt>Why is my image huge?</dt><dd>Probably includes build tools and dev dependencies; use multi-stage builds, slim bases and a <code>.dockerignore</code>.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Operations</h1>
+
+<!-- ============ A9 ============ -->
+<section class="q" id="a9">
+<header class="qh">
+  <div class="qrow"><span class="qid">A9</span><span class="tag added">Added</span></div>
+  <h2>Kubernetes, cloud and infrastructure as code</h2>
+  <p class="qtext">“Explain Kubernetes at a working level: pods, deployments, services, ingress, config, autoscaling. What cloud services does a frontend platform use (AWS S3, CloudFront, Lambda, ECS/EKS, Route 53)? What is infrastructure as code and when is serverless the right choice?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Kubernetes is a container orchestrator: I declare the desired state, such as three replicas of this image with these resources, and controllers continuously reconcile the cluster to match. The key objects are pods, the smallest unit running containers; deployments, which manage replicas and rolling updates; services, which give pods a stable address and load balance; ingress, which routes external HTTP traffic; ConfigMaps and Secrets for configuration; and the horizontal pod autoscaler. In the cloud, a typical frontend stack is object storage plus a CDN for static sites, containers on ECS, EKS or Cloud Run for server rendering and APIs, serverless functions for event-driven work, a managed database, DNS and a load balancer. I define all of it as code with Terraform or similar so environments are reproducible and reviewed.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: Kubernetes objects: ingress routes to a service which load balances to pods managed by a deployment, with ConfigMap and Secret and an autoscaler. Right: a cloud architecture for a frontend: DNS, CDN, S3 static assets, load balancer, container service, database, cache, queue.">
+  <text x="10" y="18" class="bd">Kubernetes objects</text>
+  <rect x="10" y="30" width="360" height="34" rx="4" class="h"/><text x="18" y="52" class="sm"><tspan class="bd">Ingress</tspan>  host and path routing, TLS termination</text>
+  <path class="a" d="M190 64V74"/>
+  <rect x="10" y="76" width="360" height="34" rx="4" class="h"/><text x="18" y="98" class="sm"><tspan class="bd">Service</tspan>  stable virtual IP and DNS; load balances to pods</text>
+  <path class="a" d="M190 110V120"/>
+  <rect x="10" y="122" width="360" height="86" rx="5" class="g"/><text x="18" y="140" class="bd">Deployment → ReplicaSet → Pods</text><rect x="18" y="150" width="70" height="26" class="b"/><text x="26" y="167" class="sm">pod</text><rect x="94" y="150" width="70" height="26" class="b"/><text x="102" y="167" class="sm">pod</text><rect x="170" y="150" width="70" height="26" class="b"/><text x="178" y="167" class="sm">pod</text><text x="250" y="167" class="sm">replicas</text><text x="18" y="196" class="sm">rolling updates, rollback, probes, requests/limits</text>
+  <rect x="10" y="218" width="170" height="40" rx="4" class="w"/><text x="18" y="236" class="bd">ConfigMap / Secret</text><text x="18" y="250" class="sm">env or mounted files</text>
+  <rect x="200" y="218" width="170" height="40" rx="4" class="w"/><text x="208" y="236" class="bd">HPA</text><text x="208" y="250" class="sm">scale replicas on CPU/RPS</text>
+  <text x="10" y="284" class="sm">Also: namespaces, StatefulSets, Jobs/CronJobs, PersistentVolumes,</text><text x="10" y="300" class="sm">RBAC, NetworkPolicies, Helm/Kustomize, operators. kubectl, k9s to inspect.</text>
+  <text x="400" y="18" class="bd">Cloud architecture (AWS flavour)</text>
+  <rect x="400" y="30" width="350" height="28" rx="4" class="b"/><text x="408" y="49" class="sm"><tspan class="bd">Route 53</tspan> DNS · <tspan class="bd">ACM</tspan> certificates · <tspan class="bd">WAF</tspan></text>
+  <path class="a" d="M575 58V66"/>
+  <rect x="400" y="68" width="350" height="28" rx="4" class="h"/><text x="408" y="87" class="sm"><tspan class="bd">CloudFront</tspan> CDN: cache, compress, edge functions</text>
+  <path class="a" d="M475 96V106"/><path class="a" d="M675 96V106"/>
+  <rect x="400" y="108" width="170" height="40" rx="4" class="g"/><text x="408" y="126" class="bd">S3</text><text x="408" y="140" class="sm">static SPA assets</text>
+  <rect x="580" y="108" width="170" height="40" rx="4" class="g"/><text x="588" y="126" class="bd">ALB</text><text x="588" y="140" class="sm">load balancer</text>
+  <path class="a" d="M665 148V158"/>
+  <rect x="400" y="160" width="350" height="40" rx="4" class="g"/><text x="408" y="178" class="bd">ECS Fargate / EKS / Lambda</text><text x="408" y="192" class="sm">SSR server, BFF, APIs, functions</text>
+  <path class="a" d="M575 200V210"/>
+  <rect x="400" y="212" width="170" height="40" rx="4" class="w"/><text x="408" y="230" class="bd">RDS / DynamoDB</text><text x="408" y="244" class="sm">data stores</text>
+  <rect x="580" y="212" width="170" height="40" rx="4" class="w"/><text x="588" y="230" class="bd">ElastiCache, SQS</text><text x="588" y="244" class="sm">cache and queues</text>
+  <rect x="400" y="262" width="350" height="48" rx="4" class="b"/><text x="408" y="280" class="sm">Equivalents: Azure (Front Door, Blob, App Service, AKS) and</text><text x="408" y="296" class="sm">GCP (Cloud CDN, GCS, Cloud Run, GKE).</text>
+</svg></div>
+<figcaption><b>Idea.</b> Declare desired state and let the platform reconcile it, with the same definition for every environment.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Pods and containers:</b> a pod holds one or more tightly coupled containers sharing network and storage; pods are ephemeral and replaced, never patched. Sidecars (proxy, log shipper) extend behaviour. Resource <code>requests</code> (scheduling) and <code>limits</code> (enforcement) prevent noisy neighbours; exceeding memory limits leads to OOM kills.</li>
+<li><b>Deployments and updates:</b> declarative rollouts with <code>maxSurge</code>/<code>maxUnavailable</code>; readiness probes remove pods from service until ready; liveness probes restart stuck containers; <code>preStop</code> hooks and <code>terminationGracePeriodSeconds</code> enable graceful shutdown; rollback with <code>rollout undo</code>; progressive delivery tools add canaries (A6).</li>
+<li><b>Services and networking:</b> ClusterIP, NodePort, LoadBalancer; DNS names inside the cluster; ingress controllers (nginx, Traefik, cloud ALB) and the Gateway API; service meshes (Istio, Linkerd) for mTLS and traffic policies in large systems.</li>
+<li><b>Configuration and secrets:</b> ConfigMaps for non-sensitive config, Secrets (base64, not encrypted by default; enable encryption at rest, use external secret operators with cloud vaults), environment variables or mounted files, immutable config versions with rolling restarts.</li>
+<li><b>Autoscaling:</b> HPA scales replicas on CPU, memory or custom metrics (requests per second, queue length); Vertical Pod Autoscaler tunes requests; cluster autoscaler adds nodes; KEDA scales on events; set sensible min/max and cooldowns.</li>
+<li><b>Helm, Kustomize, GitOps:</b> package manifests (Helm charts), overlay per environment (Kustomize), deploy through Argo CD or Flux from Git (A5); avoid manual <code>kubectl apply</code> in production.</li>
+<li><b>When Kubernetes is overkill:</b> small teams and simple apps are often better on managed platforms (Vercel, Netlify, Cloud Run, Fargate, App Service) where the platform handles scaling and patching; Kubernetes pays off with many services, custom networking, multi-tenant platforms and portability needs, but demands operational skill.</li>
+<li><b>Cloud building blocks for a frontend platform:</b> object storage + CDN for static assets; edge functions for redirects and personalisation; container services for SSR/BFF; serverless functions (Lambda, Cloud Functions) for event handlers and glue; managed databases and caches; queues and event buses; secrets manager; IAM; VPC and security groups; observability services.</li>
+<li><b>Serverless trade-offs:</b> pay per use, automatic scaling, no server management; cold starts, execution time limits, connection limits to databases (use proxies), vendor-specific tooling, harder local testing, and costs that rise at steady high load. Good for spiky, event-driven or low-traffic workloads; containers suit steady load and long-running processes.</li>
+<li><b>Infrastructure as code:</b> Terraform/OpenTofu (declarative, multi-cloud, state file), Pulumi (general-purpose languages), AWS CDK/CloudFormation, Bicep (Azure). Practices: modules, remote state with locking, environments via workspaces or separate stacks, plan reviewed in pull requests, drift detection, policy as code (OPA, Sentinel), no manual console changes.</li>
+<li><b>Environments and accounts:</b> separate accounts or projects per environment, least-privilege IAM roles, network segmentation, tagging for cost allocation, and landing zones for governance.</li>
+<li><b>Reliability on cloud:</b> multiple availability zones, health checks, autoscaling groups, managed database failover, backups, infrastructure redundancy in more than one region for critical systems (cost and complexity trade-off), and tested disaster recovery with RPO/RTO targets.</li>
+<li><b>Costs awareness:</b> right-size, use autoscaling and spot instances where safe, cache at the CDN, set budgets and alerts, tag resources, and review idle resources (A12).</li>
+<li><b>Frontend-specific hosting patterns:</b> static SPA on S3 + CloudFront with SPA fallback and immutable caching; SSR on containers or serverless with CDN in front; image optimisation service; edge middleware; separate asset domain optional.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Reaching for Kubernetes for a small app that a managed platform would run with far less effort.</li>
+<li>Treating pods as pets: storing state locally or patching running containers.</li>
+<li>Missing resource requests and limits, so pods are evicted or starve others.</li>
+<li>Manual console changes that drift from the Terraform state.</li>
+<li>Serverless functions opening a new database connection per invocation and exhausting the database.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Pod versus deployment versus service?</dt><dd>A pod runs containers; a deployment manages replicas and updates of pods; a service gives them a stable network identity and load balancing.</dd>
+<dt>Liveness versus readiness probes?</dt><dd>Liveness restarts a container that is stuck; readiness controls whether it receives traffic.</dd>
+<dt>How would you host a React SPA and an API on AWS?</dt><dd>SPA on S3 behind CloudFront with immutable asset caching and SPA fallback; API on ECS Fargate or Lambda behind an ALB or API Gateway with RDS; Route 53 and ACM for DNS and TLS; WAF; all defined in Terraform.</dd>
+<dt>Why infrastructure as code?</dt><dd>Reproducible environments, review and audit through Git, fast recovery, and drift detection.</dd>
+</dl></div>
+</section>
+
+<!-- ============ A10 ============ -->
+<section class="q" id="a10">
+<header class="qh">
+  <div class="qrow"><span class="qid">A10</span><span class="tag added">Added</span></div>
+  <h2>Observability, SLOs and alerting</h2>
+  <p class="qtext">“What is observability and how does it differ from monitoring? Logs, metrics and traces. What are SLIs, SLOs and error budgets? How do you set up alerting and dashboards? How do you monitor a frontend in production?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Monitoring tells you whether known things are broken; observability lets you ask new questions about system behaviour from the data it emits: logs for events, metrics for trends and alerts, and traces for the path of a request across services, tied together by correlation ids. I define service level indicators, measurable signals like the proportion of requests under 300 ms or pages with good LCP, set service level objectives such as 99.9% over 30 days, and use the remaining error budget to balance reliability and feature velocity. Alerts fire on symptoms users feel, not every cause, and link to runbooks. For the frontend I add real-user monitoring, error tracking with source maps and release tags, and synthetic checks of key journeys.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: signal types logs metrics traces plus RUM and synthetic, flowing to dashboards and alerts. Right: SLI to SLO to error budget with a worked example.">
+  <text x="10" y="18" class="bd">Signals</text>
+  <rect x="10" y="30" width="110" height="64" rx="5" class="b"/><text x="18" y="50" class="bd">Logs</text><text x="18" y="68" class="sm">what happened</text><text x="18" y="82" class="sm">structured JSON</text>
+  <rect x="130" y="30" width="110" height="64" rx="5" class="h"/><text x="138" y="50" class="bd">Metrics</text><text x="138" y="68" class="sm">how much, how</text><text x="138" y="82" class="sm">fast: time series</text>
+  <rect x="250" y="30" width="120" height="64" rx="5" class="g"/><text x="258" y="50" class="bd">Traces</text><text x="258" y="68" class="sm">where time went</text><text x="258" y="82" class="sm">across services</text>
+  <rect x="10" y="104" width="175" height="50" rx="5" class="w"/><text x="18" y="124" class="bd">Frontend RUM</text><text x="18" y="140" class="sm">vitals, errors, sessions</text>
+  <rect x="195" y="104" width="175" height="50" rx="5" class="w"/><text x="203" y="124" class="bd">Synthetic checks</text><text x="203" y="140" class="sm">scripted journeys, 24/7</text>
+  <path class="a" d="M190 154V170"/>
+  <rect x="10" y="172" width="360" height="40" rx="5" class="b"/><text x="18" y="190" class="bd">Correlate</text><text x="18" y="206" class="sm">trace id + release + user/session id across all signals</text>
+  <rect x="10" y="222" width="360" height="88" rx="5" class="g"/><text x="18" y="242" class="bd">Tools</text><text x="18" y="260" class="sm">OpenTelemetry (instrumentation standard) · Prometheus + Grafana ·</text><text x="18" y="276" class="sm">Datadog, New Relic · ELK/Loki/CloudWatch · Jaeger/Tempo ·</text><text x="18" y="292" class="sm">Sentry (errors, replay) · Lighthouse CI, web-vitals, WebPageTest</text>
+  <text x="400" y="18" class="bd">SLI → SLO → error budget</text>
+  <rect x="400" y="30" width="350" height="40" rx="5" class="b"/><text x="408" y="48" class="bd">SLI (indicator)</text><text x="408" y="62" class="sm">good events ÷ valid events: requests &lt; 300 ms, LCP ≤ 2.5 s</text>
+  <rect x="400" y="76" width="350" height="40" rx="5" class="h"/><text x="408" y="94" class="bd">SLO (objective)</text><text x="408" y="108" class="sm">target over a window: 99.9% of requests succeed in 30 days</text>
+  <rect x="400" y="122" width="350" height="40" rx="5" class="g"/><text x="408" y="140" class="bd">Error budget</text><text x="408" y="154" class="sm">100% − SLO = 0.1% ≈ 43 minutes per 30 days of allowed failure</text>
+  <rect x="400" y="168" width="350" height="62" rx="5" class="w"/><text x="408" y="188" class="bd">Use the budget</text><text x="408" y="206" class="sm">budget left → ship features faster; burning fast → freeze risky</text><text x="408" y="222" class="sm">changes, fix reliability. SLA = contractual promise (looser).</text>
+  <rect x="400" y="240" width="350" height="70" rx="5" class="x"/><text x="408" y="260" class="bd">Alerting principles</text><text x="408" y="278" class="sm">alert on symptoms and SLO burn rate, not CPU spikes · every alert</text><text x="408" y="294" class="sm">actionable with a runbook · page for urgent, ticket for the rest</text>
+</svg></div>
+<figcaption><b>Principle.</b> Measure what users experience, set explicit targets, and let those targets steer both alerting and priorities.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Logs:</b> structured, leveled, with correlation ids; centralised (ELK, Loki, CloudWatch, Datadog); retention and cost management; sampling noisy logs; no secrets or personal data (D11).</li>
+<li><b>Metrics:</b> counters, gauges, histograms; golden signals: latency, traffic, errors, saturation (Google SRE) and RED/USE methods; label cardinality must stay bounded; percentiles (p50, p95, p99) rather than averages.</li>
+<li><b>Traces:</b> spans form a tree per request; context propagation (W3C <code>traceparent</code>) through HTTP and messaging; sampling (head-based, tail-based) to control cost; link front-end RUM sessions to backend traces.</li>
+<li><b>OpenTelemetry:</b> vendor-neutral APIs, SDKs and collector for traces, metrics and logs; auto-instrumentation for common frameworks; export to many backends, avoiding lock-in.</li>
+<li><b>SLIs and SLOs:</b> choose SLIs close to user experience (availability, latency, correctness, freshness; frontend: LCP, INP, error-free sessions, successful checkouts); SLOs set a target for a rolling window; error budgets quantify allowed unreliability; burn-rate alerts (fast and slow windows) catch problems early without paging on blips.</li>
+<li><b>Alerting quality:</b> avoid alert fatigue: page only for user-impacting urgent conditions, route others to tickets or dashboards, tune thresholds, deduplicate, add context (graphs, recent deploys, runbook links), and review alert volume and false-positive rate regularly.</li>
+<li><b>Dashboards:</b> a service overview (golden signals), dependency health, release comparison, business KPIs (orders per minute) and per-team views; avoid wall-of-graphs; design for the on-call engineer at 3 a.m.</li>
+<li><b>Frontend observability:</b> error tracking (Sentry, Datadog RUM) with source maps and release versions; web vitals by route and device; session replay with privacy masking; JS error rate and failed API calls from the client; resource timing; feature-flag state attached to events; synthetic checks for login, search and checkout; correlate with backend traces (B4, F6).</li>
+<li><b>Release observability:</b> mark deployments on graphs, compare versions side by side, auto-rollback on regression, and track change failure rate and time to restore (DORA).</li>
+<li><b>Business and product metrics:</b> conversion funnels, drop-off, feature usage; link technical health to business outcomes so incidents are prioritised by impact.</li>
+<li><b>Cost and governance:</b> telemetry volume is expensive; set retention tiers, sampling, and data ownership; protect privacy (GDPR) in logs and replay.</li>
+<li><b>On-call and ownership:</b> teams own the services they run; rotation with support, runbooks, escalation policies, and postmortems (A11).</li>
+<li><b>Debugging with observability:</b> start from an alert or user report, narrow with metrics by dimension (route, version, region), follow a trace to the slow span or failing dependency, read logs for the specific request, form a hypothesis, test, and fix.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Alerting on infrastructure metrics that do not correlate with user pain.</li>
+<li>SLOs of 100%, which are impossible and block all change.</li>
+<li>Averages for latency, hiding tail pain.</li>
+<li>High-cardinality labels (user ids) in metrics, exploding cost.</li>
+<li>No frontend visibility, so the backend looks healthy while users see errors.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Monitoring versus observability?</dt><dd>Monitoring checks known conditions with predefined dashboards and alerts; observability provides rich, correlated telemetry so you can investigate unknown failure modes.</dd>
+<dt>What is a burn-rate alert?</dt><dd>An alert on how fast the error budget is being consumed relative to the SLO window, catching fast severe outages and slow leaks.</dd>
+<dt>What are the golden signals?</dt><dd>Latency, traffic, errors and saturation.</dd>
+<dt>How do you know the frontend is healthy in production?</dt><dd>RUM vitals and error rates by release, synthetic journeys, API failure rates seen from the client, and business funnel metrics.</dd>
+</dl></div>
+</section>
+
+<!-- ============ A11 ============ -->
+<section class="q" id="a11">
+<header class="qh">
+  <div class="qrow"><span class="qid">A11</span><span class="tag added">Added</span></div>
+  <h2>Incident management and resilience</h2>
+  <p class="qtext">“How do you handle a production incident? Severity levels, roles, communication, mitigation versus root cause, postmortems. What resilience patterns do you build in: timeouts, retries, circuit breakers, graceful degradation, disaster recovery?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“During an incident the priority is to restore service, not to find the root cause. I assess severity, assign an incident commander, open a channel, communicate status to stakeholders at a regular cadence, and apply the fastest safe mitigation: roll back, disable a feature flag, scale up or fail over. Once service is restored we investigate and hold a blameless postmortem that records the timeline, root and contributing causes, impact, what went well and badly, and concrete action items with owners. Prevention comes from resilience patterns, timeouts, retries with backoff, circuit breakers, bulkheads and graceful degradation, plus backups, disaster recovery plans with defined recovery objectives, and practising failure through game days.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: incident lifecycle detect, triage, mitigate, resolve, review. Right: roles and resilience patterns for dependencies.">
+  <text x="10" y="18" class="bd">Incident lifecycle</text>
+  <rect x="10" y="30" width="110" height="46" rx="5" class="x"/><text x="18" y="50" class="bd">Detect</text><text x="18" y="66" class="sm">alert or report</text>
+  <rect x="130" y="30" width="110" height="46" rx="5" class="w"/><text x="138" y="50" class="bd">Triage</text><text x="138" y="66" class="sm">severity, owner</text>
+  <rect x="250" y="30" width="120" height="46" rx="5" class="h"/><text x="258" y="50" class="bd">Mitigate</text><text x="258" y="66" class="sm">rollback, flag off</text>
+  <path class="a" d="M120 53H128"/><path class="a" d="M240 53H248"/>
+  <rect x="10" y="90" width="110" height="46" rx="5" class="g"/><text x="18" y="110" class="bd">Resolve</text><text x="18" y="126" class="sm">verify recovery</text>
+  <rect x="130" y="90" width="240" height="46" rx="5" class="g"/><text x="138" y="110" class="bd">Review (blameless)</text><text x="138" y="126" class="sm">timeline, causes, actions, owners, deadlines</text>
+  <path class="a" d="M310 76V88"/><path class="a" d="M130 113H122"/>
+  <rect x="10" y="150" width="360" height="62" rx="5" class="b"/><text x="18" y="170" class="bd">Roles</text><text x="18" y="188" class="sm">incident commander (coordinates) · tech lead (diagnoses) ·</text><text x="18" y="204" class="sm">communications lead (updates) · scribe (timeline) · subject experts</text>
+  <rect x="10" y="222" width="360" height="88" rx="5" class="w"/><text x="18" y="242" class="bd">Severity example</text><text x="18" y="260" class="sm">SEV1 full outage or data loss: page now, exec updates</text><text x="18" y="276" class="sm">SEV2 major feature down: page, update every 30 min</text><text x="18" y="292" class="sm">SEV3 partial degradation: ticket, business hours</text>
+  <text x="400" y="18" class="bd">Resilience patterns</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="g"/><text x="408" y="52" class="sm"><tspan class="bd">Timeouts</tspan> on every outbound call; deadlines propagate</text>
+  <rect x="400" y="68" width="350" height="34" rx="4" class="g"/><text x="408" y="90" class="sm"><tspan class="bd">Retries</tspan> idempotent only; backoff + jitter; retry budgets</text>
+  <rect x="400" y="106" width="350" height="34" rx="4" class="h"/><text x="408" y="128" class="sm"><tspan class="bd">Circuit breaker</tspan> fail fast; probe for recovery</text>
+  <rect x="400" y="144" width="350" height="34" rx="4" class="h"/><text x="408" y="166" class="sm"><tspan class="bd">Bulkheads</tspan> isolate pools so one failure does not spread</text>
+  <rect x="400" y="182" width="350" height="34" rx="4" class="w"/><text x="408" y="204" class="sm"><tspan class="bd">Degrade gracefully</tspan> cached/partial data, optional features off</text>
+  <rect x="400" y="220" width="350" height="34" rx="4" class="w"/><text x="408" y="242" class="sm"><tspan class="bd">Redundancy</tspan> multi-AZ, health checks, failover, backups</text>
+  <rect x="400" y="258" width="350" height="52" rx="4" class="b"/><text x="408" y="276" class="sm"><tspan class="bd">DR:</tspan> RPO (data loss allowed) and RTO (time to recover);</text><text x="408" y="292" class="sm">backup, restore tests, runbooks, game days and chaos testing</text>
+</svg></div>
+<figcaption><b>Priority.</b> Stop the bleeding first; learn second; then change the system so the failure cannot recur the same way.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>First response:</b> acknowledge the alert, confirm impact (who and how many are affected), declare severity, start an incident channel and bridge, name an incident commander, and avoid parallel uncoordinated changes. Check recent changes first: deployments, flag changes, infrastructure or dependency changes cause most incidents.</li>
+<li><b>Mitigation options:</b> rollback the last deploy, disable a feature flag, scale capacity, fail over to a replica or region, block abusive traffic, serve a static fallback page, degrade non-critical features, restore from backup. Prefer reversible, low-risk actions; communicate what you are doing and why.</li>
+<li><b>Communication:</b> regular updates to stakeholders and customers (status page) with what is known, impact, actions and next update time; no speculation; internal and external messages aligned; support teams briefed. Over-communicate during major incidents.</li>
+<li><b>Diagnosis approach:</b> dashboards and traces to localise (which service, region, version), compare with baseline, review logs for specific requests, form and test hypotheses one at a time, keep a timeline, and escalate to experts early.</li>
+<li><b>Blameless postmortems:</b> focus on systems and conditions, not people; record summary, impact, detection, timeline, root cause and contributing factors (five whys, fault trees), what went well and poorly, and action items prioritised, owned and tracked to completion. Share widely to spread learning. Distinguish mitigation actions from prevention actions and from detection improvements.</li>
+<li><b>Frontend incidents:</b> a broken release (rollback by repointing HTML, keep old assets), a third-party script outage (feature-flagged kill switch, timeouts, async loading), CDN or DNS problems, expired certificates, API outages (graceful error UI, cached data), build/dependency compromise, and widespread JavaScript errors after a deploy (error tracking by release).</li>
+<li><b>Resilient frontend design:</b> error boundaries, retries with backoff for idempotent calls, timeouts and abort, offline support and cached data, skeletons and partial rendering, feature degradation when a service fails, static fallbacks for critical pages (status, maintenance, checkout alternatives), and clear user messaging (F10).</li>
+<li><b>Backend patterns:</b> circuit breakers, bulkheads, queues to absorb spikes, idempotency, rate limiting and load shedding, health checks, autoscaling, multi-AZ deployment, and dependency isolation (D12).</li>
+<li><b>Disaster recovery:</b> define RPO and RTO per system; strategies from backup and restore to pilot light, warm standby and active-active across regions; automate and test failover; protect backups from deletion and ransomware; rehearse restores regularly.</li>
+<li><b>Chaos engineering and game days:</b> deliberately inject failures (kill instances, add latency, block dependencies) in controlled conditions to verify resilience and train responders; start in staging, then production with blast-radius limits.</li>
+<li><b>Runbooks and on-call:</b> concise runbooks per alert (what it means, how to check, how to mitigate), escalation paths, fair rotations with handover, compensation and rest policies, and training with simulated incidents; reduce toil through automation.</li>
+<li><b>Metrics:</b> MTTD (detect), MTTA (acknowledge), MTTR (restore), incident count and severity, change failure rate, repeat incidents, postmortem action completion rate.</li>
+<li><b>Leadership behaviours:</b> stay calm, delegate, make decisions with incomplete information, protect the team from blame, and follow through on learning.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Hunting for the root cause while customers remain down, instead of mitigating first.</li>
+<li>Making several uncoordinated changes at once, so nobody knows what fixed or worsened it.</li>
+<li>Blame-focused postmortems that make people hide mistakes.</li>
+<li>Action items with no owner or deadline, so the same incident repeats.</li>
+<li>Untested backups and failover plans that fail when needed.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What do you do in the first 10 minutes of a SEV1?</dt><dd>Declare it, assign roles, check what changed recently, mitigate (usually rollback or flag off), communicate impact and next update, and keep a timeline.</dd>
+<dt>RPO versus RTO?</dt><dd>RPO is the maximum acceptable data loss measured in time; RTO is the maximum acceptable time to restore service.</dd>
+<dt>How do you make postmortems effective?</dt><dd>Blameless, evidence-based, with prioritised, owned action items and visible follow-up.</dd>
+<dt>How would you handle a failing third-party script that breaks checkout?</dt><dd>Disable it with a kill switch or tag-manager rule, ensure scripts load async with timeouts, and add monitoring plus a fallback.</dd>
+</dl></div>
+</section>
+
+<!-- ============ A12 ============ -->
+<section class="q" id="a12">
+<header class="qh">
+  <div class="qrow"><span class="qid">A12</span><span class="tag added">Added</span></div>
+  <h2>DevSecOps, cost and platform thinking</h2>
+  <p class="qtext">“How do you build security into the delivery pipeline? SAST, DAST, dependency and secrets scanning, SBOM, image signing. How do you manage cloud cost? What is platform engineering and a golden path?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“DevSecOps moves security earlier and automates it: the pipeline scans code for vulnerabilities, dependencies for known CVEs and licences, and commits for leaked secrets; container images are scanned and signed; infrastructure as code is checked against policies; and deployments use least-privilege, short-lived credentials. Findings are triaged by severity and exploitability with agreed fix times. Alongside security, I keep an eye on cost, tagging resources, setting budgets and alerts, right-sizing and caching, because cost is an engineering constraint too. At organisation scale, platform engineering provides self-service golden paths, templated pipelines, infrastructure and observability, so product teams ship safely without each rebuilding the same tooling.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: security checks mapped across pipeline stages: plan, code, build, deploy, run. Right: platform engineering golden path and cost levers.">
+  <text x="10" y="18" class="bd">Shift security left, keep it running</text>
+  <rect x="10" y="30" width="360" height="34" rx="4" class="b"/><text x="18" y="52" class="sm"><tspan class="bd">Plan</tspan>  threat modelling, security requirements (P11)</text>
+  <rect x="10" y="68" width="360" height="34" rx="4" class="h"/><text x="18" y="90" class="sm"><tspan class="bd">Code</tspan>  IDE linting, pre-commit secret scan, code review, SAST</text>
+  <rect x="10" y="106" width="360" height="34" rx="4" class="h"/><text x="18" y="128" class="sm"><tspan class="bd">Build</tspan>  dependency audit, licence check, SBOM, signed artifacts</text>
+  <rect x="10" y="144" width="360" height="34" rx="4" class="w"/><text x="18" y="166" class="sm"><tspan class="bd">Deploy</tspan>  image scan, IaC policy checks, OIDC creds, approvals</text>
+  <rect x="10" y="182" width="360" height="34" rx="4" class="g"/><text x="18" y="204" class="sm"><tspan class="bd">Run</tspan>  WAF, runtime protection, DAST, patching, monitoring</text>
+  <rect x="10" y="226" width="360" height="84" rx="5" class="x"/><text x="18" y="246" class="bd">Triage policy</text><text x="18" y="264" class="sm">critical: fix or mitigate within days · high: within weeks</text><text x="18" y="280" class="sm">risk-based: exploitability, exposure, data sensitivity; exceptions</text><text x="18" y="296" class="sm">documented with owner and expiry; track mean time to remediate</text>
+  <text x="400" y="18" class="bd">Platform engineering</text>
+  <rect x="400" y="30" width="350" height="86" rx="5" class="g"/><text x="408" y="50" class="bd">Golden path (paved road)</text><text x="408" y="68" class="sm">template repo → pipeline → infra → observability → docs, in one</text><text x="408" y="84" class="sm">command or portal (Backstage). Secure, compliant by default;</text><text x="408" y="100" class="sm">teams may deviate but own the extra cost</text>
+  <rect x="400" y="124" width="350" height="62" rx="5" class="h"/><text x="408" y="144" class="bd">Platform as a product</text><text x="408" y="162" class="sm">internal customers, roadmap, support, adoption metrics, feedback</text><text x="408" y="178" class="sm">loops; reduce cognitive load for product teams</text>
+  <text x="400" y="210" class="bd">Cost levers (FinOps)</text>
+  <rect x="400" y="220" width="350" height="90" rx="5" class="w"/><text x="408" y="240" class="sm">tag and allocate costs by team · budgets and anomaly alerts</text><text x="408" y="256" class="sm">right-size and autoscale · CDN caching and compression</text><text x="408" y="272" class="sm">spot/reserved capacity · delete idle environments, old logs</text><text x="408" y="288" class="sm">watch egress, observability volume · cost per request as a KPI</text><text x="408" y="304" class="sm">ephemeral previews that auto-expire</text>
+</svg></div>
+<figcaption><b>Principle.</b> Make the secure, cost-aware, observable way the easy way.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Static analysis (SAST) and code scanning:</b> CodeQL, Semgrep, SonarQube, ESLint security rules; run on pull requests with developer-friendly results; tune to reduce false positives; block merges on critical findings only to maintain trust.</li>
+<li><b>Dependency and supply-chain security:</b> software composition analysis (Dependabot, Renovate, Snyk, Socket, <code>npm audit</code>); licence compliance; lockfiles; pin and verify; restrict install scripts; SBOM generation (CycloneDX, SPDX) for inventory and incident response; provenance attestations (SLSA levels, npm provenance); private registries and mirrors (B8, J29).</li>
+<li><b>Secrets management:</b> never commit secrets; pre-commit and server-side scanning (gitleaks, GitHub secret scanning); central vaults (HashiCorp Vault, AWS Secrets Manager, Azure Key Vault); injected at runtime; rotation; short-lived credentials via OIDC federation from CI to cloud; revoke on leak and review exposure.</li>
+<li><b>Container and infrastructure security:</b> image scanning (Trivy, Grype), minimal bases, signed images (Cosign) and admission policies that only run signed images, IaC scanning (Checkov, tfsec), policy as code (OPA, Kyverno), least-privilege IAM, network segmentation, encryption at rest and in transit, audit logs.</li>
+<li><b>DAST and runtime:</b> dynamic scanning (OWASP ZAP) against staging, penetration tests before major releases, bug bounty programmes, WAF rules, runtime detection (Falco), and continuous monitoring of misconfigurations (cloud security posture management).</li>
+<li><b>Pipeline security:</b> protect branches and require reviews, pin third-party actions by SHA, restrict who can trigger deployments, separate build and deploy permissions, isolate runners, avoid executing untrusted PR code with secrets, sign and verify artifacts, and audit pipeline changes.</li>
+<li><b>Compliance as code:</b> automate evidence for SOC 2, ISO 27001, GDPR, PCI-DSS controls through pipeline logs, policy checks and access reviews; keep approvals and change records traceable.</li>
+<li><b>Culture:</b> security champions in teams, threat modelling in design reviews, training with real examples, blameless handling of vulnerabilities, and metrics (time to fix, open criticals) that drive improvement rather than blame.</li>
+<li><b>Cost management (FinOps):</b> visibility first (tagging, cost dashboards per team and environment), then optimisation (right-sizing, autoscaling, spot instances, storage tiers, log retention, CDN offload), then governance (budgets, anomaly alerts, reviews). Include egress and observability costs; compare serverless versus containers at steady load; build cost awareness into design reviews.</li>
+<li><b>Platform engineering:</b> internal developer platform offering self-service environments, CI/CD templates, observability, secrets and deployment through a portal or CLI (Backstage), with documentation and support; measure adoption, lead time and developer satisfaction; avoid mandating rigid platforms that slow teams.</li>
+<li><b>Developer experience:</b> fast pipelines, reliable preview environments, clear errors, good documentation, and automation of toil; DX investment pays back in throughput and retention (B9).</li>
+<li><b>Sustainability:</b> efficient builds, less data transferred, right-sized infrastructure, and scheduling non-urgent jobs reduce energy use and cost.</li>
+<li><b>Balancing speed and safety:</b> guardrails over gates: automate checks and use progressive delivery rather than heavy manual approvals; reserve human review for high-risk changes.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Flooding developers with scanner noise until they ignore all findings.</li>
+<li>Long-lived credentials in CI, or secrets baked into images and repos.</li>
+<li>Security as a late-stage gate by a separate team instead of a shared, automated practice.</li>
+<li>Optimising cloud cost without visibility or ownership, or sacrificing reliability for savings.</li>
+<li>Building a platform nobody asked for, with no product thinking or adoption metrics.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is an SBOM and why?</dt><dd>A software bill of materials listing components and versions, enabling fast impact analysis when a vulnerability is announced and supporting compliance.</dd>
+<dt>How do you avoid long-lived cloud keys in CI?</dt><dd>Use OIDC federation so the pipeline obtains short-lived, scoped credentials per run.</dd>
+<dt>How do you reduce a high cloud bill?</dt><dd>Allocate costs by tag, find the top spenders, right-size, cache and compress, tune retention, use committed or spot capacity, and add budgets and alerts.</dd>
+<dt>What is a golden path?</dt><dd>A supported, opinionated route (templates and tooling) that makes the secure, observable, compliant way the easiest way to ship.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>36 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>How do you structure a large frontend?</td><td>By domain features with public interfaces, layered, dependencies pointing down, boundaries enforced by lint.</td><td>A1</td></tr>
+<tr><td>2</td><td>First step in a system design answer?</td><td>Clarify requirements, scale and constraints before choosing technology.</td><td>A1</td></tr>
+<tr><td>3</td><td>What is a BFF?</td><td>A server layer shaped for one client that aggregates APIs and hides tokens.</td><td>A1</td></tr>
+<tr><td>4</td><td>What problem do micro-frontends solve?</td><td>Organisational scaling: independent teams and deployments, at a cost in complexity.</td><td>A2</td></tr>
+<tr><td>5</td><td>Ways to compose micro-frontends?</td><td>Packages, Module Federation/single-spa, web components, iframes, server or edge composition.</td><td>A2</td></tr>
+<tr><td>6</td><td>Modular monolith versus micro-frontends?</td><td>Modular monolith gives boundaries without the runtime cost; usually enough for mid-size teams.</td><td>A2</td></tr>
+<tr><td>7</td><td>Monorepo benefits and risks?</td><td>Atomic changes and shared tooling versus tooling complexity and CI time without caching.</td><td>A3</td></tr>
+<tr><td>8</td><td>What do Turborepo and Nx add?</td><td>Task graphs, caching, remote cache and affected-only builds.</td><td>A3</td></tr>
+<tr><td>9</td><td>What is CODEOWNERS?</td><td>Maps paths to teams so reviews route to owners automatically.</td><td>A3</td></tr>
+<tr><td>10</td><td>What is an ADR?</td><td>A short record of a decision: context, options, decision, consequences.</td><td>A4</td></tr>
+<tr><td>11</td><td>Two-way versus one-way door decisions?</td><td>Reversible ones decided fast; irreversible ones analysed and prototyped.</td><td>A4</td></tr>
+<tr><td>12</td><td>Strangler pattern?</td><td>Migrate a legacy system piece by piece behind a facade instead of rewriting.</td><td>A4</td></tr>
+<tr><td>13</td><td>CI versus continuous delivery versus deployment?</td><td>Integrate and test often; always releasable; every passing change auto-released.</td><td>A5</td></tr>
+<tr><td>14</td><td>Trunk-based versus Git Flow?</td><td>Short-lived branches and flags versus long-lived release branches.</td><td>A5</td></tr>
+<tr><td>15</td><td>Build once, deploy many?</td><td>Promote the same immutable artifact through environments with injected config.</td><td>A5</td></tr>
+<tr><td>16</td><td>What are the DORA metrics?</td><td>Deployment frequency, lead time, change failure rate, time to restore.</td><td>A5</td></tr>
+<tr><td>17</td><td>Rolling versus blue-green?</td><td>Rolling replaces gradually; blue-green switches traffic between two full environments.</td><td>A6</td></tr>
+<tr><td>18</td><td>What is a canary release?</td><td>Send a small share of traffic to the new version, watch metrics, ramp or roll back.</td><td>A6</td></tr>
+<tr><td>19</td><td>Safe database change in a rollout?</td><td>Expand, deploy compatible code, migrate data, then contract.</td><td>A6</td></tr>
+<tr><td>20</td><td>What is deployment skew?</td><td>Old clients using new servers or deleted assets; keep compatibility and old assets.</td><td>A6</td></tr>
+<tr><td>21</td><td>Why feature flags?</td><td>Decouple deploy from release: gradual rollout, targeting, kill switches.</td><td>A7</td></tr>
+<tr><td>22</td><td>What is flag debt?</td><td>Stale flags left in code; give each an owner and expiry and delete them.</td><td>A7</td></tr>
+<tr><td>23</td><td>Client-side flags for security?</td><td>Never: enforce on the server; client flags are visible and editable.</td><td>A7</td></tr>
+<tr><td>24</td><td>Containers versus VMs?</td><td>Containers share the host kernel and isolate processes; VMs include a guest OS.</td><td>A8</td></tr>
+<tr><td>25</td><td>Why multi-stage Docker builds?</td><td>Small, safer runtime images without build tools or dev dependencies.</td><td>A8</td></tr>
+<tr><td>26</td><td>How do you use the layer cache?</td><td>Copy manifests and install before copying source.</td><td>A8</td></tr>
+<tr><td>27</td><td>Pod, deployment, service?</td><td>Pod runs containers; deployment manages replicas and updates; service gives stable networking.</td><td>A9</td></tr>
+<tr><td>28</td><td>Liveness versus readiness?</td><td>Restart a stuck container versus gate traffic until ready.</td><td>A9</td></tr>
+<tr><td>29</td><td>Why infrastructure as code?</td><td>Reproducible, reviewed, auditable environments with drift detection.</td><td>A9</td></tr>
+<tr><td>30</td><td>Observability pillars?</td><td>Logs, metrics and traces, correlated by ids.</td><td>A10</td></tr>
+<tr><td>31</td><td>SLI, SLO, error budget?</td><td>Measured signal, target for it, and the allowed unreliability that steers priorities.</td><td>A10</td></tr>
+<tr><td>32</td><td>What should alerts target?</td><td>User-impacting symptoms and SLO burn, each with a runbook.</td><td>A10</td></tr>
+<tr><td>33</td><td>First goal in an incident?</td><td>Restore service (mitigate), then investigate the cause.</td><td>A11</td></tr>
+<tr><td>34</td><td>RPO versus RTO?</td><td>Acceptable data loss versus acceptable recovery time.</td><td>A11</td></tr>
+<tr><td>35</td><td>How do CI jobs get cloud access safely?</td><td>OIDC federation with short-lived scoped credentials.</td><td>A12</td></tr>
+<tr><td>36</td><td>What is a golden path?</td><td>A supported template route that makes the secure, observable way the easy way.</td><td>A12</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer architecture and DevOps questions at L4</h4>
+<ul>
+<li>Lead with the problem and constraints, offer two or three options, recommend one and name what would change your mind. This is the pattern interviewers look for.</li>
+<li>Show you have operated systems: mention how you detect, mitigate, roll back and learn, with a real example of an incident, a migration or a pipeline you improved.</li>
+<li>Quantify outcomes: build time, deploy frequency, change failure rate, error budget, cost saved.</li>
+<li>Keep reversibility and blast radius in every answer: flags, canaries, expand/contract migrations, rollbacks.</li>
+<li>Be honest about operational weight: Kubernetes, micro-frontends and multi-region designs are costly, so justify them by need.</li>
+<li>The interview is theoretical: expect “how would you design”, “compare”, “what would you do first” and “what are the trade-offs”, not live coding.</li>
+</ul></div>
+</section>
+
+</div>

@@ -1,0 +1,992 @@
+<title>Engineering Practices, Process and Gen AI Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"Engineering Practices, Process and Gen AI Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"Engineering Practices, Process and Gen AI Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · Engineering practices, leadership and Gen AI · Lead level</div>
+  <h1>Engineering Practices, Process and Gen AI Study Guide</h1>
+  <p>The practices and people skills that distinguish a lead from a senior engineer, plus generative AI for engineers: code review, Git workflows, testing strategy and quality, agile delivery and estimation, technical debt and documentation, technical leadership and mentoring, hiring and feedback, client-facing consulting skills, how large language models work, AI-assisted development, building AI features into products, and engineering metrics. Behavioural answers are covered by the leadership pack built from your own stories; this guide gives you the concepts and vocabulary behind them. Every topic is something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> AI tools and models change very fast: check current docs</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Engineering practices</h3>
+    <ol>
+      <li><b>G1</b><a href="#g1">Code review</a></li>
+      <li><b>G2</b><a href="#g2">Git workflows and version control</a></li>
+      <li><b>G3</b><a href="#g3">Testing strategy and quality</a></li>
+      <li><b>G4</b><a href="#g4">Agile delivery, estimation and planning</a></li>
+    </ol>
+    <h3 style="margin-top:16px">2 · Leading people and clients</h3>
+    <ol>
+      <li><b>G5</b><a href="#g5">Technical debt, refactoring, documentation</a></li>
+      <li><b>G6</b><a href="#g6">Technical leadership and mentoring</a></li>
+      <li><b>G7</b><a href="#g7">Hiring, feedback and team building</a></li>
+      <li><b>G8</b><a href="#g8">Client-facing engineering and consulting</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>3 · Generative AI</h3>
+    <ol>
+      <li><b>G9</b><a href="#g9">How LLMs work: concepts for engineers</a></li>
+      <li><b>G10</b><a href="#g10">AI-assisted development</a></li>
+      <li><b>G11</b><a href="#g11">Building AI features into products</a></li>
+      <li><b>G12</b><a href="#g12">Metrics, excellence and responsible AI</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">G1 to G4 are the process questions every lead is asked. G6 to G8 are leadership concepts; pair them with your real stories. G9 to G11 cover the Gen AI expectation in the L4 profile.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Related: Architecture and DevOps (CI/CD, ADRs), Design systems (governance), React guides (testing, design).</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Engineering practices</h1>
+
+<!-- ============ G1 ============ -->
+<section class="q" id="g1">
+<header class="qh">
+  <div class="qrow"><span class="qid">G1</span><span class="tag added">Added</span></div>
+  <h2>Code review</h2>
+  <p class="qtext">“How do you run effective code reviews? What do you look for? How do you give feedback, keep reviews fast, and handle disagreements? What should be automated and what should stay human?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Code review exists to improve quality, share knowledge and keep the codebase consistent, not to gatekeep. I automate everything a machine can check, formatting, linting, types, tests and security scans, so human attention goes to design, correctness, readability, edge cases, tests, accessibility, performance and risk. I keep pull requests small, review within a day, and write feedback that is specific, kind and focused on the code, distinguishing blocking issues from suggestions and questions. As author I explain the why in the description, review my own diff first, and respond graciously. Disagreements are resolved with data, shared standards or a quick call, and recorded so they do not repeat.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: review responsibilities split between automation and humans. Right: review checklist ordered by importance and feedback label conventions.">
+  <text x="10" y="18" class="bd">Who checks what</text>
+  <rect x="10" y="30" width="170" height="150" rx="5" class="g"/><text x="18" y="48" class="bd">Automation</text><text x="18" y="66" class="sm">formatting (Prettier)</text><text x="18" y="82" class="sm">lint and types</text><text x="18" y="98" class="sm">tests and coverage</text><text x="18" y="114" class="sm">security scans</text><text x="18" y="130" class="sm">bundle size, a11y</text><text x="18" y="146" class="sm">PR checks, bots</text><text x="18" y="164" class="sm">fast, objective</text>
+  <rect x="200" y="30" width="170" height="150" rx="5" class="h"/><text x="208" y="48" class="bd">Humans</text><text x="208" y="66" class="sm">design and approach</text><text x="208" y="82" class="sm">correctness, edge cases</text><text x="208" y="98" class="sm">readability, naming</text><text x="208" y="114" class="sm">test quality</text><text x="208" y="130" class="sm">risk, security intent</text><text x="208" y="146" class="sm">knowledge sharing</text><text x="208" y="164" class="sm">judgement</text>
+  <rect x="10" y="194" width="360" height="116" rx="5" class="w"/><text x="18" y="214" class="bd">Healthy review habits</text><text x="18" y="232" class="sm">small PRs (under ~400 lines), one purpose, linked ticket</text><text x="18" y="248" class="sm">review within hours to a day; unblock, do not queue</text><text x="18" y="264" class="sm">author self-reviews and explains context, risks, screenshots</text><text x="18" y="280" class="sm">reviewer reads the description, then tests, then the code</text><text x="18" y="296" class="sm">approve when good enough; follow-ups for nice-to-haves</text>
+  <text x="400" y="18" class="bd">What to look for (in order)</text>
+  <rect x="400" y="30" width="350" height="144" rx="5" class="b"/><text x="408" y="50" class="sm">1 Does it solve the right problem? Requirements met?</text><text x="408" y="68" class="sm">2 Design: fits architecture, boundaries, simplicity</text><text x="408" y="86" class="sm">3 Correctness: edge cases, errors, concurrency, state</text><text x="408" y="104" class="sm">4 Tests: meaningful, cover failure paths, not brittle</text><text x="408" y="122" class="sm">5 Security, privacy, accessibility, performance</text><text x="408" y="140" class="sm">6 Readability: names, comments for why, small functions</text><text x="408" y="158" class="sm">7 Style: only what tools do not enforce</text>
+  <text x="400" y="198" class="bd">Comment conventions</text>
+  <rect x="400" y="208" width="350" height="102" rx="5" class="g"/><text x="408" y="228" class="sm"><tspan class="bd">blocking:</tspan> must change before merge (bug, risk)</text><text x="408" y="246" class="sm"><tspan class="bd">suggestion / nit:</tspan> optional improvement or style</text><text x="408" y="264" class="sm"><tspan class="bd">question:</tspan> seeking understanding, not demanding</text><text x="408" y="282" class="sm"><tspan class="bd">praise:</tspan> call out good solutions</text><text x="408" y="300" class="sm">Prefer “What do you think about…?” over “You should…”.</text>
+</svg></div>
+<figcaption><b>Goal.</b> Fast, kind, high-signal review that improves the code and the team.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Purposes:</b> catch defects early, maintain consistency and design integrity, spread knowledge (bus factor), mentor, and share ownership. Reviews are the cheapest place to find design problems before they become expensive.</li>
+<li><b>Reviewing for design:</b> does the change belong in this module, respect boundaries, avoid duplication, and match existing patterns? Is there a simpler way? Will it be easy to change later? Is the abstraction justified (rule of three)? (A1, S8)</li>
+<li><b>Reviewing for correctness:</b> null and empty cases, error handling, race conditions and async ordering, cleanup of effects and listeners, idempotency, time zones, large inputs, backward compatibility, feature flag defaults, and data migration impact.</li>
+<li><b>Reviewing frontend specifics:</b> accessibility (semantics, keyboard, labels), performance (re-renders, bundle impact, images), state placement, loading/error/empty states, responsive behaviour, i18n, security (XSS sinks, secrets), telemetry, and tests through the UI (R12, R13).</li>
+<li><b>Tests in review:</b> do tests verify behaviour rather than implementation, cover edge and failure cases, avoid flakiness, and fail for the right reason? Is the test pyramid balanced for the change?</li>
+<li><b>PR size and structure:</b> small, focused PRs get faster, better reviews; split refactoring from behaviour changes; stack PRs for large features; use feature flags to merge incrementally; avoid drive-by changes.</li>
+<li><b>Author responsibilities:</b> a descriptive title, context and rationale (the why), screenshots or recordings for UI, test plan, notes on risks and areas needing attention, self-review before requesting review, quick response to feedback, and not taking comments personally.</li>
+<li><b>Feedback style:</b> be specific and constructive, explain reasons with links to guidelines, ask questions, avoid sarcasm and absolutes, critique the code not the person, acknowledge good work; for sensitive or complex feedback move to a call and summarise in the PR.</li>
+<li><b>Speed and flow:</b> agree on a review SLA (for example first response within four working hours), notify when ready, use CODEOWNERS and auto-assign, avoid review ping-pong by batching comments, pair or mob on large changes, and track review time as a team metric.</li>
+<li><b>Handling disagreement:</b> separate preference from principle; defer to documented standards or linters; time-box discussion; escalate to a tech lead or architecture decision; record outcomes in an ADR or style guide so the debate is not repeated.</li>
+<li><b>Review anti-patterns:</b> rubber-stamping, nitpicking style that tools should enforce, reviewing only at the end of the sprint, giant PRs, gatekeeping by one person, passive-aggressive comments, and not reading tests.</li>
+<li><b>Tools and automation:</b> required status checks, branch protection, CODEOWNERS, merge queues, Danger or reviewdog bots for repeatable comments, preview deployments, and AI review assistants as a first pass (human accountability remains) (G10).</li>
+<li><b>Review for juniors versus seniors:</b> more explanation and teaching with juniors; focus on design and risk with seniors; rotate reviewers to spread knowledge.</li>
+<li><b>Beyond PRs:</b> design reviews and RFCs before coding, pair programming and mob programming for live review, and post-merge learnings.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using reviews to enforce style that a formatter should handle.</li>
+<li>Large PRs that nobody can review properly, so they get approved on trust.</li>
+<li>Leaving reviews for days, blocking flow and encouraging bigger batches.</li>
+<li>Harsh or ambiguous comments that damage trust.</li>
+<li>Blocking on personal preference instead of principles or risk.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you review a huge PR you inherit?</dt><dd>Ask to split it if possible; otherwise review by area with the author walking through it, focus on design and risk, and request tests and a rollout plan.</dd>
+<dt>How do you handle a senior engineer who disagrees with your review?</dt><dd>Discuss the underlying principle with evidence, seek a third opinion or documented standard, and remain open to being wrong.</dd>
+<dt>What makes a good PR description?</dt><dd>Problem, approach, alternatives considered, how to test, screenshots, risks, and links to the ticket.</dd>
+<dt>Should every PR need two approvals?</dt><dd>Depends on risk: one for routine changes with strong automation, more for high-risk areas or compliance needs.</dd>
+</dl></div>
+</section>
+
+<!-- ============ G2 ============ -->
+<section class="q" id="g2">
+<header class="qh">
+  <div class="qrow"><span class="qid">G2</span><span class="tag added">Added</span></div>
+  <h2>Git workflows and version control</h2>
+  <p class="qtext">“Explain how Git works internally and day to day: commits, branches, merge versus rebase, resetting, cherry-pick, bisect, reflog, handling conflicts. Which branching strategy do you recommend and how do you keep history clean?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Git stores snapshots of the project as commits, each pointing to its parents, and branches are just movable labels on commits, so branching is cheap. Merge combines histories and preserves the true graph with a merge commit; rebase replays my commits on top of another branch for a linear history, rewriting them, so I only rebase local or personal branches, never shared ones. Squash merging keeps main tidy with one commit per change. For recovery I rely on <code>reflog</code>, and for debugging on <code>bisect</code>. I prefer trunk-based development with short-lived branches, protected main, required checks, Conventional Commits for readable history, and small commits with meaningful messages.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a commit graph with main and a feature branch, showing merge with a merge commit versus rebase producing a linear history. Right: a table of commands for undoing changes and when to use each.">
+  <text x="10" y="18" class="bd">Merge versus rebase</text>
+  <text x="10" y="42" class="sm">before:</text>
+  <circle cx="90" cy="56" r="6" class="fillm"/><circle cx="130" cy="56" r="6" class="fillm"/><circle cx="170" cy="56" r="6" class="fillh"/><circle cx="210" cy="56" r="6" class="fillh"/><text x="236" y="60" class="sm">main</text>
+  <path class="l" d="M90 56H210"/><path class="l" d="M130 56L150 84H190"/><circle cx="150" cy="84" r="6" class="fillg"/><circle cx="190" cy="84" r="6" class="fillg"/><text x="206" y="88" class="sm">feature</text>
+  <text x="10" y="116" class="bd">merge: preserves the graph</text>
+  <path class="l" d="M90 136H250"/><circle cx="90" cy="136" r="6" class="fillm"/><circle cx="130" cy="136" r="6" class="fillm"/><circle cx="170" cy="136" r="6" class="fillh"/><circle cx="210" cy="136" r="6" class="fillh"/><circle cx="250" cy="136" r="7" class="fillw"/><path class="l" d="M130 136L150 160H190L250 136"/><circle cx="150" cy="160" r="6" class="fillg"/><circle cx="190" cy="160" r="6" class="fillg"/><text x="264" y="140" class="sm">merge commit</text>
+  <text x="10" y="196" class="bd">rebase: linear history (rewrites commits)</text>
+  <path class="l" d="M90 216H290"/><circle cx="90" cy="216" r="6" class="fillm"/><circle cx="130" cy="216" r="6" class="fillm"/><circle cx="170" cy="216" r="6" class="fillh"/><circle cx="210" cy="216" r="6" class="fillh"/><circle cx="250" cy="216" r="6" class="fillg"/><circle cx="290" cy="216" r="6" class="fillg"/><text x="304" y="220" class="sm">new copies</text>
+  <rect x="10" y="240" width="360" height="70" rx="5" class="w"/><text x="18" y="260" class="bd">Rules</text><text x="18" y="278" class="sm">rebase your own unpublished work; merge (or squash) shared work.</text><text x="18" y="294" class="sm">Never rewrite history others have pulled (force-push only to</text><text x="18" y="308" class="sm">your own branch, with --force-with-lease).</text>
+  <text x="400" y="18" class="bd">Undo and recover</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="b"/>
+  <text x="408" y="50" class="mono" style="font-size:10px">git restore &lt;file&gt;</text><text x="540" y="50" class="sm">discard working-tree changes</text>
+  <text x="408" y="72" class="mono" style="font-size:10px">git restore --staged</text><text x="540" y="72" class="sm">unstage</text>
+  <text x="408" y="94" class="mono" style="font-size:10px">git commit --amend</text><text x="540" y="94" class="sm">fix the last commit (local)</text>
+  <text x="408" y="116" class="mono" style="font-size:10px">git revert &lt;sha&gt;</text><text x="540" y="116" class="sm">new commit that undoes one (safe</text><text x="540" y="130" class="sm">on shared branches)</text>
+  <text x="408" y="152" class="mono" style="font-size:10px">git reset --soft/--hard</text><text x="540" y="152" class="sm">move branch; --hard discards work</text>
+  <text x="408" y="174" class="mono" style="font-size:10px">git reflog</text><text x="540" y="174" class="sm">history of HEAD: recover “lost”</text><text x="540" y="188" class="sm">commits after a bad reset</text>
+  <text x="408" y="210" class="mono" style="font-size:10px">git cherry-pick</text><text x="540" y="210" class="sm">apply one commit elsewhere (hotfix)</text>
+  <text x="408" y="232" class="mono" style="font-size:10px">git bisect</text><text x="540" y="232" class="sm">binary-search for the bad commit</text>
+  <text x="408" y="254" class="mono" style="font-size:10px">git stash</text><text x="540" y="254" class="sm">shelve changes temporarily</text>
+  <text x="408" y="276" class="mono" style="font-size:10px">git rebase -i</text><text x="540" y="276" class="sm">squash, reorder, reword local commits</text>
+  <text x="408" y="298" class="mono" style="font-size:10px">git worktree</text><text x="540" y="298" class="sm">several checkouts of one repo</text>
+</svg></div>
+<figcaption><b>Mental model.</b> Commits are immutable snapshots; branches and tags are labels; history rewrites create new commits.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Git internals:</b> content-addressed object database (blobs, trees, commits, tags identified by SHA hashes), the index (staging area), HEAD and refs; a commit stores a tree snapshot, author, message and parent pointers; branches are refs; fetch updates remote-tracking refs; pull is fetch plus merge or rebase.</li>
+<li><b>Merge strategies:</b> fast-forward (no merge commit if linear), true merge commit, squash merge (one commit on target; loses branch granularity but keeps main readable), rebase-and-merge (linear without merge commit). Teams pick one and enforce it in repository settings.</li>
+<li><b>Resolving conflicts:</b> understand both sides’ intent, use a three-way merge tool, run tests after resolving, prefer small frequent merges to reduce conflicts, communicate with the other author, and use <code>rerere</code> to remember resolutions.</li>
+<li><b>Interactive rebase:</b> clean up local commits before review (squash fixups, reword, reorder); do not do it on shared branches; <code>--autosquash</code> with fixup commits streamlines it.</li>
+<li><b>Branching strategies:</b> trunk-based development (short-lived branches, flags), GitHub Flow (feature branches and PRs into main, deploy from main), GitFlow (develop, release, hotfix; heavy), release branches for supported versions, environment branches (discouraged). For web apps with CI/CD, trunk-based or GitHub Flow fits best (A5).</li>
+<li><b>Commit hygiene:</b> small, atomic commits that build and pass tests; messages with an imperative summary line and a body explaining why; Conventional Commits (<code>feat:</code>, <code>fix:</code>, <code>chore:</code>, <code>BREAKING CHANGE:</code>) enabling automation; reference ticket ids; do not commit secrets or generated files; use <code>.gitignore</code>.</li>
+<li><b>Tags and releases:</b> annotated tags for versions; release branches or tags drive publishing; signed tags or commits for provenance.</li>
+<li><b>Hooks and automation:</b> pre-commit hooks (lint-staged), commit-msg (commitlint), server-side protections: protected branches, required reviews and checks, linear history, signed commits, merge queues (A5, B9).</li>
+<li><b>Large repositories:</b> monorepos benefit from sparse checkout, partial clone, shallow clones in CI, Git LFS for large binaries, and tools like Scalar; keep history clean to ease blame and bisect.</li>
+<li><b>Debugging with Git:</b> <code>git blame</code> and <code>git log -S</code>/<code>-G</code> to find when code changed, <code>git bisect run</code> with a test script to find regressions, <code>git diff</code> across branches, and <code>git log --graph --oneline</code>.</li>
+<li><b>Recovering from mistakes:</b> <code>reflog</code> finds previous HEAD positions; <code>reset --hard</code> to restore; <code>revert</code> for shared history; recover deleted branches by SHA; remove leaked secrets with history rewriting tools (filter-repo) <em>and</em> rotate the secret.</li>
+<li><b>Collaboration norms:</b> keep PRs focused, rebase on main before merging if the team prefers linear history, delete merged branches, avoid long-lived branches, communicate large renames, and document the workflow in CONTRIBUTING.</li>
+<li><b>Monorepo and submodules:</b> prefer workspaces and package managers over submodules; subtrees for occasional vendoring; understand the pitfalls of submodule pointers.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Rebasing or force-pushing a shared branch and breaking teammates’ work.</li>
+<li>Using <code>reset --hard</code> without checking for uncommitted changes you want to keep.</li>
+<li>Long-lived feature branches with painful merges.</li>
+<li>Committing a secret and only deleting it in a later commit (it remains in history).</li>
+<li>Calling a branch a copy of the code; it is a pointer to a commit.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Merge or rebase?</dt><dd>Rebase to update your private branch with main; merge or squash when integrating shared work. The rule: do not rewrite public history.</dd>
+<dt>Difference between <code>reset</code> and <code>revert</code>?</dt><dd><code>reset</code> moves the branch pointer (rewriting history); <code>revert</code> adds a new commit that undoes a previous one, safe for shared branches.</dd>
+<dt>How do you find which commit introduced a bug?</dt><dd><code>git bisect</code> with a good and bad commit, optionally automated with a test script.</dd>
+<dt>How do you remove a leaked secret?</dt><dd>Revoke and rotate it immediately, then clean history if needed; treat the secret as compromised regardless.</dd>
+</dl></div>
+</section>
+
+<!-- ============ G3 ============ -->
+<section class="q" id="g3">
+<header class="qh">
+  <div class="qrow"><span class="qid">G3</span><span class="tag added">Added</span></div>
+  <h2>Testing strategy and quality</h2>
+  <p class="qtext">“How do you define a testing strategy for a product? Unit, integration, contract and end-to-end tests, TDD and BDD, test data, flaky tests, coverage, quality gates and what ‘done’ means. How do you balance speed and confidence?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A testing strategy is about getting the most confidence per minute of feedback. I favour many fast tests close to the code, a solid layer of integration tests that exercise real wiring, contract tests between services and frontend, and a few end-to-end tests for critical journeys, balanced as a pyramid or trophy depending on the architecture. I run static analysis and type checks first, keep tests deterministic and independent, and treat flaky tests as bugs. TDD helps design logic-heavy code, BDD scenarios help align with product on behaviour. Coverage is a signal, not a goal. Quality is also shift-left and shift-right: acceptance criteria and reviews before coding, and monitoring, feature flags and canary releases in production.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: test pyramid and trophy side by side. Right: testing types and what each answers, plus flaky test handling.">
+  <text x="10" y="18" class="bd">Pyramid (logic-heavy) versus trophy (UI)</text>
+  <polygon points="110,40 170,40 200,100 80,100" class="x" style="opacity:.8"/><text x="124" y="74" class="sm">E2E</text>
+  <polygon points="80,104 200,104 240,160 40,160" class="h" style="opacity:.8"/><text x="102" y="136" class="sm">Integration</text>
+  <polygon points="40,164 240,164 285,220 0,220" class="g" style="opacity:.8"/><text x="102" y="196" class="sm">Unit (many)</text>
+  <text x="296" y="60" class="sm">trophy: static analysis,</text><text x="296" y="76" class="sm">mostly integration,</text><text x="296" y="92" class="sm">few unit and e2e</text>
+  <text x="10" y="250" class="sm">Choose by where defects occur and cost of feedback; for React apps</text><text x="10" y="266" class="sm">integration tests through the UI give the best confidence (R12).</text><text x="10" y="290" class="sm">Static: TypeScript, ESLint. Manual exploratory testing remains valuable.</text>
+  <text x="400" y="18" class="bd">What each level tells you</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="g"/><text x="408" y="52" class="sm"><tspan class="bd">Unit</tspan> does this function or reducer behave correctly?</text>
+  <rect x="400" y="68" width="350" height="34" rx="4" class="h"/><text x="408" y="90" class="sm"><tspan class="bd">Integration</tspan> do components, state and API layer work together?</text>
+  <rect x="400" y="106" width="350" height="34" rx="4" class="h"/><text x="408" y="128" class="sm"><tspan class="bd">Contract</tspan> will the frontend and backend still agree?</text>
+  <rect x="400" y="144" width="350" height="34" rx="4" class="x"/><text x="408" y="166" class="sm"><tspan class="bd">End-to-end</tspan> does the critical journey work in a real browser?</text>
+  <rect x="400" y="182" width="350" height="34" rx="4" class="w"/><text x="408" y="204" class="sm"><tspan class="bd">Non-functional</tspan> performance, accessibility, security, load</text>
+  <rect x="400" y="220" width="350" height="90" rx="5" class="b"/><text x="408" y="240" class="bd">Flaky tests</text><text x="408" y="258" class="sm">causes: timing, shared state, network, order dependence, time.</text><text x="408" y="274" class="sm">Fix the cause; quarantine with owner and deadline; never ignore;</text><text x="408" y="290" class="sm">track flake rate; auto-wait locators; isolated data per test.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Confidence per minute: cheap fast tests for most behaviour, expensive slow tests only for what must be proven end to end.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Test types in detail:</b> unit (isolated logic), component (UI in jsdom with Testing Library), integration (multiple modules with real or fake boundaries), contract (consumer-driven with Pact or schema checks), end-to-end (Playwright/Cypress against a deployed environment), visual regression, accessibility, performance (Lighthouse CI, load tests), security (SAST/DAST), and exploratory manual testing.</li>
+<li><b>TDD:</b> red-green-refactor: write a failing test, make it pass, refactor. Best for algorithms, reducers, validation and bug fixes (write a failing test that reproduces the bug first). Less natural for exploratory UI; do not force it. <b>BDD:</b> Given-When-Then scenarios (Gherkin, Cucumber, Playwright BDD) as shared acceptance criteria between product, QA and developers; valuable when the collaboration is real, wasteful as a translation layer otherwise.</li>
+<li><b>Test design principles:</b> arrange-act-assert, one behaviour per test, descriptive names, independent and order-free tests, deterministic (control time, randomness, network), avoid testing implementation details, prefer fakes and MSW to heavy mocking, keep fixtures small with factories, and treat test code as production code.</li>
+<li><b>Coverage:</b> useful to find untested areas; not a measure of quality (100% coverage can still miss behaviour). Prefer diff coverage on changed lines and mutation testing for critical logic; avoid coverage mandates that encourage meaningless tests.</li>
+<li><b>Test data and environments:</b> factories and builders, seeded databases, ephemeral environments per PR, service virtualisation, sandbox accounts for third parties, and masked production-like data; keep tests independent of shared mutable data.</li>
+<li><b>Contract testing:</b> for frontend-backend and service-to-service agreements; Pact or OpenAPI-driven checks run in CI by both sides; catches breaking API changes before integration (E9, D11).</li>
+<li><b>End-to-end strategy:</b> few, stable, high-value journeys (sign-up, login, checkout); run against preview or staging with seeded data; parallelise and shard; auto-waiting locators; traces and videos for debugging; avoid duplicating lower-level coverage.</li>
+<li><b>Quality gates and definition of done:</b> code reviewed, tests added or updated, acceptance criteria met, accessibility checked, performance considered, documentation updated, feature flag and monitoring in place, deployed to staging and verified; automated gates in CI for the measurable parts (A5).</li>
+<li><b>Shift left:</b> clarify acceptance criteria and examples before coding, three amigos sessions (product, dev, QA), design reviews, threat modelling, static analysis and pre-commit checks, testability as a design goal (dependency injection, pure functions).</li>
+<li><b>Shift right:</b> testing in production safely: feature flags, canary releases, synthetic monitoring, error tracking, real-user monitoring, A/B experiments, chaos experiments; observability complements pre-release testing (A6, A10).</li>
+<li><b>QA collaboration:</b> QA engineers as quality coaches and exploratory testers rather than gatekeepers; developers own automated tests; pairing on test design; shared bug triage and root-cause analysis.</li>
+<li><b>Regression and bug handling:</b> every production bug gets a test that would have caught it; analyse why the existing suite missed it; categorise defects to improve the process.</li>
+<li><b>Risk-based testing:</b> invest more in high-impact, high-likelihood areas (payments, auth, data loss); lighter testing for low-risk cosmetic changes; document risk decisions.</li>
+<li><b>Performance and non-functional testing:</b> budgets enforced in CI, load tests before major launches, accessibility audits, security testing, browser/device matrix testing prioritised by usage.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Chasing coverage numbers with low-value tests.</li>
+<li>A huge end-to-end suite that is slow and flaky, standing in for faster layers.</li>
+<li>Tests coupled to implementation details so every refactor breaks them.</li>
+<li>Ignoring flaky tests until nobody trusts the suite.</li>
+<li>Treating QA as the last stage instead of building quality in from the start.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you decide what to test?</dt><dd>By risk: business impact, complexity, change frequency and defect history; test behaviour that users and other modules depend on.</dd>
+<dt>TDD in a React app?</dt><dd>Useful for pure logic and bug reproduction; for UI, write tests through the DOM alongside the feature rather than strictly first.</dd>
+<dt>How do you handle a flaky end-to-end test in CI?</dt><dd>Reproduce with traces, fix the root cause (waits, shared data, ordering), quarantine temporarily with an owner, and track the flake rate.</dd>
+<dt>What is the test pyramid for?</dt><dd>A reminder to keep most tests fast and cheap and use slow end-to-end tests sparingly.</dd>
+</dl></div>
+</section>
+
+<!-- ============ G4 ============ -->
+<section class="q" id="g4">
+<header class="qh">
+  <div class="qrow"><span class="qid">G4</span><span class="tag added">Added</span></div>
+  <h2>Agile delivery, estimation and planning</h2>
+  <p class="qtext">“Explain Scrum and Kanban. How do you estimate and plan work, handle changing requirements, communicate delays, and run retrospectives? What metrics do you use, and what is your view on story points and velocity?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Agile means delivering value in small increments, inviting feedback and adapting to change. Scrum organises work in fixed sprints with defined roles, planning, daily stand-ups, review and retrospective; Kanban visualises work on a board, limits work in progress and optimises flow. I estimate by breaking work into small slices, using relative sizing or probabilistic forecasts from past throughput instead of promising precise dates, and I make uncertainty visible through spikes, ranges and risk lists. When requirements change I reprioritise with the product owner and explain the trade-offs. If a date is at risk I raise it early with options: reduce scope, add time or add help. I use flow metrics such as cycle time and throughput, and DORA metrics for delivery health, not as individual performance targets.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: the Scrum cycle with backlog, sprint planning, sprint, daily scrum, review, retrospective. Right: a Kanban board with work-in-progress limits and a forecast range.">
+  <text x="10" y="18" class="bd">Scrum cycle</text>
+  <rect x="10" y="30" width="110" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">Backlog</text><text x="18" y="62" class="sm">refined, ordered</text>
+  <rect x="140" y="30" width="110" height="40" rx="5" class="h"/><text x="148" y="48" class="bd">Planning</text><text x="148" y="62" class="sm">sprint goal</text>
+  <rect x="270" y="30" width="100" height="40" rx="5" class="w"/><text x="278" y="48" class="bd">Sprint</text><text x="278" y="62" class="sm">1 to 2 weeks</text>
+  <path class="a" d="M120 50H138"/><path class="a" d="M250 50H268"/>
+  <rect x="10" y="90" width="110" height="40" rx="5" class="g"/><text x="18" y="108" class="bd">Review</text><text x="18" y="122" class="sm">demo increment</text>
+  <rect x="140" y="90" width="110" height="40" rx="5" class="g"/><text x="148" y="108" class="bd">Retrospective</text><text x="148" y="122" class="sm">improve process</text>
+  <rect x="270" y="90" width="100" height="40" rx="5" class="b"/><text x="278" y="108" class="bd">Daily scrum</text><text x="278" y="122" class="sm">15 min sync</text>
+  <path class="a" d="M320 70V88"/><path class="a" d="M268 110H252"/><path class="a" d="M138 110H122"/>
+  <rect x="10" y="144" width="360" height="62" rx="5" class="w"/><text x="18" y="164" class="bd">Roles and artefacts</text><text x="18" y="182" class="sm">Product Owner (value, order) · Scrum Master (process) · Developers</text><text x="18" y="198" class="sm">Product backlog · sprint backlog · increment · definition of done</text>
+  <rect x="10" y="216" width="360" height="94" rx="5" class="b"/><text x="18" y="236" class="bd">Estimation approaches</text><text x="18" y="254" class="sm">slice small (≤ 1 to 3 days) · relative sizing (story points) ·</text><text x="18" y="270" class="sm">no estimates + throughput forecasts · three-point range ·</text><text x="18" y="286" class="sm">spikes for unknowns · reference-class comparison</text>
+  <text x="400" y="18" class="bd">Kanban board with WIP limits</text>
+  <rect x="400" y="30" width="110" height="130" rx="5" class="b"/><text x="408" y="48" class="bd">To do</text><rect x="408" y="56" width="94" height="22" class="g"/><rect x="408" y="82" width="94" height="22" class="g"/><rect x="408" y="108" width="94" height="22" class="g"/>
+  <rect x="520" y="30" width="110" height="130" rx="5" class="h"/><text x="528" y="48" class="bd">Doing (WIP 3)</text><rect x="528" y="56" width="94" height="22" class="w"/><rect x="528" y="82" width="94" height="22" class="w"/><rect x="528" y="108" width="94" height="22" class="w"/>
+  <rect x="640" y="30" width="110" height="130" rx="5" class="g"/><text x="648" y="48" class="bd">Done</text><rect x="648" y="56" width="94" height="22" class="b"/><rect x="648" y="82" width="94" height="22" class="b"/>
+  <text x="400" y="182" class="sm">Limit WIP to expose bottlenecks; pull work when capacity frees.</text><text x="400" y="198" class="sm">Measure cycle time, throughput, WIP age, blocked time.</text>
+  <rect x="400" y="212" width="350" height="98" rx="5" class="x"/><text x="408" y="232" class="bd">Communicating delay</text><text x="408" y="250" class="sm">raise it early with facts, impact and options: cut scope, move date,</text><text x="408" y="266" class="sm">add capacity, accept risk · never hide slippage · agree a new plan</text><text x="408" y="282" class="sm">and update stakeholders on a fixed cadence</text>
+</svg></div>
+<figcaption><b>Principle.</b> Short feedback loops, visible work, and honest forecasts beat detailed plans that pretend to know the future.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Agile values and principles:</b> individuals and interactions, working software, customer collaboration, responding to change; the manifesto’s principles (frequent delivery, sustainable pace, technical excellence). Frameworks implement them; practices matter more than labels.</li>
+<li><b>Scrum details:</b> sprint planning (goal and forecast), daily scrum (coordination), refinement (ongoing), sprint review (inspect the increment with stakeholders), retrospective (inspect the process); definition of done and sprint goal give focus; roles: product owner, scrum master, developers. Pitfalls: scrum as ceremonies without agility, sprint commitments treated as contracts, carry-over, mini-waterfalls inside sprints.</li>
+<li><b>Kanban:</b> visualise workflow, limit WIP, manage flow, make policies explicit, improve collaboratively; no fixed iterations; suits support and continuous delivery. <b>Scrumban</b> mixes both. SAFe, LeSS and Spotify model address scaling; EPAM-style client projects may follow the client’s process.</li>
+<li><b>Estimation:</b> story points measure relative effort and complexity, not hours; planning poker for shared understanding; velocity is a planning aid for one team, never a performance metric or cross-team comparison. Alternatives: #NoEstimates with slicing and throughput forecasting (Monte Carlo), t-shirt sizes for roadmaps, three-point estimates (optimistic, likely, pessimistic), and time-boxed spikes for research.</li>
+<li><b>Planning under uncertainty:</b> cone of uncertainty (estimates improve as work progresses), buffers for risk, identify dependencies and critical path, deliver the riskiest and most valuable items first (walking skeleton), thin vertical slices, MVP definition, and re-forecast regularly with actuals.</li>
+<li><b>Requirements and refinement:</b> user stories with acceptance criteria (INVEST: independent, negotiable, valuable, estimable, small, testable), examples and edge cases, non-functional requirements, design and API contracts agreed early, “definition of ready”, and spikes to de-risk.</li>
+<li><b>Handling change:</b> embrace it through backlog reprioritisation; make trade-offs explicit (what moves out if something comes in); protect the sprint goal; distinguish scope change from clarification; keep a change log with impact; for fixed-scope contracts, manage change requests formally.</li>
+<li><b>Roadmaps and OKRs:</b> outcome-oriented roadmaps (themes over feature lists), quarterly planning, OKRs linking work to goals; communicate confidence levels rather than false precision.</li>
+<li><b>Retrospectives:</b> safe, blameless, focused on a few concrete experiments with owners; formats (start/stop/continue, 4Ls, sailboat); follow up on actions; rotate facilitation; measure whether changes helped.</li>
+<li><b>Metrics:</b> cycle time, lead time, throughput, WIP, blocked time, escaped defects, flow efficiency; DORA (deployment frequency, lead time for changes, change failure rate, time to restore); predictability (say/do ratio); team health surveys; avoid individual productivity metrics and story-point targets (G12).</li>
+<li><b>Dependencies and coordination:</b> map and manage cross-team dependencies early, use integration points and contracts, dependency boards, joint planning sessions; reduce dependencies through team ownership of vertical slices.</li>
+<li><b>Working with product and stakeholders:</b> shared understanding of goals, regular demos, transparent progress (burn-up charts, cumulative flow), managing expectations, pushing back with options, and saying no with reasons.</li>
+<li><b>Remote and distributed teams:</b> written decisions, clear working agreements, overlap hours, async updates, good documentation, and deliberate team rituals.</li>
+<li><b>Agile and engineering practices:</b> CI/CD, automated testing, refactoring, pair programming and trunk-based development make agile delivery sustainable; without them, agile becomes ceremony.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using story points or velocity to compare or rank people and teams.</li>
+<li>Committing to a precise date long before the work is understood.</li>
+<li>Running Scrum ceremonies mechanically without improving outcomes.</li>
+<li>Hiding a slipping deadline until the last moment.</li>
+<li>Accepting every change request without showing the trade-off.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you estimate a large uncertain feature?</dt><dd>Break it down, spike the unknowns, give a range with assumptions and risks, deliver the riskiest slice first, and re-forecast as you learn.</dd>
+<dt>What do you do when the team consistently misses sprint goals?</dt><dd>Examine causes in retrospective (overcommitment, unclear stories, interruptions, dependencies), adjust capacity and slicing, and improve refinement.</dd>
+<dt>Scrum or Kanban?</dt><dd>Scrum for cadence and product increments; Kanban for continuous flow and variable work; many teams blend them.</dd>
+<dt>How do you tell a client a deadline will slip?</dt><dd>Early, with data, the impact, and options (descope, extend, add capacity), plus a recovery plan and regular updates.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Leading people and clients</h1>
+
+<!-- ============ G5 ============ -->
+<section class="q" id="g5">
+<header class="qh">
+  <div class="qrow"><span class="qid">G5</span><span class="tag added">Added</span></div>
+  <h2>Technical debt, refactoring, documentation</h2>
+  <p class="qtext">“How do you identify, prioritise and pay down technical debt? When and how do you refactor safely? What documentation do you keep, and how do you make knowledge sharing sustainable?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Technical debt is the future cost of shortcuts or outdated design choices; like financial debt it has principal and interest, the extra effort every future change pays. Some debt is deliberate and sensible, such as shipping an MVP quickly with a plan to fix it; some is accidental. I make debt visible in a register with impact and cost, prioritise by risk and by how much it slows delivery, and reserve regular capacity for it, attaching small cleanups to feature work. I refactor in small, safe steps protected by tests, never as a big-bang rewrite. For documentation I keep it close to the code: READMEs, ADRs, runbooks and diagrams that are reviewed with changes, because stale documentation is worse than none.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a debt quadrant of deliberate and inadvertent, reckless and prudent. Right: a prioritisation matrix of impact against effort, and the safe refactoring loop.">
+  <text x="10" y="18" class="bd">Debt quadrant (Fowler)</text>
+  <rect x="10" y="30" width="175" height="62" rx="5" class="x"/><text x="18" y="48" class="bd">Deliberate, reckless</text><text x="18" y="66" class="sm">“we have no time for</text><text x="18" y="80" class="sm">design”</text>
+  <rect x="195" y="30" width="175" height="62" rx="5" class="g"/><text x="203" y="48" class="bd">Deliberate, prudent</text><text x="203" y="66" class="sm">“ship now, fix after</text><text x="203" y="80" class="sm">release” with a plan</text>
+  <rect x="10" y="98" width="175" height="62" rx="5" class="x"/><text x="18" y="116" class="bd">Inadvertent, reckless</text><text x="18" y="134" class="sm">“what is layering?”</text><text x="18" y="148" class="sm">lack of skill or review</text>
+  <rect x="195" y="98" width="175" height="62" rx="5" class="w"/><text x="203" y="116" class="bd">Inadvertent, prudent</text><text x="203" y="134" class="sm">“now we know how we</text><text x="203" y="148" class="sm">should have built it”</text>
+  <rect x="10" y="176" width="360" height="134" rx="5" class="b"/><text x="18" y="196" class="bd">Debt register entry</text><text x="18" y="214" class="sm">what and where · why it exists · impact (risk, slowdown) ·</text><text x="18" y="230" class="sm">interest (extra cost per change) · fix cost · owner · trigger date</text><text x="18" y="250" class="bd">Capacity policy</text><text x="18" y="268" class="sm">15 to 20% per sprint for debt and improvement; boy-scout rule</text><text x="18" y="284" class="sm">(leave code better); big items as planned epics with outcomes</text><text x="18" y="300" class="sm">(build time, incident rate, lead time)</text>
+  <text x="400" y="18" class="bd">Prioritise</text>
+  <rect x="400" y="30" width="170" height="70" rx="5" class="g"/><text x="408" y="48" class="bd">High impact, low effort</text><text x="408" y="66" class="sm">do now</text>
+  <rect x="580" y="30" width="170" height="70" rx="5" class="h"/><text x="588" y="48" class="bd">High impact, high effort</text><text x="588" y="66" class="sm">plan as a project</text>
+  <rect x="400" y="106" width="170" height="70" rx="5" class="w"/><text x="408" y="124" class="bd">Low impact, low effort</text><text x="408" y="142" class="sm">opportunistic cleanup</text>
+  <rect x="580" y="106" width="170" height="70" rx="5" class="b"/><text x="588" y="124" class="bd">Low impact, high effort</text><text x="588" y="142" class="sm">leave it, document it</text>
+  <text x="400" y="204" class="bd">Safe refactoring loop</text>
+  <rect x="400" y="214" width="350" height="96" rx="5" class="h"/><text x="408" y="234" class="sm">1 add characterisation tests around existing behaviour</text><text x="408" y="250" class="sm">2 make one small structural change (extract, rename, move)</text><text x="408" y="266" class="sm">3 run tests; commit; repeat in tiny steps</text><text x="408" y="282" class="sm">4 keep behaviour changes separate from refactors in PRs</text><text x="408" y="298" class="sm">5 use feature flags and strangler for larger replacements</text>
+</svg></div>
+<figcaption><b>Principle.</b> Treat debt as a managed portfolio: visible, prioritised by interest, and repaid continuously in small steps.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Types of debt:</b> code (duplication, complexity), design/architecture (tight coupling, wrong boundaries), test (low coverage, flaky), dependency (outdated, vulnerable libraries), build and infrastructure (slow pipelines, manual deploys), documentation, data/schema, and security debt. Distinguish debt from bugs and missing features.</li>
+<li><b>Finding it:</b> developer surveys and pain points, code hotspots (files with frequent change and high complexity via churn × complexity), static analysis (SonarQube), dependency age reports, incident and bug trends, onboarding difficulties, slow areas of delivery, and architecture reviews.</li>
+<li><b>Quantifying:</b> estimate interest as extra time per change, incident frequency or customer impact; link to DORA-style metrics (lead time, change failure rate); show the cost of delay for features blocked by debt; use a simple score (impact × frequency / effort).</li>
+<li><b>Making the case:</b> speak the business language: faster delivery, fewer outages, lower onboarding cost, reduced risk, compliance; propose a bounded plan with measurable outcomes and incremental value; avoid asking for a “refactoring sprint” with no outcome.</li>
+<li><b>Strategies for repayment:</b> continuous small improvements (boy-scout rule), dedicated capacity, refactor-before-feature when a change touches a hotspot, planned epics for major items, strangler migrations, automated upgrades (Renovate) and codemods, and deleting dead code and unused features.</li>
+<li><b>Refactoring safely:</b> tests first (characterisation tests for legacy), small reversible steps, IDE-assisted refactorings, separate commits and PRs for structure versus behaviour, feature flags, parallel runs for risky replacements, and monitoring after release. Typical refactorings: extract function or component, rename, inline, move, replace conditional with polymorphism or lookup, introduce a parameter object, break up god components.</li>
+<li><b>When not to refactor:</b> code that will be deleted soon, stable code that rarely changes, or when there are no tests and no time to add them; sometimes isolate and live with it.</li>
+<li><b>Rewrites versus incremental:</b> rewrites often fail (second-system effect, lost knowledge); prefer incremental modernisation; reserve rewrites for small or fundamentally flawed components with a clear migration plan (A4).</li>
+<li><b>Preventing new debt:</b> definition of done, code review, architecture guidelines and fitness functions, automated quality gates, time for design before big changes, and conscious tracking of intentional shortcuts with an expiry date.</li>
+<li><b>Documentation types:</b> README (what, how to run, how to contribute), architecture overview (C4 diagrams), ADRs and RFCs (why), API docs (OpenAPI, Storybook), runbooks and playbooks (how to operate and respond), onboarding guide, glossary, and changelog; docs-as-code in Git with review.</li>
+<li><b>Keeping docs alive:</b> store with the code, update in the same PR, test examples and links in CI, assign owners, prune obsolete pages, prefer concise and diagram-first content, and generate reference docs from code and types where possible.</li>
+<li><b>Knowledge sharing:</b> pair and mob programming, code review as teaching, tech talks and brown-bag sessions, written post-mortems, onboarding buddies, guilds or communities of practice, recorded demos, and rotating ownership to reduce bus factor.</li>
+<li><b>Reducing key-person risk:</b> document critical systems, cross-train, rotate on-call and reviews, avoid single owners, and record decisions and tribal knowledge in ADRs and runbooks.</li>
+<li><b>Communicating debt to stakeholders:</b> use analogies carefully, show trends (cycle time rising, incidents), connect to roadmap risk, and present options with costs and benefits.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Treating all debt as bad. Deliberate, tracked debt can be a smart trade.</li>
+<li>Proposing a full rewrite instead of incremental modernisation.</li>
+<li>Asking for time to “clean up” with no measurable outcome.</li>
+<li>Refactoring without tests and mixing behaviour changes into the same PR.</li>
+<li>Documentation written once in a wiki and never maintained.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you convince a product owner to invest in debt?</dt><dd>Quantify the cost: slower features, incidents, onboarding time; propose a small, outcome-linked investment and show results quickly.</dd>
+<dt>How do you refactor legacy code with no tests?</dt><dd>Add characterisation tests at the boundaries first, refactor in tiny steps behind them, and use the strangler approach for larger parts.</dd>
+<dt>What goes into an ADR?</dt><dd>Context, options considered, decision, consequences, status and date, stored in the repository.</dd>
+<dt>How do you reduce the bus factor?</dt><dd>Pair, rotate ownership and on-call, document and automate critical knowledge, and review across team boundaries.</dd>
+</dl></div>
+</section>
+
+<!-- ============ G6 ============ -->
+<section class="q" id="g6">
+<header class="qh">
+  <div class="qrow"><span class="qid">G6</span><span class="tag added">Added</span></div>
+  <h2>Technical leadership and mentoring</h2>
+  <p class="qtext">“What does a technical lead do? How do you mentor and grow engineers, delegate, set direction, build consensus, influence without authority, handle conflict and balance coding with leading? What is the difference between a senior engineer and a lead?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A senior engineer is excellent at delivering complex work; a lead multiplies the team’s output. That means setting technical direction and standards, breaking down and delegating work, unblocking people, raising the quality bar through reviews and design discussions, and communicating with stakeholders, while still staying close to the code. I mentor by giving people stretch assignments with support, asking questions rather than giving answers, giving timely specific feedback, and sponsoring them for visibility. I influence without authority by building trust, using data and prototypes, listening to concerns and making decisions transparent. In conflict I focus on shared goals and underlying interests, and I make decisions when consensus is not possible, explaining why.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: how scope grows from engineer to senior to lead to staff, with impact through others. Right: situational leadership and a mentoring conversation model.">
+  <text x="10" y="18" class="bd">Scope of impact</text>
+  <rect x="10" y="30" width="110" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">Engineer</text><text x="18" y="66" class="sm">own tasks</text>
+  <rect x="130" y="30" width="110" height="46" rx="5" class="h"/><text x="138" y="50" class="bd">Senior</text><text x="138" y="66" class="sm">own features</text>
+  <rect x="250" y="30" width="120" height="46" rx="5" class="g"/><text x="258" y="50" class="bd">Lead</text><text x="258" y="66" class="sm">team outcomes</text>
+  <path class="a" d="M120 53H128"/><path class="a" d="M240 53H248"/>
+  <rect x="10" y="90" width="360" height="124" rx="5" class="w"/><text x="18" y="110" class="bd">What a lead adds</text><text x="18" y="128" class="sm">direction: technical vision, standards, architecture choices</text><text x="18" y="144" class="sm">enablement: unblock, delegate, grow people, reduce bus factor</text><text x="18" y="160" class="sm">quality: reviews, practices, definition of done, tech debt</text><text x="18" y="176" class="sm">communication: translate between engineers, product, clients</text><text x="18" y="192" class="sm">delivery: plan, forecast, manage risk, remove obstacles</text><text x="18" y="208" class="sm">still hands-on, but a balance (often 30 to 60% coding)</text>
+  <rect x="10" y="226" width="360" height="84" rx="5" class="b"/><text x="18" y="246" class="bd">Multiplier habits</text><text x="18" y="264" class="sm">write things down · share context · decide and explain · say no</text><text x="18" y="280" class="sm">to protect focus · give credit publicly, feedback privately ·</text><text x="18" y="296" class="sm">make yourself replaceable</text>
+  <text x="400" y="18" class="bd">Situational leadership</text>
+  <rect x="400" y="30" width="170" height="52" rx="5" class="g"/><text x="408" y="48" class="bd">New / low skill</text><text x="408" y="64" class="sm">direct: clear tasks,</text><text x="408" y="78" class="sm">examples, close review</text>
+  <rect x="580" y="30" width="170" height="52" rx="5" class="h"/><text x="588" y="48" class="bd">Growing</text><text x="588" y="64" class="sm">coach: explain why,</text><text x="588" y="78" class="sm">guide decisions</text>
+  <rect x="400" y="90" width="170" height="52" rx="5" class="w"/><text x="408" y="108" class="bd">Capable, unsure</text><text x="408" y="124" class="sm">support: encourage,</text><text x="408" y="138" class="sm">listen, build confidence</text>
+  <rect x="580" y="90" width="170" height="52" rx="5" class="b"/><text x="588" y="108" class="bd">Expert, motivated</text><text x="588" y="124" class="sm">delegate: outcomes,</text><text x="588" y="138" class="sm">autonomy, sponsorship</text>
+  <text x="400" y="168" class="bd">Mentoring conversation (GROW)</text>
+  <rect x="400" y="178" width="350" height="132" rx="5" class="b"/><text x="408" y="198" class="sm"><tspan class="bd">Goal</tspan> what do you want to achieve?</text><text x="408" y="216" class="sm"><tspan class="bd">Reality</tspan> where are you now? what have you tried?</text><text x="408" y="234" class="sm"><tspan class="bd">Options</tspan> what could you do? what else?</text><text x="408" y="252" class="sm"><tspan class="bd">Will</tspan> what will you do, by when, how can I help?</text><text x="408" y="276" class="sm">Feedback: situation, behaviour, impact, next step (SBI).</text><text x="408" y="294" class="sm">Regular 1:1s, growth plans, stretch goals, safe failure.</text>
+</svg></div>
+<figcaption><b>Shift.</b> From “how fast can I deliver” to “how well can the team deliver without me”.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Tech lead responsibilities:</b> shape the technical approach and architecture with the team, ensure delivery against commitments, own quality and non-functional requirements, coordinate with product, QA, design and other teams, represent the team to stakeholders, and develop engineers. Distinguish from engineering manager (people management, hiring, performance reviews, budgets) and architect (broad design across systems).</li>
+<li><b>Mentoring practices:</b> understand goals and strengths; pair on real tasks; give stretch assignments with safety nets; ask guiding questions (“what have you considered?”) before giving answers; give frequent, specific feedback; encourage reading, talks and ownership; track progress; celebrate growth; adapt style to the person (situational leadership).</li>
+<li><b>Feedback:</b> timely, specific, behavioural, and about impact (SBI model), balancing positive and developmental; private for criticism, public for praise; ask for the other person’s view; follow up; receive feedback yourself gracefully and ask for it regularly.</li>
+<li><b>Delegation:</b> match tasks to growth areas and strengths, define outcomes and constraints not methods, agree on check-ins, provide context and authority, accept different approaches, and stay accountable. Delegate meaningful work, not only chores; resist the urge to take back tasks.</li>
+<li><b>Setting direction and standards:</b> a clear technical vision and principles; coding and testing standards enforced by tools; decision records; architecture reviews; a roadmap for technical improvements aligned with product goals; involve the team to build ownership.</li>
+<li><b>Decision-making:</b> gather input, state options and trade-offs, decide who decides (consult, then decide; consensus is not always needed), set a deadline, commit and communicate the rationale; disagree and commit; revisit when facts change. Avoid design by committee and avoid unilateral surprises.</li>
+<li><b>Influence without authority:</b> build credibility through competence and reliability, listen first, use data, prototypes and small wins, find allies, frame proposals around others’ goals, write clear proposals (RFCs), and give credit.</li>
+<li><b>Conflict resolution:</b> address early and privately, focus on interests and facts not personalities, find shared goals, use structured discussion (each side explains the other’s view), involve a neutral party if needed, and agree on next steps; distinguish healthy debate from toxic behaviour and act on the latter.</li>
+<li><b>Balancing coding and leading:</b> protect focus time, pick work that is not on the critical path (or pair), avoid becoming the bottleneck, delegate reviews, and automate coordination; accept that your output is the team’s outcomes.</li>
+<li><b>Team culture:</b> psychological safety (people can raise issues and admit mistakes), blameless learning, clear working agreements, inclusion and diverse perspectives, sustainable pace, recognition, and shared ownership of quality.</li>
+<li><b>Handling underperformance:</b> clarify expectations, gather facts, give direct feedback early, find root causes (skills, clarity, motivation, personal issues), agree on a support plan with measurable goals and timeline, involve the manager, and document; fairness and respect throughout.</li>
+<li><b>Managing up and across:</b> proactively share status and risks, bring options not just problems, align with product and business goals, negotiate scope, and build relationships with other leads.</li>
+<li><b>Onboarding and growing the team:</b> buddies, starter tasks, clear docs, early wins; career ladders and growth plans; opportunities to lead (running a design review, owning a module).</li>
+<li><b>Remote and distributed leadership:</b> over-communicate, document decisions, hold regular one-to-ones, schedule intentional social time, and respect time zones.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Staying the “best coder” who bottlenecks every decision and review.</li>
+<li>Micromanaging, or delegating without context and support.</li>
+<li>Avoiding hard conversations until problems escalate.</li>
+<li>Pursuing consensus on everything so decisions stall.</li>
+<li>Taking credit for team work or blaming the team for failures.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you mentor a struggling junior?</dt><dd>Clarify expectations, pair on real tasks, break work into small wins, give frequent specific feedback, and adjust support to their progress.</dd>
+<dt>How do you handle a strong engineer who resists a team decision?</dt><dd>Listen to concerns, test them against data, clarify the decision and why, ask for disagree-and-commit, and keep the dialogue open.</dd>
+<dt>What is your leadership style?</dt><dd>Servant and situational: clear direction, high trust, support tailored to each person, accountability for outcomes.</dd>
+<dt>How do you prioritise your own time as a lead?</dt><dd>Protect the work that multiplies others (unblocking, reviews, design, mentoring), delegate delivery tasks, and keep a small amount of coding to stay credible.</dd>
+</dl></div>
+</section>
+
+<!-- ============ G7 ============ -->
+<section class="q" id="g7">
+<header class="qh">
+  <div class="qrow"><span class="qid">G7</span><span class="tag added">Added</span></div>
+  <h2>Hiring, feedback and team building</h2>
+  <p class="qtext">“How do you hire engineers and run interviews? How do you give performance feedback and run one-to-ones? How do you build a high-performing, inclusive team and manage motivation, workload and remote collaboration?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Good hiring starts with a clear definition of the role and a structured, consistent process: defined competencies, standard questions and scoring rubrics, practical and relevant exercises, multiple trained interviewers and calibrated debriefs, which reduces bias and improves signal. I look for fundamentals, learning ability, collaboration and ownership, not trivia. For ongoing performance I hold regular one-to-ones, give continuous specific feedback, set clear expectations and growth goals, and avoid surprises at review time. A high-performing team has psychological safety, clear goals, diversity of perspective, healthy debate, sustainable workload and shared ownership; I build it through working agreements, rituals, recognition and by removing obstacles.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a structured hiring pipeline from role definition through sourcing, screening, interviews, debrief and offer with a rubric. Right: team health dimensions and a one-to-one agenda.">
+  <text x="10" y="18" class="bd">Structured hiring pipeline</text>
+  <rect x="10" y="30" width="110" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">Define role</text><text x="18" y="66" class="sm">competencies, level</text>
+  <rect x="130" y="30" width="110" height="46" rx="5" class="b"/><text x="138" y="50" class="bd">Source</text><text x="138" y="66" class="sm">inclusive reach</text>
+  <rect x="250" y="30" width="120" height="46" rx="5" class="h"/><text x="258" y="50" class="bd">Screen</text><text x="258" y="66" class="sm">same questions</text>
+  <path class="a" d="M120 53H128"/><path class="a" d="M240 53H248"/>
+  <rect x="10" y="90" width="110" height="46" rx="5" class="h"/><text x="18" y="110" class="bd">Interviews</text><text x="18" y="126" class="sm">tech and design</text>
+  <rect x="130" y="90" width="110" height="46" rx="5" class="w"/><text x="138" y="110" class="bd">Debrief</text><text x="138" y="126" class="sm">rubric, evidence</text>
+  <rect x="250" y="90" width="120" height="46" rx="5" class="g"/><text x="258" y="110" class="bd">Offer + onboard</text><text x="258" y="126" class="sm">30-60-90 plan</text>
+  <path class="a" d="M310 76V88"/><path class="a" d="M120 113H128"/><path class="a" d="M240 113H248"/>
+  <rect x="10" y="150" width="360" height="160" rx="5" class="b"/><text x="18" y="170" class="bd">Interview design</text><text x="18" y="188" class="sm">assess: fundamentals, problem solving, design thinking, code</text><text x="18" y="204" class="sm">quality, communication, ownership, learning ability, collaboration</text><text x="18" y="222" class="sm">methods: structured behavioural questions (STAR), system design</text><text x="18" y="238" class="sm">discussion, code review exercise, pair session, take-home only if</text><text x="18" y="254" class="sm">short and paid/optional; avoid trivia and gotchas</text><text x="18" y="274" class="sm">bias controls: independent written feedback before debrief, same</text><text x="18" y="290" class="sm">rubric for all, diverse panels, candidate experience matters</text>
+  <text x="400" y="18" class="bd">Team health dimensions</text>
+  <rect x="400" y="30" width="170" height="52" rx="5" class="g"/><text x="408" y="48" class="bd">Psychological safety</text><text x="408" y="66" class="sm">speak up, fail safely</text>
+  <rect x="580" y="30" width="170" height="52" rx="5" class="g"/><text x="588" y="48" class="bd">Clarity</text><text x="588" y="66" class="sm">goals, roles, priorities</text>
+  <rect x="400" y="88" width="170" height="52" rx="5" class="h"/><text x="408" y="106" class="bd">Dependability</text><text x="408" y="124" class="sm">commitments honoured</text>
+  <rect x="580" y="88" width="170" height="52" rx="5" class="h"/><text x="588" y="106" class="bd">Meaning and impact</text><text x="588" y="124" class="sm">work matters</text>
+  <rect x="400" y="146" width="350" height="164" rx="5" class="w"/><text x="408" y="166" class="bd">One-to-one agenda (30 to 45 min, weekly or biweekly)</text><text x="408" y="186" class="sm">their topics first: blockers, wellbeing, workload</text><text x="408" y="204" class="sm">feedback both ways: recent work, what to continue or change</text><text x="408" y="222" class="sm">growth: goals, skills, next stretch, career path</text><text x="408" y="240" class="sm">team and context: priorities, decisions, concerns</text><text x="408" y="258" class="sm">actions: owners and dates; notes kept privately</text><text x="408" y="282" class="sm">The one-to-one belongs to the report; cancel rarely.</text><text x="408" y="298" class="sm">Skip-level conversations build trust and visibility.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Consistency and structure improve fairness and signal, in hiring and in how you support people day to day.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Defining the role:</b> level expectations (scope, autonomy, impact), must-have versus nice-to-have skills, a rubric aligned to a competency ladder, and a clear job description free of bias and unnecessary requirements.</li>
+<li><b>Interview formats:</b> structured behavioural (past situations with STAR), technical discussions (explain trade-offs in your own project), system or frontend design, code review of a sample PR, pair programming on a realistic task, practical exercises relevant to the job; avoid whiteboard puzzles and brain-teasers with weak validity. Keep exercises time-boxed and respectful of candidates’ time.</li>
+<li><b>Evaluating candidates:</b> use a scorecard with anchored levels per competency, record evidence (what was said or done) rather than impressions, avoid halo and similarity bias, calibrate across interviewers, hold debriefs where everyone presents evidence before discussing, and give the final decision to a hiring manager with input. Check references appropriately.</li>
+<li><b>Candidate experience:</b> clear communication of process and timelines, prompt feedback, interviewers prepared, space for candidate questions, and respectful rejection with feedback where possible; hiring reflects on the employer brand.</li>
+<li><b>Onboarding:</b> a 30-60-90 day plan, a buddy, environment setup in a day, early small win, documented architecture and norms, introductions, and regular check-ins; the first weeks determine retention.</li>
+<li><b>Performance management:</b> clear expectations and leveling, ongoing feedback, regular one-to-ones, documented goals (OKRs or similar), mid-year and annual reviews with no surprises, evidence-based assessments (impact, not hours), calibration for fairness; distinguish performance, potential and fit; give actionable development advice.</li>
+<li><b>Growth and career paths:</b> engineering ladders (IC and management tracks), growth plans with skills to develop, stretch projects, sponsorship for promotions, training budgets, conference talks and internal teaching, and conversations about aspirations.</li>
+<li><b>Motivation:</b> autonomy, mastery, purpose; connect work to user and business impact, give ownership, recognise contributions meaningfully, remove demotivators (unclear priorities, constant context switching, bureaucracy), and address burnout early.</li>
+<li><b>Workload and wellbeing:</b> sustainable pace, protect focus time, limit work in progress, fair on-call rotations, respect time off, notice signals (withdrawal, irritability), and have supportive conversations with escalation to HR where appropriate.</li>
+<li><b>Diversity, equity and inclusion:</b> diverse sourcing, inclusive language, structured processes to reduce bias, accessible interview formats, inclusive meeting practices (everyone speaks, written input), mentorship and sponsorship for underrepresented groups, and psychologically safe culture.</li>
+<li><b>Team formation and dynamics:</b> forming-storming-norming-performing model, working agreements (meeting norms, communication, review SLAs), shared goals, healthy debate, celebrate wins, post-mortems without blame, and regular team health checks.</li>
+<li><b>Remote and hybrid:</b> asynchronous-first communication, written decisions, overlap hours, intentional social rituals, equal visibility for remote members, good documentation, and clear boundaries.</li>
+<li><b>Dealing with turnover and attrition:</b> exit interviews, stay conversations, knowledge transfer plans, succession and cross-training, and learning from patterns.</li>
+<li><b>Legal and ethical points:</b> respect confidentiality and employment law, avoid discriminatory questions, document performance matters properly, and escalate sensitive issues to HR.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Unstructured interviews that reward charisma and similarity.</li>
+<li>Hiring for “culture fit” as sameness rather than values and contribution.</li>
+<li>Annual review surprises because feedback was never given earlier.</li>
+<li>Cancelling one-to-ones repeatedly or using them only for status updates.</li>
+<li>Ignoring early signs of burnout or exclusion.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you assess a senior candidate’s level?</dt><dd>Probe scope of past decisions, trade-off reasoning, mentoring and influence, handling ambiguity, and quality of design thinking, using evidence-based rubrics.</dd>
+<dt>What do you do when the team disagrees on a hire?</dt><dd>Review the evidence against the rubric, identify missing signals, possibly add a focused interview, and decide with the hiring manager, documenting reasons.</dd>
+<dt>How do you give difficult feedback?</dt><dd>Promptly and privately, describing specific behaviour and its impact, asking for their perspective, and agreeing on concrete next steps and support.</dd>
+<dt>How do you keep a team motivated through a long project?</dt><dd>Clarify purpose, deliver visible milestones, rotate interesting work, recognise contributions, control workload and celebrate progress.</dd>
+</dl></div>
+</section>
+
+<!-- ============ G8 ============ -->
+<section class="q" id="g8">
+<header class="qh">
+  <div class="qrow"><span class="qid">G8</span><span class="tag added">Added</span></div>
+  <h2>Client-facing engineering and consulting</h2>
+  <p class="qtext">“How do you work with clients and stakeholders as a lead in a consultancy? Requirements gathering, managing expectations and scope, communicating risk, estimating and presenting solutions, handling difficult stakeholders, and delivering across distributed teams.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“In a client-facing role I act as a trusted advisor as well as a technical lead. I start by understanding the client’s business goals and constraints, not just the feature list, clarify requirements through questions and examples, and propose options with trade-offs, costs and risks in business terms. I set expectations early on scope, timelines and responsibilities, give regular, honest status updates with risks and mitigation, and raise problems quickly with options instead of excuses. I manage scope through a clear change process, document decisions, and build relationships so difficult conversations happen from a base of trust. I translate between the client’s stakeholders and my engineers, protecting the team while delivering value.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: an engagement lifecycle from discovery through proposal, delivery and handover with the communication artefacts at each stage. Right: the stakeholder map by influence and interest and risk communication format.">
+  <text x="10" y="18" class="bd">Engagement lifecycle</text>
+  <rect x="10" y="30" width="80" height="50" rx="5" class="b"/><text x="16" y="50" class="bd">Discover</text><text x="16" y="66" class="sm">goals, users</text>
+  <rect x="98" y="30" width="80" height="50" rx="5" class="h"/><text x="104" y="50" class="bd">Propose</text><text x="104" y="66" class="sm">options, plan</text>
+  <rect x="186" y="30" width="90" height="50" rx="5" class="w"/><text x="192" y="50" class="bd">Deliver</text><text x="192" y="66" class="sm">iterate, demo</text>
+  <rect x="284" y="30" width="86" height="50" rx="5" class="g"/><text x="290" y="50" class="bd">Handover</text><text x="290" y="66" class="sm">docs, support</text>
+  <path class="a" d="M90 55H96"/><path class="a" d="M178 55H184"/><path class="a" d="M276 55H282"/>
+  <rect x="10" y="96" width="360" height="214" rx="5" class="b"/><text x="18" y="116" class="bd">What to produce at each stage</text><text x="18" y="136" class="sm"><tspan class="bd">Discover</tspan> goals and success metrics, stakeholders, constraints,</text><text x="28" y="152" class="sm">assumptions and risks, current-state findings</text><text x="18" y="172" class="sm"><tspan class="bd">Propose</tspan> options with trade-offs and estimates (ranges),</text><text x="28" y="188" class="sm">architecture sketch, team and timeline, change process</text><text x="18" y="208" class="sm"><tspan class="bd">Deliver</tspan> demos each iteration, status report, RAID log</text><text x="28" y="224" class="sm">(risks, assumptions, issues, dependencies), decisions log</text><text x="18" y="244" class="sm"><tspan class="bd">Handover</tspan> documentation, runbooks, training, support plan,</text><text x="28" y="260" class="sm">lessons learned, next-step recommendations</text><text x="18" y="284" class="sm">Always: written follow-ups after calls; single source of truth.</text>
+  <text x="400" y="18" class="bd">Stakeholder map</text>
+  <rect x="400" y="30" width="170" height="70" rx="5" class="g"/><text x="408" y="48" class="bd">High power, high interest</text><text x="408" y="66" class="sm">manage closely: frequent</text><text x="408" y="80" class="sm">updates, early involvement</text>
+  <rect x="580" y="30" width="170" height="70" rx="5" class="h"/><text x="588" y="48" class="bd">High power, low interest</text><text x="588" y="66" class="sm">keep satisfied: brief,</text><text x="588" y="80" class="sm">well-timed summaries</text>
+  <rect x="400" y="106" width="170" height="70" rx="5" class="w"/><text x="408" y="124" class="bd">Low power, high interest</text><text x="408" y="142" class="sm">keep informed: end users,</text><text x="408" y="156" class="sm">teams; use as feedback</text>
+  <rect x="580" y="106" width="170" height="70" rx="5" class="b"/><text x="588" y="124" class="bd">Low power, low interest</text><text x="588" y="142" class="sm">monitor</text>
+  <rect x="400" y="190" width="350" height="120" rx="5" class="x"/><text x="408" y="210" class="bd">Communicating risk (SBAR-style)</text><text x="408" y="228" class="sm"><tspan class="bd">Situation</tspan> what is happening, impact, date</text><text x="408" y="244" class="sm"><tspan class="bd">Background</tspan> how we got here, facts</text><text x="408" y="260" class="sm"><tspan class="bd">Assessment</tspan> likelihood, severity, confidence</text><text x="408" y="276" class="sm"><tspan class="bd">Recommendation</tspan> options with cost/benefit; decision needed</text><text x="408" y="296" class="sm">No surprises: bad news early, with a plan.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Be the person the client trusts to tell them the truth early and to bring solutions with the problem.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Understanding the client:</b> business model, goals and KPIs, users, competitors, constraints (budget, timeline, regulation, legacy), decision makers and politics. Ask “what outcome would make this a success?” and “what happens if we do nothing?” to get beyond requested features.</li>
+<li><b>Requirements gathering:</b> workshops, user interviews, event storming, user story mapping, prototypes and clickable mockups, examples and acceptance criteria, non-functional requirements (performance, security, accessibility, scale, browsers), explicit assumptions and out-of-scope lists; confirm in writing and keep a living backlog.</li>
+<li><b>Managing scope and change:</b> a clear scope statement and change-request process; show the cost of changes in time, budget and risk; offer trade-offs (swap, defer, descope); distinguish fixed-price versus time-and-materials dynamics; keep a decision log so agreements are traceable and avoid blame later.</li>
+<li><b>Estimating and proposing:</b> give ranges with assumptions and confidence; separate discovery from build when uncertainty is high; propose phased delivery (MVP first); provide options (good/better/best) with consequences; avoid committing to unrealistic dates under pressure; explain what drives the estimate.</li>
+<li><b>Presenting to non-technical stakeholders:</b> start with the outcome and decision needed, use plain language and analogies, visuals over jargon, concrete examples and demos, and quantify business impact; prepare for “why” and “what if” questions; avoid overwhelming detail.</li>
+<li><b>Status reporting and transparency:</b> regular cadence (weekly report, sprint demos), traffic-light status with explanations, progress against milestones, risks and mitigations, upcoming decisions, burn-up charts; consistency builds trust; never hide problems.</li>
+<li><b>Handling difficult stakeholders:</b> understand motivations and pressures, listen and acknowledge concerns, stay factual and calm, set boundaries respectfully, document agreements, align through shared goals, involve sponsors when needed, and separate the person from the issue.</li>
+<li><b>Managing expectations and pushback:</b> say no with reasons and alternatives; explain technical constraints in terms of cost, risk and time; offer prototypes to resolve disagreements; use data from analytics, performance reports and tests to support recommendations.</li>
+<li><b>Working with product owners, designers and QA:</b> shared backlog and definition of done, early design collaboration (feasibility checks), integrated QA, clear API contracts with backend teams, and regular cross-functional ceremonies.</li>
+<li><b>Distributed teams and time zones:</b> overlap hours, async updates, clear ownership, written specs, recorded demos, shared dashboards, cultural awareness and respectful communication, and consistent tooling.</li>
+<li><b>Technical advisory role:</b> challenge requirements constructively, recommend simpler solutions, highlight risks (security, accessibility, performance, vendor lock-in), advocate for quality and maintainability, and propose roadmaps beyond the immediate scope; opportunities for the account growth emerge from trusted advice.</li>
+<li><b>Risk and issue management:</b> maintain a RAID log, assess likelihood and impact, define mitigations and owners, escalate within agreed thresholds, and review regularly; communicate with options and recommendations.</li>
+<li><b>Contracts and governance basics:</b> awareness of SLAs, acceptance criteria, warranty, intellectual property, data protection, security obligations and compliance requirements; involve legal and account management as needed.</li>
+<li><b>Handover and relationship:</b> knowledge transfer, documentation, training, support period, retrospective with the client, and feedback loops; strong delivery leads to repeat work and referrals.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying yes to every request to please the client, then missing commitments.</li>
+<li>Reporting everything as green until the last moment.</li>
+<li>Explaining in technical jargon instead of business outcomes and options.</li>
+<li>Taking requirements at face value without understanding the underlying goal.</li>
+<li>Agreeing to scope changes verbally with no record of impact and approval.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>A client asks for a feature that is a bad idea. What do you do?</dt><dd>Understand the underlying goal, explain the risks and costs with evidence, propose better alternatives or a prototype, and let them make an informed decision, documenting it.</dd>
+<dt>How do you handle a deadline you believe is unrealistic?</dt><dd>Show the breakdown and risks, offer options (reduced scope, phased delivery, extra capacity), and agree on a plan before committing.</dd>
+<dt>How do you build trust with a new client?</dt><dd>Deliver early, visible value, be transparent about risks, communicate regularly, follow through on commitments, and show curiosity about their business.</dd>
+<dt>How do you align engineers with client priorities without burning them out?</dt><dd>Share context and goals, shield the team from noise, negotiate realistic commitments, and watch workload and morale.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Generative AI</h1>
+
+<!-- ============ G9 ============ -->
+<section class="q" id="g9">
+<header class="qh">
+  <div class="qrow"><span class="qid">G9</span><span class="tag added">Added</span></div>
+  <h2>How LLMs work: concepts for engineers</h2>
+  <p class="qtext">“How do large language models work at a conceptual level? What are tokens, context windows, embeddings, temperature, fine-tuning and hallucination? What can and can’t they do, and how do you prompt them effectively?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A large language model is a neural network, usually a transformer, trained on huge amounts of text to predict the next token. At inference it reads the prompt as tokens, produces a probability distribution for the next token, samples one, and repeats, which is why output is fluent but not guaranteed true. It has a limited context window, a maximum number of tokens for prompt plus response, and no memory beyond what I put in the context. Temperature controls randomness. Models can reason in-context, follow instructions and use tools, but they hallucinate plausible falsehoods, can be manipulated by prompt injection, and are non-deterministic, so I treat them as powerful but fallible components that need grounding, validation and evaluation.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: the generation loop: text to tokens, to the model, to next-token probabilities, sampling, append and repeat. Right: levers: prompting, retrieval augmentation, fine-tuning, and their trade-offs.">
+  <text x="10" y="18" class="bd">Next-token generation loop</text>
+  <rect x="10" y="30" width="100" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">Prompt</text><text x="18" y="66" class="sm">text → tokens</text>
+  <rect x="125" y="30" width="110" height="46" rx="5" class="h"/><text x="133" y="50" class="bd">Transformer</text><text x="133" y="66" class="sm">attention layers</text>
+  <rect x="250" y="30" width="120" height="46" rx="5" class="w"/><text x="258" y="50" class="bd">Probabilities</text><text x="258" y="66" class="sm">over the vocabulary</text>
+  <path class="a" d="M110 53H123"/><path class="a" d="M235 53H248"/>
+  <rect x="250" y="90" width="120" height="40" rx="5" class="g"/><text x="258" y="108" class="bd">Sample</text><text x="258" y="122" class="sm">temperature, top-p</text>
+  <path class="a" d="M310 76V88"/>
+  <rect x="10" y="90" width="230" height="40" rx="5" class="g"/><text x="18" y="108" class="bd">Append token, repeat</text><text x="18" y="122" class="sm">until stop token or length limit</text>
+  <path class="a" d="M250 110H242"/>
+  <rect x="10" y="144" width="360" height="166" rx="5" class="b"/><text x="18" y="164" class="bd">Key terms</text><text x="18" y="182" class="sm"><tspan class="bd">Token</tspan> sub-word piece (~4 characters of English); you pay per token</text><text x="18" y="198" class="sm"><tspan class="bd">Context window</tspan> max tokens: prompt + output</text><text x="18" y="214" class="sm"><tspan class="bd">Embedding</tspan> vector capturing meaning; similar texts are close</text><text x="18" y="230" class="sm"><tspan class="bd">Temperature</tspan> 0 = most likely token; higher = more varied</text><text x="18" y="246" class="sm"><tspan class="bd">System / user / assistant</tspan> roles in chat prompts</text><text x="18" y="262" class="sm"><tspan class="bd">Hallucination</tspan> confident output not grounded in fact</text><text x="18" y="278" class="sm"><tspan class="bd">Tool / function calling</tspan> model asks your code to act</text><text x="18" y="294" class="sm"><tspan class="bd">Multimodal</tspan> text, images, audio, video inputs</text>
+  <text x="400" y="18" class="bd">Ways to adapt a model</text>
+  <rect x="400" y="30" width="350" height="58" rx="5" class="g"/><text x="408" y="48" class="bd">Prompting (cheapest, first)</text><text x="408" y="66" class="sm">clear instructions, examples (few-shot), format and constraints,</text><text x="408" y="82" class="sm">step-by-step reasoning; iterate with evaluations</text>
+  <rect x="400" y="94" width="350" height="58" rx="5" class="h"/><text x="408" y="112" class="bd">Retrieval-augmented generation (RAG)</text><text x="408" y="130" class="sm">fetch relevant documents and put them in the prompt: fresh,</text><text x="408" y="146" class="sm">private, citable knowledge without retraining</text>
+  <rect x="400" y="158" width="350" height="58" rx="5" class="w"/><text x="408" y="176" class="bd">Fine-tuning</text><text x="408" y="194" class="sm">adjust weights on examples for style, format or domain behaviour;</text><text x="408" y="210" class="sm">costly, not for adding facts; needs good data and evals</text>
+  <rect x="400" y="222" width="350" height="88" rx="5" class="x"/><text x="408" y="242" class="bd">Limits to remember</text><text x="408" y="260" class="sm">hallucination · outdated knowledge · non-determinism · context</text><text x="408" y="276" class="sm">limits and cost · weak at exact arithmetic and long-range</text><text x="408" y="292" class="sm">consistency · prompt injection · bias · opaque reasoning</text>
+</svg></div>
+<figcaption><b>Mental model.</b> A probabilistic text engine with in-context learning. Ground it, constrain it, and verify its outputs.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Architecture in one paragraph:</b> transformers use self-attention to weigh relationships between all tokens in the context, stacked in many layers, with parameters learned during pre-training on large corpora (next-token prediction), then refined with supervised fine-tuning and reinforcement learning from human or AI feedback to follow instructions and be safe. “Reasoning” models spend extra inference tokens on intermediate thinking.</li>
+<li><b>Tokenisation and cost:</b> text is split into tokens by a learned vocabulary (BPE); pricing and limits are token-based; languages and code tokenise differently; long prompts cost more and are slower; count tokens with the provider’s tokenizer. Input and output tokens are priced differently.</li>
+<li><b>Context windows:</b> hold system prompt, conversation history, retrieved documents, tool outputs and the response. Larger windows allow more material but cost more, add latency and can dilute attention (“lost in the middle”). Techniques: summarise history, retrieve selectively, cache stable prefixes (prompt caching).</li>
+<li><b>Sampling parameters:</b> temperature (randomness), top-p/top-k (restrict candidates), max tokens, stop sequences; use low temperature for extraction and code, higher for creative tasks; even at zero temperature outputs may vary slightly across runs and versions.</li>
+<li><b>Prompting techniques:</b> clear role and task, relevant context, explicit output format (JSON schema, structured outputs), few-shot examples, step-by-step reasoning requests (chain of thought) for complex tasks, delimiting untrusted content, positive instructions, and iterative refinement. Keep prompts versioned and tested like code.</li>
+<li><b>Structured outputs and tools:</b> constrain output to a JSON schema; function/tool calling lets the model request actions that your code executes and returns results (search, database queries, calculators); the model never runs code by itself; validate every tool argument server-side.</li>
+<li><b>Embeddings and vector search:</b> embedding models map text (or images) to vectors; cosine similarity finds semantically related content; vector databases (pgvector, Pinecone, Weaviate, Qdrant) index them; used for search, RAG, clustering and recommendations.</li>
+<li><b>Hallucination and grounding:</b> models generate plausible text, not verified facts; mitigate with retrieval and citations, constrained outputs, verification steps (second pass or rules), refusing when unsure, human review for high-stakes use, and evaluating factuality on test sets.</li>
+<li><b>Non-determinism and evaluation:</b> create evaluation sets of representative inputs with expected properties; use automated checks, LLM-as-judge (with care), human review, and regression runs when changing prompts or models (G11).</li>
+<li><b>Model landscape:</b> frontier hosted models (Anthropic Claude, OpenAI GPT, Google Gemini), open-weight models (Llama, Mistral, Qwen) runnable on your infrastructure, small models for edge or cost; choose by quality, latency, cost, privacy, licence and tool support <span class="verify">verify current models</span>. Abstract providers behind an interface to avoid lock-in.</li>
+<li><b>Capabilities and weaknesses:</b> strong at summarisation, drafting, translation, classification, extraction, code generation and explanation, question answering over provided text; weak at guaranteed accuracy, precise calculations, real-time knowledge, long-horizon planning without tools, and consistent adherence to complex constraints.</li>
+<li><b>Security and privacy basics:</b> prompt injection (instructions hidden in user content or retrieved documents), data leakage via prompts and logs, model inversion concerns, jailbreaks; do not send secrets or personal data to third-party models without agreements and controls (G11, G12).</li>
+<li><b>Terminology you will hear:</b> agents (LLM + tools + loop), MCP (Model Context Protocol for tool and data connectors), RAG, fine-tuning, LoRA, distillation, quantisation, guardrails, alignment, multimodal, synthetic data, evals <span class="verify">verify definitions in current docs</span>.</li>
+<li><b>Interview framing:</b> show pragmatic understanding: what LLMs are good for, how to ground and evaluate them, and the engineering around them (cost, latency, safety), not research-level mathematics.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Treating LLM output as authoritative or deterministic.</li>
+<li>Believing fine-tuning is the way to add new facts; retrieval is usually better for knowledge.</li>
+<li>Ignoring token costs and latency when designing prompts and context.</li>
+<li>Assuming a larger context window removes the need for retrieval and curation.</li>
+<li>Sending sensitive data to external APIs without policy and controls.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why do LLMs hallucinate?</dt><dd>They are trained to produce likely continuations, not to verify truth; without grounding they can generate fluent but false statements.</dd>
+<dt>RAG or fine-tuning?</dt><dd>RAG for fresh, private or citable knowledge; fine-tuning for consistent style, format or specialised behaviour; often start with prompting and RAG.</dd>
+<dt>What does temperature do?</dt><dd>It scales the randomness of token sampling: low values are more deterministic, high values more varied.</dd>
+<dt>What is an embedding?</dt><dd>A numeric vector representing meaning, enabling similarity search.</dd>
+</dl></div>
+</section>
+
+<!-- ============ G10 ============ -->
+<section class="q" id="g10">
+<header class="qh">
+  <div class="qrow"><span class="qid">G10</span><span class="tag added">Added</span></div>
+  <h2>AI-assisted development</h2>
+  <p class="qtext">“How do you use AI coding assistants effectively and safely? Where do they help, where do they hurt? How do you review AI-generated code, protect IP and security, and set team policy? What changes for a lead?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“AI assistants such as GitHub Copilot, Cursor and Claude Code speed up boilerplate, tests, refactors, documentation, exploration of unfamiliar code and first drafts, and they can act as agents that plan and edit across a codebase. I treat them as a fast but fallible junior pair: I give clear context and constraints, work in small steps, run the tests, and review every change as if a stranger wrote it, because they can produce subtle bugs, insecure code, outdated APIs and confident nonsense. The engineer remains accountable. As a lead I set team guidelines: approved tools and data policies, no secrets or customer data in prompts, review standards for generated code, licence awareness, and training so the team builds judgement rather than dependence.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a workflow loop for AI-assisted development: define the task and context, generate a small change, run tests, review the diff, iterate. Right: where AI helps most and the risks with mitigations.">
+  <text x="10" y="18" class="bd">A safe working loop</text>
+  <rect x="10" y="30" width="170" height="44" rx="5" class="b"/><text x="18" y="48" class="bd">1 Frame the task</text><text x="18" y="64" class="sm">goal, constraints, files</text>
+  <rect x="200" y="30" width="170" height="44" rx="5" class="h"/><text x="208" y="48" class="bd">2 Generate small step</text><text x="208" y="64" class="sm">plan first, then edit</text>
+  <path class="a" d="M180 52H198"/>
+  <rect x="10" y="90" width="170" height="44" rx="5" class="w"/><text x="18" y="108" class="bd">4 Review the diff</text><text x="18" y="124" class="sm">logic, security, style</text>
+  <rect x="200" y="90" width="170" height="44" rx="5" class="g"/><text x="208" y="108" class="bd">3 Run tests, lint</text><text x="208" y="124" class="sm">types, build, e2e</text>
+  <path class="a" d="M285 74V88"/><path class="a" d="M200 112H182"/>
+  <path class="a" d="M95 134V148H285V76" style="stroke-dasharray:4 3"/>
+  <text x="10" y="176" class="sm">Iterate in small commits; keep a human decision at every merge.</text>
+  <rect x="10" y="190" width="360" height="120" rx="5" class="b"/><text x="18" y="210" class="bd">Giving good context</text><text x="18" y="228" class="sm">project rules file (CLAUDE.md, .cursorrules): conventions,</text><text x="18" y="244" class="sm">commands, architecture, do and don’t · relevant files and types ·</text><text x="18" y="260" class="sm">acceptance criteria and examples · ask for a plan before edits ·</text><text x="18" y="276" class="sm">ask it to write tests first · tell it what NOT to change · verify</text><text x="18" y="292" class="sm">against docs for current APIs</text>
+  <text x="400" y="18" class="bd">Where it helps</text>
+  <rect x="400" y="30" width="350" height="86" rx="5" class="g"/><text x="408" y="50" class="sm">boilerplate, scaffolding, repetitive transforms, codemods</text><text x="408" y="68" class="sm">unit and integration test drafts, test data, edge-case ideas</text><text x="408" y="86" class="sm">explaining unfamiliar code, summarising PRs, drafting docs</text><text x="408" y="104" class="sm">refactoring with tests, migrations, debugging hypotheses</text>
+  <text x="400" y="138" class="bd">Risks and mitigations</text>
+  <rect x="400" y="148" width="350" height="162" rx="5" class="x"/><text x="408" y="168" class="sm"><tspan class="bd">wrong or subtle bugs</tspan> tests, review, small steps</text><text x="408" y="186" class="sm"><tspan class="bd">insecure code</tspan> SAST, security review, no secrets in prompts</text><text x="408" y="204" class="sm"><tspan class="bd">outdated or invented APIs</tspan> check docs, types, compile</text><text x="408" y="222" class="sm"><tspan class="bd">licence and IP</tspan> approved tools, enterprise terms, scanners</text><text x="408" y="240" class="sm"><tspan class="bd">over-trust, skill atrophy</tspan> keep reasoning, pair, teach</text><text x="408" y="258" class="sm"><tspan class="bd">inconsistent style or design</tspan> rules files, lint, review</text><text x="408" y="276" class="sm"><tspan class="bd">prompt injection via files</tspan> sandbox agents, least privilege</text><text x="408" y="294" class="sm"><tspan class="bd">data leakage</tspan> policy, redaction, local or private models</text>
+</svg></div>
+<figcaption><b>Stance.</b> Use AI to go faster on well-specified work; keep the judgement, accountability and verification human.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Tool categories:</b> inline completion (Copilot), chat and edit in the IDE (Cursor, Copilot Chat, JetBrains AI), terminal or autonomous agents (Claude Code, Codex CLI, Aider), cloud agents that open PRs, AI code review bots, and test generation tools. Capabilities change quickly <span class="verify">verify current tools</span>.</li>
+<li><b>Effective prompting for code:</b> state the goal, constraints (framework, style, performance, accessibility), the relevant context (files, types, existing patterns), the expected output (diff only, tests included) and acceptance criteria; ask for alternatives and trade-offs; request explanations of non-obvious choices; iterate with feedback from failing tests.</li>
+<li><b>Agentic workflows:</b> the agent reads files, plans, edits, runs commands and tests, and iterates. Keep tasks scoped, require a plan before changes, use branches and checkpoints, restrict permissions (sandbox, no production credentials), review the diff, and run the full CI; do not let agents run unreviewed commands with destructive effects.</li>
+<li><b>Reviewing AI-generated code:</b> check it solves the right problem, matches architecture and conventions, handles edge cases and errors, has meaningful tests (not tautologies), avoids unnecessary complexity and dependencies, uses current APIs, and has no security issues (injection, secrets, insecure defaults). Generated code that “looks right” is the riskiest.</li>
+<li><b>Testing with AI:</b> generate test ideas and scaffolding, but ensure assertions verify behaviour; verify that tests fail when the code is wrong (mutation or deliberate breakage); do not let the same model write both code and the tests that bless it without review.</li>
+<li><b>Productivity evidence:</b> studies show faster completion for well-scoped tasks and mixed results on complex ones; perceived speed can exceed measured speed; benefits depend on task, experience and process. Measure outcomes (cycle time, defect rate, review load) rather than lines produced.</li>
+<li><b>Security and compliance policy:</b> approved tool list with enterprise agreements (no training on your code, data retention terms, SSO, audit logs); never paste secrets, credentials, customer data or proprietary code into unapproved services; secret scanning; licence checks for copied code (public code filters); regulated environments may require private deployments or open-weight models.</li>
+<li><b>Team guidelines to set:</b> where AI use is encouraged or restricted, disclosure in PRs when substantial AI generation is used (if policy requires), accountability stays with the author, review bar identical to human code, shared prompt and rules files in the repo, and sharing effective practices in guilds.</li>
+<li><b>Impact on skills and hiring:</b> juniors need to build fundamentals (debugging, reading code, design) rather than outsource thinking; leads should coach on verification skills and critical thinking; interviews may include working with AI tools or reviewing AI output.</li>
+<li><b>Maintainability concerns:</b> AI can produce large volumes of plausible but inconsistent code, increasing review burden and duplication; keep PRs small, enforce linters and architecture rules, and prefer the simplest solution.</li>
+<li><b>Non-code uses:</b> summarising meetings and incidents, drafting ADRs and documentation, generating release notes, analysing logs, brainstorming designs, learning new technologies, and writing SQL or regex with verification.</li>
+<li><b>Context engineering:</b> curate what the model sees: concise project docs, relevant files only, current dependency versions, and retrieval tools (code search, MCP servers for docs, issue trackers) to reduce hallucinated APIs.</li>
+<li><b>Ethics and attribution:</b> be transparent where required, respect licences, avoid using AI to bypass review or fabricate work, and consider the effect on team learning.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Accepting large generated changes without reading or running them.</li>
+<li>Pasting secrets or customer data into an unapproved tool.</li>
+<li>Letting the same assistant write both the implementation and the tests that “prove” it.</li>
+<li>Assuming AI always uses current library APIs.</li>
+<li>Measuring productivity by lines generated rather than outcomes.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you review a PR that is mostly AI-generated?</dt><dd>The same as any PR, but with extra scepticism: understand the logic, run and extend tests, check security and dependencies, and ask the author to explain the design.</dd>
+<dt>How would you roll out AI assistants to a team?</dt><dd>Pilot with volunteers, choose approved tools with data protections, publish guidelines, share good practices, track outcomes and adjust.</dd>
+<dt>What tasks would you not delegate to an AI agent?</dt><dd>Security-sensitive changes without expert review, architectural decisions, production operations, and anything touching secrets or irreversible actions.</dd>
+<dt>Does AI change what makes a good engineer?</dt><dd>It raises the value of problem framing, design, verification, communication and judgement, while routine code production gets cheaper.</dd>
+</dl></div>
+</section>
+
+<!-- ============ G11 ============ -->
+<section class="q" id="g11">
+<header class="qh">
+  <div class="qrow"><span class="qid">G11</span><span class="tag added">Added</span></div>
+  <h2>Building AI features into products</h2>
+  <p class="qtext">“How do you design and build an AI feature such as a chat assistant or semantic search? RAG architecture, streaming UI, tool use and agents, evaluation, guardrails, prompt injection, cost and latency, privacy and frontend patterns.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I treat an AI feature as a product capability with engineering around a model. For question answering over company data I use retrieval-augmented generation: chunk and embed documents into a vector index, retrieve the most relevant chunks for each question, put them in the prompt, and ask the model to answer with citations. The server calls the model API, never the browser with a secret key, streams tokens to the UI, enforces authorisation on what can be retrieved, and logs prompts and outputs with privacy controls. I define evaluation sets before shipping, add guardrails for input and output, defend against prompt injection by treating retrieved text as untrusted, manage cost with caching and smaller models for simple tasks, and design the UX for errors, uncertainty and human override.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: RAG pipeline with ingestion (chunk, embed, index) and query time (embed question, retrieve, build prompt, generate, cite). Right: system architecture with frontend streaming, backend orchestration, guardrails, evals and observability.">
+  <text x="10" y="18" class="bd">RAG pipeline</text>
+  <rect x="10" y="30" width="360" height="30" rx="4" class="b"/><text x="18" y="50" class="sm"><tspan class="bd">Ingest:</tspan> docs → chunk → embed → vector index + metadata</text>
+  <rect x="10" y="68" width="110" height="40" rx="4" class="h"/><text x="18" y="86" class="bd">1 Question</text><text x="18" y="100" class="sm">+ user identity</text>
+  <rect x="130" y="68" width="110" height="40" rx="4" class="h"/><text x="138" y="86" class="bd">2 Retrieve</text><text x="138" y="100" class="sm">top-k, filter by ACL</text>
+  <rect x="250" y="68" width="120" height="40" rx="4" class="w"/><text x="258" y="86" class="bd">3 Rerank</text><text x="258" y="100" class="sm">best chunks</text>
+  <path class="a" d="M120 88H128"/><path class="a" d="M240 88H248"/>
+  <rect x="10" y="118" width="170" height="40" rx="4" class="g"/><text x="18" y="136" class="bd">4 Build prompt</text><text x="18" y="150" class="sm">instructions + context</text>
+  <rect x="190" y="118" width="180" height="40" rx="4" class="g"/><text x="198" y="136" class="bd">5 Generate</text><text x="198" y="150" class="sm">stream, cite sources</text>
+  <path class="a" d="M310 108V116"/><path class="a" d="M180 138H188"/>
+  <rect x="10" y="172" width="360" height="148" rx="5" class="w"/><text x="18" y="192" class="bd">Quality levers</text><text x="18" y="210" class="sm">chunking by structure (headings), overlap, metadata · hybrid search</text><text x="18" y="226" class="sm">(keyword + vector) · reranking · query rewriting · tenant and</text><text x="18" y="242" class="sm">permission filters · “I don’t know” if nothing fits · citations to</text><text x="18" y="258" class="sm">open · re-index on change · measure retrieval and answer</text><text x="18" y="274" class="sm">faithfulness separately</text><text x="18" y="298" class="bd">Authorisation:</text><text x="18" y="314" class="sm">retrieve only what this user may see; do not rely on the model</text>
+  <text x="400" y="18" class="bd">Product architecture</text>
+  <rect x="400" y="30" width="350" height="40" rx="5" class="b"/><text x="408" y="48" class="bd">Frontend</text><text x="408" y="62" class="sm">chat UI, streaming tokens, stop, retry, feedback, citations</text>
+  <path class="a" d="M575 70V80"/>
+  <rect x="400" y="82" width="350" height="40" rx="5" class="h"/><text x="408" y="100" class="bd">Backend orchestration (your server)</text><text x="408" y="114" class="sm">auth, rate limits, prompt assembly, tools, caching, logging</text>
+  <path class="a" d="M475 122V132"/><path class="a" d="M675 122V132"/>
+  <rect x="400" y="134" width="170" height="40" rx="4" class="g"/><text x="408" y="152" class="bd">Guardrails</text><text x="408" y="166" class="sm">input/output checks</text>
+  <rect x="580" y="134" width="170" height="40" rx="4" class="g"/><text x="588" y="152" class="bd">Model API</text><text x="588" y="166" class="sm">provider abstraction</text>
+  <rect x="400" y="184" width="170" height="40" rx="4" class="w"/><text x="408" y="202" class="bd">Retrieval / tools</text><text x="408" y="216" class="sm">vector DB, APIs, search</text>
+  <rect x="580" y="184" width="170" height="40" rx="4" class="w"/><text x="588" y="202" class="bd">Observability</text><text x="588" y="216" class="sm">traces, cost, evals</text>
+  <rect x="400" y="234" width="350" height="76" rx="5" class="x"/><text x="408" y="254" class="bd">Streaming UI notes</text><text x="408" y="272" class="sm">SSE or fetch streams; render incrementally, handle partial</text><text x="408" y="288" class="sm">Markdown safely (sanitise), abort on navigation, keep scroll</text><text x="408" y="304" class="sm">stable, show tool progress, clear error and retry states</text>
+</svg></div>
+<figcaption><b>Principle.</b> Retrieval, authorisation, evaluation and guardrails are the engineering; the model is one component.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Use-case selection:</b> start with a clear user problem and a measurable outcome (time saved, deflection rate, conversion), choose tasks tolerant of imperfect output or with human review, and avoid AI where a deterministic solution is simpler, cheaper and more reliable.</li>
+<li><b>RAG design:</b> ingestion pipeline (parse PDFs, HTML and wikis; clean; chunk by structure with overlap; embed; store with metadata such as source, ACL, date), retrieval (vector search, hybrid with BM25, metadata filters, reranking models), prompt construction (instructions, retrieved context, question; cap tokens), generation with citations, and fallback when retrieval is weak. Vector stores: pgvector (simple, in Postgres), Pinecone, Qdrant, Weaviate, OpenSearch.</li>
+<li><b>Tool use and agents:</b> define tools with JSON schemas (search, get order, create ticket); the model proposes calls, your server validates and executes with the user’s permissions, returns results, and the loop continues; limit steps and scope, require confirmation for side effects, log every call; avoid giving the model broad credentials. MCP standardises tool/data connectors <span class="verify">verify</span>.</li>
+<li><b>Frontend patterns:</b> stream tokens via SSE or <code>fetch</code> streams (Vercel AI SDK, <code>ReadableStream</code>); append incrementally without re-rendering the entire transcript; sanitise rendered Markdown and links (XSS); show typing and tool-use states, citations and “stop generating”; handle aborts and retries; keep conversation state server-side or in a persisted store; accessibility (live regions, keyboard), and clear disclosure that content is AI generated.</li>
+<li><b>Structured output UI:</b> for forms and extraction use JSON schema outputs validated with Zod; render typed components (generative UI) from validated structures rather than raw model text.</li>
+<li><b>Evaluation:</b> build a golden dataset of real questions with expected answers or criteria; measure retrieval (recall@k), answer faithfulness (grounded in sources), relevance, safety and format validity; use automated metrics, LLM-as-judge with calibration, and human review; run evals in CI on prompt or model changes (regression), and monitor production quality with sampled reviews and user feedback (thumbs, edits).</li>
+<li><b>Guardrails:</b> input validation (length, topic, PII detection), output checks (schema, toxicity, policy, secrets, citations present), refusal behaviour, rate limits, content filters, allow-lists for tools, and human-in-the-loop for high-impact actions. Libraries and services exist (Guardrails, NeMo Guardrails, provider moderation APIs).</li>
+<li><b>Prompt injection and security:</b> untrusted text (user input, retrieved documents, web pages, emails) can contain instructions that hijack the model (direct and indirect injection). Mitigate: treat all external content as data, separate instructions from data, least-privilege tools, require confirmation for actions, output filtering, no secrets in prompts, isolate sessions per user, and test with red-team prompts. Prevent data exfiltration through rendered links or images. Follow OWASP Top 10 for LLM applications <span class="verify">verify current list</span>.</li>
+<li><b>Cost and latency management:</b> choose the smallest model that meets quality; route simple tasks to cheaper models; prompt caching for stable prefixes; cache answers for repeated queries; limit context size and output tokens; batch offline work; stream to improve perceived latency; set budgets and alerts per tenant; monitor tokens per request.</li>
+<li><b>Privacy and compliance:</b> data processing agreements, regional hosting, retention and no-training terms, PII redaction before sending, user consent and disclosure, deletion rights, audit logs, GDPR/AI Act considerations (risk classification, transparency obligations) <span class="verify">verify regulations</span>; private or open-weight models when data cannot leave your boundary.</li>
+<li><b>Reliability:</b> timeouts, retries with backoff, fallbacks to another model or cached response, graceful degradation to non-AI behaviour, circuit breakers, and handling provider rate limits and outages; abstract providers to switch.</li>
+<li><b>Observability:</b> trace each request (prompt version, model, tokens, latency, retrieved documents, tool calls, cost), log with PII controls, dashboards for quality signals and cost, and tools such as LangSmith, Langfuse, Helicone, or OpenTelemetry GenAI conventions.</li>
+<li><b>UX principles:</b> set expectations, show sources, allow correction and feedback, make AI output editable, avoid over-claiming, provide human escalation, and design for failure and uncertainty; measure task success, not just engagement.</li>
+<li><b>Semantic search and other patterns:</b> embeddings-based search, classification and tagging, summarisation, extraction to structured data, recommendations, code assistants inside products, and moderation; many are simpler than chat and offer better ROI.</li>
+<li><b>Team and process:</b> prompts as versioned artefacts with tests, collaboration with product and domain experts on evaluation data, staged rollout with feature flags and A/B tests, and incident playbooks for harmful outputs.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Calling the model API directly from the browser with a secret key.</li>
+<li>Relying on the model to enforce access control rather than filtering retrieval by permissions.</li>
+<li>Shipping without an evaluation set, so quality changes are invisible.</li>
+<li>Rendering model Markdown or links without sanitisation.</li>
+<li>Ignoring token cost, latency and failure modes until the bill or the outage arrives.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you reduce hallucinations in a support assistant?</dt><dd>Ground answers in retrieved, authoritative content with citations, instruct the model to say when it does not know, validate outputs, evaluate faithfulness, and provide human handoff.</dd>
+<dt>What is indirect prompt injection?</dt><dd>Malicious instructions hidden in content the model reads (a web page or document) that try to change its behaviour; defend by treating content as untrusted data and limiting tool powers.</dd>
+<dt>How do you stream a response in React?</dt><dd>Consume an SSE or fetch stream chunk by chunk, append to state efficiently (batched updates), support abort, and sanitise the rendered output.</dd>
+<dt>How do you evaluate a RAG system?</dt><dd>Separate retrieval metrics (did we fetch the right chunks) from generation metrics (is the answer faithful and helpful) on a labelled dataset, plus production feedback.</dd>
+</dl></div>
+</section>
+
+<!-- ============ G12 ============ -->
+<section class="q" id="g12">
+<header class="qh">
+  <div class="qrow"><span class="qid">G12</span><span class="tag added">Added</span></div>
+  <h2>Metrics, excellence and responsible AI</h2>
+  <p class="qtext">“How do you measure engineering effectiveness without gaming it? DORA and SPACE metrics, quality and reliability indicators, engineering culture. How do you approach responsible and ethical AI use in a team?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I measure the system, not the individuals. The DORA metrics, deployment frequency, lead time for changes, change failure rate and time to restore service, capture delivery speed and stability together, and the SPACE framework reminds me that satisfaction, performance, activity, communication and efficiency all matter, so no single number tells the story. I use metrics to find bottlenecks and to see whether changes help, discuss them with the team, and never use them for ranking people, because that invites gaming and destroys trust. Engineering excellence comes from habits: small changes, fast feedback, shared ownership of quality, blameless learning, and attention to user outcomes. For AI I add responsibility: fairness, transparency, privacy, safety, human oversight and accountability.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: the four DORA metrics and the SPACE dimensions. Right: responsible AI principles with practices, and metric anti-patterns.">
+  <text x="10" y="18" class="bd">Measuring delivery</text>
+  <rect x="10" y="30" width="170" height="64" rx="5" class="g"/><text x="18" y="48" class="bd">Deployment frequency</text><text x="18" y="66" class="sm">how often we ship</text><text x="18" y="80" class="sm">to production</text>
+  <rect x="190" y="30" width="180" height="64" rx="5" class="g"/><text x="198" y="48" class="bd">Lead time for changes</text><text x="198" y="66" class="sm">commit to production</text>
+  <rect x="10" y="100" width="170" height="64" rx="5" class="h"/><text x="18" y="118" class="bd">Change failure rate</text><text x="18" y="136" class="sm">share of deployments</text><text x="18" y="150" class="sm">causing incidents</text>
+  <rect x="190" y="100" width="180" height="64" rx="5" class="h"/><text x="198" y="118" class="bd">Time to restore</text><text x="198" y="136" class="sm">recover from a failure</text>
+  <rect x="10" y="176" width="360" height="62" rx="5" class="b"/><text x="18" y="196" class="bd">SPACE framework</text><text x="18" y="214" class="sm">Satisfaction · Performance · Activity · Communication and</text><text x="18" y="230" class="sm">collaboration · Efficiency and flow: use several dimensions</text>
+  <rect x="10" y="248" width="360" height="62" rx="5" class="x"/><text x="18" y="268" class="bd">Anti-patterns</text><text x="18" y="286" class="sm">ranking people by commits, lines or story points · targets that</text><text x="18" y="302" class="sm">become goals (Goodhart’s law) · metrics without context or action</text>
+  <text x="400" y="18" class="bd">Responsible AI in practice</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="b"/>
+  <text x="408" y="50" class="bd">Fairness</text><text x="408" y="66" class="sm">test for bias across groups; diverse data and reviewers</text>
+  <text x="408" y="90" class="bd">Transparency</text><text x="408" y="106" class="sm">disclose AI use, explain limits, cite sources, keep model cards</text>
+  <text x="408" y="130" class="bd">Privacy and security</text><text x="408" y="146" class="sm">minimise data, consent, retention limits, injection defences</text>
+  <text x="408" y="170" class="bd">Safety and reliability</text><text x="408" y="186" class="sm">guardrails, evals, red-teaming, monitoring, incident playbook</text>
+  <text x="408" y="210" class="bd">Human oversight</text><text x="408" y="226" class="sm">human in the loop for high-stakes decisions; appeal paths</text>
+  <text x="408" y="250" class="bd">Accountability</text><text x="408" y="266" class="sm">named owners, audit logs, risk assessments, governance board</text>
+  <text x="408" y="290" class="bd">Compliance</text><text x="408" y="306" class="sm">EU AI Act risk tiers, GDPR, sector rules, copyright and licences</text>
+</svg></div>
+<figcaption><b>Principle.</b> Measure to learn and improve flow, and build AI with accountability from the start.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>DORA in practice:</b> elite performers deploy frequently with short lead times, low failure rates and fast recovery; speed and stability correlate, they are not a trade-off. Measure from tools (CI/CD, Git, incident systems), at team level, trend over time, and ask why numbers change; improvement comes from capabilities such as trunk-based development, test automation, CI/CD, loosely coupled architecture and monitoring.</li>
+<li><b>Flow metrics:</b> cycle time, throughput, work in progress, work item age, blocked time, flow efficiency; cumulative flow diagrams reveal bottlenecks; use to forecast and to find waiting time between steps (review, QA, deploy).</li>
+<li><b>Quality indicators:</b> escaped defects, bug reopen rate, change failure rate, incident count and severity, test reliability (flake rate), code review turnaround, technical debt hotspots, accessibility and performance budgets, security findings time-to-fix.</li>
+<li><b>Reliability:</b> SLO attainment, error budget consumption, MTTR, on-call load and quality; link engineering work to user experience (A10, A11).</li>
+<li><b>Developer experience (DX) and satisfaction:</b> surveys (satisfaction, friction), build and test time, onboarding time, tooling reliability, interruptions; DX improvements raise throughput and retention (B9).</li>
+<li><b>Productivity and AI:</b> measure outcomes (lead time, quality, satisfaction) when AI tools are introduced, not usage counts; watch review load and defect rates; include qualitative feedback.</li>
+<li><b>Using metrics well:</b> agree on goals first, choose a small set, make them visible to the team, review in retrospectives, treat as signals needing investigation, combine quantitative with qualitative, and never tie to individual compensation. Goodhart’s law: when a measure becomes a target it ceases to be a good measure.</li>
+<li><b>Engineering excellence culture:</b> ownership of outcomes, craftsmanship (tests, refactoring, reviews), learning (blameless postmortems, tech talks), customer focus, bias for small iterations, pragmatic standards, mentoring, and psychological safety; leaders model the behaviours.</li>
+<li><b>Operational excellence:</b> automation of toil, runbooks, game days, capacity planning, cost awareness, security hygiene, patching discipline, and regular architecture and dependency reviews.</li>
+<li><b>Responsible AI principles:</b> fairness (avoid discriminatory outcomes), reliability and safety, privacy and security, inclusiveness and accessibility, transparency (explainability, disclosure), and accountability (clear ownership); frameworks include Microsoft Responsible AI, Google AI Principles, NIST AI RMF, ISO/IEC 42001, and the EU AI Act’s risk-based regulation <span class="verify">verify current regulations</span>.</li>
+<li><b>Practices:</b> impact assessments before launch, dataset and model documentation (datasheets, model cards), bias testing, red-teaming and adversarial testing, human review for consequential decisions, user controls and opt-outs, monitoring for drift and harm, incident response for AI failures, and training for staff.</li>
+<li><b>Intellectual property and licences:</b> understand training data and output ownership terms, open-source licence obligations for generated code, and attribution; use enterprise agreements and scanning tools.</li>
+<li><b>Environmental and cost view:</b> AI inference has energy and monetary cost; choose appropriately sized models, cache, and avoid unnecessary calls.</li>
+<li><b>Talking about this in an interview:</b> show balanced optimism: concrete benefits, concrete risks, and the engineering and governance controls you would put in place.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using velocity, commit counts or lines of code to rate individuals.</li>
+<li>Optimising one DORA metric while ignoring the others.</li>
+<li>Treating responsible AI as a legal checkbox rather than a design and engineering practice.</li>
+<li>Collecting metrics but never acting on them.</li>
+<li>Announcing AI productivity gains without measuring quality and review costs.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How would you improve lead time for changes?</dt><dd>Find where time is spent (review waiting, long pipelines, manual approvals), then shorten branches, speed up CI, automate checks and release, and reduce batch size.</dd>
+<dt>What is Goodhart’s law?</dt><dd>When a measure becomes a target, people optimise the measure and it stops reflecting the underlying goal.</dd>
+<dt>How do you introduce responsible AI practices in a team?</dt><dd>Start with a risk assessment per feature, define guardrails and evaluation criteria, require human oversight for high-impact outcomes, add monitoring and an incident process, and train the team.</dd>
+<dt>How do you show your team is improving?</dt><dd>Track a few outcome metrics over time (lead time, change failure rate, satisfaction), share them transparently, and tie them to specific improvements.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>36 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>Purpose of code review?</td><td>Quality, shared knowledge and consistency, not gatekeeping.</td><td>G1</td></tr>
+<tr><td>2</td><td>What should automation handle?</td><td>Formatting, lint, types, tests, security scans; humans focus on design and risk.</td><td>G1</td></tr>
+<tr><td>3</td><td>How big should a PR be?</td><td>Small and focused, reviewable in under an hour, one purpose.</td><td>G1</td></tr>
+<tr><td>4</td><td>Merge versus rebase?</td><td>Merge preserves history; rebase rewrites it, so only on unshared branches.</td><td>G2</td></tr>
+<tr><td>5</td><td><code>reset</code> versus <code>revert</code>?</td><td>Reset moves the branch (rewrites); revert adds an undoing commit, safe when shared.</td><td>G2</td></tr>
+<tr><td>6</td><td>How do you find the breaking commit?</td><td><code>git bisect</code>, ideally with a test script.</td><td>G2</td></tr>
+<tr><td>7</td><td>Recommended branching model?</td><td>Trunk-based with short-lived branches and feature flags.</td><td>G2</td></tr>
+<tr><td>8</td><td>Test pyramid idea?</td><td>Many fast tests, fewer integration tests, very few end-to-end tests.</td><td>G3</td></tr>
+<tr><td>9</td><td>What to do about flaky tests?</td><td>Fix the cause, quarantine with an owner, track flake rate.</td><td>G3</td></tr>
+<tr><td>10</td><td>Is coverage a quality measure?</td><td>No: a signal for gaps; prefer diff coverage and behaviour tests.</td><td>G3</td></tr>
+<tr><td>11</td><td>TDD versus BDD?</td><td>TDD drives design with failing tests first; BDD shares behaviour as Given-When-Then examples.</td><td>G3</td></tr>
+<tr><td>12</td><td>Scrum versus Kanban?</td><td>Timeboxed sprints with roles versus continuous flow with WIP limits.</td><td>G4</td></tr>
+<tr><td>13</td><td>Is velocity a performance metric?</td><td>No: a planning aid for one team, never for comparing or ranking.</td><td>G4</td></tr>
+<tr><td>14</td><td>How to estimate uncertain work?</td><td>Slice small, spike unknowns, give ranges with assumptions, re-forecast.</td><td>G4</td></tr>
+<tr><td>15</td><td>When a deadline slips?</td><td>Raise it early with data and options: descope, extend, add capacity.</td><td>G4</td></tr>
+<tr><td>16</td><td>What is technical debt?</td><td>Future cost of shortcuts or outdated design: principal plus interest.</td><td>G5</td></tr>
+<tr><td>17</td><td>How to refactor safely?</td><td>Tests first, tiny steps, separate structure from behaviour changes, flags for large moves.</td><td>G5</td></tr>
+<tr><td>18</td><td>Why prefer incremental over rewrite?</td><td>Rewrites stall delivery and lose knowledge; strangler migrations de-risk change.</td><td>G5</td></tr>
+<tr><td>19</td><td>Senior versus lead?</td><td>Senior delivers complex work; lead multiplies the team’s outcomes.</td><td>G6</td></tr>
+<tr><td>20</td><td>How do you mentor?</td><td>Goals, stretch tasks with support, guiding questions, frequent specific feedback.</td><td>G6</td></tr>
+<tr><td>21</td><td>Influence without authority?</td><td>Trust, data, prototypes, listening, framing around others’ goals.</td><td>G6</td></tr>
+<tr><td>22</td><td>Feedback model?</td><td>Situation, behaviour, impact, next step.</td><td>G6</td></tr>
+<tr><td>23</td><td>Fair interviewing?</td><td>Structured questions, rubrics, independent written feedback, calibrated debriefs.</td><td>G7</td></tr>
+<tr><td>24</td><td>Purpose of one-to-ones?</td><td>The report’s space for blockers, feedback, growth and wellbeing.</td><td>G7</td></tr>
+<tr><td>25</td><td>Psychological safety?</td><td>People can raise issues and admit mistakes without fear.</td><td>G7</td></tr>
+<tr><td>26</td><td>First step with a client request?</td><td>Understand the underlying goal and success metrics before the solution.</td><td>G8</td></tr>
+<tr><td>27</td><td>Handling scope change?</td><td>Show impact on time, cost and risk; trade off or change request; document.</td><td>G8</td></tr>
+<tr><td>28</td><td>Communicating risk?</td><td>Situation, background, assessment and options with a recommendation, early.</td><td>G8</td></tr>
+<tr><td>29</td><td>How does an LLM generate text?</td><td>Predicts the next token repeatedly, sampling from a probability distribution.</td><td>G9</td></tr>
+<tr><td>30</td><td>RAG versus fine-tuning?</td><td>RAG injects fresh private knowledge at query time; fine-tuning changes behaviour or style.</td><td>G9</td></tr>
+<tr><td>31</td><td>Why do models hallucinate?</td><td>They produce plausible continuations without verifying facts; ground and validate.</td><td>G9</td></tr>
+<tr><td>32</td><td>Rule for AI-generated code?</td><td>Review and test it like a stranger’s code; the author stays accountable.</td><td>G10</td></tr>
+<tr><td>33</td><td>What never goes into a prompt?</td><td>Secrets, credentials, customer data or proprietary code on unapproved services.</td><td>G10</td></tr>
+<tr><td>34</td><td>Where is the model API called from?</td><td>Your server, never the browser with a secret key; stream results to the UI.</td><td>G11</td></tr>
+<tr><td>35</td><td>What is prompt injection?</td><td>Untrusted content carrying instructions that hijack the model; treat it as data, limit tools.</td><td>G11</td></tr>
+<tr><td>36</td><td>The four DORA metrics?</td><td>Deployment frequency, lead time, change failure rate, time to restore.</td><td>G12</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer practice, leadership and AI questions at L4</h4>
+<ul>
+<li>Use the pattern concept, then a real example, then a measured result. Your leadership stories (built with the interview coach) are the evidence; this guide gives the vocabulary.</li>
+<li>For people questions, show empathy and structure together: understand the person, set clear expectations, give specific feedback, and follow up.</li>
+<li>For process questions, tie practices to outcomes: smaller batches, faster feedback, fewer incidents, happier teams.</li>
+<li>For AI, be balanced and specific: where it helps, how you verify, how you protect data and users, and what you measure.</li>
+<li>Never claim metrics should rank people; always say they steer the system.</li>
+<li>The interview is theoretical and conversational: expect “how would you handle”, “what is your approach” and “what are the trade-offs”.</li>
+</ul></div>
+</section>
+
+</div>

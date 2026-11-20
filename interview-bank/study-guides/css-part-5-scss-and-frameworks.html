@@ -1,0 +1,500 @@
+<title>CSS Study Guide Part 5</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"CSS Study Guide Part 5";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"CSS Study Guide Part 5";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · CSS · Advanced level · Addendum to the CSS guide</div>
+  <h1>CSS Study Guide, Part 5: SCSS and Frameworks</h1>
+  <p>This addendum extends the CSS study guide you already printed (topics C1 to C15) without changing it. It covers Sass and SCSS, CSS architecture and naming methodologies (BEM, ITCSS, utility-first, CUBE CSS), Tailwind CSS, Bootstrap and other frameworks, and the CSS toolchain (PostCSS, Lightning CSS, Stylelint, CSS Modules), including how modern native CSS now replaces much of what preprocessors were used for. Topic numbers continue from the CSS guide (C16 onwards). Every topic is something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> check the current docs and browser support</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>5 · Preprocessors, architecture and frameworks</h3>
+    <ol>
+      <li><b>C16</b><a href="#c16">Sass and SCSS</a></li>
+      <li><b>C17</b><a href="#c17">CSS architecture and naming methodologies</a></li>
+      <li><b>C18</b><a href="#c18">Tailwind CSS and utility-first design</a></li>
+      <li><b>C19</b><a href="#c19">Bootstrap and other CSS frameworks</a></li>
+      <li><b>C20</b><a href="#c20">The CSS toolchain and modern CSS versus preprocessors</a></li>
+    </ol>
+    <h3 style="margin-top:16px">Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>How it fits</h3>
+    <p style="font-size:13px;color:var(--muted)">Read after C1 to C15 of the CSS guide. Related: styling approaches in the React ecosystem guide (E7), design tokens in the design systems guide (S2), and PostCSS in the browser and build guide (B7).</p>
+  </div>
+  <div></div>
+</nav>
+
+<h1 class="part">Part 5 · Preprocessors, architecture and frameworks</h1>
+
+<!-- ============ C16 ============ -->
+<section class="q" id="c16">
+<header class="qh">
+  <div class="qrow"><span class="qid">C16</span><span class="tag added">Added</span></div>
+  <h2>Sass and SCSS</h2>
+  <p class="qtext">“What is Sass/SCSS and why use it? Explain variables, nesting, mixins, functions, partials, <code>@use</code> and <code>@forward</code>, maps, control directives and placeholders. What does Sass give you that native CSS now provides, and what does it still add?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Sass is a CSS preprocessor: I write SCSS, a superset of CSS syntax, and a compiler turns it into plain CSS at build time. It adds variables, nesting, mixins for reusable blocks, functions, partial files organised with the module system (<code>@use</code> and <code>@forward</code>), maps and loops for generating styles, and placeholder selectors for sharing rules. Because the output is static CSS, Sass values do not exist at run time, unlike native custom properties. Modern CSS now has custom properties, nesting and <code>color-mix()</code>, so I use Sass mainly for build-time logic such as generating utility classes or scales, mixins with arguments, math, and existing codebases such as Bootstrap, while preferring custom properties for anything that must change at run time, such as themes.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: SCSS source features and the compiled CSS output. Right: Sass versus native CSS custom properties comparison, and the module system.">
+  <text x="10" y="18" class="bd">SCSS in, CSS out</text>
+  <rect x="10" y="30" width="360" height="140" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10px">@use 'tokens' as t;</text><text x="18" y="64" class="mono" style="font-size:10px">@mixin focus-ring($c: t.$brand) { outline: 2px solid $c; }</text><text x="18" y="80" class="mono" style="font-size:10px">.card {</text><text x="18" y="96" class="mono" style="font-size:10px">  padding: t.$space-4;</text><text x="18" y="112" class="mono" style="font-size:10px">  &amp;:focus-visible { @include focus-ring; }</text><text x="18" y="128" class="mono" style="font-size:10px">  &amp;__title { font-weight: 600; }</text><text x="18" y="144" class="mono" style="font-size:10px">  @media (min-width: 48em) { padding: t.$space-6; }</text><text x="18" y="160" class="mono" style="font-size:10px">}</text>
+  <path class="a" d="M190 170V186"/><text x="198" y="182" class="sm">sass compiler (build time)</text>
+  <rect x="10" y="190" width="360" height="120" rx="5" class="g"/><text x="18" y="208" class="mono" style="font-size:10px">.card { padding: 1rem; }</text><text x="18" y="224" class="mono" style="font-size:10px">.card:focus-visible { outline: 2px solid #2563eb; }</text><text x="18" y="240" class="mono" style="font-size:10px">.card__title { font-weight: 600; }</text><text x="18" y="256" class="mono" style="font-size:10px">@media (min-width: 48em) { .card { padding: 1.5rem; } }</text><text x="18" y="282" class="sm">static CSS: no Sass variables remain, nothing to change at run time</text><text x="18" y="298" class="sm">Dart Sass is the reference compiler (sass package)</text>
+  <text x="400" y="18" class="bd">Sass variables versus custom properties</text>
+  <rect x="400" y="30" width="170" height="130" rx="5" class="b"/><text x="408" y="48" class="bd">Sass $vars</text><text x="408" y="66" class="sm">compile-time only</text><text x="408" y="82" class="sm">usable in math,</text><text x="408" y="98" class="sm">loops, functions</text><text x="408" y="114" class="sm">cannot change per</text><text x="408" y="130" class="sm">theme at run time</text><text x="408" y="146" class="sm">no DOM awareness</text>
+  <rect x="580" y="30" width="170" height="130" rx="5" class="h"/><text x="588" y="48" class="bd">--custom props</text><text x="588" y="66" class="sm">run-time values</text><text x="588" y="82" class="sm">inherit and cascade</text><text x="588" y="98" class="sm">themeable per scope</text><text x="588" y="114" class="sm">readable and set</text><text x="588" y="130" class="sm">from JavaScript</text><text x="588" y="146" class="sm">no build step needed</text>
+  <rect x="400" y="170" width="350" height="140" rx="5" class="w"/><text x="408" y="190" class="bd">Module system (Dart Sass)</text><text x="408" y="208" class="sm"><tspan class="bd">@use</tspan> loads a module once with a namespace (t.$brand)</text><text x="408" y="224" class="sm"><tspan class="bd">@forward</tspan> re-exports members from an index file</text><text x="408" y="240" class="sm"><tspan class="bd">@import</tspan> is deprecated: global scope, duplicates output</text><text x="408" y="256" class="sm">partials start with _ and are not compiled alone (_tokens.scss)</text><text x="408" y="272" class="sm">private members: prefix with - or _ (not exported)</text><text x="408" y="294" class="sm">built-ins: sass:math, sass:map, sass:color, sass:string</text>
+</svg></div>
+<figcaption><b>Key point.</b> Sass is build-time authoring convenience that outputs static CSS; custom properties are run-time values.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>SCSS versus indented Sass:</b> SCSS uses braces and semicolons and is a strict superset of CSS (any valid CSS is valid SCSS); the older indented syntax omits braces. SCSS is the standard. Compilers: Dart Sass (current, reference), LibSass and node-sass are deprecated.</li>
+<li><b>Variables and scope:</b> <code>$brand: #2563eb;</code>, <code>!default</code> to make configurable, <code>!global</code> to assign globally; lexical block scope. Use maps for scales: <code>$space: (1: .25rem, 2: .5rem)</code> with <code>map.get($space, 2)</code>.</li>
+<li><b>Nesting:</b> mirror structure with <code>&amp;</code> for parent references (<code>&amp;:hover</code>, <code>&amp;__element</code>, <code>.theme-dark &amp;</code>); limit depth to two or three levels to avoid specificity bloat and unreadable output. Native CSS nesting now exists, so Sass nesting is less crucial (C20).</li>
+<li><b>Mixins and includes:</b> reusable blocks with arguments and defaults (<code>@mixin breakpoint($bp)</code>), content blocks (<code>@content</code>) for wrapping media queries; each include duplicates declarations in output, so avoid large mixins used many times.</li>
+<li><b>Extend and placeholders:</b> <code>%placeholder</code> with <code>@extend</code> groups selectors to share one rule block, producing smaller CSS than mixins, but it can create surprising selector ordering and cross-file coupling; many teams prefer mixins or utility classes.</li>
+<li><b>Functions and math:</b> <code>@function</code> returning values (<code>rem(24px)</code>), <code>math.div</code> (the <code>/</code> division operator is deprecated), colour functions (<code>color.adjust</code>, <code>color.scale</code>), responsive helpers; native <code>calc()</code>, <code>clamp()</code> and <code>color-mix()</code> cover many cases at run time.</li>
+<li><b>Control directives:</b> <code>@if</code>/<code>@else</code>, <code>@each</code>, <code>@for</code>, <code>@while</code> generate repetitive CSS (utility classes, grid columns, spacing scales) from data; this is where Sass still shines.</li>
+<li><b>Architecture with Sass:</b> a 7-1 or ITCSS-style folder structure (abstracts/tokens, base, layout, components, pages, themes, vendors) with an index using <code>@forward</code>; keep tokens in one module; compile per entry; avoid global leakage by using <code>@use</code> (C17).</li>
+<li><b>Source maps and tooling:</b> compile via Vite, webpack (sass-loader), Next.js (built-in), or the CLI; source maps map output to SCSS in DevTools; combine with PostCSS (Autoprefixer) and minifiers; watch build times with large Sass trees.</li>
+<li><b>CSS Modules with Sass:</b> <code>*.module.scss</code> scopes class names and still allows Sass features; common in React/Next.js apps.</li>
+<li><b>Sass versus alternatives:</b> Less and Stylus (older), PostCSS-based approaches (postcss-preset-env, nesting), Lightning CSS, and plain modern CSS; Sass remains popular because of Bootstrap, existing codebases and its maturity.</li>
+<li><b>When to avoid heavy Sass:</b> deep nesting, giant mixin libraries, and heavy <code>@extend</code> chains make CSS hard to debug; prefer simple structure plus custom properties.</li>
+<li><b>Performance and output size:</b> mixin repetition and over-nesting bloat output; analyse compiled CSS size; split critical CSS; remove unused styles (PurgeCSS, Tailwind-like tree shaking for utilities).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Expecting Sass variables to change at run time or per theme.</li>
+<li>Deep nesting that produces long, high-specificity selectors.</li>
+<li>Still using <code>@import</code> and the <code>/</code> division operator, both deprecated.</li>
+<li>Using <code>@extend</code> across unrelated files and creating fragile output.</li>
+<li>Describing Sass as “more powerful than CSS” without saying it compiles away before the browser runs.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Mixin versus <code>@extend</code>?</dt><dd>A mixin copies declarations into each include and accepts arguments; <code>@extend</code> merges selectors into one rule and cannot take arguments but can reorder output unexpectedly.</dd>
+<dt>Why <code>@use</code> instead of <code>@import</code>?</dt><dd><code>@use</code> namespaces members and loads each module once, avoiding global scope collisions and duplicated CSS.</dd>
+<dt>Can you theme with Sass variables?</dt><dd>Only by compiling separate bundles; for run-time theming use custom properties, optionally generated from Sass maps.</dd>
+<dt>Do you still need Sass today?</dt><dd>Often not for new projects, but it helps with build-time generation, shared mixins and existing frameworks.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C17 ============ -->
+<section class="q" id="c17">
+<header class="qh">
+  <div class="qrow"><span class="qid">C17</span><span class="tag added">Added</span></div>
+  <h2>CSS architecture and naming methodologies</h2>
+  <p class="qtext">“How do you structure CSS in a large codebase? Compare BEM, OOCSS, SMACSS, ITCSS, utility-first and CUBE CSS. How do you manage specificity, the cascade and style leakage? What do cascade layers and <code>@scope</code> add?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“CSS is global by default, so at scale you need conventions that keep specificity low and predictable and styles scoped. BEM names classes by block, element and modifier, such as <code>card__title--large</code>, which makes ownership explicit and keeps selectors flat. ITCSS organises the stylesheet in layers from generic to specific, so the cascade and specificity grow in a controlled direction. Utility-first, as in Tailwind, composes small single-purpose classes in markup. CSS Modules or component styles scope class names automatically. Modern CSS gives structural tools: cascade layers to control precedence regardless of specificity, and <code>@scope</code> and nesting for local rules. I choose by team and tooling, and the common rules are low specificity, no styling by structure or IDs, and one place to define each thing.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: BEM anatomy of block, element and modifier. Middle: ITCSS triangle from settings to trumps by increasing specificity. Right: cascade layers ordering.">
+  <text x="10" y="18" class="bd">BEM naming</text>
+  <rect x="10" y="30" width="360" height="62" rx="5" class="b"/><text x="18" y="52" class="mono" style="font-size:11px">.card__title--large</text><text x="18" y="72" class="sm"><tspan class="bd">block</tspan> card · <tspan class="bd">element</tspan> __title · <tspan class="bd">modifier</tspan> --large</text><text x="18" y="86" class="sm">flat selectors, specificity 0,1,0, self-documenting</text>
+  <rect x="10" y="100" width="360" height="70" rx="5" class="g"/><text x="18" y="120" class="mono" style="font-size:10px">&lt;article class="card card--featured"&gt;</text><text x="18" y="136" class="mono" style="font-size:10px">  &lt;h3 class="card__title"&gt;…&lt;/h3&gt;</text><text x="18" y="152" class="mono" style="font-size:10px">  &lt;a class="card__link"&gt;…&lt;/a&gt;&lt;/article&gt;</text>
+  <rect x="10" y="180" width="360" height="130" rx="5" class="w"/><text x="18" y="200" class="bd">Other approaches</text><text x="18" y="218" class="sm"><tspan class="bd">OOCSS</tspan> separate structure from skin; reuse objects</text><text x="18" y="234" class="sm"><tspan class="bd">SMACSS</tspan> base, layout, module, state, theme categories</text><text x="18" y="250" class="sm"><tspan class="bd">CUBE CSS</tspan> composition, utility, block, exception; works with</text><text x="18" y="266" class="sm">the cascade rather than against it</text><text x="18" y="282" class="sm"><tspan class="bd">Utility-first</tspan> compose atomic classes (C18)</text><text x="18" y="298" class="sm"><tspan class="bd">Scoped</tspan> CSS Modules, Vue/Svelte scoped styles, Shadow DOM</text>
+  <text x="400" y="18" class="bd">ITCSS layers (low → high specificity)</text>
+  <polygon points="575,30 750,30 700,60 600,60" class="x" style="opacity:.8"/><text x="620" y="50" class="sm">Trumps</text>
+  <polygon points="600,64 700,64 725,94 575,94" class="w" style="opacity:.8"/><text x="620" y="84" class="sm">Components</text>
+  <polygon points="575,98 725,98 745,128 555,128" class="h" style="opacity:.8"/><text x="600" y="118" class="sm">Objects (layout)</text>
+  <polygon points="555,132 745,132 760,162 540,162" class="g" style="opacity:.8"/><text x="590" y="152" class="sm">Elements (h1, a)</text>
+  <polygon points="540,166 760,166 760,196 520,196" class="b" style="opacity:.8"/><text x="590" y="186" class="sm">Generic (reset)</text>
+  <text x="400" y="62" class="sm">Settings, Tools: no output</text><text x="400" y="78" class="sm">(variables, mixins)</text><text x="400" y="110" class="sm">overrides last,</text><text x="400" y="126" class="sm">!important only</text><text x="400" y="142" class="sm">in utilities</text>
+  <rect x="400" y="210" width="350" height="100" rx="5" class="g"/><text x="408" y="230" class="bd">Cascade layers</text><text x="408" y="248" class="mono" style="font-size:10px">@layer reset, base, components, utilities;</text><text x="408" y="266" class="sm">later layers win regardless of selector specificity; unlayered</text><text x="408" y="282" class="sm">styles beat layered ones; import third-party CSS into a low</text><text x="408" y="298" class="sm">layer so your code always overrides it</text>
+</svg></div>
+<figcaption><b>Principle.</b> Control specificity and ownership structurally, with naming conventions or layers, instead of fighting the cascade with <code>!important</code>.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Why architecture matters:</b> global scope, specificity wars, source-order dependence, dead CSS that nobody dares delete, and inconsistent patterns. The aim is predictability: a new developer can add styles without breaking others.</li>
+<li><b>BEM:</b> block (standalone component), element (part of a block, <code>__</code>), modifier (variant or state, <code>--</code>). Pros: flat specificity, clear ownership, works without tooling. Cons: verbose names, discipline needed, nested elements (<code>card__body__title</code> is discouraged: flatten to <code>card__title</code>). Pair with Sass <code>&amp;__element</code> for brevity (C16).</li>
+<li><b>ITCSS (Inverted Triangle):</b> layers ordered from low specificity and wide reach to high specificity and narrow reach: settings, tools, generic, elements, objects, components, trumps. It structures the stylesheet so cascade conflicts are rare; combine with BEM for naming.</li>
+<li><b>SMACSS and OOCSS:</b> categorise rules (base, layout, module, state, theme) and separate structure from skin and container from content; they inspired later methods; know the vocabulary.</li>
+<li><b>CUBE CSS:</b> Composition (layout primitives), Utilities, Blocks, Exceptions: embrace the cascade, use a small number of global rules and lightweight utilities, and data attributes for exceptions.</li>
+<li><b>Specificity management:</b> specificity order (inline, IDs, classes/attributes/pseudo-classes, elements); avoid IDs and overly qualified selectors (<code>div.card ul li a</code>); keep selector depth low; use <code>:where()</code> to zero out specificity for defaults and <code>:is()</code>/<code>:not()</code> with care; avoid <code>!important</code> outside utilities; prefer reordering or layers to escalating specificity (CSS guide C3).</li>
+<li><b>Cascade layers (<code>@layer</code>):</b> explicit precedence between groups of rules independent of specificity; order declared once at the top; ideal for resets, third-party libraries, design systems and utilities; supported in all modern browsers <span class="verify">verify the support level for your audience</span>. Tailwind v4 and many design systems use layers.</li>
+<li><b><code>@scope</code>:</b> limits rules to a subtree with optional lower boundary (donut scope) and proximity-based precedence, offering native scoping without class conventions; newer feature <span class="verify">verify browser support</span>.</li>
+<li><b>Native nesting and <code>:has()</code>:</b> reduce the need for preprocessors and extra classes but can recreate deep selectors if abused; keep nesting shallow.</li>
+<li><b>Component-scoped solutions:</b> CSS Modules (hashed class names per file), CSS-in-JS (scoped by generation), framework-scoped styles (Vue, Svelte, Angular emulated encapsulation), Shadow DOM (true encapsulation) (S9, E7).</li>
+<li><b>File organisation:</b> colocate component styles with components, global base/tokens in a shared package, one stylesheet per feature or route for loading performance, naming files after components; avoid giant catch-all stylesheets.</li>
+<li><b>Dead code and growth control:</b> coverage tools (DevTools Coverage), PurgeCSS/Tailwind content scanning, Stylelint rules for max specificity and no duplicate selectors, review practices, and periodic audits with CSS Stats.</li>
+<li><b>Migrating legacy CSS:</b> introduce layers to contain old CSS, scope new components with Modules or BEM, replace utilities gradually, and avoid wholesale rewrites; measure with visual regression tests (A4).</li>
+<li><b>Naming and API consistency:</b> predictable state classes or data attributes (<code>is-open</code> or <code>[data-state="open"]</code>), consistent modifiers, avoid names tied to appearance (<code>.red-button</code>) in favour of meaning or role.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Styling by deep structure (<code>.sidebar ul li a</code>), which breaks when markup changes.</li>
+<li>Fighting specificity with <code>!important</code> and more nested selectors instead of structure.</li>
+<li>Over-long BEM names from nested elements.</li>
+<li>Treating methodologies as dogma instead of tools; consistency within the codebase matters most.</li>
+<li>Putting third-party CSS after your own without layers, so it overrides your styles.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you override a library’s styles cleanly?</dt><dd>Load the library inside a low-priority <code>@layer</code> (or lower specificity), then write your styles in a later layer, avoiding <code>!important</code>.</dd>
+<dt>BEM or CSS Modules?</dt><dd>BEM uses naming discipline and works anywhere; CSS Modules scope classes automatically at build time; both give low specificity, and they can be combined.</dd>
+<dt>What does <code>:where()</code> do?</dt><dd>It matches like <code>:is()</code> but contributes zero specificity, ideal for easily overridable base styles.</dd>
+<dt>How would you tame a 10-year-old stylesheet?</dt><dd>Contain it in a low layer, measure unused CSS, add scoped components gradually, and use visual regression tests to refactor safely.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C18 ============ -->
+<section class="q" id="c18">
+<header class="qh">
+  <div class="qrow"><span class="qid">C18</span><span class="tag added">Added</span></div>
+  <h2>Tailwind CSS and utility-first design</h2>
+  <p class="qtext">“What is utility-first CSS and how does Tailwind work? Explain the config and theme, variants, JIT scanning, <code>@apply</code>, component extraction, dark mode and Tailwind 4. What are the trade-offs versus BEM or CSS-in-JS?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Utility-first CSS styles elements by composing many small single-purpose classes directly in the markup, such as <code>flex items-center gap-4 p-4 rounded-lg</code>. Tailwind generates those utilities from a design-token configuration and scans my source files to emit only the classes I use, so the CSS stays small. Variants such as <code>hover:</code>, <code>md:</code> and <code>dark:</code> apply a utility conditionally. Benefits are speed, consistency from a constrained token scale, no naming and no dead CSS. Costs are long class lists, a learning curve, and the need to extract repeated patterns into components rather than CSS classes. Dynamic class names must be written in full so the scanner can see them, and accessibility and semantics are still my job.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: markup with utility classes and the generated CSS pipeline from content scanning. Right: tokens in theme config and variant stack, and trade-offs.">
+  <text x="10" y="18" class="bd">From markup to minimal CSS</text>
+  <rect x="10" y="30" width="360" height="62" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10px">&lt;button class="rounded-lg bg-blue-600 px-4 py-2 text-white</text><text x="18" y="64" class="mono" style="font-size:10px">  hover:bg-blue-700 md:px-6 dark:bg-blue-500"&gt;</text><text x="18" y="82" class="sm">spacing, colour and radius come from the theme scale</text>
+  <path class="a" d="M190 92V108"/>
+  <rect x="10" y="110" width="360" height="40" rx="5" class="h"/><text x="18" y="128" class="bd">Scan sources for class names</text><text x="18" y="142" class="sm">content globs (v3) or automatic detection (v4)</text>
+  <path class="a" d="M190 150V164"/>
+  <rect x="10" y="166" width="360" height="40" rx="5" class="g"/><text x="18" y="184" class="bd">Generate only used utilities</text><text x="18" y="198" class="sm">plus base reset (preflight) → one small CSS file</text>
+  <rect x="10" y="216" width="360" height="94" rx="5" class="x"/><text x="18" y="236" class="bd">Dynamic class gotcha</text><text x="18" y="254" class="mono" style="font-size:10px">`text-${color}-500`     // NOT found by the scanner</text><text x="18" y="270" class="mono" style="font-size:10px">{ red: 'text-red-500', blue: 'text-blue-500' }[c]   // OK</text><text x="18" y="290" class="sm">write complete class names; use lookup maps or CSS variables</text>
+  <text x="400" y="18" class="bd">Design tokens and variants</text>
+  <rect x="400" y="30" width="350" height="76" rx="5" class="w"/><text x="408" y="48" class="mono" style="font-size:10px">/* v4: CSS-first config */</text><text x="408" y="64" class="mono" style="font-size:10px">@import "tailwindcss";</text><text x="408" y="80" class="mono" style="font-size:10px">@theme { --color-brand: #2563eb; --spacing: 0.25rem; }</text><text x="408" y="98" class="sm">v3 used tailwind.config.js (theme.extend) (verify v4 details)</text>
+  <rect x="400" y="114" width="350" height="70" rx="5" class="h"/><text x="408" y="132" class="bd">Variants stack</text><text x="408" y="150" class="mono" style="font-size:10px">dark:md:hover:bg-slate-800  group-hover:  peer-checked:</text><text x="408" y="168" class="sm">responsive (sm, md, lg), state, dark, motion-safe, container</text><text x="408" y="180" class="sm">queries (@container), arbitrary values: w-[42rem]</text>
+  <rect x="400" y="194" width="170" height="116" rx="5" class="g"/><text x="408" y="212" class="bd">Strengths</text><text x="408" y="230" class="sm">fast iteration</text><text x="408" y="246" class="sm">consistent scale</text><text x="408" y="262" class="sm">tiny CSS output</text><text x="408" y="278" class="sm">no naming or dead CSS</text><text x="408" y="294" class="sm">RSC-friendly</text>
+  <rect x="580" y="194" width="170" height="116" rx="5" class="x"/><text x="588" y="212" class="bd">Costs</text><text x="588" y="230" class="sm">long class strings</text><text x="588" y="246" class="sm">needs component</text><text x="588" y="262" class="sm">abstraction</text><text x="588" y="278" class="sm">vocabulary to learn</text><text x="588" y="294" class="sm">design drift if unchecked</text>
+</svg></div>
+<figcaption><b>Idea.</b> Constrain choices through tokens, compose in markup, and let the build output only what is used.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Core idea and rationale:</b> avoids naming and context-switching between HTML and CSS files, keeps styles local to the element (changing one component cannot break another), and limits CSS growth because utilities are reused. Criticisms: markup noise and “inline styles with extras”; the counter is constraints (a scale), variants (states and breakpoints) and pseudo-selectors that inline styles lack.</li>
+<li><b>Configuration and tokens:</b> theme values for colours, spacing, type, radii, breakpoints; extend rather than replace the defaults; map to your design tokens (S2); in v4, tokens are CSS variables defined with <code>@theme</code> and available at run time for theming; v3 used JavaScript config and plugins <span class="verify">verify the version in use</span>.</li>
+<li><b>Content scanning (JIT):</b> Tailwind scans files for class-like strings and generates matching utilities on demand; arbitrary values (<code>top-[117px]</code>) generate one-off classes; safelisting is for classes that cannot be detected statically.</li>
+<li><b>Variants:</b> state (<code>hover</code>, <code>focus-visible</code>, <code>disabled</code>), responsive (mobile-first <code>md:</code>), dark mode (<code>dark:</code> via media or a class/attribute strategy), <code>group</code>/<code>peer</code> for parent and sibling state, <code>has-[]</code>, container queries, motion preferences, <code>aria-*</code> and <code>data-*</code> variants.</li>
+<li><b>Reuse and extraction:</b> extract components (React/Vue/Angular components) or partials, not CSS classes; <code>@apply</code> exists but is discouraged for general use because it recreates naming and ordering problems; helpers: <code>clsx</code>, <code>cva</code> (class-variance-authority) for variants, <code>tailwind-merge</code> to resolve conflicting classes.</li>
+<li><b>Plugins and ecosystem:</b> typography, forms, container queries (built in for v4), animate plugins; component kits built on Tailwind: shadcn/ui, Headless UI, daisyUI, Flowbite; Prettier plugin sorts class names consistently (E8).</li>
+<li><b>Accessibility and semantics:</b> utilities do not make markup accessible; use semantic elements, focus styles (<code>focus-visible:</code>), sufficient contrast, motion preferences, and screen-reader utilities (<code>sr-only</code>).</li>
+<li><b>Performance:</b> small CSS output, no runtime; scanning cost at build; large arbitrary-value usage reduces reuse; critical CSS is small enough to inline; works with Server Components (E7, N9).</li>
+<li><b>Dark mode and theming:</b> pair <code>dark:</code> variants with semantic tokens (CSS variables) to avoid doubling every class; theme switching via a class or data attribute set before first paint (S2).</li>
+<li><b>Versus alternatives:</b> BEM/Sass separates concerns but requires naming and growth control; CSS-in-JS offers dynamic styles at runtime cost; CSS Modules scope styles. Tailwind trades markup length for consistency and speed; large design systems may layer semantic components on top.</li>
+<li><b>Team adoption:</b> agree on conventions (ordering, extraction rules, limits on arbitrary values), lint with <code>eslint-plugin-tailwindcss</code> <span class="verify">verify tool</span>, document patterns, and review class lists for duplication; onboarding includes learning the scale and variants.</li>
+<li><b>Tailwind 4 highlights:</b> new engine for faster builds, CSS-first configuration, automatic content detection, built-in container queries, cascade layers and native CSS features such as <code>color-mix</code> and <code>@property</code> <span class="verify">verify the final feature list</span>.</li>
+<li><b>Migration and coexistence:</b> adopt in new components while legacy CSS remains in a lower layer; prefix utilities (<code>tw-</code>) to avoid collisions; remove the old CSS gradually.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Building class names with string concatenation so the scanner cannot find them.</li>
+<li>Reaching for <code>@apply</code> everywhere and recreating a naming problem.</li>
+<li>Copy-pasting long class lists instead of extracting components.</li>
+<li>Assuming Tailwind handles accessibility and responsive behaviour automatically.</li>
+<li>Unlimited arbitrary values that bypass the design scale.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why does Tailwind output small CSS?</dt><dd>It generates only the utilities found in your source files, rather than shipping a full framework.</dd>
+<dt>How do you handle component variants?</dt><dd>With <code>cva</code> or a lookup map of complete class strings, merged with <code>tailwind-merge</code>.</dd>
+<dt>Is Tailwind just inline styles?</dt><dd>No: utilities support pseudo-classes, media and container queries, a shared scale, and are deduplicated in a stylesheet with consistent specificity.</dd>
+<dt>When would you avoid Tailwind?</dt><dd>When the team strongly prefers separated styles, when a mature BEM/Sass system already works, or when runtime theming needs dominate; also for very small static pages.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C19 ============ -->
+<section class="q" id="c19">
+<header class="qh">
+  <div class="qrow"><span class="qid">C19</span><span class="tag added">Added</span></div>
+  <h2>Bootstrap and other CSS frameworks</h2>
+  <p class="qtext">“What are Bootstrap and similar frameworks, how does the Bootstrap grid and utility system work, how do you customise it with Sass, and when do you choose a CSS framework, a component library or custom CSS? What are Bulma, Foundation and Material?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Bootstrap is a widely used CSS and JavaScript framework providing a responsive 12-column flexbox grid, ready-made components such as navbars, modals and forms, and utility classes for spacing, display and flex. Version 5 dropped jQuery and added utilities and CSS variables. You customise it by overriding Sass variables before importing its source, or with CSS custom properties, rather than overriding compiled CSS. Frameworks give speed and consistency for prototypes, admin tools and teams without design resources; the costs are a recognisable look, extra CSS weight if not trimmed, and fighting the framework when the design diverges. Modern projects often prefer utility frameworks like Tailwind or headless component libraries for more control, but Bootstrap remains common in enterprise codebases.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: the Bootstrap grid with container, row and col classes and breakpoints. Right: customisation via Sass variables and a table comparing frameworks and choices.">
+  <text x="10" y="18" class="bd">Bootstrap 12-column grid</text>
+  <rect x="10" y="30" width="360" height="104" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10px">&lt;div class="container"&gt;&lt;div class="row"&gt;</text><text x="18" y="64" class="mono" style="font-size:10px">  &lt;div class="col-12 col-md-8"&gt;main&lt;/div&gt;</text><text x="18" y="80" class="mono" style="font-size:10px">  &lt;div class="col-12 col-md-4"&gt;side&lt;/div&gt;</text><text x="18" y="96" class="mono" style="font-size:10px">&lt;/div&gt;&lt;/div&gt;</text><text x="18" y="118" class="sm">breakpoints (px): sm 576, md 768, lg 992, xl 1200</text>
+  <rect x="10" y="144" width="110" height="26" class="g"/><text x="16" y="161" class="sm">col-md-8 (8)</text><rect x="124" y="144" width="60" height="26" class="h"/><text x="130" y="161" class="sm">col-md-4</text>
+  <text x="200" y="161" class="sm">12 columns, gutters, auto layout</text>
+  <rect x="10" y="182" width="360" height="128" rx="5" class="w"/><text x="18" y="202" class="bd">Bootstrap 5 features</text><text x="18" y="220" class="sm">grid (flexbox, optional CSS grid), utilities API (spacing, flex,</text><text x="18" y="236" class="sm">display, text), components (navbar, modal, dropdown, toast, form</text><text x="18" y="252" class="sm">controls), CSS variables, dark mode via data-bs-theme, no jQuery,</text><text x="18" y="268" class="sm">JS plugins with data attributes; icons separate</text><text x="18" y="290" class="sm">Accessibility basics included but verify custom usage</text>
+  <text x="400" y="18" class="bd">Customise at the source</text>
+  <rect x="400" y="30" width="350" height="76" rx="5" class="g"/><text x="408" y="48" class="mono" style="font-size:10px">// custom.scss</text><text x="408" y="64" class="mono" style="font-size:10px">$primary: #2563eb; $border-radius: .5rem;</text><text x="408" y="80" class="mono" style="font-size:10px">$enable-shadows: true;</text><text x="408" y="96" class="mono" style="font-size:10px">@import "bootstrap/scss/bootstrap";   // after variables</text>
+  <text x="400" y="128" class="bd">Framework landscape</text>
+  <rect x="400" y="138" width="350" height="172" rx="5" class="b"/>
+  <text x="408" y="158" class="sm"><tspan class="bd">Bootstrap</tspan> grid + components + utilities; huge adoption</text>
+  <text x="408" y="178" class="sm"><tspan class="bd">Tailwind</tspan> utilities only; bring your own components</text>
+  <text x="408" y="198" class="sm"><tspan class="bd">Bulma</tspan> pure CSS, flexbox, no JS, readable class names</text>
+  <text x="408" y="218" class="sm"><tspan class="bd">Foundation</tspan> enterprise-oriented, less active now</text>
+  <text x="408" y="238" class="sm"><tspan class="bd">Material (MUI, Angular Material)</tspan> component libraries</text>
+  <text x="408" y="258" class="sm"><tspan class="bd">Pico, Open Props, Water.css</tspan> minimal or classless</text>
+  <text x="408" y="278" class="sm"><tspan class="bd">Headless + custom CSS</tspan> full design control (E8)</text>
+  <text x="408" y="298" class="sm">Choose by design needs, team skills, bundle size, maintenance</text>
+</svg></div>
+<figcaption><b>Trade-off.</b> Frameworks trade design freedom for speed and consistency; customise at the variable level, not by overriding output.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Grid system:</b> <code>.container</code> (fixed or fluid), <code>.row</code> (flex wrapper with negative gutters), <code>.col-*</code> (flex items spanning 12 columns), breakpoint prefixes, auto-sizing columns (<code>.col</code>), offsets, ordering utilities, gutters (<code>g-*</code>); newer versions offer an optional CSS Grid engine; compare with writing your own CSS grid and flexbox layouts, which is often simpler and more flexible today (CSS guide C-layout topics).</li>
+<li><b>Utilities and components:</b> spacing scale (<code>m-3</code>, <code>px-4</code>), display and flex helpers, colours, borders, shadows, visibility; component markup follows documented structures with classes; JS components (modal, dropdown, collapse, tooltip) rely on data attributes or an instance API and work with ARIA patterns; in React, use React-Bootstrap to avoid manipulating the DOM directly with Bootstrap’s JavaScript.</li>
+<li><b>Customisation strategies:</b> override Sass variables and maps (<code>$theme-colors</code>, <code>$spacers</code>, <code>$grid-breakpoints</code>) before importing; import only needed parts (<code>@import "bootstrap/scss/functions"</code>…) to reduce size; use the CSS variables for run-time theming (<code>--bs-primary</code>) and <code>data-bs-theme="dark"</code> for dark mode; avoid overriding with heavy specificity in a separate stylesheet.</li>
+<li><b>Performance and size:</b> compiled Bootstrap CSS is around 150 KB unminified (about 25 KB gzipped, check current) and the JS bundle adds weight; trim unused components via Sass imports, PurgeCSS, or tree-shaken JS; consider CSS-only usage.</li>
+<li><b>Accessibility:</b> components implement many ARIA patterns (modal focus management, dropdown keyboard), but custom compositions still need testing; ensure colour contrast of default palette meets requirements when customised.</li>
+<li><b>Other frameworks:</b> Bulma (CSS-only, Flexbox, easy to read, modifiers like <code>is-primary</code>), Foundation (powerful grid and accessibility, decreasing popularity), Semantic UI (largely replaced by Fomantic), Material Design Lite (retired), Primer (GitHub), Carbon (IBM), Fluent (Microsoft); component libraries such as MUI, Ant Design, Chakra, Mantine blend styling with React components (E8).</li>
+<li><b>Choosing between approaches:</b> prototype, internal tools and admin dashboards: Bootstrap or a component library; branded marketing and product UI with a design system: custom tokens plus Tailwind, CSS Modules or headless components; long-lived apps with legacy Bootstrap: encapsulate and migrate gradually.</li>
+<li><b>Common problems:</b> sites that look generic, fighting defaults, specificity conflicts when overriding, loading both Bootstrap and another framework, version upgrade pain (Bootstrap 4 to 5 changed many classes and removed jQuery), and bundle bloat.</li>
+<li><b>Migration paths:</b> replace Bootstrap components behind your own wrappers, move layout to native grid/flex, introduce tokens as CSS variables, then drop the framework CSS (A4, S1).</li>
+<li><b>CSS frameworks in the Angular and React worlds:</b> ng-bootstrap, ngx-bootstrap, React-Bootstrap provide component bindings without jQuery; Angular Material and CDK implement Material Design with accessibility.</li>
+<li><b>Licensing and governance:</b> MIT for Bootstrap, Tailwind and Bulma; check licences for commercial component kits and UI templates.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Overriding Bootstrap’s compiled CSS with more specific selectors instead of customising Sass variables.</li>
+<li>Importing the entire framework for a few components.</li>
+<li>Mixing Bootstrap JavaScript with a React or Angular rendered DOM and getting stale state.</li>
+<li>Assuming components are fully accessible regardless of how you compose them.</li>
+<li>Choosing a framework because it is familiar when the product needs a distinct brand.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Bootstrap versus Tailwind?</dt><dd>Bootstrap provides ready-made components and a grid; Tailwind provides low-level utilities and requires building components, giving more design freedom.</dd>
+<dt>How do you customise the Bootstrap theme?</dt><dd>Set Sass variables before importing Bootstrap’s source (or override CSS variables), and import only the needed modules.</dd>
+<dt>How does the 12-column grid work?</dt><dd>Rows are flex containers; columns take a fraction of 12 per breakpoint, wrapping to new lines when the total exceeds 12.</dd>
+<dt>Would you still use a 12-column grid today?</dt><dd>For legacy or quick layouts yes; for new work CSS Grid and flexbox give more precise and simpler layouts.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C20 ============ -->
+<section class="q" id="c20">
+<header class="qh">
+  <div class="qrow"><span class="qid">C20</span><span class="tag added">Added</span></div>
+  <h2>The CSS toolchain and modern CSS versus preprocessors</h2>
+  <p class="qtext">“Which tools process CSS: PostCSS, Autoprefixer, Lightning CSS, Stylelint, CSS Modules, PurgeCSS? Which preprocessor features does native CSS now cover (variables, nesting, <code>color-mix</code>, layers, container queries)? How would you set up CSS for a new project in 2026?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The CSS toolchain transforms, lints and optimises stylesheets. PostCSS parses CSS into an AST so plugins can add vendor prefixes with Autoprefixer, compile future syntax with preset-env and minify; Lightning CSS is a very fast Rust alternative that does parsing, prefixing, nesting and minification, and is built into Vite and Parcel. Stylelint enforces conventions, and CSS Modules scope class names. Native CSS now covers many preprocessor features: custom properties, nesting, <code>calc()</code>, <code>clamp()</code>, <code>color-mix()</code>, cascade layers, container queries and <code>:has()</code>. For a new project I would start with plain modern CSS or CSS Modules plus custom properties for tokens, add PostCSS or Lightning CSS for prefixing driven by <code>browserslist</code>, use Stylelint, and reach for Sass or Tailwind only when their specific benefits are needed.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a CSS build pipeline from authored CSS or SCSS through preprocessing, PostCSS or Lightning CSS, scoping with CSS Modules, to optimised production CSS. Right: a table of preprocessor features and their native equivalents.">
+  <text x="10" y="18" class="bd">CSS build pipeline</text>
+  <rect x="10" y="30" width="110" height="40" rx="4" class="b"/><text x="18" y="48" class="bd">Authored</text><text x="18" y="62" class="sm">CSS / SCSS</text>
+  <rect x="130" y="30" width="110" height="40" rx="4" class="h"/><text x="138" y="48" class="bd">Sass (opt.)</text><text x="138" y="62" class="sm">compile-time logic</text>
+  <rect x="250" y="30" width="120" height="40" rx="4" class="h"/><text x="258" y="48" class="bd">PostCSS / LCSS</text><text x="258" y="62" class="sm">prefix, nest, min</text>
+  <path class="a" d="M120 50H128"/><path class="a" d="M240 50H248"/>
+  <rect x="10" y="82" width="170" height="40" rx="4" class="w"/><text x="18" y="100" class="bd">Scoping</text><text x="18" y="114" class="sm">CSS Modules hashing</text>
+  <rect x="190" y="82" width="180" height="40" rx="4" class="g"/><text x="198" y="100" class="bd">Production CSS</text><text x="198" y="114" class="sm">minified, hashed, split</text>
+  <path class="a" d="M310 70V80"/><path class="a" d="M180 102H188"/>
+  <rect x="10" y="134" width="360" height="176" rx="5" class="b"/><text x="18" y="154" class="bd">Tools</text><text x="18" y="172" class="sm"><tspan class="bd">PostCSS</tspan> AST + plugins: Autoprefixer, preset-env, cssnano</text><text x="18" y="188" class="sm"><tspan class="bd">Lightning CSS</tspan> Rust: parse, transform, prefix, minify, modules</text><text x="18" y="204" class="sm"><tspan class="bd">Stylelint</tspan> lint rules: specificity, duplicates, token usage</text><text x="18" y="220" class="sm"><tspan class="bd">PurgeCSS / content scan</tspan> remove unused selectors (careful)</text><text x="18" y="236" class="sm"><tspan class="bd">Critical CSS</tspan> inline above-the-fold (Critters, Beasties)</text><text x="18" y="252" class="sm"><tspan class="bd">browserslist</tspan> single source for targets</text><text x="18" y="268" class="sm"><tspan class="bd">DevTools Coverage</tspan> find unused CSS; CSS Stats audits</text><text x="18" y="290" class="sm"><tspan class="bd">Visual tests</tspan> catch regressions after refactors (R12)</text>
+  <text x="400" y="18" class="bd">Native CSS vs preprocessor features</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="w"/>
+  <text x="408" y="50" class="bd">Sass feature</text><text x="560" y="50" class="bd">Native today</text>
+  <text x="408" y="74" class="sm">$variables</text><text x="560" y="74" class="sm">custom properties (--x)</text>
+  <text x="408" y="96" class="sm">nesting &amp;</text><text x="560" y="96" class="sm">native CSS nesting</text>
+  <text x="408" y="118" class="sm">math, rem()</text><text x="560" y="118" class="sm">calc(), clamp(), min(), max()</text>
+  <text x="408" y="140" class="sm">color functions</text><text x="560" y="140" class="sm">color-mix(), relative colours</text>
+  <text x="408" y="162" class="sm">partials + @use</text><text x="560" y="162" class="sm">@import (native), bundlers</text>
+  <text x="408" y="184" class="sm">breakpoint mixins</text><text x="560" y="184" class="sm">container queries, range syntax</text>
+  <text x="408" y="206" class="sm">@extend, specificity</text><text x="560" y="206" class="sm">@layer, :where(), @scope</text>
+  <text x="408" y="228" class="sm">loops and maps</text><text x="560" y="228" class="sm">no native equivalent (still Sass)</text>
+  <text x="408" y="254" class="bd">Still useful from Sass</text><text x="408" y="272" class="sm">generated scales and utility classes, build-time math,</text><text x="408" y="288" class="sm">shared mixins, framework sources (Bootstrap); verify support</text>
+</svg></div>
+<figcaption><b>Trend.</b> The platform absorbed most preprocessor conveniences; the toolchain now focuses on compatibility, scoping and optimisation.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>PostCSS:</b> a tool for transforming CSS with JavaScript plugins; plugins: Autoprefixer (adds prefixes from <code>browserslist</code> and caniuse data), <code>postcss-preset-env</code> (polyfills future CSS by target), <code>postcss-nesting</code>, <code>cssnano</code> (minify), <code>postcss-import</code>, Tailwind (as a plugin in v3); configured via <code>postcss.config.js</code>; widely integrated into Vite, Next.js and webpack (B7).</li>
+<li><b>Lightning CSS:</b> parses, transforms, prefixes and minifies CSS, supports nesting, modern colour syntax, CSS Modules and custom media; used by Vite (optional), Parcel and Tailwind v4’s toolchain; much faster than JS-based pipelines <span class="verify">verify integration details</span>.</li>
+<li><b>Stylelint:</b> configurable linter with rules for errors and conventions: no duplicate selectors, max specificity, property order, forbid hard-coded colours (use tokens), enforce naming patterns; integrates with editors and CI (B9).</li>
+<li><b>CSS Modules:</b> file-local class names via hashing (<code>styles.button</code>), <code>composes</code>, <code>:global</code>; works with CSS, Sass and PostCSS; typed class names via generators; default in Next.js and Vite setups (E7).</li>
+<li><b>Removing unused CSS:</b> Tailwind scans content; PurgeCSS and Lightning CSS can drop unused selectors but need safelists for dynamic classes and third-party markup; DevTools Coverage identifies dead code; keep component-scoped CSS so removing a component removes its styles.</li>
+<li><b>Critical CSS and loading:</b> inline above-the-fold CSS, load the rest asynchronously, split CSS by route, avoid <code>@import</code> chains in production CSS, compress with Brotli, and use <code>content-visibility</code> to defer rendering costs (F2, B1).</li>
+<li><b>Native replacements in detail:</b> custom properties for tokens and theming (runtime), CSS nesting (with relaxed syntax in newer versions), <code>@layer</code> for precedence, container queries and units for component-level responsiveness, <code>:has()</code> for parent selection, <code>color-mix()</code> and relative colour syntax for palettes, <code>@property</code> for typed variables and animation of custom properties, <code>@scope</code>, <code>@starting-style</code>, view transitions <span class="verify">verify support per feature on caniuse and Baseline</span>.</li>
+<li><b>Fallbacks and progressive enhancement:</b> use <code>@supports</code> to gate new features, provide baseline styles, and let PostCSS/Lightning CSS down-level syntax per <code>browserslist</code> when required (B3).</li>
+<li><b>Setting up CSS for a new project:</b> choose scoping (CSS Modules or Tailwind or framework-scoped), define tokens as custom properties, set up <code>@layer</code> order, add PostCSS/Lightning CSS with <code>browserslist</code>, Stylelint, and a visual regression or Storybook pipeline; document conventions; add Sass only if build-time logic is needed.</li>
+<li><b>CSS-in-JS comparison:</b> runtime CSS-in-JS gives dynamic styling and co-location but adds runtime cost and RSC friction; zero-runtime variants extract static CSS; for most apps CSS Modules or utilities plus custom properties for dynamic values give the best performance (E7).</li>
+<li><b>Maintainability practices:</b> keep specificity low, avoid duplication through tokens and components, review for dead CSS regularly, restrict global styles to resets and tokens, and use visual tests during refactors.</li>
+<li><b>Debugging CSS toolchain issues:</b> inspect source maps from compiled CSS back to SCSS or Modules, check the computed output in DevTools, verify prefixes in the built file, and confirm <code>browserslist</code> resolution with <code>npx browserslist</code>.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Adding Sass, PostCSS, CSS-in-JS and a framework to a small project without need.</li>
+<li>PurgeCSS removing dynamically generated classes because they were not safelisted.</li>
+<li>Using new CSS features without feature checks or fallbacks for the support matrix.</li>
+<li>Maintaining duplicated tokens in Sass variables and custom properties.</li>
+<li>Believing native nesting and Sass nesting behave identically in every detail.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does Autoprefixer need to work?</dt><dd>A <code>browserslist</code> target list; it then adds only the vendor prefixes those browsers require.</dd>
+<dt>Do you still need Sass?</dt><dd>Rarely for new projects; it remains useful for build-time loops and maps, shared mixins and legacy frameworks.</dd>
+<dt>How do you find and remove unused CSS?</dt><dd>DevTools Coverage and static analysis to find candidates, then component-scoped styles or content scanning with safelists to remove them safely.</dd>
+<dt>Why did Lightning CSS appear?</dt><dd>To replace multiple JavaScript tools with one fast native pipeline for parsing, transforming and minifying modern CSS.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>24 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>What is SCSS?</td><td>A CSS-superset syntax for Sass, compiled to plain CSS at build time.</td><td>C16</td></tr>
+<tr><td>2</td><td>Sass variable versus custom property?</td><td>Sass variables vanish at compile time; custom properties exist at run time and cascade.</td><td>C16</td></tr>
+<tr><td>3</td><td><code>@use</code> versus <code>@import</code>?</td><td><code>@use</code> namespaces and loads once; <code>@import</code> is global, duplicates output and is deprecated.</td><td>C16</td></tr>
+<tr><td>4</td><td>Mixin versus <code>@extend</code>?</td><td>Mixins copy declarations and take arguments; extend merges selectors and takes none.</td><td>C16</td></tr>
+<tr><td>5</td><td>What is a partial?</td><td>A file starting with <code>_</code> that is only compiled when loaded by another file.</td><td>C16</td></tr>
+<tr><td>6</td><td>What does Sass still do better than CSS?</td><td>Loops, maps and build-time generation of scales and utilities.</td><td>C16</td></tr>
+<tr><td>7</td><td>Risk of deep Sass nesting?</td><td>Long, high-specificity selectors and bloated output.</td><td>C16</td></tr>
+<tr><td>8</td><td>What does BEM stand for?</td><td>Block, element, modifier: <code>card__title--large</code>.</td><td>C17</td></tr>
+<tr><td>9</td><td>What is ITCSS?</td><td>Layering CSS from low-specificity, wide-reach to high-specificity, narrow-reach rules.</td><td>C17</td></tr>
+<tr><td>10</td><td>Why avoid IDs and deep selectors?</td><td>They raise specificity and couple styles to markup structure.</td><td>C17</td></tr>
+<tr><td>11</td><td>What do cascade layers do?</td><td>Set precedence between rule groups regardless of selector specificity.</td><td>C17</td></tr>
+<tr><td>12</td><td>Layered versus unlayered styles?</td><td>Unlayered styles win over layered ones.</td><td>C17</td></tr>
+<tr><td>13</td><td>What does <code>:where()</code> do?</td><td>Like <code>:is()</code> but with zero specificity, for easy-to-override defaults.</td><td>C17</td></tr>
+<tr><td>14</td><td>How to override a library cleanly?</td><td>Put it in a low layer and your styles in a later one, no <code>!important</code>.</td><td>C17</td></tr>
+<tr><td>15</td><td>What is utility-first CSS?</td><td>Composing small single-purpose classes in markup from a constrained token scale.</td><td>C18</td></tr>
+<tr><td>16</td><td>Why is Tailwind output small?</td><td>It generates only the utilities found by scanning your source.</td><td>C18</td></tr>
+<tr><td>17</td><td>Why does <code>text-${c}-500</code> fail?</td><td>The scanner cannot see dynamically built class names; write them in full.</td><td>C18</td></tr>
+<tr><td>18</td><td>How to reuse Tailwind patterns?</td><td>Extract components, not CSS classes; <code>@apply</code> sparingly.</td><td>C18</td></tr>
+<tr><td>19</td><td>How does Bootstrap's grid work?</td><td>Flex rows with columns spanning a 12-unit total per breakpoint.</td><td>C19</td></tr>
+<tr><td>20</td><td>How to customise Bootstrap?</td><td>Override Sass variables before importing it, or CSS variables at run time.</td><td>C19</td></tr>
+<tr><td>21</td><td>What does Autoprefixer need?</td><td>A <code>browserslist</code> target list.</td><td>C20</td></tr>
+<tr><td>22</td><td>What is Lightning CSS?</td><td>A fast Rust tool that parses, transforms, prefixes and minifies CSS.</td><td>C20</td></tr>
+<tr><td>23</td><td>What do CSS Modules do?</td><td>Hash class names per file so styles are locally scoped.</td><td>C20</td></tr>
+<tr><td>24</td><td>Native CSS replacing Sass features?</td><td>Custom properties, nesting, <code>calc()</code>, <code>color-mix()</code>, <code>@layer</code>, container queries.</td><td>C20</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer CSS tooling questions at L4</h4>
+<ul>
+<li>Lead with the problem each tool solves: global scope, specificity, dead CSS, browser support, consistency.</li>
+<li>Give a recommendation and its trade-off, not a tool list: “tokens as custom properties, scoped styles, Sass only if build-time logic is needed”.</li>
+<li>Separate build-time from run-time: Sass variables versus custom properties is the classic probe.</li>
+<li>Talk about team and migration: conventions, linting, visual regression tests, gradual replacement of legacy CSS.</li>
+<li>The interview is theoretical: expect “when would you choose” and “what are the trade-offs”, not writing stylesheets.</li>
+</ul></div>
+</section>
+
+</div>

@@ -1,0 +1,761 @@
+<title>Java for Frontend Developers Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"Java for Frontend Developers Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"Java for Frontend Developers Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · Java for frontend developers · Awareness depth</div>
+  <h1>Java for Frontend Developers Study Guide</h1>
+  <p>What a frontend lead should know about Java to work effectively with Java backends, which are common in EPAM and enterprise projects: the JVM and how Java runs, core language and object-oriented concepts, collections and streams, concurrency compared with the JavaScript event loop, Spring Boot and dependency injection, building REST APIs and what they mean for the frontend, persistence and transactions, build and deployment, and collaboration patterns with a Java team. The level is awareness and conversation, not writing production Java. Every topic is something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> versions and framework features change: check current docs</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · The language and runtime</h3>
+    <ol>
+      <li><b>JV1</b><a href="#jv1">The JVM and how Java runs</a></li>
+      <li><b>JV2</b><a href="#jv2">Core language and OOP essentials</a></li>
+      <li><b>JV3</b><a href="#jv3">Collections, generics and streams</a></li>
+      <li><b>JV4</b><a href="#jv4">Concurrency versus the JavaScript model</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>2 · Java in the backend</h3>
+    <ol>
+      <li><b>JV5</b><a href="#jv5">Spring Boot and dependency injection</a></li>
+      <li><b>JV6</b><a href="#jv6">REST APIs: what the frontend sees</a></li>
+      <li><b>JV7</b><a href="#jv7">Persistence, JPA and transactions</a></li>
+      <li><b>JV8</b><a href="#jv8">Build, deploy and operate Java services</a></li>
+      <li><b>JV9</b><a href="#jv9">Working with a Java team as a frontend lead</a></li>
+    </ol>
+    <h3 style="margin-top:16px">3 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">JV1 to JV3 give you the vocabulary. JV5 to JV7 explain what happens behind your API calls. JV9 is the most practical for a frontend lead.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Related: Node and databases (the alternative backend and SQL), Web protocols (HTTP and security), Architecture and DevOps (deployment).</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · The language and runtime</h1>
+
+<!-- ============ JV1 ============ -->
+<section class="q" id="jv1">
+<header class="qh">
+  <div class="qrow"><span class="qid">JV1</span><span class="tag added">Added</span></div>
+  <h2>The JVM and how Java runs</h2>
+  <p class="qtext">“How does Java run? What are the JDK, JRE and JVM? Explain bytecode, the JIT compiler, memory (heap, stack), garbage collection and the Java release model. How does this compare with JavaScript and V8?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Java source is compiled by <code>javac</code> into platform-independent bytecode, which the Java Virtual Machine loads and executes, interpreting it first and using a just-in-time compiler to turn hot code into optimised machine code, so the same class files run on any operating system with a JVM. The JDK contains the compiler and tools; the JRE is the runtime; the JVM is the engine. Objects live on the heap, managed by a garbage collector such as G1 or ZGC; each thread has a stack for method calls and local variables. Java is statically typed and compiled ahead to bytecode, unlike JavaScript which is dynamically typed and compiled at run time, but both use JIT compilation and garbage collection. Oracle releases a new Java version every six months, with long-term support releases such as 17 and 21 used in production.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: Java compile and run pipeline from source to bytecode to JVM with interpreter, JIT and garbage collector. Right: JVM memory areas and comparison with JavaScript V8.">
+  <text x="10" y="18" class="bd">Compile once, run anywhere</text>
+  <rect x="10" y="30" width="100" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">.java</text><text x="18" y="66" class="sm">source code</text>
+  <rect x="130" y="30" width="100" height="46" rx="5" class="h"/><text x="138" y="50" class="bd">javac</text><text x="138" y="66" class="sm">compiler</text>
+  <rect x="250" y="30" width="120" height="46" rx="5" class="w"/><text x="258" y="50" class="bd">.class / .jar</text><text x="258" y="66" class="sm">bytecode</text>
+  <path class="a" d="M110 53H128"/><path class="a" d="M230 53H248"/>
+  <rect x="10" y="90" width="360" height="124" rx="5" class="g"/><text x="18" y="110" class="bd">JVM</text><text x="18" y="128" class="sm">class loader → verifier → execution engine</text><rect x="18" y="138" width="100" height="30" class="b"/><text x="24" y="157" class="sm">interpreter</text><rect x="126" y="138" width="110" height="30" class="h"/><text x="132" y="157" class="sm">JIT (C1, C2)</text><rect x="244" y="138" width="118" height="30" class="w"/><text x="250" y="157" class="sm">garbage collector</text><text x="18" y="190" class="sm">hot methods are profiled and compiled to optimised machine code</text><text x="18" y="206" class="sm">(speculation, inlining); GC reclaims unreachable objects</text>
+  <rect x="10" y="226" width="360" height="84" rx="5" class="b"/><text x="18" y="246" class="bd">JDK, JRE, JVM</text><text x="18" y="264" class="sm">JDK = tools (javac, jar, jlink, jshell) + JRE · JRE = JVM + libraries</text><text x="18" y="280" class="sm">JVM = the engine. Distributions: OpenJDK builds (Temurin, Corretto,</text><text x="18" y="296" class="sm">Zulu, Oracle). Use an LTS release: 17 or 21 (verify current).</text>
+  <text x="400" y="18" class="bd">Memory model overview</text>
+  <rect x="400" y="30" width="350" height="62" rx="5" class="h"/><text x="408" y="48" class="bd">Heap (shared)</text><text x="408" y="66" class="sm">all objects and arrays; young generation (eden, survivors) and old</text><text x="408" y="82" class="sm">generation; collected by the GC; sized with -Xms / -Xmx</text>
+  <rect x="400" y="98" width="350" height="50" rx="5" class="g"/><text x="408" y="116" class="bd">Thread stacks (per thread)</text><text x="408" y="132" class="sm">frames for method calls, locals, references; StackOverflowError</text>
+  <rect x="400" y="154" width="350" height="50" rx="5" class="w"/><text x="408" y="172" class="bd">Metaspace + code cache</text><text x="408" y="188" class="sm">class metadata and JIT-compiled code (off-heap)</text>
+  <rect x="400" y="212" width="350" height="98" rx="5" class="x"/><text x="408" y="232" class="bd">Versus JavaScript / V8</text><text x="408" y="250" class="sm">both: bytecode + JIT + generational GC</text><text x="408" y="266" class="sm">Java: static types, compiled to bytecode before running, true</text><text x="408" y="282" class="sm">multithreading, heavier startup and memory, strong tooling</text><text x="408" y="298" class="sm">JS: dynamic types, single thread, event loop, fast start</text>
+</svg></div>
+<figcaption><b>Idea.</b> The JVM is a portable managed runtime. Java’s performance comes from JIT optimisation after warm-up.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Compilation and execution:</b> <code>javac</code> produces <code>.class</code> files; <code>jar</code> packages them with metadata (<code>MANIFEST.MF</code>); the JVM’s class loader loads classes lazily; the bytecode verifier checks safety; execution starts in the interpreter, and tiered JIT compilation (C1 quick, C2 aggressive) optimises hot code; <b>warm-up</b> explains slower initial requests after startup.</li>
+<li><b>Garbage collection:</b> automatic reclamation of unreachable objects; generational hypothesis (most objects die young). Collectors: Serial, Parallel, <b>G1</b> (default, balanced pause times), <b>ZGC</b> and Shenandoah (low latency, concurrent). Tuning knobs: heap size, pause goals; symptoms of trouble: long pauses, <code>OutOfMemoryError</code>, memory leaks from static collections and listeners (similar causes to JS leaks, J24, J25).</li>
+<li><b>Stack and heap:</b> primitives and references in stack frames; objects in the heap; passing arguments is always by value (object references are copied), like JavaScript’s “call by sharing” (J1).</li>
+<li><b>Release model and LTS:</b> a feature release every six months; LTS every few years (8, 11, 17, 21, 25) supported longer; enterprises standardise on LTS and upgrade periodically; features arrive as preview before finalising (records, sealed classes, virtual threads, pattern matching) <span class="verify">verify the current LTS</span>.</li>
+<li><b>Native images and startup:</b> GraalVM native image compiles ahead of time for fast startup and low memory (useful for serverless), with trade-offs in build time and reflection constraints; Spring Boot supports it. CRaC and class data sharing also reduce startup.</li>
+<li><b>Tooling:</b> Maven or Gradle for builds, IDEs (IntelliJ IDEA), JFR (Java Flight Recorder) and VisualVM for profiling, <code>jstack</code> thread dumps, <code>jmap</code> heap dumps, Mission Control, and APM agents (Datadog, New Relic) attach as <code>-javaagent</code>.</li>
+<li><b>Platforms beyond Java:</b> Kotlin and Scala run on the JVM and interoperate; many “Java shops” use Kotlin for new services.</li>
+<li><b>Why enterprises use Java:</b> mature ecosystem, strong typing and tooling, performance, long-term compatibility, a huge talent pool, and robust frameworks (Spring, Jakarta EE); good for large, long-lived systems and teams.</li>
+<li><b>What frontend leads should take away:</b> Java services have slower cold starts and heavier memory but strong throughput; response times may vary after deploys until JIT warm-up; heap sizing and GC affect latency (visible as slow outliers in your API calls).</li>
+<li><b>Containers:</b> modern JVMs respect container memory and CPU limits; set max heap as a percentage; OOM kills in Kubernetes appear as exit code 137 (A8, A9).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying Java is “interpreted” or “compiled to native code” without explaining bytecode and JIT.</li>
+<li>Confusing Java and JavaScript beyond the name.</li>
+<li>Believing Java’s garbage collection means memory leaks are impossible.</li>
+<li>Ignoring warm-up when benchmarking or diagnosing slow first requests.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>JDK versus JRE versus JVM?</dt><dd>The JDK includes development tools and the JRE; the JRE includes the JVM and standard libraries; the JVM executes bytecode.</dd>
+<dt>Why do Java services seem slow right after deployment?</dt><dd>The JVM is still interpreting and profiling; JIT compilation optimises hot code after warm-up.</dd>
+<dt>What does the garbage collector do?</dt><dd>Finds objects no longer reachable and frees their memory, in generations, concurrently with the application in modern collectors.</dd>
+<dt>What is an LTS release?</dt><dd>A Java version with extended vendor support, preferred for production.</dd>
+</dl></div>
+</section>
+
+<!-- ============ JV2 ============ -->
+<section class="q" id="jv2">
+<header class="qh">
+  <div class="qrow"><span class="qid">JV2</span><span class="tag added">Added</span></div>
+  <h2>Core language and OOP essentials</h2>
+  <p class="qtext">“Explain the core Java language concepts a non-Java developer should recognise: classes, interfaces, inheritance, encapsulation, polymorphism, immutability, records, enums, generics, exceptions, <code>equals</code>/<code>hashCode</code>, <code>Optional</code> and modern features.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Java is a statically typed, class-based object-oriented language. Everything lives in classes; interfaces define contracts that classes implement; inheritance lets a class extend one parent, and polymorphism means a reference of the parent or interface type can hold different implementations. Fields are private and exposed through methods, which is encapsulation. Java has primitives and wrapper objects, strings are immutable, and modern Java adds records for immutable data carriers, sealed classes, pattern matching, text blocks, <code>var</code> and enhanced switch. Exceptions are either checked, which must be handled or declared, or unchecked. Collections of objects rely on <code>equals</code> and <code>hashCode</code> being consistent. I can read Java code comfortably because the concepts map to TypeScript classes, interfaces and generics.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a mapping table of Java concepts to TypeScript equivalents. Right: class hierarchy with interface, abstract class and implementations, and modern Java features list.">
+  <text x="10" y="18" class="bd">Java ↔ TypeScript mapping</text>
+  <rect x="10" y="30" width="360" height="280" rx="5" class="b"/>
+  <text x="18" y="50" class="bd">Java</text><text x="200" y="50" class="bd">TypeScript</text>
+  <text x="18" y="74" class="sm">class, interface, abstract class</text><text x="200" y="74" class="sm">class, interface, abstract</text>
+  <text x="18" y="96" class="sm">extends (one) / implements (many)</text><text x="200" y="96" class="sm">extends / implements</text>
+  <text x="18" y="118" class="sm">private / protected / public</text><text x="200" y="118" class="sm">same (TS: compile-time)</text>
+  <text x="18" y="140" class="sm">final (field, class, method)</text><text x="200" y="140" class="sm">readonly / const</text>
+  <text x="18" y="162" class="sm">static members</text><text x="200" y="162" class="sm">static</text>
+  <text x="18" y="184" class="sm">record Point(int x, int y)</text><text x="200" y="184" class="sm">readonly object / class</text>
+  <text x="18" y="206" class="sm">enum with fields and methods</text><text x="200" y="206" class="sm">union or enum</text>
+  <text x="18" y="228" class="sm">generics List&lt;T&gt; (erased at runtime)</text><text x="200" y="228" class="sm">generics (erased)</text>
+  <text x="18" y="250" class="sm">annotations @Override @Entity</text><text x="200" y="250" class="sm">decorators</text>
+  <text x="18" y="272" class="sm">Optional&lt;T&gt;</text><text x="200" y="272" class="sm">T | undefined</text>
+  <text x="18" y="294" class="sm">checked exceptions</text><text x="200" y="294" class="sm">no equivalent (all unchecked)</text>
+  <text x="400" y="18" class="bd">Polymorphism through interfaces</text>
+  <rect x="400" y="30" width="170" height="40" rx="5" class="h"/><text x="408" y="48" class="bd">interface Shape</text><text x="408" y="62" class="sm">double area();</text>
+  <rect x="400" y="96" width="110" height="40" rx="5" class="g"/><text x="408" y="114" class="bd">Circle</text><text x="408" y="128" class="sm">implements</text>
+  <rect x="520" y="96" width="110" height="40" rx="5" class="g"/><text x="528" y="114" class="bd">Square</text><text x="528" y="128" class="sm">implements</text>
+  <path class="a" d="M455 96L480 72"/><path class="a" d="M575 96L520 72"/>
+  <rect x="640" y="30" width="110" height="106" rx="5" class="w"/><text x="648" y="48" class="bd">Shape s =</text><text x="648" y="64" class="mono" style="font-size:10px">new Circle();</text><text x="648" y="84" class="sm">s.area() calls</text><text x="648" y="100" class="sm">the runtime</text><text x="648" y="116" class="sm">type’s method</text>
+  <rect x="400" y="148" width="350" height="162" rx="5" class="g"/><text x="408" y="168" class="bd">Modern Java (17 to 21+)</text><text x="408" y="186" class="sm"><tspan class="bd">records</tspan> immutable data classes with equals/hashCode/toString</text><text x="408" y="202" class="sm"><tspan class="bd">sealed</tspan> classes and interfaces: closed hierarchies</text><text x="408" y="218" class="sm"><tspan class="bd">pattern matching</tspan> for instanceof and switch</text><text x="408" y="234" class="sm"><tspan class="bd">var</tspan> local inference · <tspan class="bd">text blocks</tspan> multi-line strings</text><text x="408" y="250" class="sm"><tspan class="bd">enhanced switch</tspan> expressions</text><text x="408" y="266" class="sm"><tspan class="bd">virtual threads</tspan> lightweight concurrency (21)</text><text x="408" y="286" class="sm">Lombok (annotation library) removes boilerplate in older code</text>
+</svg></div>
+<figcaption><b>Take-away.</b> If you know TypeScript classes and interfaces, you can read most Java; the differences are in checked exceptions, primitives and the runtime model.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Types:</b> eight primitives (<code>int</code>, <code>long</code>, <code>double</code>, <code>boolean</code>, <code>char</code>, <code>byte</code>, <code>short</code>, <code>float</code>) and reference types; wrapper classes (<code>Integer</code>, <code>Long</code>) with autoboxing; <code>null</code> is a valid reference value (the source of <code>NullPointerException</code>); <code>String</code> is immutable (like JavaScript strings); <code>==</code> compares references for objects, so <code>.equals()</code> compares content.</li>
+<li><b>Classes and encapsulation:</b> fields usually <code>private</code> with getters and setters (JavaBeans convention); constructors; <code>static</code> members; access modifiers (package-private is the default); packages and imports organise code; one public class per file.</li>
+<li><b>Inheritance and polymorphism:</b> single inheritance of classes, multiple interfaces; <code>@Override</code>; <code>abstract</code> classes; <code>super</code>; interfaces can have default methods; favour composition over inheritance (J28, S8). Dynamic dispatch means the runtime class decides which method runs.</li>
+<li><b>Immutability and records:</b> <code>final</code> fields, immutable classes, and <code>record Point(int x, int y) {}</code> (compact immutable data carrier with accessors <code>x()</code>, <code>equals</code>, <code>hashCode</code>); records are popular for DTOs in APIs.</li>
+<li><b>Enums and sealed types:</b> enums are full classes with fields, constructors and methods; sealed hierarchies with pattern-matching switch give exhaustive handling similar to TypeScript discriminated unions (T4).</li>
+<li><b>Generics:</b> compile-time type safety (<code>List&lt;String&gt;</code>), wildcards (<code>? extends</code>, <code>? super</code>), and <em>type erasure</em>: generic information is removed at runtime, so you cannot do <code>instanceof List&lt;String&gt;</code>; similar erasure exists in TypeScript.</li>
+<li><b>Exceptions:</b> <code>Throwable</code> splits into <code>Error</code> (JVM problems), checked <code>Exception</code> (must be caught or declared with <code>throws</code>) and unchecked <code>RuntimeException</code> (programming errors such as <code>NullPointerException</code>, <code>IllegalArgumentException</code>); <code>try-with-resources</code> closes resources; Spring commonly translates exceptions into HTTP responses (JV6).</li>
+<li><b><code>equals</code> and <code>hashCode</code>:</b> must be consistent: equal objects must have equal hash codes, otherwise <code>HashMap</code> and <code>HashSet</code> misbehave; records and IDE generation handle it.</li>
+<li><b><code>Optional&lt;T&gt;</code>:</b> a container signalling a value may be absent, used for return types (not fields or parameters); methods <code>map</code>, <code>orElse</code>, <code>orElseThrow</code>, <code>ifPresent</code>; avoids returning <code>null</code> but is not a general nullability solution; annotations (<code>@Nullable</code>) and static analysis help.</li>
+<li><b>Annotations:</b> metadata like <code>@Override</code>, <code>@Deprecated</code>, and framework annotations (<code>@RestController</code>, <code>@Entity</code>, <code>@Autowired</code>, <code>@Valid</code>) that drive behaviour via reflection at runtime or annotation processing at compile time.</li>
+<li><b>Lambdas and functional interfaces:</b> <code>x -&gt; x * 2</code> implements single-method interfaces (<code>Function</code>, <code>Predicate</code>, <code>Consumer</code>, <code>Supplier</code>); method references <code>String::trim</code>; used with streams and callbacks, like JavaScript arrow functions (J8).</li>
+<li><b>Naming and style:</b> classes PascalCase, methods and variables camelCase, constants UPPER_SNAKE_CASE, packages lowercase; JSON property names often need mapping (<code>@JsonProperty</code>) when the frontend uses different casing.</li>
+<li><b>Date and time and numbers:</b> <code>java.time</code> (<code>Instant</code>, <code>LocalDate</code>, <code>ZonedDateTime</code>, <code>Duration</code>) is the modern API; <code>BigDecimal</code> for money; <code>long</code> ids can exceed JavaScript’s safe integer range (J13) (JV6).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Comparing strings or boxed numbers with <code>==</code> in Java.</li>
+<li>Overriding <code>equals</code> without <code>hashCode</code>.</li>
+<li>Treating <code>Optional</code> as a replacement for all null handling or using it for fields.</li>
+<li>Assuming generics exist at runtime.</li>
+<li>Using floating-point types for money instead of <code>BigDecimal</code>.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Interface versus abstract class?</dt><dd>Interfaces define contracts (and default methods) with multiple implementation; abstract classes share state and code with single inheritance.</dd>
+<dt>Checked versus unchecked exceptions?</dt><dd>Checked must be handled or declared; unchecked represent programming errors and need not be.</dd>
+<dt>What is a record?</dt><dd>A concise immutable data class with generated accessors, <code>equals</code>, <code>hashCode</code> and <code>toString</code>.</dd>
+<dt>What is type erasure?</dt><dd>The compiler removes generic type arguments, so they are not available at run time.</dd>
+</dl></div>
+</section>
+
+<!-- ============ JV3 ============ -->
+<section class="q" id="jv3">
+<header class="qh">
+  <div class="qrow"><span class="qid">JV3</span><span class="tag added">Added</span></div>
+  <h2>Collections, generics and streams</h2>
+  <p class="qtext">“What are the Java collections: List, Set, Map and their implementations? How does <code>HashMap</code> work? What are streams and how do they compare with JavaScript array methods? What is immutability in collections?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The Java Collections Framework provides interfaces and implementations for groups of objects: <code>List</code> is an ordered sequence, usually <code>ArrayList</code>; <code>Set</code> holds unique elements, such as <code>HashSet</code> or the ordered <code>LinkedHashSet</code> and <code>TreeSet</code>; <code>Map</code> stores key-value pairs, usually <code>HashMap</code>. A <code>HashMap</code> computes a bucket from the key’s <code>hashCode</code> and uses <code>equals</code> to find the entry, giving average constant-time lookups. The Stream API processes collections declaratively with operations like <code>filter</code>, <code>map</code> and <code>collect</code>, similar to JavaScript’s array methods but lazy and able to run in parallel. Collections are mutable by default; <code>List.of</code> creates immutable ones, and concurrent collections exist for multi-threaded use.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: collection interface hierarchy with common implementations and their complexity. Right: a stream pipeline compared with JavaScript array method chaining.">
+  <text x="10" y="18" class="bd">Collections framework</text>
+  <rect x="10" y="30" width="360" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">Iterable → Collection</text><text x="18" y="62" class="sm">List · Set · Queue/Deque   (Map is separate)</text>
+  <rect x="10" y="76" width="170" height="86" rx="5" class="g"/><text x="18" y="94" class="bd">List</text><text x="18" y="112" class="sm">ArrayList: index O(1)</text><text x="18" y="128" class="sm">LinkedList: rarely best</text><text x="18" y="144" class="sm">immutable: List.of(…)</text>
+  <rect x="190" y="76" width="180" height="86" rx="5" class="g"/><text x="198" y="94" class="bd">Set</text><text x="198" y="112" class="sm">HashSet: O(1), unordered</text><text x="198" y="128" class="sm">LinkedHashSet: insertion</text><text x="198" y="144" class="sm">TreeSet: sorted, O(log n)</text>
+  <rect x="10" y="170" width="360" height="62" rx="5" class="h"/><text x="18" y="190" class="bd">Map</text><text x="18" y="208" class="sm">HashMap: O(1) average · LinkedHashMap: order · TreeMap: sorted</text><text x="18" y="224" class="sm">ConcurrentHashMap for threads · EnumMap · Map.of(…) immutable</text>
+  <rect x="10" y="242" width="360" height="68" rx="5" class="w"/><text x="18" y="262" class="bd">HashMap in short</text><text x="18" y="278" class="sm">hash(key) → bucket index → compare with equals; collisions form a</text><text x="18" y="294" class="sm">list or tree; resize at load factor 0.75; keys need stable hashCode</text>
+  <text x="400" y="18" class="bd">Streams versus array methods</text>
+  <rect x="400" y="30" width="350" height="100" rx="5" class="b"/><text x="408" y="48" class="mono" style="font-size:10px">users.stream()</text><text x="408" y="64" class="mono" style="font-size:10px">  .filter(u -&gt; u.isActive())</text><text x="408" y="80" class="mono" style="font-size:10px">  .map(User::getEmail)</text><text x="408" y="96" class="mono" style="font-size:10px">  .sorted()</text><text x="408" y="112" class="mono" style="font-size:10px">  .collect(Collectors.toList());   // or .toList()</text>
+  <rect x="400" y="138" width="350" height="46" rx="5" class="g"/><text x="408" y="156" class="mono" style="font-size:10px">users.filter(u =&gt; u.active).map(u =&gt; u.email).sort()</text><text x="408" y="174" class="sm">same ideas in JavaScript (J10, J17)</text>
+  <rect x="400" y="192" width="350" height="118" rx="5" class="w"/><text x="408" y="212" class="bd">Differences to remember</text><text x="408" y="230" class="sm">streams are lazy and one-shot (cannot be reused)</text><text x="408" y="246" class="sm">intermediate ops (filter, map) vs terminal ops (collect, forEach)</text><text x="408" y="262" class="sm">parallelStream() uses a shared pool: use with care</text><text x="408" y="278" class="sm">primitive streams IntStream, LongStream avoid boxing</text><text x="408" y="294" class="sm">Collectors: groupingBy, partitioningBy, joining, toMap</text>
+</svg></div>
+<figcaption><b>Mapping.</b> Arrays → <code>ArrayList</code>; objects used as maps → <code>HashMap</code>; <code>Set</code> → <code>HashSet</code>; array methods → streams.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Choosing a collection:</b> <code>ArrayList</code> by default for lists; <code>LinkedList</code> almost never; <code>HashSet</code> for uniqueness; <code>TreeMap</code>/<code>TreeSet</code> when sorted order matters; <code>LinkedHashMap</code> for insertion order or LRU caches; <code>ArrayDeque</code> for queues and stacks; <code>PriorityQueue</code> for ordering by priority.</li>
+<li><b>Big-O awareness:</b> ArrayList get O(1), add amortised O(1), insert middle O(n); HashMap/HashSet O(1) average; TreeMap O(log n); contains on a list is O(n). Interview-level understanding, similar to JavaScript data structure costs (J10, J11).</li>
+<li><b>HashMap internals:</b> array of buckets, key hash spread, collisions resolved by chaining (linked list converting to a balanced tree when long), resize doubling; null keys allowed in <code>HashMap</code> but not in <code>ConcurrentHashMap</code>; iteration order is unspecified.</li>
+<li><b>Equality and ordering:</b> <code>equals</code>/<code>hashCode</code> for hash-based collections; <code>Comparable</code> (natural ordering) and <code>Comparator</code> (external ordering) for sorting and tree collections.</li>
+<li><b>Immutability and defensive copies:</b> <code>List.of</code>, <code>Set.of</code>, <code>Map.of</code>, <code>Collections.unmodifiableList</code> (a view), <code>List.copyOf</code>; modifying immutable collections throws <code>UnsupportedOperationException</code>; return copies from APIs to protect internal state.</li>
+<li><b>Streams:</b> sources (collections, arrays, ranges), intermediate operations (<code>filter</code>, <code>map</code>, <code>flatMap</code>, <code>distinct</code>, <code>sorted</code>, <code>limit</code>), terminal operations (<code>collect</code>, <code>forEach</code>, <code>reduce</code>, <code>count</code>, <code>anyMatch</code>, <code>findFirst</code>); keep them side-effect free; avoid overusing for complex logic; debugging is harder than loops.</li>
+<li><b>Collectors:</b> <code>groupingBy</code> (like building a map of arrays), <code>partitioningBy</code>, <code>toMap</code> (watch duplicate keys), <code>joining</code>, <code>counting</code>, <code>summarizingInt</code>.</li>
+<li><b>Generics with collections:</b> compile-time safety, bounded types and wildcards; raw types (<code>List</code> without type) are legacy and unsafe.</li>
+<li><b>Concurrent collections:</b> <code>ConcurrentHashMap</code>, <code>CopyOnWriteArrayList</code>, blocking queues for producer-consumer; plain collections are not thread-safe; <code>Collections.synchronizedList</code> is coarse.</li>
+<li><b>Iteration:</b> enhanced for-loop, iterators, <code>forEach</code> with lambdas; modifying a collection while iterating throws <code>ConcurrentModificationException</code> (use iterator removal or <code>removeIf</code>).</li>
+<li><b>Relevance to the frontend:</b> API responses are often serialised collections; ordering guarantees (a <code>HashSet</code> or <code>HashMap</code> has no stable order, so the JSON array or object order may vary), pagination of lists, and large result sets affecting response size and latency.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using mutable objects as <code>HashMap</code> keys and changing them after insertion.</li>
+<li>Relying on iteration order of a <code>HashMap</code>/<code>HashSet</code>.</li>
+<li>Reusing a stream after a terminal operation.</li>
+<li>Thinking <code>Collections.unmodifiableList</code> makes a copy; it is a read-only view.</li>
+<li>Using parallel streams without understanding thread pool sharing.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt><code>ArrayList</code> versus <code>LinkedList</code>?</dt><dd>ArrayList is array-backed with fast random access and is the default; LinkedList has fast inserts at known nodes but poor cache locality and slow indexed access.</dd>
+<dt>How does <code>HashMap</code> handle collisions?</dt><dd>Entries in the same bucket are chained (list, or tree when long) and distinguished using <code>equals</code>.</dd>
+<dt>What is a lazy stream?</dt><dd>Intermediate operations are not executed until a terminal operation runs, allowing optimisations and short-circuiting.</dd>
+<dt>Stream or for loop?</dt><dd>Streams for declarative transformations; loops for complex control flow or performance-critical code.</dd>
+</dl></div>
+</section>
+
+<!-- ============ JV4 ============ -->
+<section class="q" id="jv4">
+<header class="qh">
+  <div class="qrow"><span class="qid">JV4</span><span class="tag added">Added</span></div>
+  <h2>Concurrency versus the JavaScript model</h2>
+  <p class="qtext">“How does concurrency work in Java? Threads, executors, synchronisation, <code>volatile</code>, <code>CompletableFuture</code> and virtual threads. How does it differ from the single-threaded JavaScript event loop, and what do race conditions mean for an API?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Java has real multithreading: multiple threads execute code simultaneously and share heap memory, so correctness depends on synchronisation. A web server typically handles each request on a thread from a pool, so many requests run in parallel, and shared mutable state needs protection with locks, <code>synchronized</code>, atomic classes or concurrent collections; <code>volatile</code> ensures visibility of changes across threads. Higher-level tools include executors and <code>CompletableFuture</code> for asynchronous composition, similar to promises, and from Java 21 virtual threads, which make blocking code cheap to scale. JavaScript instead runs one thread with an event loop, so data races on shared memory do not occur, but CPU work blocks everything. For a frontend lead the relevance is that concurrent requests can race on the server, so operations need idempotency, transactions and optimistic locking.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a thread-per-request web server with a thread pool handling concurrent requests that share a database and in-memory state. Right: comparison of Java threads and the JavaScript event loop, and a race condition example.">
+  <text x="10" y="18" class="bd">Thread-per-request server</text>
+  <rect x="10" y="30" width="110" height="36" rx="4" class="b"/><text x="18" y="52" class="sm">requests 1..N</text>
+  <path class="a" d="M120 48H138"/>
+  <rect x="140" y="30" width="230" height="110" rx="5" class="h"/><text x="148" y="48" class="bd">Thread pool (e.g. 200)</text><rect x="148" y="56" width="62" height="22" class="g"/><text x="154" y="72" class="sm">thread 1</text><rect x="218" y="56" width="62" height="22" class="g"/><text x="224" y="72" class="sm">thread 2</text><rect x="288" y="56" width="74" height="22" class="g"/><text x="294" y="72" class="sm">thread 3</text><text x="148" y="100" class="sm">one request each; blocks on I/O</text><text x="148" y="116" class="sm">(DB, HTTP calls); excess requests queue</text><text x="148" y="132" class="sm">virtual threads (21): very cheap</text>
+  <path class="a" d="M255 140V156"/>
+  <rect x="10" y="158" width="360" height="52" rx="5" class="w"/><text x="18" y="178" class="bd">Shared state is the danger</text><text x="18" y="196" class="sm">singletons, caches, static fields, counters: need thread safety</text>
+  <rect x="10" y="220" width="360" height="90" rx="5" class="x"/><text x="18" y="240" class="bd">Tools</text><text x="18" y="258" class="sm">synchronized, lock · volatile · Atomic* · ConcurrentHashMap ·</text><text x="18" y="274" class="sm">ExecutorService, CompletableFuture · immutable objects (best) ·</text><text x="18" y="290" class="sm">database transactions and optimistic locking for business races</text>
+  <text x="400" y="18" class="bd">Java threads versus JS event loop</text>
+  <rect x="400" y="30" width="170" height="130" rx="5" class="g"/><text x="408" y="48" class="bd">Java</text><text x="408" y="66" class="sm">many threads, real</text><text x="408" y="82" class="sm">parallelism</text><text x="408" y="98" class="sm">shared mutable memory</text><text x="408" y="114" class="sm">needs locks and care</text><text x="408" y="130" class="sm">blocking I/O is fine</text><text x="408" y="146" class="sm">(with threads to spare)</text>
+  <rect x="580" y="30" width="170" height="130" rx="5" class="h"/><text x="588" y="48" class="bd">JavaScript</text><text x="588" y="66" class="sm">one thread, event loop</text><text x="588" y="82" class="sm">concurrency by async I/O</text><text x="588" y="98" class="sm">no data races in JS code</text><text x="588" y="114" class="sm">CPU work blocks all</text><text x="588" y="130" class="sm">workers for parallelism</text><text x="588" y="146" class="sm">(J18, J23)</text>
+  <rect x="400" y="170" width="350" height="140" rx="5" class="b"/><text x="408" y="190" class="bd">A race a frontend can trigger</text><text x="408" y="208" class="sm">two tabs click “Buy” for the last item at once:</text><text x="408" y="224" class="sm">T1 reads stock=1, T2 reads stock=1, both decrement → −1.</text><text x="408" y="244" class="bd">Server defences</text><text x="408" y="260" class="sm">transaction + row lock or atomic UPDATE … WHERE stock&gt;0,</text><text x="408" y="276" class="sm">optimistic version column (409/412), idempotency key.</text><text x="408" y="296" class="bd">Client:</text><text x="440" y="296" class="sm">disable button, handle 409, retry safely.</text>
+</svg></div>
+<figcaption><b>Key difference.</b> JavaScript avoids data races by being single-threaded; Java runs parallel threads, so shared state must be protected.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Threads and executors:</b> creating raw <code>Thread</code>s is discouraged; use <code>ExecutorService</code> thread pools (<code>Executors.newFixedThreadPool</code>, <code>ForkJoinPool</code>); servlet containers (Tomcat) assign a pool thread per request; pool sizing affects throughput and latency (too small queues requests, too large wastes memory).</li>
+<li><b>Synchronisation:</b> <code>synchronized</code> blocks provide mutual exclusion and visibility; <code>ReentrantLock</code> adds features; <code>volatile</code> guarantees visibility, not atomicity of compound operations; <code>AtomicInteger</code>/<code>LongAdder</code> for lock-free counters; immutable objects and thread-confined data avoid locking.</li>
+<li><b>Common problems:</b> race conditions, deadlocks (lock ordering), starvation, memory visibility bugs, thread leaks, and thread-unsafe shared singletons such as a <code>SimpleDateFormat</code> instance (legacy pitfall).</li>
+<li><b>CompletableFuture:</b> composes async tasks (<code>supplyAsync</code>, <code>thenApply</code>, <code>thenCompose</code>, <code>thenCombine</code>, <code>allOf</code>, <code>exceptionally</code>), conceptually like <code>Promise</code> chains (J19); pay attention to which executor runs each stage.</li>
+<li><b>Reactive stacks:</b> Spring WebFlux and Project Reactor (<code>Mono</code>, <code>Flux</code>) offer a non-blocking event-loop model similar to Node, with backpressure; higher complexity; mostly justified for very high concurrency or streaming. Virtual threads (Java 21) give most of the scalability benefit with the simple blocking style <span class="verify">verify adoption status</span>.</li>
+<li><b>Virtual threads:</b> lightweight threads scheduled by the JVM onto carrier threads; blocking calls park the virtual thread rather than an OS thread; allow thread-per-request designs at huge scale; supported in Spring Boot 3.2+ with a configuration flag.</li>
+<li><b>Transactions and concurrency control:</b> database isolation levels (D6), pessimistic locking (<code>SELECT … FOR UPDATE</code>, JPA <code>PESSIMISTIC_WRITE</code>), optimistic locking with a <code>@Version</code> column leading to <code>OptimisticLockException</code> mapped to 409; these protect business invariants from lost updates (JV7).</li>
+<li><b>Idempotency and retries:</b> servers must handle duplicate requests from retries and double clicks; frontends should send idempotency keys for creation and disable repeated actions (D3).</li>
+<li><b>Scheduled and async work:</b> <code>@Scheduled</code> jobs, <code>@Async</code> methods, message queues (Kafka, RabbitMQ) for background processing; frontends see eventual consistency and job status endpoints (D10).</li>
+<li><b>Timeouts and resilience:</b> thread pools exhausted by slow downstream calls cause cascading latency; use timeouts, circuit breakers (Resilience4j), bulkheads; as a frontend lead you will see this as intermittent 503s or timeouts (A11, D12).</li>
+<li><b>Thread dumps and diagnosis:</b> <code>jstack</code> shows blocked threads and deadlocks; useful when a service hangs; ask backend colleagues for thread dumps during incidents.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Assuming <code>volatile</code> makes compound operations such as <code>count++</code> atomic.</li>
+<li>Sharing mutable state in singleton beans without synchronisation.</li>
+<li>Thinking Java is slow at concurrency because JavaScript “is async”; they are different models.</li>
+<li>Ignoring that two quick frontend requests can interleave on the server.</li>
+<li>Believing parallel streams are free speedups.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How can two requests corrupt data?</dt><dd>They run concurrently on different threads and interleave reads and writes; protect with transactions, atomic updates, locking or versioning.</dd>
+<dt><code>CompletableFuture</code> versus <code>Promise</code>?</dt><dd>Both represent a future result and support chaining; <code>CompletableFuture</code> runs on thread pools and can be blocked on with <code>get</code>.</dd>
+<dt>What are virtual threads?</dt><dd>Cheap JVM-managed threads that let blocking-style code scale to many concurrent tasks without OS thread limits.</dd>
+<dt>What is optimistic locking?</dt><dd>Detecting concurrent modification via a version number at update time and failing (409/412) rather than holding locks.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Java in the backend</h1>
+
+<!-- ============ JV5 ============ -->
+<section class="q" id="jv5">
+<header class="qh">
+  <div class="qrow"><span class="qid">JV5</span><span class="tag added">Added</span></div>
+  <h2>Spring Boot and dependency injection</h2>
+  <p class="qtext">“What is Spring and Spring Boot? Explain inversion of control, dependency injection, beans, annotations like <code>@RestController</code>, <code>@Service</code> and <code>@Autowired</code>, auto-configuration, profiles and the typical layered structure.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Spring is the dominant Java application framework; Spring Boot adds convention-based auto-configuration, starter dependencies, an embedded server and production features such as actuator endpoints, so a service can start with a single command. Its core is inversion of control with dependency injection: instead of creating dependencies myself, I declare them, usually through constructor parameters, and the Spring container creates and wires beans, objects it manages, with scopes such as singleton. Annotations mark roles: <code>@RestController</code> for HTTP endpoints, <code>@Service</code> for business logic, <code>@Repository</code> for data access, <code>@Configuration</code> for bean definitions. Services are layered controller to service to repository, configuration comes from properties and profiles per environment, and this is very similar in spirit to Angular’s dependency injection or NestJS.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: Spring application layers controller, service, repository, database with DTOs and entities, and the container wiring beans. Right: key annotations and configuration sources.">
+  <text x="10" y="18" class="bd">Layered application</text>
+  <rect x="10" y="30" width="360" height="40" rx="5" class="h"/><text x="18" y="48" class="bd">@RestController</text><text x="18" y="62" class="sm">HTTP mapping, validation, DTOs in/out, status codes</text>
+  <path class="a" d="M190 70V80"/>
+  <rect x="10" y="82" width="360" height="40" rx="5" class="g"/><text x="18" y="100" class="bd">@Service</text><text x="18" y="114" class="sm">business rules, transactions (@Transactional), orchestration</text>
+  <path class="a" d="M190 122V132"/>
+  <rect x="10" y="134" width="360" height="40" rx="5" class="w"/><text x="18" y="152" class="bd">@Repository (Spring Data JPA)</text><text x="18" y="166" class="sm">queries, entities, persistence</text>
+  <path class="a" d="M190 174V184"/>
+  <rect x="10" y="186" width="360" height="34" rx="5" class="b"/><text x="18" y="208" class="bd">Database</text>
+  <rect x="10" y="230" width="360" height="80" rx="5" class="x"/><text x="18" y="250" class="bd">IoC container (ApplicationContext)</text><text x="18" y="268" class="sm">scans classes, creates beans, injects dependencies (constructor),</text><text x="18" y="284" class="sm">manages lifecycle and scope; proxies add transactions, security,</text><text x="18" y="300" class="sm">caching via AOP</text>
+  <text x="400" y="18" class="bd">What it looks like</text>
+  <rect x="400" y="30" width="350" height="136" rx="5" class="b"/><text x="408" y="48" class="mono" style="font-size:10px">@RestController @RequestMapping("/api/users")</text><text x="408" y="64" class="mono" style="font-size:10px">class UserController {</text><text x="408" y="80" class="mono" style="font-size:10px">  private final UserService users;   // constructor-injected</text><text x="408" y="96" class="mono" style="font-size:10px">  UserController(UserService users) { this.users = users; }</text><text x="408" y="112" class="mono" style="font-size:10px">  @GetMapping("/{id}")</text><text x="408" y="128" class="mono" style="font-size:10px">  UserDto get(@PathVariable long id) { … }</text><text x="408" y="148" class="mono" style="font-size:10px">}</text>
+  <rect x="400" y="176" width="350" height="134" rx="5" class="g"/><text x="408" y="196" class="bd">Boot conveniences</text><text x="408" y="214" class="sm">starters (spring-boot-starter-web, -data-jpa, -security)</text><text x="408" y="230" class="sm">auto-configuration from the classpath · embedded Tomcat</text><text x="408" y="246" class="sm">application.yml + profiles (dev, test, prod) + env vars</text><text x="408" y="262" class="sm">actuator: /health, /metrics, /info · devtools · testing support</text><text x="408" y="278" class="sm">validation (@Valid), Spring Security, OpenAPI (springdoc)</text><text x="408" y="296" class="sm">Compare: Angular DI, NestJS modules, Express + manual wiring</text>
+</svg></div>
+<figcaption><b>Idea.</b> Declare what you need; the container builds and connects the objects. Cross-cutting features hang off annotations.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Inversion of control and DI:</b> the framework controls object creation and wiring; constructor injection is preferred (immutable fields, easy tests); field injection with <code>@Autowired</code> is discouraged; interfaces allow swapping implementations (<code>@Primary</code>, <code>@Qualifier</code>); beans are singletons by default (shared across threads, so keep them stateless), with request or prototype scopes available.</li>
+<li><b>Component scanning and configuration:</b> <code>@SpringBootApplication</code> combines <code>@Configuration</code>, <code>@EnableAutoConfiguration</code> and <code>@ComponentScan</code>; stereotype annotations <code>@Component</code>, <code>@Service</code>, <code>@Repository</code>, <code>@Controller</code>; explicit beans with <code>@Bean</code> methods in <code>@Configuration</code> classes.</li>
+<li><b>Auto-configuration:</b> Boot inspects the classpath and properties and configures beans (data source, Jackson, web server) conditionally (<code>@ConditionalOnClass</code>), which you override with your own beans or properties; debug with <code>--debug</code> reports.</li>
+<li><b>Configuration and profiles:</b> <code>application.properties</code>/<code>.yml</code>, profile-specific files (<code>application-prod.yml</code>), environment variables override, <code>@ConfigurationProperties</code> binds typed settings, secrets from vaults or the platform; same twelve-factor approach as Node (D11).</li>
+<li><b>Web layer:</b> Spring MVC (servlet-based, thread per request) with <code>@GetMapping</code>, <code>@PostMapping</code>, <code>@RequestBody</code> (JSON via Jackson), <code>@PathVariable</code>, <code>@RequestParam</code>, <code>ResponseEntity</code>; Spring WebFlux for reactive; filters and interceptors for cross-cutting concerns (logging, auth, CORS).</li>
+<li><b>AOP and proxies:</b> annotations like <code>@Transactional</code>, <code>@Cacheable</code>, <code>@Async</code>, <code>@PreAuthorize</code> work through proxies wrapping beans; a pitfall: calling an annotated method from within the same class bypasses the proxy (“self-invocation”).</li>
+<li><b>Spring Security (awareness):</b> filter chain handling authentication and authorisation; common setups: session cookies with CSRF protection, or stateless JWT/OAuth2 resource server validating bearer tokens; method security (<code>@PreAuthorize</code>); CORS configuration; configuration complexity is notable (P6, P8).</li>
+<li><b>Testing:</b> JUnit 5, Mockito for mocks, <code>@SpringBootTest</code> for integration tests, <code>@WebMvcTest</code> for controller slices with <code>MockMvc</code>, Testcontainers for real databases, WireMock for external services; contract tests with Spring Cloud Contract or Pact (D11).</li>
+<li><b>Actuator and observability:</b> health and readiness endpoints for Kubernetes, metrics via Micrometer (Prometheus), tracing with OpenTelemetry, structured logging (Logback, SLF4J) (A10).</li>
+<li><b>Alternatives:</b> Quarkus and Micronaut (fast startup, native images), Jakarta EE, Dropwizard, Vert.x; for frontend leads the choice rarely matters, the contract does.</li>
+<li><b>Compared with Express/NestJS:</b> Spring Boot is more opinionated and heavier with richer built-in capabilities; NestJS imitates its DI and decorators in TypeScript (D2).</li>
+<li><b>Microservices with Spring:</b> Spring Cloud for config, discovery, gateway and resilience (Resilience4j); many teams use Kubernetes-native alternatives instead.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Storing request-specific state in singleton beans.</li>
+<li>Expecting <code>@Transactional</code> to work on self-invoked or private methods.</li>
+<li>Field injection everywhere, making tests and immutability awkward.</li>
+<li>Exposing entities directly in APIs instead of DTOs.</li>
+<li>Believing Spring is only for “old” systems; modern Spring Boot 3 is current practice.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is a bean?</dt><dd>An object created, wired and managed by the Spring container.</dd>
+<dt>Constructor versus field injection?</dt><dd>Constructor injection makes dependencies explicit and objects immutable and testable; field injection hides dependencies.</dd>
+<dt>What does Spring Boot add to Spring?</dt><dd>Auto-configuration, starters, an embedded server, externalised configuration and production-ready features.</dd>
+<dt>How does Spring’s DI compare with Angular’s?</dt><dd>Both inject dependencies from a container using types and annotations or decorators; Spring uses a global container with scopes, Angular a hierarchical injector.</dd>
+</dl></div>
+</section>
+
+<!-- ============ JV6 ============ -->
+<section class="q" id="jv6">
+<header class="qh">
+  <div class="qrow"><span class="qid">JV6</span><span class="tag added">Added</span></div>
+  <h2>REST APIs: what the frontend sees</h2>
+  <p class="qtext">“How are REST APIs built in Spring and what do frontend developers need to know? DTOs, validation, error handling, pagination, CORS, dates and numbers in JSON, versioning, OpenAPI, file upload and authentication.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“In Spring, controllers map HTTP requests to methods, bind JSON bodies to Java objects with Jackson, validate them with annotations, and return DTOs rather than database entities. Errors are translated into HTTP responses by exception handlers, and pagination, sorting and filtering follow Spring Data conventions. From the frontend side the details that cause bugs are contract details: how dates and times are serialised, whether large <code>long</code> ids exceed JavaScript’s safe integer range, how nulls and empty collections appear, enum representation, error response shape, pagination parameters and CORS configuration. I work with backend colleagues on an OpenAPI contract, generate typed clients, validate at the boundary and agree on error formats and versioning early.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: request flow in Spring MVC from HTTP through filter, controller, validation, service to response with error handler. Right: contract pitfalls frontends meet: dates, ids, null, enums, pagination, errors, CORS.">
+  <text x="10" y="18" class="bd">Request flow</text>
+  <rect x="10" y="30" width="110" height="36" rx="4" class="b"/><text x="18" y="52" class="sm">HTTP + JSON</text>
+  <rect x="130" y="30" width="110" height="36" rx="4" class="h"/><text x="138" y="52" class="sm">filters, CORS</text>
+  <rect x="250" y="30" width="120" height="36" rx="4" class="h"/><text x="258" y="52" class="sm">auth (Security)</text>
+  <path class="a" d="M120 48H128"/><path class="a" d="M240 48H248"/>
+  <rect x="10" y="78" width="110" height="36" rx="4" class="g"/><text x="18" y="100" class="sm">Jackson → DTO</text>
+  <rect x="130" y="78" width="110" height="36" rx="4" class="g"/><text x="138" y="100" class="sm">@Valid checks</text>
+  <rect x="250" y="78" width="120" height="36" rx="4" class="g"/><text x="258" y="100" class="sm">controller → service</text>
+  <path class="a" d="M310 66V76"/><path class="a" d="M120 96H128"/><path class="a" d="M240 96H248"/>
+  <rect x="10" y="126" width="360" height="40" rx="5" class="x"/><text x="18" y="144" class="bd">@RestControllerAdvice</text><text x="18" y="158" class="sm">maps exceptions to a uniform error JSON and the right status code</text>
+  <rect x="10" y="178" width="360" height="132" rx="5" class="w"/><text x="18" y="198" class="bd">Typical building blocks</text><text x="18" y="216" class="sm">DTOs/records for request and response (never expose entities)</text><text x="18" y="232" class="sm">Bean Validation: @NotNull, @Size, @Email, @Pattern, @Min</text><text x="18" y="248" class="sm">Spring Data paging: Pageable → page, size, sort; Page&lt;T&gt; response</text><text x="18" y="264" class="sm">MapStruct for entity ↔ DTO mapping · springdoc-openapi for docs</text><text x="18" y="280" class="sm">ProblemDetail (RFC 9457) for errors in Spring 6</text><text x="18" y="296" class="sm">@CrossOrigin or central CORS config with an allowlist</text>
+  <text x="400" y="18" class="bd">Contract pitfalls for frontends</text>
+  <rect x="400" y="30" width="350" height="292" rx="5" class="b"/>
+  <text x="408" y="50" class="bd">Dates and times</text><text x="408" y="66" class="sm">ISO 8601 strings; zone or UTC? (Instant vs LocalDateTime);</text><text x="408" y="82" class="sm">old epoch milliseconds vs strings; agree and test time zones</text>
+  <text x="408" y="106" class="bd">Numbers and ids</text><text x="408" y="122" class="sm">Java long up to 2^63 vs JS safe 2^53: send ids as strings;</text><text x="408" y="138" class="sm">BigDecimal money as string or minor units, not float</text>
+  <text x="408" y="162" class="bd">Null, missing, empty</text><text x="408" y="178" class="sm">null versus absent field; empty list versus null; Jackson</text><text x="408" y="194" class="sm">include rules; Optional mapping; document nullability</text>
+  <text x="408" y="218" class="bd">Naming and enums</text><text x="408" y="234" class="sm">camelCase vs snake_case; enum names as strings; unknown</text><text x="408" y="250" class="sm">enum values when the backend adds new ones</text>
+  <text x="408" y="274" class="bd">Pagination and errors</text><text x="408" y="290" class="sm">page index 0 or 1? Page&lt;T&gt; shape; total counts; stable error</text><text x="408" y="306" class="sm">shape with codes and field errors; 401/403/404/409/422 usage</text>
+</svg></div>
+<figcaption><b>Advice.</b> Most integration bugs are contract bugs. Pin the contract in OpenAPI and generate and validate against it.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Controllers and mapping:</b> <code>@RestController</code> (controller + response body), <code>@RequestMapping</code>, <code>@GetMapping</code>, <code>@PostMapping</code>, <code>@PutMapping</code>, <code>@PatchMapping</code>, <code>@DeleteMapping</code>; request binding: <code>@PathVariable</code>, <code>@RequestParam</code>, <code>@RequestBody</code>, <code>@RequestHeader</code>; responses via return values or <code>ResponseEntity</code> with explicit status and headers (<code>201 Created</code> + <code>Location</code>).</li>
+<li><b>Jackson serialisation:</b> maps objects to JSON; configuration for naming strategy, date formats (<code>JavaTimeModule</code>, <code>WRITE_DATES_AS_TIMESTAMPS</code>), <code>@JsonProperty</code>, <code>@JsonIgnore</code>, <code>@JsonInclude(NON_NULL)</code>, unknown properties handling; version differences produce subtle contract changes, so test serialised output.</li>
+<li><b>DTO versus entity:</b> entities represent persistence; DTOs represent API contracts. Exposing entities leaks internal fields (passwords, relations), couples the API to the schema, causes lazy-loading and cyclic serialisation problems, and invites mass-assignment vulnerabilities (D4). Map with MapStruct or manually.</li>
+<li><b>Validation:</b> <code>@Valid</code> on <code>@RequestBody</code> triggers Bean Validation; violations produce <code>MethodArgumentNotValidException</code> mapped to 400/422 with field errors; custom validators for cross-field rules; server validation is authoritative (E6, T11).</li>
+<li><b>Error handling:</b> <code>@ControllerAdvice</code>/<code>@RestControllerAdvice</code> with <code>@ExceptionHandler</code> methods returning a consistent error body (RFC 9457 <code>ProblemDetail</code> in Spring Framework 6); do not leak stack traces; include a correlation id; map domain exceptions (not found, conflict, forbidden) to proper statuses (D3).</li>
+<li><b>Pagination and filtering:</b> Spring Data’s <code>Pageable</code> (<code>?page=0&amp;size=20&amp;sort=createdAt,desc</code>) and <code>Page&lt;T&gt;</code> (content, totalElements, totalPages); frontends must know that pages start at 0 and the exact response shape; keyset pagination for large data; specifications or QueryDSL for dynamic filters; whitelist sortable fields.</li>
+<li><b>CORS and security headers:</b> configure allowed origins, methods, headers and credentials centrally (<code>CorsConfigurationSource</code> with Spring Security) rather than per controller; CSRF settings for cookie sessions; common frontend symptom is a failing preflight caused by security filters rejecting OPTIONS (P5).</li>
+<li><b>Dates and time zones:</b> use <code>Instant</code> or <code>OffsetDateTime</code> in UTC for timestamps and <code>LocalDate</code> for dates without time; document the format; avoid <code>LocalDateTime</code> without zone for events; frontends convert to the user’s locale with <code>Intl</code> (J13).</li>
+<li><b>Large numbers and money:</b> <code>Long</code> ids above 2^53 − 1 lose precision in JavaScript <code>JSON.parse</code>; serialise as strings (<code>@JsonSerialize(using = ToStringSerializer.class)</code>) or use UUIDs; represent money as <code>BigDecimal</code> serialised as string or as integer minor units.</li>
+<li><b>File upload and download:</b> <code>MultipartFile</code> for uploads (size limits configured), streaming responses with <code>StreamingResponseBody</code>, <code>Content-Disposition</code> headers; large files often go via presigned URLs to object storage (N6).</li>
+<li><b>OpenAPI:</b> springdoc-openapi generates a spec from controllers; frontends generate TypeScript clients (<code>openapi-typescript</code>, Orval); contract-first alternative designs the spec first and generates server stubs; fail CI on breaking changes with spec diff tools.</li>
+<li><b>Versioning and compatibility:</b> URL versions (<code>/api/v1</code>), headers, or additive evolution; Jackson’s lenient handling of unknown fields keeps clients compatible when the backend adds fields; communicate deprecations.</li>
+<li><b>Authentication in practice:</b> bearer JWTs validated by Spring Security’s resource server, or cookie sessions via a gateway/BFF; token refresh flows and 401 handling in the client (P8, E9).</li>
+<li><b>GraphQL and other styles:</b> Spring for GraphQL, gRPC and messaging exist; REST/JSON is the default for browser clients.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Assuming a Java <code>long</code> id survives JSON in JavaScript.</li>
+<li>Ambiguous date-time formats and time zones between backend and frontend.</li>
+<li>Depending on an undocumented error shape or field presence.</li>
+<li>Exposing JPA entities directly and leaking fields or triggering lazy-loading errors.</li>
+<li>Blaming the frontend for CORS failures caused by server security filters.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why DTOs instead of entities?</dt><dd>They decouple the API from the database schema, control exposed fields, avoid lazy-loading and cyclic JSON issues, and prevent mass assignment.</dd>
+<dt>How does Spring validate input?</dt><dd>Bean Validation annotations on DTO fields, triggered by <code>@Valid</code>, with violations translated into 400/422 error responses.</dd>
+<dt>What do you check when a CORS error appears with a Spring backend?</dt><dd>Allowed origins and headers, credentials setting, and whether the security filter chain permits preflight OPTIONS requests.</dd>
+<dt>How do you keep frontend types in sync with the Java API?</dt><dd>Publish an OpenAPI spec from the backend, generate TypeScript types or clients in CI, and add contract checks.</dd>
+</dl></div>
+</section>
+
+<!-- ============ JV7 ============ -->
+<section class="q" id="jv7">
+<header class="qh">
+  <div class="qrow"><span class="qid">JV7</span><span class="tag added">Added</span></div>
+  <h2>Persistence, JPA and transactions</h2>
+  <p class="qtext">“How do Java backends talk to databases? JDBC, JPA, Hibernate and Spring Data. What are entities, relationships, lazy loading, the N+1 problem, <code>@Transactional</code>, connection pools and migrations? What should a frontend lead ask about performance?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Java applications access relational databases through JDBC at the lowest level and, more commonly, through JPA with Hibernate as the ORM, usually via Spring Data repositories where I declare an interface and the framework generates queries. Entities are classes mapped to tables, with relationships such as one-to-many. Hibernate loads related data lazily by default, which can cause the N+1 query problem when a list triggers one extra query per row, solved with fetch joins, entity graphs or projections. <code>@Transactional</code> demarcates transactions so multiple operations commit or roll back together. A pooled set of connections, typically HikariCP, serves requests, and schema changes are managed by migration tools like Flyway or Liquibase. From the frontend side, slow lists and timeouts often come from these layers, so I ask about queries, indexes, pagination and payload size.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: persistence stack from repository to JPA and Hibernate to JDBC and connection pool to the database. Right: the N+1 problem and its fixes, and transaction boundaries.">
+  <text x="10" y="18" class="bd">Persistence stack</text>
+  <rect x="10" y="30" width="360" height="34" rx="4" class="h"/><text x="18" y="52" class="sm"><tspan class="bd">Spring Data repository</tspan>  interface UserRepo extends JpaRepository</text>
+  <rect x="10" y="68" width="360" height="34" rx="4" class="h"/><text x="18" y="90" class="sm"><tspan class="bd">JPA / Hibernate</tspan>  entities, mapping, caching, dirty checking</text>
+  <rect x="10" y="106" width="360" height="34" rx="4" class="g"/><text x="18" y="128" class="sm"><tspan class="bd">JDBC + HikariCP</tspan>  drivers, connection pool (size matters)</text>
+  <rect x="10" y="144" width="360" height="34" rx="4" class="b"/><text x="18" y="166" class="sm"><tspan class="bd">Database</tspan>  PostgreSQL, Oracle, MySQL, SQL Server</text>
+  <rect x="10" y="190" width="360" height="120" rx="5" class="w"/><text x="18" y="210" class="bd">Entity sketch</text><text x="18" y="228" class="mono" style="font-size:10px">@Entity class Order {</text><text x="18" y="244" class="mono" style="font-size:10px">  @Id @GeneratedValue Long id;</text><text x="18" y="260" class="mono" style="font-size:10px">  @ManyToOne(fetch = LAZY) Customer customer;</text><text x="18" y="276" class="mono" style="font-size:10px">  @OneToMany(mappedBy = "order") List&lt;Line&gt; lines;</text><text x="18" y="292" class="mono" style="font-size:10px">  @Version long version; }   // optimistic locking</text>
+  <text x="400" y="18" class="bd">The N+1 problem</text>
+  <rect x="400" y="30" width="350" height="62" rx="5" class="x"/><text x="408" y="48" class="mono" style="font-size:10px">orders = repo.findAll();            // 1 query</text><text x="408" y="64" class="mono" style="font-size:10px">orders.forEach(o -&gt; o.getCustomer()…);  // +N</text><text x="408" y="82" class="sm">list of 100 orders → 101 queries → slow endpoint, slow UI</text>
+  <rect x="400" y="100" width="350" height="62" rx="5" class="g"/><text x="408" y="118" class="bd">Fixes</text><text x="408" y="136" class="sm">fetch join (JOIN FETCH), @EntityGraph, batch fetching, DTO</text><text x="408" y="152" class="sm">projections selecting only needed columns, pagination</text>
+  <text x="400" y="186" class="bd">Transactions</text>
+  <rect x="400" y="196" width="350" height="114" rx="5" class="b"/><text x="408" y="216" class="sm">@Transactional on service methods: commit or rollback on</text><text x="408" y="232" class="sm">RuntimeException (checked exceptions need rollbackFor)</text><text x="408" y="248" class="sm">propagation and isolation settings; readOnly for queries</text><text x="408" y="264" class="sm">pitfalls: self-invocation, lazy loading outside a transaction</text><text x="408" y="280" class="sm">(LazyInitializationException), long transactions holding locks,</text><text x="408" y="296" class="sm">external calls inside transactions</text>
+</svg></div>
+<figcaption><b>Frontend view.</b> Slow or inconsistent API responses often trace to ORM behaviour: N+1 queries, missing indexes, large payloads, or transaction scope.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>JDBC and pools:</b> JDBC is the low-level API (connections, statements, result sets); <code>PreparedStatement</code> parameters prevent SQL injection; HikariCP (Spring Boot default) pools connections; pool size must fit the database limit across all instances (D12).</li>
+<li><b>JPA and Hibernate:</b> JPA is the specification; Hibernate is the dominant implementation. The persistence context tracks entity changes (dirty checking) and flushes updates on commit. <code>EntityManager</code> underlies repositories. First-level cache per transaction; second-level cache optional.</li>
+<li><b>Spring Data JPA:</b> repository interfaces with derived queries (<code>findByEmailAndActiveTrue</code>), <code>@Query</code> for JPQL or native SQL, paging and sorting, specifications for dynamic filters; projections to DTOs reduce loaded columns.</li>
+<li><b>Relationships and fetching:</b> <code>@OneToMany</code>, <code>@ManyToOne</code>, <code>@ManyToMany</code>; lazy loading (default for collections) versus eager; bidirectional associations and cyclic serialisation when entities are returned directly (use DTOs); cascade types and orphan removal need care.</li>
+<li><b>N+1 and performance diagnosis:</b> enable SQL logging in development, use p6spy or Hibernate statistics, APM traces showing many repeated queries; fix via fetch joins or entity graphs, <code>@BatchSize</code>, projections, or separate queries; combine with pagination (note fetch join with collections and pagination in memory pitfall).</li>
+<li><b>Indexes and query tuning:</b> backend team adds indexes for filters and sorts; ask for <code>EXPLAIN</code> plans when an endpoint is slow; avoid <code>SELECT *</code> through projections; pagination with keyset for large tables (D6).</li>
+<li><b><code>@Transactional</code>:</b> proxy-based; applies to public methods called from outside the bean; rollback by default on unchecked exceptions; <code>readOnly = true</code> optimises reads; isolation level and propagation (<code>REQUIRED</code>, <code>REQUIRES_NEW</code>) determine nested behaviour; keep transactions short and do not call slow external services inside.</li>
+<li><b>Optimistic and pessimistic locking:</b> <code>@Version</code> detects concurrent updates and throws <code>OptimisticLockException</code> (map to 409); <code>PESSIMISTIC_WRITE</code> locks rows for critical sections; choose by contention and invariants; frontends should handle 409 by refetching and retrying (JV4).</li>
+<li><b>Migrations:</b> Flyway or Liquibase versioned scripts run at deploy; backward-compatible changes (expand/contract) so old and new versions can coexist (A6); <code>ddl-auto=update</code> is unsafe in production.</li>
+<li><b>Other persistence options:</b> jOOQ and MyBatis for SQL-centric designs, Spring Data MongoDB/Redis/Elasticsearch for other stores, event-sourced designs, read models for queries (CQRS).</li>
+<li><b>Data volume and API design:</b> large collections in JSON slow both server and client; paginate, limit nested expansions, and allow field selection; backend and frontend agree on maximum page sizes.</li>
+<li><b>Caching on the Java side:</b> Spring Cache with Caffeine or Redis, Hibernate second-level cache, HTTP caching with ETags; frontends benefit from <code>Cache-Control</code> headers set correctly (P3, D9).</li>
+<li><b>Questions to ask the backend team:</b> which queries does this endpoint run, are there indexes, is the result paginated, how long can it take at p95, what happens on concurrent updates, and how are migrations deployed.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Assuming ORMs remove the need to understand SQL and query plans.</li>
+<li>Returning entities with lazy relations and hitting <code>LazyInitializationException</code> or infinite recursion.</li>
+<li>Expecting <code>@Transactional</code> to roll back on checked exceptions by default.</li>
+<li>Long transactions that include HTTP calls.</li>
+<li>Letting a list endpoint load full object graphs for each row.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is Hibernate?</dt><dd>The leading JPA implementation: an ORM that maps objects to tables, generates SQL and tracks entity changes.</dd>
+<dt>What causes N+1 queries and how do you fix them?</dt><dd>Lazy loading a relation per item in a loop; fix with fetch joins, entity graphs, batching or DTO projections.</dd>
+<dt>How do you handle two users editing the same record?</dt><dd>Optimistic locking with a version field, returning 409 so the client can refetch and merge or retry.</dd>
+<dt>Why might an endpoint be fast in dev and slow in production?</dt><dd>Larger data volumes, missing indexes, N+1 behaviour, cold caches and concurrent load.</dd>
+</dl></div>
+</section>
+
+<!-- ============ JV8 ============ -->
+<section class="q" id="jv8">
+<header class="qh">
+  <div class="qrow"><span class="qid">JV8</span><span class="tag added">Added</span></div>
+  <h2>Build, deploy and operate Java services</h2>
+  <p class="qtext">“How are Java services built and deployed? Maven versus Gradle, JAR packaging, Docker images, JVM options, logging, monitoring, microservice patterns and how a Java release pipeline compares with a frontend one.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Java projects are built with Maven or Gradle, which resolve dependencies from repositories, compile, run tests and package an executable JAR containing the application and an embedded server. In CI the pipeline runs unit and integration tests, static analysis such as SonarQube, builds a container image, scans it and deploys to Kubernetes or a cloud service, much like a frontend pipeline. Operationally I would expect health endpoints from Spring Actuator, structured logs through SLF4J and Logback, metrics via Micrometer, and JVM settings for heap and garbage collection tuned to the container. Many systems are split into microservices behind an API gateway, communicating over REST or messaging, which affects how the frontend calls the backend and handles partial failures.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a Java build and release pipeline compared with a frontend one. Right: a microservice architecture with API gateway, services, messaging and a BFF used by the frontend.">
+  <text x="10" y="18" class="bd">Java pipeline</text>
+  <rect x="10" y="30" width="80" height="40" rx="4" class="b"/><text x="16" y="48" class="bd">Build</text><text x="16" y="62" class="sm">mvn/gradle</text>
+  <rect x="98" y="30" width="80" height="40" rx="4" class="h"/><text x="104" y="48" class="bd">Test</text><text x="104" y="62" class="sm">JUnit, IT</text>
+  <rect x="186" y="30" width="90" height="40" rx="4" class="h"/><text x="192" y="48" class="bd">Quality</text><text x="192" y="62" class="sm">Sonar, SAST</text>
+  <rect x="284" y="30" width="86" height="40" rx="4" class="w"/><text x="290" y="48" class="bd">Package</text><text x="290" y="62" class="sm">JAR + image</text>
+  <path class="a" d="M90 50H96"/><path class="a" d="M178 50H184"/><path class="a" d="M276 50H282"/>
+  <rect x="10" y="82" width="170" height="40" rx="4" class="w"/><text x="18" y="100" class="bd">Scan + publish</text><text x="18" y="114" class="sm">Trivy, registry</text>
+  <rect x="190" y="82" width="180" height="40" rx="4" class="g"/><text x="198" y="100" class="bd">Deploy</text><text x="198" y="114" class="sm">K8s/ECS, canary, flags</text>
+  <path class="a" d="M320 70V80"/><path class="a" d="M180 102H188"/>
+  <rect x="10" y="134" width="360" height="176" rx="5" class="b"/><text x="18" y="154" class="bd">Compared with a frontend pipeline</text><text x="18" y="172" class="sm">same shape: build, test, scan, package, deploy, monitor</text><text x="18" y="188" class="sm">artifact: JAR/container image (frontend: static bundle/image)</text><text x="18" y="204" class="sm">slower builds and startup; more integration tests with databases</text><text x="18" y="220" class="sm">contracts: OpenAPI and consumer tests protect the frontend</text><text x="18" y="236" class="sm">environment config via properties and env vars (profiles)</text><text x="18" y="252" class="sm">DB migrations run with deploys (Flyway): coordinate with</text><text x="18" y="268" class="sm">API changes (expand/contract)</text><text x="18" y="290" class="sm">Versions: pin JDK in toolchain; use LTS; keep dependencies patched</text>
+  <text x="400" y="18" class="bd">Microservice setting</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">Frontend</tspan> web app / SPA calls one entry point</text>
+  <path class="a" d="M575 64V74"/>
+  <rect x="400" y="76" width="350" height="34" rx="4" class="h"/><text x="408" y="98" class="sm"><tspan class="bd">API gateway / BFF</tspan> auth, routing, aggregation, rate limits</text>
+  <path class="a" d="M475 110V120"/><path class="a" d="M575 110V120"/><path class="a" d="M675 110V120"/>
+  <rect x="400" y="122" width="100" height="40" rx="4" class="g"/><text x="408" y="140" class="sm">orders</text><text x="408" y="154" class="sm">service</text>
+  <rect x="525" y="122" width="100" height="40" rx="4" class="g"/><text x="533" y="140" class="sm">users</text><text x="533" y="154" class="sm">service</text>
+  <rect x="650" y="122" width="100" height="40" rx="4" class="g"/><text x="658" y="140" class="sm">catalogue</text><text x="658" y="154" class="sm">service</text>
+  <rect x="400" y="172" width="350" height="34" rx="4" class="w"/><text x="408" y="194" class="sm"><tspan class="bd">Messaging</tspan> Kafka / RabbitMQ events between services</text>
+  <rect x="400" y="216" width="350" height="94" rx="5" class="x"/><text x="408" y="236" class="bd">What it means for the frontend</text><text x="408" y="254" class="sm">partial failures: one service down, others up → degrade UI</text><text x="408" y="270" class="sm">eventual consistency after writes · different teams, different</text><text x="408" y="286" class="sm">error formats unless the gateway standardises · more hops,</text><text x="408" y="302" class="sm">more latency · use a BFF to shape data for the UI</text>
+</svg></div>
+<figcaption><b>Parallel.</b> The delivery ideas you know from frontend pipelines apply directly; the artefacts and runtime are heavier.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Build tools:</b> Maven (XML <code>pom.xml</code>, convention over configuration, lifecycle phases <code>compile</code>, <code>test</code>, <code>package</code>, <code>verify</code>) and Gradle (Groovy/Kotlin DSL, faster incremental builds, flexible); dependency management with BOMs and version catalogues; repositories (Maven Central, Artifactory, Nexus); multi-module projects similar to monorepos (A3).</li>
+<li><b>Packaging:</b> Spring Boot “fat” JAR (<code>java -jar app.jar</code>) with an embedded Tomcat/Netty; layered JARs and Buildpacks or Jib create efficient container images without a Dockerfile; WAR deployment to application servers is legacy; GraalVM native images for fast startup (JV1).</li>
+<li><b>JVM options in containers:</b> <code>-XX:MaxRAMPercentage</code>, <code>-Xmx</code>, GC choice (<code>-XX:+UseG1GC</code>, ZGC), heap dumps on OOM (<code>-XX:+HeapDumpOnOutOfMemoryError</code>), and JFR flags; set requests and limits in Kubernetes accordingly; monitor GC pauses and heap usage (A9).</li>
+<li><b>Logging:</b> SLF4J API with Logback or Log4j2; JSON logs for aggregation; MDC (mapped diagnostic context) adds request and trace ids to every line; log levels per package; the Log4Shell vulnerability (2021) shows the need to patch logging libraries quickly.</li>
+<li><b>Monitoring:</b> Spring Boot Actuator (<code>/actuator/health</code>, <code>/metrics</code>, <code>/prometheus</code>), Micrometer metrics, OpenTelemetry tracing, APM agents, JMX; dashboards for latency, error rate, GC and thread pools (A10, D11).</li>
+<li><b>Quality tooling:</b> JUnit 5, Mockito, AssertJ, Testcontainers, JaCoCo coverage, SonarQube for smells and security hotspots, Checkstyle/SpotBugs, ArchUnit for architecture rules, OWASP Dependency-Check or Snyk for vulnerabilities.</li>
+<li><b>Microservices and gateways:</b> Spring Cloud Gateway, Kong, API Gateway (AWS) for routing, auth and rate limits; service discovery in Kubernetes via DNS; resilience with Resilience4j (circuit breaker, retry, bulkhead, rate limiter); distributed tracing across services; saga and outbox patterns for consistency (D10, A11).</li>
+<li><b>Configuration and secrets:</b> Spring profiles, ConfigMaps and Secrets in Kubernetes, vault integrations; never commit credentials; feature toggles through flags (A7).</li>
+<li><b>Release and compatibility:</b> backward-compatible API changes, versioned endpoints, deprecation notices, database migrations coordinated with application versions, rolling and canary deployments (A6).</li>
+<li><b>Java versions and upgrades:</b> upgrade LTS to LTS (for example 11 → 17 → 21), update Spring Boot major versions (Boot 3 requires Java 17 and the <code>jakarta.*</code> namespace migration), use OpenRewrite recipes for automated upgrades; security patch cadence for JDK and libraries.</li>
+<li><b>Legacy realities:</b> many enterprise systems still run Java 8/11, WAR files on application servers (WebLogic, JBoss/WildFly), SOAP/XML services and monoliths; the frontend lead often integrates with these through adapters or a BFF.</li>
+<li><b>Performance characteristics:</b> high throughput after warm-up, higher memory use than Node, slower cold start (mitigated by native images or CRaC); autoscaling should consider warm-up time.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Assuming Java services start as quickly as Node services when planning autoscaling.</li>
+<li>Deploying with default JVM memory settings in containers and getting OOM kills.</li>
+<li>Skipping database migration coordination in rolling deployments.</li>
+<li>Leaving outdated logging or framework libraries unpatched.</li>
+<li>Treating microservices as free: every hop adds latency and failure modes.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Maven or Gradle?</dt><dd>Maven is standard and declarative; Gradle is more flexible and faster for large builds; both are widely used and either is fine.</dd>
+<dt>What is a fat JAR?</dt><dd>An executable archive including the app, its dependencies and an embedded server, started with <code>java -jar</code>.</dd>
+<dt>How does an API gateway help the frontend?</dt><dd>It provides a single entry point with authentication, routing, aggregation and rate limiting across backend services.</dd>
+<dt>Why might a new Java instance be slow at first?</dt><dd>Cold JIT and cold caches; warm-up before sending full traffic or use readiness checks and gradual rollout.</dd>
+</dl></div>
+</section>
+
+<!-- ============ JV9 ============ -->
+<section class="q" id="jv9">
+<header class="qh">
+  <div class="qrow"><span class="qid">JV9</span><span class="tag added">Added</span></div>
+  <h2>Working with a Java team as a frontend lead</h2>
+  <p class="qtext">“How do you collaborate effectively with Java backend engineers? How do you negotiate API contracts, handle errors and versioning, debug cross-team issues, and decide between consuming Java services directly or through a BFF?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Effective collaboration starts with a shared contract. I agree the API in OpenAPI before or alongside implementation, with examples, error shapes, pagination, nullability and date and ID formats spelled out, and I use mock servers and generated clients so frontend and backend work in parallel. I set up contract tests so breaking changes are caught in CI, agree on versioning and deprecation, and align on non-functional needs such as latency budgets and payload sizes. When problems occur I debug together using correlation ids across logs and traces and reproduce with real requests. If backend APIs are too granular or shaped for other consumers, I propose a backend-for-frontend or an aggregation endpoint. I treat the Java team as partners and learn enough of their stack to ask the right questions.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: contract-first collaboration loop: agree OpenAPI, mock, generate clients, build in parallel, contract tests in CI, integrate. Right: checklist of API contract details and cross-team debugging steps.">
+  <text x="10" y="18" class="bd">Contract-first collaboration</text>
+  <rect x="10" y="30" width="170" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">1 Agree contract</text><text x="18" y="62" class="sm">OpenAPI + examples</text>
+  <rect x="200" y="30" width="170" height="40" rx="5" class="h"/><text x="208" y="48" class="bd">2 Mock + generate</text><text x="208" y="62" class="sm">MSW/Prism, TS client</text>
+  <path class="a" d="M180 50H198"/>
+  <rect x="10" y="84" width="170" height="40" rx="5" class="h"/><text x="18" y="102" class="bd">3 Build in parallel</text><text x="18" y="116" class="sm">UI on mocks, API real</text>
+  <rect x="200" y="84" width="170" height="40" rx="5" class="g"/><text x="208" y="102" class="bd">4 Contract tests</text><text x="208" y="116" class="sm">CI on both sides</text>
+  <path class="a" d="M285 70V82"/><path class="a" d="M200 104H182"/>
+  <rect x="10" y="138" width="360" height="40" rx="5" class="g"/><text x="18" y="156" class="bd">5 Integrate and iterate</text><text x="18" y="170" class="sm">staging environment, shared test data, joint demos</text>
+  <path class="a" d="M190 124V136"/>
+  <rect x="10" y="190" width="360" height="120" rx="5" class="w"/><text x="18" y="210" class="bd">Working agreements</text><text x="18" y="228" class="sm">definition of done includes updated OpenAPI + changelog</text><text x="18" y="244" class="sm">breaking changes: notice period, versioned endpoints</text><text x="18" y="260" class="sm">shared channel for API questions; regular sync on upcoming work</text><text x="18" y="276" class="sm">latency budgets, max payload and page sizes agreed up front</text><text x="18" y="292" class="sm">error taxonomy and codes owned by the backend, used by the UI</text>
+  <text x="400" y="18" class="bd">Contract details to pin down</text>
+  <rect x="400" y="30" width="350" height="130" rx="5" class="b"/><text x="408" y="50" class="sm">IDs (string or number) · date and time formats and zones</text><text x="408" y="68" class="sm">money and decimals · enums and unknown values · null versus</text><text x="408" y="86" class="sm">absent · pagination and sorting · filtering syntax · error</text><text x="408" y="104" class="sm">shape and codes · auth and token refresh · CORS · rate limits</text><text x="408" y="122" class="sm">idempotency keys · file upload limits · localisation and</text><text x="408" y="140" class="sm">character encoding · caching headers · deprecation policy</text>
+  <text x="400" y="182" class="bd">Debugging across teams</text>
+  <rect x="400" y="192" width="350" height="118" rx="5" class="x"/><text x="408" y="212" class="sm">1 capture the exact request (HAR, cURL) and response with ids</text><text x="408" y="228" class="sm">2 find the correlation/trace id and share it with the backend</text><text x="408" y="244" class="sm">3 check server logs and traces together: status, latency, query</text><text x="408" y="260" class="sm">4 reproduce in staging or with the spec’s examples</text><text x="408" y="276" class="sm">5 decide where to fix: contract, backend, or client handling</text><text x="408" y="294" class="sm">6 add a test that would have caught it; update the spec</text>
+</svg></div>
+<figcaption><b>Principle.</b> Shared contracts and shared tooling turn cross-team friction into routine engineering.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Contract-first versus code-first:</b> contract-first designs the OpenAPI spec first and generates server stubs and client types; code-first generates the spec from annotations (springdoc). Either way, the spec is reviewed in pull requests and published; frontends generate types (<code>openapi-typescript</code>) and mocks so work is parallel (E9, T11).</li>
+<li><b>Backend-for-frontend:</b> when microservices expose fine-grained or domain-oriented APIs, a BFF (Node or Java) aggregates and shapes responses for the UI, hides tokens, handles sessions and reduces round trips; weigh the cost of another service and who owns it; sometimes a gateway aggregation endpoint suffices (A1).</li>
+<li><b>Error handling alignment:</b> agree on a standard error body (problem details with code, message, field errors, trace id), distinguish validation (400/422), authentication (401), authorisation (403), not found (404), conflict (409), rate limit (429) and server errors (5xx), and map codes to UI messages; avoid leaking technical messages.</li>
+<li><b>Versioning and change management:</b> backward-compatible additions by default; breaking changes via new versions with a deprecation window; changelog and notifications; feature flags to coordinate rollouts; contract tests (Pact) verify consumers still pass before releases.</li>
+<li><b>Environments and test data:</b> stable staging with realistic data, shared seeded datasets, sandbox integrations, and the ability to reset; mocks or MSW for UI development and tests; avoid blocking on backend availability (R12).</li>
+<li><b>Performance conversations:</b> share frontend needs (p95 latency per endpoint, payload size, pagination size), request field selection or compact representations, ask for ETags and caching headers, and collaborate on N+1 and index fixes using traces (JV7, P3).</li>
+<li><b>Security collaboration:</b> agree on authentication flows (OAuth2/OIDC, cookie sessions with CSRF, token refresh), CORS allowlists, input validation on both sides, authorisation on the server, and secret handling; participate in threat modelling (P8, P11).</li>
+<li><b>Learning enough Java:</b> read controllers, DTOs and OpenAPI; understand Spring annotations and the request lifecycle; know how to run the service locally in Docker; read logs and traces; ask informed questions (“is this lazy-loaded?”, “which transaction covers this?”).</li>
+<li><b>Building credibility and rapport:</b> deliver precise bug reports (request, response, expected, trace id), propose concrete contract changes with examples, respect backend constraints, share frontend context and priorities, and celebrate joint wins.</li>
+<li><b>Handling friction:</b> misaligned priorities, “works on my machine” disputes, blame about who caused a bug; address with shared dashboards, joint post-incident reviews, and clear ownership boundaries; escalate cross-team blockers early with data.</li>
+<li><b>Interview angle:</b> show you can work across the stack without pretending to be a Java expert: explain how you align on contracts, ask good questions, debug across layers and reduce integration risk.</li>
+<li><b>Career and architecture view:</b> understand trade-offs between Java and Node for the BFF and services, and where each shines (heavy domain logic and transactions in Java; UI-oriented aggregation in Node/TypeScript) (D12).</li>
+<li><b>Checklist for kicking off a feature with the backend:</b> user story and acceptance criteria, API draft in OpenAPI, error cases, data volume expectations, performance targets, security considerations, test data plan, feature flag plan, and release coordination.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Waiting for the backend to finish before starting UI work, instead of building against a mock of the agreed contract.</li>
+<li>Undocumented or inconsistently shaped errors that force brittle UI parsing.</li>
+<li>Changing a response shape without notice or contract tests.</li>
+<li>Treating backend teams as a black box and filing vague “it is slow” bugs.</li>
+<li>Building heavy client-side aggregation when a BFF or endpoint would be simpler and faster.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you start a feature when the API does not exist yet?</dt><dd>Agree an OpenAPI draft with the backend, generate types and a mock, and build and test the UI against it while the real implementation is developed.</dd>
+<dt>When would you propose a BFF?</dt><dd>When the UI needs aggregated or reshaped data from several services, when tokens and sessions should be handled server-side, or when mobile and web need different payloads.</dd>
+<dt>How do you protect against breaking API changes?</dt><dd>Contract tests in both pipelines, a deprecation policy, versioned endpoints and generated types that fail the build on incompatible changes.</dd>
+<dt>How do you report a backend issue effectively?</dt><dd>Provide the exact request and response, timestamp, environment, trace id, expected versus actual behaviour, and the impact.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>30 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>How does Java run?</td><td><code>javac</code> compiles to bytecode; the JVM interprets and JIT-compiles it to machine code.</td><td>JV1</td></tr>
+<tr><td>2</td><td>JDK, JRE, JVM?</td><td>Tools plus runtime; runtime plus libraries; the engine that executes bytecode.</td><td>JV1</td></tr>
+<tr><td>3</td><td>What is warm-up?</td><td>The period before the JIT has optimised hot code, giving slower early requests.</td><td>JV1</td></tr>
+<tr><td>4</td><td>What does the GC do?</td><td>Reclaims unreachable heap objects, generationally and mostly concurrently.</td><td>JV1</td></tr>
+<tr><td>5</td><td>Which Java versions in production?</td><td>LTS releases such as 17 and 21.</td><td>JV1</td></tr>
+<tr><td>6</td><td><code>==</code> versus <code>equals</code>?</td><td><code>==</code> compares references; <code>equals</code> compares content.</td><td>JV2</td></tr>
+<tr><td>7</td><td>Checked versus unchecked exceptions?</td><td>Checked must be handled or declared; unchecked are programming errors.</td><td>JV2</td></tr>
+<tr><td>8</td><td>What is a record?</td><td>A compact immutable data class with generated accessors and equality.</td><td>JV2</td></tr>
+<tr><td>9</td><td>What is type erasure?</td><td>Generic type arguments are removed at compile time.</td><td>JV2</td></tr>
+<tr><td>10</td><td>Why override both <code>equals</code> and <code>hashCode</code>?</td><td>Hash-based collections rely on them being consistent.</td><td>JV2</td></tr>
+<tr><td>11</td><td>Default list and map?</td><td><code>ArrayList</code> and <code>HashMap</code>.</td><td>JV3</td></tr>
+<tr><td>12</td><td>How does <code>HashMap</code> find a key?</td><td>Hash to bucket, then <code>equals</code>; average O(1).</td><td>JV3</td></tr>
+<tr><td>13</td><td>Are streams reusable?</td><td>No: lazy and consumed by one terminal operation.</td><td>JV3</td></tr>
+<tr><td>14</td><td>Is iteration order of <code>HashMap</code> stable?</td><td>No: use <code>LinkedHashMap</code> or <code>TreeMap</code> if order matters.</td><td>JV3</td></tr>
+<tr><td>15</td><td>Java versus JS concurrency?</td><td>Java has real parallel threads with shared memory; JS has one thread and an event loop.</td><td>JV4</td></tr>
+<tr><td>16</td><td>What are virtual threads?</td><td>Lightweight JVM-managed threads making blocking code scalable (Java 21).</td><td>JV4</td></tr>
+<tr><td>17</td><td>Race on the last item in stock?</td><td>Fix with transaction plus atomic update, locking or versioning, and idempotency.</td><td>JV4</td></tr>
+<tr><td>18</td><td>What does Spring Boot add?</td><td>Auto-configuration, starters, embedded server, externalised config, actuator.</td><td>JV5</td></tr>
+<tr><td>19</td><td>What is a bean?</td><td>An object created and wired by the Spring container.</td><td>JV5</td></tr>
+<tr><td>20</td><td>Preferred injection style?</td><td>Constructor injection.</td><td>JV5</td></tr>
+<tr><td>21</td><td>Controller, service, repository roles?</td><td>HTTP mapping; business logic and transactions; data access.</td><td>JV5</td></tr>
+<tr><td>22</td><td>DTO versus entity?</td><td>DTOs are API contracts; entities are persistence models and should not be exposed.</td><td>JV6</td></tr>
+<tr><td>23</td><td>Java <code>long</code> ids in JSON?</td><td>May exceed JS safe integers; send as strings or use UUIDs.</td><td>JV6</td></tr>
+<tr><td>24</td><td>Spring error handling?</td><td><code>@RestControllerAdvice</code> mapping exceptions to a uniform error body.</td><td>JV6</td></tr>
+<tr><td>25</td><td>Spring Data pagination?</td><td><code>Pageable</code> (page from 0, size, sort) returning <code>Page&lt;T&gt;</code>.</td><td>JV6</td></tr>
+<tr><td>26</td><td>What is the N+1 problem?</td><td>One query plus one per row via lazy loading; fix with fetch joins or projections.</td><td>JV7</td></tr>
+<tr><td>27</td><td>What does <code>@Transactional</code> do?</td><td>Wraps a method in a transaction, rolling back on unchecked exceptions by default.</td><td>JV7</td></tr>
+<tr><td>28</td><td>Optimistic locking?</td><td>A version column detects concurrent updates and fails with 409.</td><td>JV7</td></tr>
+<tr><td>29</td><td>How are Java services packaged?</td><td>Executable (fat) JAR, usually in a container image.</td><td>JV8</td></tr>
+<tr><td>30</td><td>When propose a BFF?</td><td>When the UI needs aggregated, shaped data, server-side tokens, or different payloads per client.</td><td>JV9</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer Java questions as a frontend lead</h4>
+<ul>
+<li>Be candid: you are a frontend specialist who works well with Java teams. Show you understand the runtime, the framework layers and the contract details that affect the UI.</li>
+<li>Map concepts to what you know: Spring DI to Angular DI and NestJS, streams to array methods, <code>CompletableFuture</code> to promises, DTOs to API types, Maven or Gradle to npm scripts.</li>
+<li>Emphasise integration skills: contract-first design, error shapes, ids and dates, pagination, CORS, versioning, correlation ids when debugging.</li>
+<li>Mention the failure modes you have watched for: N+1 queries, slow warm-up, thread pool exhaustion, concurrent updates, cascading failures between microservices.</li>
+<li>The interview is theoretical: expect “how would you work with”, “what would you check” and “what are the trade-offs”, not Java coding.</li>
+</ul></div>
+</section>
+
+</div>

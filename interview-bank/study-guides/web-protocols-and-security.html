@@ -1,0 +1,918 @@
+<title>Web Protocols and Security Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"Web Protocols and Security Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"Web Protocols and Security Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · Web protocols and security · Expert level</div>
+  <h1>Web Protocols and Security Study Guide</h1>
+  <p>How the web works on the wire and how to keep it safe: HTTP/1.1, HTTP/2 and HTTP/3, the network path from DNS to TLS, HTTP caching, CORS and the same-origin policy, cookies and sessions, authentication (OAuth 2.0, OIDC, JWT, passkeys), the OWASP risks that matter for frontends, security headers and Content Security Policy, real-time protocols, API design principles, and threat modelling and privacy. The interview is theoretical, so every topic is something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> standards and browser policies change: check before stating as fact</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Protocols and the network</h3>
+    <ol>
+      <li><b>P1</b><a href="#p1">HTTP/1.1, HTTP/2 and HTTP/3</a></li>
+      <li><b>P2</b><a href="#p2">DNS, TCP, TLS: the network path</a></li>
+      <li><b>P3</b><a href="#p3">HTTP caching</a></li>
+      <li><b>P4</b><a href="#p4">Real-time protocols and API styles</a></li>
+    </ol>
+    <h3 style="margin-top:16px">2 · The browser security model</h3>
+    <ol>
+      <li><b>P5</b><a href="#p5">Same-origin policy and CORS</a></li>
+      <li><b>P6</b><a href="#p6">Cookies, sessions and CSRF</a></li>
+      <li><b>P7</b><a href="#p7">Security headers and Content Security Policy</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>3 · Identity and risk</h3>
+    <ol>
+      <li><b>P8</b><a href="#p8">Authentication: OAuth 2.0, OIDC, JWT</a></li>
+      <li><b>P9</b><a href="#p9">Passkeys, MFA and session management</a></li>
+      <li><b>P10</b><a href="#p10">OWASP Top 10 for frontend engineers</a></li>
+      <li><b>P11</b><a href="#p11">Threat modelling, privacy and secure delivery</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">P1, P3 and P5 are asked in almost every interview. P6 to P8 cover the auth questions. P10 and P11 show security thinking at lead level.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">JavaScript-specific attacks (XSS sinks, prototype pollution) are in J29 of the JavaScript guide; this guide covers the protocol and browser-policy side.</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Protocols and the network</h1>
+
+<!-- ============ P1 ============ -->
+<section class="q" id="p1">
+<header class="qh">
+  <div class="qrow"><span class="qid">P1</span><span class="tag added">Added</span></div>
+  <h2>HTTP/1.1, HTTP/2 and HTTP/3</h2>
+  <p class="qtext">“What are the differences between HTTP/1.1, HTTP/2 and HTTP/3? What is multiplexing and head-of-line blocking? Explain methods, status codes, idempotency and important headers.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“HTTP/1.1 sends one request at a time per connection, so browsers open several connections and still suffer head-of-line blocking at the application level. HTTP/2 keeps one TCP connection and multiplexes many streams over it as binary frames, compresses headers with HPACK, and lets the server prioritise streams, which removes the need for tricks like domain sharding and sprite sheets. But because it runs on TCP, one lost packet stalls all streams. HTTP/3 runs over QUIC on UDP, with streams that are independent at the transport level, built-in TLS 1.3, faster connection setup with 0-RTT and connection migration when the network changes. Semantics stay the same across versions: methods, status codes and headers.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Three columns comparing HTTP/1.1 with several connections each carrying one request at a time, HTTP/2 with one TCP connection multiplexing streams but suffering TCP head-of-line blocking, and HTTP/3 with QUIC over UDP with independent streams.">
+  <text x="10" y="18" class="bd">HTTP/1.1</text>
+  <rect x="10" y="30" width="230" height="130" rx="5" class="b"/>
+  <text x="18" y="48" class="sm">conn 1  [ req A ][ resp A ][ req D ] …</text><text x="18" y="68" class="sm">conn 2  [ req B ][ resp B ] …</text><text x="18" y="88" class="sm">conn 3  [ req C ][ resp C ] …</text>
+  <text x="18" y="112" class="sm">~6 connections per origin; one</text><text x="18" y="128" class="sm">in-flight request each (HOL blocking)</text><text x="18" y="148" class="sm">text protocol, repeated headers</text>
+  <text x="270" y="18" class="bd">HTTP/2</text>
+  <rect x="270" y="30" width="230" height="130" rx="5" class="h"/>
+  <text x="278" y="48" class="sm">one TCP connection, many streams</text><rect x="278" y="56" width="50" height="12" class="g"/><rect x="332" y="56" width="50" height="12" class="w"/><rect x="386" y="56" width="50" height="12" class="b"/><rect x="440" y="56" width="50" height="12" class="g"/><text x="278" y="90" class="sm">frames interleaved (binary)</text><text x="278" y="108" class="sm">HPACK header compression</text><text x="278" y="124" class="sm">stream priorities, flow control</text><text x="278" y="148" class="sm" style="fill:var(--bad)">TCP loss stalls every stream</text>
+  <text x="530" y="18" class="bd">HTTP/3</text>
+  <rect x="530" y="30" width="220" height="130" rx="5" class="g"/>
+  <text x="538" y="48" class="sm">QUIC over UDP, TLS 1.3 built in</text><rect x="538" y="56" width="60" height="12" class="g"/><rect x="602" y="56" width="60" height="12" class="w"/><rect x="666" y="56" width="70" height="12" class="b"/><text x="538" y="90" class="sm">streams independent: loss in one</text><text x="538" y="106" class="sm">does not block the others</text><text x="538" y="124" class="sm">QPACK, 0-RTT resume, connection</text><text x="538" y="140" class="sm">migration (Wi-Fi to mobile)</text>
+  <text x="10" y="186" class="bd">What stays the same: HTTP semantics</text>
+  <rect x="10" y="196" width="360" height="114" rx="5" class="b"/><text x="18" y="216" class="bd">Methods</text><text x="18" y="234" class="sm">GET read (safe, idempotent) · HEAD · POST create (not idempotent)</text><text x="18" y="250" class="sm">PUT replace (idempotent) · PATCH partial · DELETE (idempotent)</text><text x="18" y="270" class="bd">Status classes</text><text x="18" y="288" class="sm">2xx success · 3xx redirect · 4xx client error · 5xx server error</text><text x="18" y="304" class="sm">200 201 204 · 301 304 307 308 · 400 401 403 404 429 · 500 503</text>
+  <rect x="390" y="196" width="360" height="114" rx="5" class="g"/><text x="398" y="216" class="bd">Practical consequences</text><text x="398" y="234" class="sm">HTTP/2: stop domain sharding, bundles can be finer-grained,</text><text x="398" y="250" class="sm">drop sprite sheets; server push was removed from browsers</text><text x="398" y="270" class="sm">HTTP/3: best on lossy mobile networks; needs UDP 443 open;</text><text x="398" y="286" class="sm">servers advertise it with Alt-Svc; browsers fall back to H2</text><text x="398" y="302" class="sm">All browsers require TLS for HTTP/2 and 3</text>
+</svg></div>
+<figcaption><b>Idea.</b> Each version fixes the main bottleneck of the previous one: connections (H2) and TCP head-of-line blocking (H3).</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>HTTP/1.1:</b> persistent connections (keep-alive), chunked transfer encoding, Host header (virtual hosting), pipelining (rarely used because of head-of-line blocking). Optimisations: domain sharding, concatenation, sprites, inlining.</li>
+<li><b>HTTP/2:</b> binary framing, multiplexed streams, HPACK header compression, prioritisation (weaker in practice, replaced by Extensible Priorities), flow control, server push (deprecated and removed from Chrome; use <code>preload</code> and 103 Early Hints <span class="verify">verify</span>). Concerns: TCP-level head-of-line blocking, one connection per origin (so coalescing across hostnames can help).</li>
+<li><b>HTTP/3 and QUIC:</b> transport on UDP implemented in user space; per-stream loss recovery; 1-RTT handshake (0-RTT for resumed connections, with replay caveats); connection IDs allow migration; congestion control per connection. Deployment requires server and CDN support; enterprise firewalls sometimes block UDP, hence fallback.</li>
+<li><b>Methods and idempotency:</b> safe methods do not change state (GET, HEAD, OPTIONS); idempotent methods give the same result when repeated (GET, PUT, DELETE); POST is not idempotent, so retries need idempotency keys. This matters for retry logic and caching (E9).</li>
+<li><b>Status codes to know cold:</b> 200 OK, 201 Created (with <code>Location</code>), 204 No Content, 301/308 permanent redirects, 302/307 temporary, 304 Not Modified (conditional request), 400 Bad Request, 401 Unauthorized (unauthenticated), 403 Forbidden (authenticated but not allowed), 404, 409 Conflict, 422 Unprocessable, 429 Too Many Requests (<code>Retry-After</code>), 500, 502, 503, 504.</li>
+<li><b>Redirect semantics:</b> 301 and 302 may change POST to GET in clients; 307 and 308 preserve the method and body. Prefer 308/307 for APIs; 301 for SEO moves of pages.</li>
+<li><b>Important request headers:</b> <code>Accept</code>, <code>Accept-Encoding</code>, <code>Accept-Language</code>, <code>Authorization</code>, <code>Cookie</code>, <code>Origin</code>, <code>Referer</code>, <code>User-Agent</code>, <code>Content-Type</code>, <code>If-None-Match</code>. Response: <code>Content-Type</code>, <code>Content-Encoding</code>, <code>Cache-Control</code>, <code>ETag</code>, <code>Set-Cookie</code>, <code>Location</code>, <code>Vary</code>, CORS and security headers.</li>
+<li><b>Content negotiation and compression:</b> <code>Accept-Encoding: br, gzip</code> and <code>Content-Encoding</code>; Brotli for text; <code>Vary: Accept-Encoding</code> so caches store per encoding. Media types and charset in <code>Content-Type</code>.</li>
+<li><b>Range requests and streaming:</b> <code>Range</code>/<code>206 Partial Content</code> for video seeking and resumable downloads; chunked/streamed responses for server-rendered HTML and large data.</li>
+<li><b>Connection performance:</b> keep-alive, connection reuse, preconnect, CDNs terminating TLS near users, fewer round trips; HTTP/2 or 3 mostly helps when many parallel requests exist.</li>
+<li><b>Debugging:</b> DevTools Network “Protocol” column, <code>curl -v --http2/--http3</code>, WebPageTest, Wireshark with key log for deep dives.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying HTTP/2 solves head-of-line blocking entirely. It removes it at the HTTP layer but TCP still blocks.</li>
+<li>Continuing HTTP/1.1-era hacks (sharding, giant bundles) as if they still help.</li>
+<li>Mixing up 401 and 403, or using 200 with an error body.</li>
+<li>Believing HTTP/3 is “faster” for all cases; gains are largest on lossy or high-latency networks.</li>
+<li>Retrying non-idempotent POST requests blindly.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why was HTTP/3 built on UDP?</dt><dd>TCP is implemented in operating systems and middleboxes and is hard to change; QUIC on UDP evolves in user space and gives independent streams.</dd>
+<dt>401 versus 403?</dt><dd>401: not authenticated (missing or invalid credentials). 403: authenticated but not permitted.</dd>
+<dt>How does a browser learn a site supports HTTP/3?</dt><dd>Through the <code>Alt-Svc</code> header (or DNS HTTPS records) after a first HTTP/2 connection, then it tries QUIC.</dd>
+<dt>PUT versus PATCH?</dt><dd>PUT replaces the whole resource and is idempotent; PATCH applies a partial change, idempotency depends on the patch semantics.</dd>
+</dl></div>
+</section>
+
+<!-- ============ P2 ============ -->
+<section class="q" id="p2">
+<header class="qh">
+  <div class="qrow"><span class="qid">P2</span><span class="tag added">Added</span></div>
+  <h2>DNS, TCP, TLS: the network path</h2>
+  <p class="qtext">“What happens at the network level when a browser loads an HTTPS page? How do DNS, the TCP handshake and the TLS handshake work? What do HSTS, CDNs and <code>preconnect</code> do?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“First the browser resolves the hostname to an IP address through DNS, checking its own cache, the operating system and a recursive resolver. Then it opens a TCP connection with a three-way handshake, and on top of it a TLS handshake: the client and server agree on a cipher, the server proves its identity with a certificate chained to a trusted authority, and they derive session keys, so everything after is encrypted and tamper-evident. TLS 1.3 needs one round trip, and QUIC combines transport and TLS. Only then is the HTTP request sent. Each step costs round trips, so we reduce latency with CDNs close to users, connection reuse, <code>preconnect</code>, HTTP/2 or 3, and HSTS ensures browsers use HTTPS from the first request.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="A sequence diagram between browser and servers: DNS lookup, TCP SYN SYN-ACK ACK, TLS ClientHello ServerHello certificate finished, then HTTP request and response, with round trip counts.">
+  <text x="60" y="18" class="bd">Browser</text><text x="320" y="18" class="bd">DNS resolver</text><text x="560" y="18" class="bd">Server / CDN edge</text>
+  <line x1="90" y1="26" x2="90" y2="318" class="d"/><line x1="360" y1="26" x2="360" y2="318" class="d"/><line x1="620" y1="26" x2="620" y2="318" class="d"/>
+  <path class="a" d="M92 44H358"/><text x="140" y="40" class="sm">1  A/AAAA? shop.example.com</text>
+  <path class="a" d="M358 62H94"/><text x="150" y="58" class="sm">93.184.216.34 (cached by TTL)</text>
+  <path class="a" d="M92 92H618"/><text x="300" y="88" class="sm">2  TCP SYN</text>
+  <path class="a" d="M618 108H94"/><text x="300" y="124" class="sm">SYN-ACK</text>
+  <path class="a" d="M92 134H618"/><text x="300" y="130" class="sm" style="opacity:0"></text><text x="300" y="150" class="sm">ACK  (1 round trip)</text>
+  <path class="a" d="M92 172H618"/><text x="240" y="168" class="sm">3  TLS ClientHello (versions, ciphers, key share)</text>
+  <path class="a" d="M618 192H94"/><text x="190" y="210" class="sm">ServerHello + certificate chain + Finished (TLS 1.3: 1 round trip)</text>
+  <path class="a" d="M92 224H618"/><text x="300" y="220" class="sm">client Finished → keys ready</text>
+  <path class="a" d="M92 254H618"/><text x="260" y="250" class="sm">4  HTTP request (encrypted)</text>
+  <path class="a" d="M618 274H94"/><text x="260" y="292" class="sm">HTTP response (first byte = TTFB)</text>
+  <text x="650" y="96" class="sm">≈ 1 RTT</text><text x="650" y="190" class="sm">≈ 1 RTT</text><text x="650" y="262" class="sm">≈ 1 RTT +</text><text x="650" y="276" class="sm">server time</text>
+  <text x="10" y="316" class="sm">New connection ≈ DNS + 1 + 1 RTT before the first request. Reuse and HTTP/3 cut this.</text>
+</svg></div>
+<figcaption><b>Why latency matters.</b> Each round trip is the network’s speed-of-light delay; reducing round trips beats adding bandwidth.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>DNS:</b> hierarchical (root, TLD, authoritative). Records: A/AAAA (IP), CNAME (alias), MX, TXT, NS, HTTPS/SVCB. Caching by TTL at browser, OS, resolver. Lowering TTL before a migration enables faster cutover. DNS can be a performance and availability dependency; use a reliable provider and consider DNS over HTTPS for privacy.</li>
+<li><b>TCP:</b> reliable ordered byte stream; three-way handshake; slow start and congestion control mean new connections start slowly; connection reuse avoids repeated handshakes. TCP Fast Open and QUIC reduce setup costs.</li>
+<li><b>TLS handshake:</b> negotiation of protocol version and cipher suite, key exchange (ephemeral Diffie-Hellman gives forward secrecy), certificate verification (chain to a trusted CA, hostname match, validity, revocation via OCSP stapling or CRLite), then symmetric encryption (AES-GCM, ChaCha20). TLS 1.3 removes legacy ciphers, reduces the handshake to one round trip, and supports 0-RTT resumption (replayable, so only for idempotent requests).</li>
+<li><b>Certificates:</b> issued by CAs (Let’s Encrypt automates free certificates); SANs list hostnames; wildcard certificates; expiry causes outages, so automate renewal and monitor. Certificate Transparency logs help detect mis-issuance.</li>
+<li><b>HTTPS benefits:</b> confidentiality, integrity, authentication of the server; required for HTTP/2 and 3, service workers, geolocation, clipboard, and secure cookies; also ranking and trust signals.</li>
+<li><b>HSTS:</b> <code>Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</code> tells browsers to use HTTPS only, preventing downgrade and cookie hijacking on first visits when preloaded. Misconfiguration with includeSubDomains can break HTTP-only subdomains.</li>
+<li><b>Mixed content:</b> loading HTTP subresources on an HTTPS page is blocked or upgraded; fix URLs and use <code>upgrade-insecure-requests</code> in CSP as a safety net.</li>
+<li><b>Latency reduction:</b> CDNs and edge termination; <code>&lt;link rel="preconnect"&gt;</code> and <code>dns-prefetch</code> for critical third-party origins; fewer origins; keep-alive; HTTP/2 or 3; TLS session resumption; OCSP stapling; compressing responses; place servers near users and near data.</li>
+<li><b>CDN role:</b> caches static content at the edge, terminates TLS close to users, absorbs traffic spikes and DDoS, optimises routes to the origin, and can run edge logic. Cache keys, purging and headers determine behaviour (P3).</li>
+<li><b>Proxies and load balancers:</b> reverse proxies (nginx, Envoy), TLS termination, sticky sessions, health checks, <code>X-Forwarded-For</code> and <code>Forwarded</code> headers; WebSockets need upgrade support.</li>
+<li><b>Debugging the path:</b> <code>dig</code>/<code>nslookup</code>, <code>curl -v</code> with timing (<code>-w</code>), <code>openssl s_client</code>, DevTools timing breakdown (DNS, Initial connection, SSL, TTFB), SSL Labs for configuration review.</li>
+<li><b>Security threats at this level:</b> man-in-the-middle (stopped by valid TLS), DNS spoofing (DNSSEC, DoH), certificate misuse, downgrade attacks (HSTS), and expired certificates causing outages.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying TLS “encrypts the URL”: the host name is visible (SNI) though paths and bodies are encrypted; Encrypted Client Hello is emerging.</li>
+<li>Letting certificates expire because renewal is manual.</li>
+<li>Setting HSTS <code>preload</code> or <code>includeSubDomains</code> without checking all subdomains.</li>
+<li>Over-using <code>preconnect</code> to many origins; each connection costs CPU and battery.</li>
+<li>Ignoring DNS TTL when planning a cutover.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How does the browser know to trust a certificate?</dt><dd>It validates the chain up to a root CA in its trust store, checks hostname, validity period and revocation status.</dd>
+<dt>What is forward secrecy?</dt><dd>Ephemeral session keys mean a later compromise of the server’s private key cannot decrypt past recorded traffic.</dd>
+<dt>What does a CDN do for dynamic content?</dt><dd>It terminates connections near users and reuses optimised connections to the origin, and can cache short-lived or personalised-by-key responses.</dd>
+<dt>How would you speed up a slow first request?</dt><dd>Examine DNS, connect and TLS timings; use a CDN, HTTP/3, preconnect, and a faster server response with caching.</dd>
+</dl></div>
+</section>
+
+<!-- ============ P3 ============ -->
+<section class="q" id="p3">
+<header class="qh">
+  <div class="qrow"><span class="qid">P3</span><span class="tag added">Added</span></div>
+  <h2>HTTP caching</h2>
+  <p class="qtext">“How does HTTP caching work? Explain <code>Cache-Control</code>, <code>ETag</code>, conditional requests, <code>Vary</code>, <code>stale-while-revalidate</code> and how you cache an SPA and an API. How do you bust caches?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“HTTP caching lets browsers and intermediaries reuse responses. The server controls it with <code>Cache-Control</code>: <code>max-age</code> says how long a response is fresh; within that time the browser uses it without contacting the server. When it expires, the browser revalidates with a conditional request using <code>If-None-Match</code> and the <code>ETag</code>, and the server answers <code>304 Not Modified</code> with no body if unchanged. <code>no-store</code> forbids storing, <code>no-cache</code> means store but always revalidate, <code>private</code> restricts to the browser, <code>public</code> allows shared caches such as CDNs. For static assets I use content-hashed filenames with a year-long <code>immutable</code> lifetime; for HTML I revalidate. <code>Vary</code> tells caches which request headers change the response.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Decision flow of a cached response: fresh within max-age is served from cache; stale triggers a conditional request; 304 reuses the cache; 200 replaces it. Right: Cache-Control recipes for hashed assets, HTML, API and private data.">
+  <text x="10" y="18" class="bd">Lifecycle of a cached response</text>
+  <rect x="10" y="30" width="170" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">Request for /app.js</text><text x="18" y="62" class="sm">browser checks its cache</text>
+  <path class="a" d="M180 50H218"/>
+  <rect x="220" y="30" width="150" height="40" rx="5" class="g"/><text x="228" y="48" class="bd">Fresh (age &lt; max-age)</text><text x="228" y="62" class="sm">served from cache, 0 ms</text>
+  <path class="a" d="M95 70V94"/><text x="102" y="86" class="sm">stale or no entry</text>
+  <rect x="10" y="96" width="360" height="44" rx="5" class="w"/><text x="18" y="114" class="bd">Conditional request</text><text x="18" y="130" class="mono" style="font-size:10px">GET /app.js  If-None-Match: "v42"</text>
+  <path class="a" d="M95 140V160"/><path class="a" d="M285 140V160"/>
+  <rect x="10" y="162" width="170" height="44" rx="5" class="g"/><text x="18" y="180" class="bd">304 Not Modified</text><text x="18" y="196" class="sm">no body; reuse, reset age</text>
+  <rect x="200" y="162" width="170" height="44" rx="5" class="h"/><text x="208" y="180" class="bd">200 OK + new ETag</text><text x="208" y="196" class="sm">full body replaces cache</text>
+  <text x="10" y="232" class="bd">Validators</text><text x="10" y="250" class="sm">ETag (hash/version) + If-None-Match · Last-Modified + If-Modified-Since</text><text x="10" y="270" class="bd">Vary</text><text x="10" y="288" class="sm">Vary: Accept-Encoding, Accept-Language → separate cache entries.</text><text x="10" y="304" class="sm">Vary: Cookie makes shared caching almost useless.</text>
+  <text x="400" y="18" class="bd">Recipes</text>
+  <rect x="400" y="30" width="350" height="50" rx="5" class="g"/><text x="408" y="48" class="bd">Hashed static assets</text><text x="408" y="66" class="mono" style="font-size:10px">public, max-age=31536000, immutable</text>
+  <rect x="400" y="88" width="350" height="50" rx="5" class="w"/><text x="408" y="106" class="bd">HTML shell</text><text x="408" y="124" class="mono" style="font-size:10px">no-cache  (revalidate every time, ETag)</text>
+  <rect x="400" y="146" width="350" height="50" rx="5" class="h"/><text x="408" y="164" class="bd">Public API data (CDN friendly)</text><text x="408" y="182" class="mono" style="font-size:10px">public, max-age=60, stale-while-revalidate=300</text>
+  <rect x="400" y="204" width="350" height="50" rx="5" class="b"/><text x="408" y="222" class="bd">User-specific data</text><text x="408" y="240" class="mono" style="font-size:10px">private, no-cache   (or no-store if sensitive)</text>
+  <rect x="400" y="262" width="350" height="48" rx="5" class="x"/><text x="408" y="282" class="bd">Never cache</text><text x="408" y="298" class="mono" style="font-size:10px">no-store  (banking, tokens, personal data)</text>
+</svg></div>
+<figcaption><b>Strategy.</b> Immutable URLs cached forever; mutable URLs revalidated; user data kept out of shared caches.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Cache layers:</b> browser memory and disk cache, service worker cache, CDN edge, reverse proxy, application cache. A response may be served from any of them; know which you control with headers.</li>
+<li><b><code>Cache-Control</code> directives:</b> <code>max-age</code> (browser freshness), <code>s-maxage</code> (shared caches), <code>no-store</code> (do not store), <code>no-cache</code> (store, but validate before use), <code>must-revalidate</code> (do not serve stale after expiry), <code>public</code>/<code>private</code>, <code>immutable</code> (will not change during freshness; skip revalidation on reload), <code>stale-while-revalidate</code> (serve stale while refreshing in the background), <code>stale-if-error</code>. The older <code>Expires</code> header and <code>Pragma</code> are superseded.</li>
+<li><b>Validation:</b> <code>ETag</code> (strong or weak <code>W/"…"</code>) with <code>If-None-Match</code>; <code>Last-Modified</code> with <code>If-Modified-Since</code>. A 304 saves bandwidth but still costs a round trip, so long freshness plus fingerprinting beats frequent revalidation.</li>
+<li><b>Heuristic caching:</b> without explicit directives, caches may guess freshness from <code>Last-Modified</code> (a fraction of its age), causing surprising stale content; always set <code>Cache-Control</code> explicitly.</li>
+<li><b>Cache busting:</b> change the URL when content changes: content hashes in filenames (best), version query strings (less reliable with some CDNs), and revalidating HTML so it points to new asset names (B10). Purging a CDN is for emergencies, not routine releases.</li>
+<li><b><code>Vary</code> and cache keys:</b> shared caches key on URL plus the headers named in <code>Vary</code>. Excessive variation (<code>User-Agent</code>, <code>Cookie</code>) fragments the cache; normalise at the CDN (device class, language).</li>
+<li><b>CDN caching:</b> CDNs honour <code>s-maxage</code>; cache key rules (ignore tracking query params), cache tags and surrogate keys for targeted purges, tiered caching, and origin shield; dynamic pages can use short TTL with stale-while-revalidate. Do not cache responses with <code>Set-Cookie</code> accidentally.</li>
+<li><b>API caching:</b> GET only; ETags for conditional requests; consistent query-string ordering; short TTLs for volatile data; use client-side caches (TanStack Query) on top; mutations must invalidate or version (E4).</li>
+<li><b>Reload behaviour:</b> normal navigation uses fresh entries; reload revalidates the main resource; hard reload bypasses cache; <code>immutable</code> prevents revalidation of subresources on reload in supporting browsers.</li>
+<li><b>Back/forward cache:</b> separate from the HTTP cache; <code>no-store</code> historically blocked it (P7, J31).</li>
+<li><b>Service worker caching:</b> programmatic strategies (cache-first, network-first, stale-while-revalidate) layered above the HTTP cache; remember both layers apply (performance guide).</li>
+<li><b>Security and privacy:</b> do not cache personalised or sensitive responses in shared caches (<code>private</code> or <code>no-store</code>); cache poisoning through unkeyed headers is an attack class; avoid reflecting unkeyed headers in cacheable responses.</li>
+<li><b>Debugging:</b> DevTools “Size” column (from memory cache, disk cache, service worker), <code>Age</code> and <code>X-Cache</code>/<code>CF-Cache-Status</code> headers, <code>curl -I</code> twice, and testing with cache disabled and enabled.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Believing <code>no-cache</code> means “do not cache”. It means “validate before reuse”; <code>no-store</code> forbids storing.</li>
+<li>Long <code>max-age</code> on a non-hashed filename, trapping users on old code.</li>
+<li>Caching HTML for a long time while hashed assets change, or the opposite.</li>
+<li>Adding <code>Vary: Cookie</code> or <code>User-Agent</code> to a cacheable page and killing the hit ratio.</li>
+<li>Sending cache headers on personalised responses through a shared CDN.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you roll out a new JavaScript bundle?</dt><dd>Content-hashed filename with a year-long immutable lifetime, and revalidated HTML referencing it.</dd>
+<dt>What is the point of <code>stale-while-revalidate</code>?</dt><dd>Users get an instant (slightly stale) response while the cache refreshes in the background, hiding latency.</dd>
+<dt>ETag versus Last-Modified?</dt><dd>ETag is a content validator (more precise, works for dynamic content); Last-Modified is time-based with one-second resolution.</dd>
+<dt>How do you cache an API without serving stale personal data?</dt><dd>Use <code>private</code> or no CDN caching for user-specific responses, vary or key by user where appropriate, and short TTL for shared data.</dd>
+</dl></div>
+</section>
+
+<!-- ============ P4 ============ -->
+<section class="q" id="p4">
+<header class="qh">
+  <div class="qrow"><span class="qid">P4</span><span class="tag added">Added</span></div>
+  <h2>Real-time protocols and API styles</h2>
+  <p class="qtext">“How do WebSockets work? Compare WebSockets, Server-Sent Events, long polling, WebRTC and webhooks. How do REST, GraphQL and gRPC differ at the protocol level? How do you scale real-time connections?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A WebSocket starts as an HTTP request with an Upgrade header; if the server agrees, the connection becomes a persistent full-duplex channel where either side can send messages, framed over TCP, with no per-message HTTP overhead. Server-Sent Events are simpler: a long-lived HTTP response for one-way server-to-client text events with automatic reconnect. Long polling and plain polling use ordinary requests. WebRTC provides peer-to-peer audio, video and data with signalling through a server and NAT traversal. Webhooks are server-to-server callbacks. For scale, real-time connections are stateful, so I use sticky or connection-aware load balancing, a pub/sub backbone like Redis or a managed service so any node can broadcast, heartbeats, and backpressure handling.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: WebSocket handshake as an HTTP upgrade followed by framed messages in both directions. Right: scaling real-time connections with a load balancer, several app nodes, and a pub/sub bus.">
+  <text x="10" y="18" class="bd">WebSocket lifecycle</text>
+  <rect x="10" y="30" width="360" height="50" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10px">GET /chat  Upgrade: websocket</text><text x="18" y="64" class="mono" style="font-size:10px">Sec-WebSocket-Key: …   Origin: https://app.example</text>
+  <path class="a" d="M190 80V96"/>
+  <rect x="10" y="98" width="360" height="40" rx="5" class="g"/><text x="18" y="116" class="mono" style="font-size:10px">101 Switching Protocols</text><text x="18" y="130" class="sm">same TCP connection now speaks the WebSocket protocol</text>
+  <path class="a" d="M190 138V152"/>
+  <rect x="10" y="154" width="360" height="54" rx="5" class="h"/><text x="18" y="172" class="bd">Full-duplex messages</text><text x="18" y="190" class="sm">client ⇄ server text or binary frames, ping/pong heartbeats,</text><text x="18" y="204" class="sm">close frame with code (1000 normal, 1006 abnormal)</text>
+  <text x="10" y="232" class="bd">Compare</text>
+  <text x="10" y="250" class="sm">SSE: one-way, HTTP, auto-reconnect, text only, fits proxies well</text><text x="10" y="266" class="sm">Polling / long polling: simplest, higher latency or overhead</text><text x="10" y="282" class="sm">WebRTC: peer-to-peer media/data, STUN/TURN, signalling needed</text><text x="10" y="298" class="sm">Webhooks: server-to-server HTTP callbacks, verify signatures</text>
+  <text x="400" y="18" class="bd">Scaling stateful connections</text>
+  <rect x="400" y="30" width="350" height="36" rx="5" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">Clients</tspan>  thousands of long-lived connections</text>
+  <path class="a" d="M575 66V82"/>
+  <rect x="400" y="84" width="350" height="36" rx="5" class="w"/><text x="408" y="106" class="sm"><tspan class="bd">Load balancer</tspan>  WebSocket-aware, idle timeouts, sticky</text>
+  <path class="a" d="M475 120V136"/><path class="a" d="M575 120V136"/><path class="a" d="M675 120V136"/>
+  <rect x="400" y="138" width="90" height="36" rx="5" class="h"/><text x="408" y="160" class="sm">node A</text>
+  <rect x="530" y="138" width="90" height="36" rx="5" class="h"/><text x="538" y="160" class="sm">node B</text>
+  <rect x="660" y="138" width="90" height="36" rx="5" class="h"/><text x="668" y="160" class="sm">node C</text>
+  <path class="a" d="M445 174V190"/><path class="a" d="M575 174V190"/><path class="a" d="M705 174V190"/>
+  <rect x="400" y="192" width="350" height="40" rx="5" class="g"/><text x="408" y="210" class="bd">Pub/sub backbone</text><text x="408" y="224" class="sm">Redis, NATS, Kafka, or a managed service: broadcast to all nodes</text>
+  <text x="400" y="256" class="sm">Also: auth on connect (token in first message or cookie), reconnect</text><text x="400" y="272" class="sm">with backoff + resume from last event id, backpressure, rate limits,</text><text x="400" y="288" class="sm">heartbeats to detect dead peers, message size limits, origin checks.</text>
+</svg></div>
+<figcaption><b>Rule.</b> Choose the simplest channel that fits the data direction and scale, then plan reconnection and fan-out.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>WebSocket protocol:</b> handshake via HTTP/1.1 Upgrade; after <code>101</code> it is a framed message protocol over the same TCP connection; subprotocols (<code>Sec-WebSocket-Protocol</code>); no built-in reconnect, ordering across reconnects, or authentication beyond what you add. Over HTTP/2 and 3 there are extended CONNECT variants.</li>
+<li><b>Security of WebSockets:</b> validate the <code>Origin</code> header server-side (cross-site WebSocket hijacking), authenticate and authorise on connect and per message, use <code>wss://</code>, limit message size and rate, sanitise payloads, avoid tokens in URLs (they are logged).</li>
+<li><b>Server-Sent Events:</b> <code>EventSource</code>, <code>text/event-stream</code>, automatic reconnect with <code>Last-Event-ID</code>; limited to GET (use fetch streams for POST bodies) and a per-domain connection cap on HTTP/1.1; excellent for notifications, progress and LLM token streaming (J30).</li>
+<li><b>Long polling and polling:</b> long polling holds a request until data is available and then repeats; polling asks on a schedule. Simple through any proxy, but wasteful at scale.</li>
+<li><b>WebRTC:</b> peer-to-peer using ICE, STUN (discover public address) and TURN (relay when direct fails), DTLS-SRTP for media, SDP for session description, signalling via your own channel (often WebSocket); used for video calls and low-latency data channels.</li>
+<li><b>Webhooks:</b> event delivery to your endpoint: verify the signature (HMAC) on the raw body, respond fast with 2xx and process asynchronously, make handlers idempotent, handle retries and duplicates, and allow replay; protect against SSRF when you send webhooks.</li>
+<li><b>gRPC and gRPC-web:</b> Protocol Buffers over HTTP/2 with strong typing, streaming and code generation; browsers cannot speak native gRPC, so gRPC-web or Connect protocol via a proxy is used; common between backend services.</li>
+<li><b>REST, GraphQL, gRPC at a glance:</b> REST (resources, HTTP semantics, cacheable), GraphQL (single endpoint, client-shaped queries, subscriptions over WebSocket/SSE), gRPC (binary contracts, streaming, internal services) (E9).</li>
+<li><b>Scaling considerations:</b> memory per connection, file descriptor limits, load balancer idle timeouts (send heartbeats), sticky sessions or connection-agnostic design through pub/sub, graceful draining on deploy so clients reconnect smoothly, and horizontal scaling with managed services (Ably, Pusher, AWS API Gateway WebSocket) when operating your own is not worthwhile.</li>
+<li><b>Client behaviour:</b> exponential backoff with jitter, resubscribe after reconnect, sequence numbers or last-seen ids to fetch missed messages, offline queue for outgoing messages, mobile background limits and battery use, merge messages into client caches (E4).</li>
+<li><b>Fallbacks and compatibility:</b> corporate proxies may block WebSockets; libraries like Socket.IO provide fallbacks, rooms and acknowledgements at the cost of a custom protocol.</li>
+<li><b>Choosing:</b> notifications and feeds: SSE or push. Chat, presence and collaborative editing: WebSocket (with CRDT/OT for merging). Video and voice: WebRTC. Third-party integrations: webhooks. Infrequent updates: polling.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using WebSockets for everything when SSE or polling suffices and is easier to operate.</li>
+<li>Not validating <code>Origin</code> or authenticating the socket.</li>
+<li>Ignoring load-balancer idle timeouts, so connections drop silently without heartbeats.</li>
+<li>Assuming messages are never lost or duplicated across reconnects.</li>
+<li>Webhook handlers that do heavy work before responding, causing timeouts and retries.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How does the WebSocket handshake work?</dt><dd>An HTTP GET with <code>Upgrade: websocket</code> and a key; the server answers 101 with an accept hash, after which the connection carries WebSocket frames.</dd>
+<dt>How do you broadcast to all users across several servers?</dt><dd>Publish to a pub/sub channel; every node subscribes and forwards to its connected clients.</dd>
+<dt>How do you secure a webhook receiver?</dt><dd>Verify HMAC signatures with a shared secret, check timestamps against replay, use HTTPS and idempotent processing.</dd>
+<dt>SSE or WebSocket for streaming LLM responses?</dt><dd>SSE (or fetch streaming) is typically enough: one-way, simple, works over standard HTTP infrastructure.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · The browser security model</h1>
+
+<!-- ============ P5 ============ -->
+<section class="q" id="p5">
+<header class="qh">
+  <div class="qrow"><span class="qid">P5</span><span class="tag added">Added</span></div>
+  <h2>Same-origin policy and CORS</h2>
+  <p class="qtext">“What is the same-origin policy? What is CORS, a preflight request, and what do the CORS headers do? Why do CORS errors happen and how do you fix them properly? Is CORS a security feature?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The same-origin policy is the browser’s core isolation rule: a page can freely load resources from other origins, but scripts can only read responses from their own origin, where an origin is scheme plus host plus port. CORS, cross-origin resource sharing, is the controlled relaxation of that rule: the server tells the browser, through headers like <code>Access-Control-Allow-Origin</code>, which other origins may read its responses. For requests that could have side effects, such as a JSON POST or any with custom headers, the browser first sends an OPTIONS preflight asking permission. CORS protects users’ browsers, not the server: it is enforced by the browser only, and it does not stop curl or another server. The fix for a CORS error is to configure the server correctly, an allowlist of origins, not to disable it or use a wildcard with credentials.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: what counts as the same origin, comparing scheme, host and port. Right: the preflight flow where the browser sends OPTIONS with Origin and request headers, the server replies with allow headers, then the actual request is sent and the response is readable.">
+  <text x="10" y="18" class="bd">Origin = scheme + host + port</text>
+  <rect x="10" y="30" width="360" height="150" rx="5" class="b"/><text x="18" y="50" class="mono" style="font-size:10.5px">https://app.example.com:443/page</text>
+  <text x="18" y="74" class="mono" style="font-size:10px">https://app.example.com/x</text><text x="240" y="74" class="sm" style="fill:var(--good)">same origin</text>
+  <text x="18" y="92" class="mono" style="font-size:10px">http://app.example.com/x</text><text x="240" y="92" class="sm" style="fill:var(--bad)">different scheme</text>
+  <text x="18" y="110" class="mono" style="font-size:10px">https://api.example.com/x</text><text x="240" y="110" class="sm" style="fill:var(--bad)">different host</text>
+  <text x="18" y="128" class="mono" style="font-size:10px">https://app.example.com:8443/x</text><text x="240" y="128" class="sm" style="fill:var(--bad)">different port</text>
+  <text x="18" y="156" class="sm">Allowed across origins: embedding (img, script, link, iframe) and</text><text x="18" y="172" class="sm">form posts. Blocked: reading responses and DOM across origins.</text>
+  <rect x="10" y="196" width="360" height="62" rx="5" class="w"/><text x="18" y="216" class="bd">Not a server-side protection</text><text x="18" y="234" class="sm">CORS is enforced by browsers. curl, servers and attackers’ own</text><text x="18" y="250" class="sm">scripts ignore it. Authorise requests on the server regardless.</text>
+  <rect x="10" y="268" width="360" height="52" rx="5" class="x"/><text x="18" y="288" class="bd">Dangerous config</text><text x="18" y="306" class="sm">Reflecting any Origin with credentials, or null origin allowed</text>
+  <text x="400" y="18" class="bd">Preflighted request</text>
+  <rect x="400" y="30" width="350" height="62" rx="5" class="b"/><text x="408" y="48" class="mono" style="font-size:10px">OPTIONS /api/orders</text><text x="408" y="64" class="mono" style="font-size:10px">Origin: https://app.example.com</text><text x="408" y="80" class="mono" style="font-size:10px">Access-Control-Request-Method: POST</text>
+  <path class="a" d="M575 92V106"/>
+  <rect x="400" y="108" width="350" height="76" rx="5" class="g"/><text x="408" y="126" class="mono" style="font-size:10px">204  Access-Control-Allow-Origin: https://app.example.com</text><text x="408" y="142" class="mono" style="font-size:10px">Access-Control-Allow-Methods: GET, POST</text><text x="408" y="158" class="mono" style="font-size:10px">Access-Control-Allow-Headers: content-type, authorization</text><text x="408" y="174" class="mono" style="font-size:10px">Access-Control-Max-Age: 600   Vary: Origin</text>
+  <path class="a" d="M575 184V198"/>
+  <rect x="400" y="200" width="350" height="46" rx="5" class="h"/><text x="408" y="218" class="bd">Actual request</text><text x="408" y="234" class="sm">POST + Origin; response repeats Allow-Origin</text>
+  <rect x="400" y="256" width="350" height="64" rx="5" class="b"/><text x="408" y="276" class="bd">With cookies (credentials: 'include')</text><text x="408" y="294" class="sm">Allow-Origin must be the exact origin (no *), plus</text><text x="408" y="310" class="mono" style="font-size:10px">Access-Control-Allow-Credentials: true</text>
+</svg></div>
+<figcaption><b>Mental model.</b> The browser asks the destination server for permission to share its response with a given origin.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Same-origin policy scope:</b> restricts reading cross-origin responses from <code>fetch</code>/XHR, accessing another origin’s DOM (iframes), and storage (each origin has its own <code>localStorage</code>, IndexedDB and cookies rules). Cookies use site-based rules (P6). <code>postMessage</code> is the safe channel between origins.</li>
+<li><b>Simple requests (no preflight):</b> GET, HEAD or POST with only safe headers and content types <code>application/x-www-form-urlencoded</code>, <code>multipart/form-data</code>, <code>text/plain</code>. The request is sent and the browser then checks the response headers before exposing it. Note the request still reaches the server, which is why CSRF defences are needed regardless (P6).</li>
+<li><b>Preflight triggers:</b> methods like PUT, PATCH, DELETE; headers such as <code>Authorization</code> or custom ones; <code>Content-Type: application/json</code>. Preflight responses can be cached with <code>Access-Control-Max-Age</code> to reduce extra round trips.</li>
+<li><b>Key response headers:</b> <code>Access-Control-Allow-Origin</code> (one origin or <code>*</code>), <code>-Allow-Methods</code>, <code>-Allow-Headers</code>, <code>-Allow-Credentials</code>, <code>-Expose-Headers</code> (which response headers JS may read), <code>-Max-Age</code>. Add <code>Vary: Origin</code> when the allowed origin is dynamic so caches do not mix responses.</li>
+<li><b>Credentials rules:</b> with cookies or HTTP auth, the wildcard is disallowed; you must echo an exact, validated origin from an allowlist. Never reflect arbitrary <code>Origin</code> values or allow <code>null</code>; use exact matching, not “ends with” checks.</li>
+<li><b>Common causes of CORS errors:</b> missing headers on the API, headers present on success but not on error responses or redirects, preflight blocked by authentication middleware or a 404/405 on OPTIONS, wildcard with credentials, proxies stripping headers, mixed http/https or port mismatches, and misunderstanding that the error appears in the browser while the request actually succeeded server-side.</li>
+<li><b>Proper fixes:</b> configure the API (a CORS middleware with an allowlist), handle OPTIONS before auth, return CORS headers on errors, or avoid cross-origin by serving the API under the same origin through a reverse proxy or the framework’s dev proxy. Do not “fix” it with browser extensions or <code>no-cors</code> (which only yields an unreadable opaque response).</li>
+<li><b>CORS versus CSRF:</b> CORS controls reading responses; CSRF is about unwanted state-changing requests, which CORS does not prevent for simple requests. Defend with SameSite cookies, CSRF tokens and checking <code>Origin</code> (P6).</li>
+<li><b>Related policies:</b> <code>Cross-Origin-Resource-Policy</code> (who may embed my resource), <code>Cross-Origin-Opener-Policy</code> and <code>Cross-Origin-Embedder-Policy</code> (isolation, needed for <code>SharedArrayBuffer</code>), <code>crossorigin</code> attribute on <code>&lt;script&gt;</code>/<code>&lt;img&gt;</code> to request CORS (needed for SRI and detailed error reporting), Private Network Access for local networks.</li>
+<li><b>Fonts and canvas:</b> web fonts from other origins need CORS; images drawn on canvas taint it unless served with CORS and loaded with <code>crossorigin</code>.</li>
+<li><b>Cross-origin communication options:</b> <code>postMessage</code> with explicit <code>targetOrigin</code> and origin checks on receipt, JSONP (legacy and unsafe), proxying through your server, BroadcastChannel within an origin.</li>
+<li><b>Subdomains and <code>document.domain</code>:</b> relaxing same-origin for subdomains with <code>document.domain</code> is deprecated; use <code>postMessage</code> or a shared parent-domain strategy.</li>
+<li><b>Testing:</b> inspect OPTIONS and the actual request in DevTools; use curl with an <code>Origin</code> header to verify server responses; automated tests for allowlist behaviour.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying CORS protects the API. It protects other sites’ scripts from reading data in a user’s browser; the API itself is unaffected.</li>
+<li>Using <code>Access-Control-Allow-Origin: *</code> with credentials, or reflecting any origin.</li>
+<li>Forgetting that the request is still sent for simple cross-origin POSTs.</li>
+<li>Applying CORS headers only to successful responses.</li>
+<li>Using <code>mode: 'no-cors'</code> to “fix” errors and getting an opaque response.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why does the browser send a preflight?</dt><dd>To ask the server whether a potentially side-effecting cross-origin request is allowed before sending it, protecting older servers that never expected such requests.</dd>
+<dt>How do you avoid CORS in development?</dt><dd>Use the dev server’s proxy so the browser sees one origin, and configure real CORS on the API for production if cross-origin is intended.</dd>
+<dt>Can CORS be used to block malicious sites from calling my API?</dt><dd>Not for non-browser clients, and not for simple requests; use authentication, CSRF protection and server-side authorisation.</dd>
+<dt>What is an opaque response?</dt><dd>The result of a <code>no-cors</code> fetch: status and body are hidden from JavaScript.</dd>
+</dl></div>
+</section>
+
+<!-- ============ P6 ============ -->
+<section class="q" id="p6">
+<header class="qh">
+  <div class="qrow"><span class="qid">P6</span><span class="tag added">Added</span></div>
+  <h2>Cookies, sessions and CSRF</h2>
+  <p class="qtext">“How do cookies work? Explain <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite</code>, <code>Domain</code> and <code>Path</code>. How do sessions work? What is CSRF and how do you defend against it? What is changing with third-party cookies?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A cookie is a small piece of data the server sets with <code>Set-Cookie</code> and the browser sends back automatically on matching requests. That automatic sending is both the convenience and the danger. <code>HttpOnly</code> hides the cookie from JavaScript, limiting theft by XSS; <code>Secure</code> restricts it to HTTPS; <code>SameSite</code> controls whether it is sent on cross-site requests, with <code>Lax</code> the modern default and <code>Strict</code> the most protective; <code>Domain</code> and <code>Path</code> scope where it is sent, and <code>Max-Age</code> or <code>Expires</code> sets lifetime. A session stores state on the server and gives the browser only an opaque id in a cookie. CSRF tricks a logged-in user’s browser into sending an unwanted request with their cookies; defences are SameSite cookies, anti-CSRF tokens and checking the <code>Origin</code> header.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a cookie with its attributes. Middle: a CSRF attack where a malicious site causes the browser to send a request with the victim's session cookie, and the defences that block it. Right: SameSite behaviour table.">
+  <text x="10" y="18" class="bd">A hardened session cookie</text>
+  <rect x="10" y="30" width="360" height="84" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10px">Set-Cookie: __Host-sid=9f3a…;</text><text x="18" y="64" class="mono" style="font-size:10px">  Path=/; Secure; HttpOnly; SameSite=Lax;</text><text x="18" y="80" class="mono" style="font-size:10px">  Max-Age=3600</text><text x="18" y="102" class="sm">__Host- prefix: Secure, Path=/, no Domain (host-locked)</text>
+  <text x="10" y="136" class="sm"><tspan class="bd">HttpOnly</tspan> JS cannot read it   <tspan class="bd">Secure</tspan> HTTPS only</text><text x="10" y="154" class="sm"><tspan class="bd">SameSite</tspan> Strict / Lax / None(+Secure)</text><text x="10" y="172" class="sm"><tspan class="bd">Domain</tspan> adds subdomains (wider)  <tspan class="bd">Path</tspan> narrows (not a security boundary)</text><text x="10" y="190" class="sm"><tspan class="bd">Max-Age / Expires</tspan> session cookie if omitted</text><text x="10" y="208" class="sm"><tspan class="bd">Partitioned</tspan> (CHIPS): per top-level site storage for embeds</text>
+  <rect x="10" y="224" width="360" height="86" rx="5" class="g"/><text x="18" y="244" class="bd">Server session</text><text x="18" y="262" class="sm">cookie holds only an opaque, random id; data lives server-side</text><text x="18" y="278" class="sm">(memory, Redis, DB): revocable, small. Rotate the id on login,</text><text x="18" y="294" class="sm">set idle + absolute expiry, invalidate on logout.</text>
+  <text x="400" y="18" class="bd">CSRF: forged request with the victim’s cookies</text>
+  <rect x="400" y="30" width="170" height="44" rx="5" class="x"/><text x="408" y="48" class="bd">evil.example</text><text x="408" y="64" class="sm">hidden form / img</text>
+  <path class="ax" d="M570 52H600"/>
+  <rect x="602" y="30" width="148" height="44" rx="5" class="b"/><text x="610" y="48" class="bd">bank.example</text><text x="610" y="64" class="sm">POST /transfer</text>
+  <text x="400" y="94" class="sm">The browser attaches bank.example cookies itself, so the</text><text x="400" y="110" class="sm">server sees a request the user never intended.</text>
+  <rect x="400" y="124" width="350" height="112" rx="5" class="g"/><text x="408" y="144" class="bd">Defences (layered)</text><text x="408" y="162" class="sm">1 SameSite=Lax/Strict: cookie not sent on cross-site POSTs</text><text x="408" y="178" class="sm">2 CSRF token: random per session, in a header or hidden field</text><text x="408" y="194" class="sm">3 Verify Origin / Referer (and Sec-Fetch-Site) on mutations</text><text x="408" y="210" class="sm">4 Require JSON content type or custom header (forces preflight)</text><text x="408" y="226" class="sm">5 Re-authentication for sensitive actions</text>
+  <rect x="400" y="246" width="350" height="64" rx="5" class="w"/><text x="408" y="266" class="bd">Not vulnerable</text><text x="408" y="284" class="sm">APIs that read a token from an Authorization header set by</text><text x="408" y="300" class="sm">JavaScript (the browser does not add it automatically).</text>
+</svg></div>
+<figcaption><b>Key insight.</b> Cookies are ambient authority: the browser adds them without the page’s consent. That is why CSRF exists and why SameSite matters.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Attributes in detail:</b> <code>HttpOnly</code> (not in <code>document.cookie</code>, still sent), <code>Secure</code> (HTTPS only), <code>SameSite</code> (<code>Strict</code>: never cross-site; <code>Lax</code>: sent on top-level GET navigations but not on cross-site subrequests or POSTs; <code>None</code>: always, needs <code>Secure</code>), <code>Domain</code> (if set, includes all subdomains; omit for host-only), <code>Path</code>, <code>Max-Age</code>/<code>Expires</code>, <code>Priority</code>, <code>Partitioned</code>. Cookie prefixes <code>__Host-</code> and <code>__Secure-</code> enforce safe attributes.</li>
+<li><b>Site versus origin:</b> “same-site” means same registrable domain (eTLD+1), so <code>app.example.com</code> and <code>api.example.com</code> are same-site but cross-origin. SameSite concerns sites, CORS concerns origins.</li>
+<li><b>Size and limits:</b> about 4 KB per cookie and a limited count per domain; cookies are sent on every matching request, so keep them small and avoid putting them on static asset domains.</li>
+<li><b>Sessions versus tokens:</b> server sessions (cookie with id) are simple and revocable; stateless tokens (JWT) scale across services but are hard to revoke and bigger. A session cookie remains the most robust choice for browser apps, often via a backend-for-frontend (P8).</li>
+<li><b>Session security:</b> long random ids from a CSPRNG, rotate after authentication (prevents fixation), idle and absolute timeouts, bind to context carefully (IP binding is fragile), invalidate on logout, store server-side, and protect with HTTPS everywhere.</li>
+<li><b>XSS and cookies:</b> <code>HttpOnly</code> stops scripts reading the cookie but an XSS can still perform actions as the user through the browser; so it reduces but does not remove the impact (J29).</li>
+<li><b>CSRF tokens:</b> synchroniser token (server stores it) or double-submit cookie (token in cookie and header, compared, preferably signed); send in a custom header for AJAX, hidden field for forms. Frameworks provide middleware. Tokens must not be leaked in URLs.</li>
+<li><b><code>Sec-Fetch-*</code> headers:</b> <code>Sec-Fetch-Site</code>, <code>-Mode</code>, <code>-Dest</code> let servers reject unexpected cross-site requests (resource isolation policy), a strong modern defence layer.</li>
+<li><b>Login CSRF and clickjacking:</b> login forms need CSRF protection too; clickjacking (framing the site) is prevented with <code>frame-ancestors</code> or <code>X-Frame-Options</code> (P7).</li>
+<li><b>Third-party cookies:</b> used for cross-site tracking, embedded widgets, SSO and payments. Browsers block or restrict them (Safari and Firefox by default; Chrome’s plan changed several times <span class="verify">verify current status</span>). Alternatives: first-party contexts, <code>Partitioned</code> cookies (CHIPS), Storage Access API, redirects and tokens, server-side tracking.</li>
+<li><b>Cookie consent and privacy:</b> non-essential cookies (analytics, ads) need consent under GDPR and ePrivacy; strictly necessary cookies (session, security) do not; document cookies in a policy (P11).</li>
+<li><b>Alternatives to cookies in browsers:</b> <code>localStorage</code> (readable by any script), tokens in memory with refresh via HttpOnly cookie, IndexedDB; none send automatically, avoiding CSRF but exposing tokens to XSS (J29, J30).</li>
+<li><b>Debugging:</b> DevTools Application → Cookies, the “Issues” panel for SameSite warnings, and checking <code>Set-Cookie</code> headers in Network.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying <code>HttpOnly</code> prevents XSS. It prevents cookie theft by script, not XSS itself.</li>
+<li>Confusing same-site with same-origin.</li>
+<li>Setting <code>SameSite=None</code> without <code>Secure</code> (rejected by browsers).</li>
+<li>Putting <code>Domain=.example.com</code> and exposing the session to every subdomain, including vulnerable ones.</li>
+<li>Relying only on SameSite and skipping CSRF tokens for sensitive flows or older browsers.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does <code>SameSite=Lax</code> block?</dt><dd>Sending the cookie on cross-site subrequests and non-GET requests such as a forged POST, while still allowing it on normal top-level link navigations.</dd>
+<dt>Why do APIs using bearer tokens avoid CSRF?</dt><dd>The browser does not attach the <code>Authorization</code> header automatically; JavaScript from your origin must add it.</dd>
+<dt>How do you log a user out everywhere?</dt><dd>Invalidate the server-side sessions (or token family) and clear cookies; stateless JWTs need a deny list or short expiry.</dd>
+<dt>How do you share sessions across subdomains?</dt><dd>Set <code>Domain</code> to the parent only when necessary, understand the wider exposure, or use SSO with token exchange.</dd>
+</dl></div>
+</section>
+
+<!-- ============ P7 ============ -->
+<section class="q" id="p7">
+<header class="qh">
+  <div class="qrow"><span class="qid">P7</span><span class="tag added">Added</span></div>
+  <h2>Security headers and Content Security Policy</h2>
+  <p class="qtext">“Which security headers do you set and why? How does Content Security Policy work and how do you roll one out? What are Trusted Types, SRI, COOP and COEP?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Security headers instruct the browser to enforce protections. The essentials are <code>Strict-Transport-Security</code> to force HTTPS, <code>X-Content-Type-Options: nosniff</code> to stop MIME sniffing, <code>Referrer-Policy</code> to limit leaking URLs, <code>Permissions-Policy</code> to restrict powerful features, and clickjacking protection with CSP <code>frame-ancestors</code>. The most powerful is Content Security Policy: a header listing which sources may supply scripts, styles, images, frames and connections, so even if an attacker injects markup, the browser refuses to run script from disallowed places. A strict CSP uses per-request nonces or hashes with <code>strict-dynamic</code> and no <code>unsafe-inline</code>. I roll it out in report-only mode first, collect violations, fix them, then enforce. Subresource Integrity pins third-party files by hash, and COOP/COEP enable cross-origin isolation.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: a table of important security headers and what each prevents. Right: a strict CSP example with nonce and strict-dynamic, and the rollout steps from report-only to enforce.">
+  <text x="10" y="18" class="bd">Headers to set</text>
+  <rect x="10" y="30" width="360" height="290" rx="5" class="b"/>
+  <text x="18" y="50" class="mono" style="font-size:10px">Strict-Transport-Security</text><text x="18" y="64" class="sm">HTTPS only, blocks downgrade (preload list)</text>
+  <text x="18" y="86" class="mono" style="font-size:10px">Content-Security-Policy</text><text x="18" y="100" class="sm">allowlist of sources; mitigates XSS and injection</text>
+  <text x="18" y="122" class="mono" style="font-size:10px">X-Content-Type-Options: nosniff</text><text x="18" y="136" class="sm">trust declared MIME type; no script sniffing</text>
+  <text x="18" y="158" class="mono" style="font-size:10px">Referrer-Policy</text><text x="18" y="172" class="sm">strict-origin-when-cross-origin limits URL leakage</text>
+  <text x="18" y="194" class="mono" style="font-size:10px">Permissions-Policy</text><text x="18" y="208" class="sm">disable camera, geolocation, etc. for page and frames</text>
+  <text x="18" y="230" class="mono" style="font-size:10px">frame-ancestors (CSP) / X-Frame-Options</text><text x="18" y="244" class="sm">who may embed me: stops clickjacking</text>
+  <text x="18" y="266" class="mono" style="font-size:10px">Cross-Origin-Opener/Embedder-Policy</text><text x="18" y="280" class="sm">process isolation; needed for SharedArrayBuffer</text>
+  <text x="18" y="302" class="mono" style="font-size:10px">Cross-Origin-Resource-Policy</text><text x="18" y="316" class="sm">who may load my resources (Spectre-style leaks)</text>
+  <text x="400" y="18" class="bd">A strict, nonce-based CSP</text>
+  <rect x="400" y="30" width="350" height="116" rx="5" class="g"/><text x="408" y="48" class="mono" style="font-size:10px">default-src 'self';</text><text x="408" y="62" class="mono" style="font-size:10px">script-src 'nonce-R4nd0m' 'strict-dynamic';</text><text x="408" y="76" class="mono" style="font-size:10px">style-src 'self' 'nonce-R4nd0m';</text><text x="408" y="90" class="mono" style="font-size:10px">img-src 'self' data: https://cdn.example.com;</text><text x="408" y="104" class="mono" style="font-size:10px">connect-src 'self' https://api.example.com;</text><text x="408" y="118" class="mono" style="font-size:10px">object-src 'none'; base-uri 'none';</text><text x="408" y="132" class="mono" style="font-size:10px">frame-ancestors 'none'; report-to csp</text>
+  <text x="400" y="170" class="bd">Rollout</text>
+  <rect x="400" y="180" width="82" height="50" rx="4" class="b"/><text x="406" y="200" class="sm">1 Inventory</text><text x="406" y="216" class="sm">sources</text>
+  <rect x="488" y="180" width="82" height="50" rx="4" class="w"/><text x="494" y="200" class="sm">2 Report-</text><text x="494" y="216" class="sm">Only mode</text>
+  <rect x="576" y="180" width="82" height="50" rx="4" class="h"/><text x="582" y="200" class="sm">3 Fix and</text><text x="582" y="216" class="sm">tighten</text>
+  <rect x="664" y="180" width="86" height="50" rx="4" class="g"/><text x="670" y="200" class="sm">4 Enforce +</text><text x="670" y="216" class="sm">monitor</text>
+  <rect x="400" y="246" width="350" height="74" rx="5" class="w"/><text x="408" y="266" class="bd">Related controls</text><text x="408" y="284" class="sm">SRI: integrity="sha384-…" crossorigin on third-party scripts</text><text x="408" y="300" class="sm">Trusted Types: blocks DOM XSS sinks</text><text x="408" y="316" class="sm">upgrade-insecure-requests · sandbox directive</text>
+</svg></div>
+<figcaption><b>Principle.</b> Defence in depth: headers cannot fix vulnerable code, but they sharply limit what an exploit can do.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>CSP directives:</b> <code>default-src</code> (fallback), <code>script-src</code>, <code>style-src</code>, <code>img-src</code>, <code>connect-src</code> (fetch, XHR, WebSocket), <code>font-src</code>, <code>frame-src</code>, <code>frame-ancestors</code>, <code>form-action</code>, <code>base-uri</code>, <code>object-src</code>, <code>worker-src</code>, <code>report-to</code>/<code>report-uri</code>. Sources: <code>'self'</code>, hosts, <code>https:</code>, <code>'nonce-…'</code>, <code>'sha256-…'</code>, <code>'strict-dynamic'</code>, and unsafe keywords (<code>'unsafe-inline'</code>, <code>'unsafe-eval'</code>) that weaken protection.</li>
+<li><b>Allowlist CSPs fail:</b> long host allowlists are often bypassable through JSONP endpoints or script gadgets on allowed hosts. Nonce- or hash-based policies with <code>strict-dynamic</code> (trust scripts loaded by trusted scripts) are the recommended approach.</li>
+<li><b>Nonces:</b> unpredictable per-response value added to the header and to each allowed <code>&lt;script nonce&gt;</code>; requires dynamic HTML generation (SSR, middleware), which conflicts with fully static caching; hashes work for static inline scripts.</li>
+<li><b>Frameworks:</b> Next.js supports nonces via middleware (dynamic pages), Angular and others have CSP guidance; inline styles from CSS-in-JS often need nonces or hashes; third-party tags (analytics, chat) complicate policies, so govern them.</li>
+<li><b>Report-only and monitoring:</b> <code>Content-Security-Policy-Report-Only</code> logs violations without blocking; collect reports with a service (report-uri, Sentry), triage noise from browser extensions, then enforce. Keep monitoring after enforcement.</li>
+<li><b>Trusted Types:</b> the browser requires dangerous DOM sinks (<code>innerHTML</code>, <code>eval</code>) to receive typed objects created by named policies, eliminating most DOM XSS if every sink goes through sanitising policies; support is strongest in Chromium <span class="verify">verify</span>.</li>
+<li><b>Subresource Integrity:</b> <code>integrity</code> hash on <code>&lt;script&gt;</code>/<code>&lt;link&gt;</code> from a CDN ensures the file is unchanged; needs <code>crossorigin</code>; protects against CDN compromise but breaks if the file legitimately changes, so pin versions.</li>
+<li><b>HSTS details:</b> <code>max-age</code>, <code>includeSubDomains</code>, <code>preload</code>; start with a short max-age, increase after validation, preload only when all subdomains are HTTPS.</li>
+<li><b>Referrer-Policy:</b> <code>strict-origin-when-cross-origin</code> (default in modern browsers) sends full URL same-origin and only the origin cross-site; use <code>no-referrer</code> for sensitive pages, and never put secrets in URLs.</li>
+<li><b>Permissions-Policy:</b> turn off features you do not use (<code>camera=()</code>, <code>geolocation=()</code>) and restrict embeds with the <code>allow</code> attribute on iframes.</li>
+<li><b>Clickjacking:</b> UI redress through invisible iframes; stop with <code>frame-ancestors 'none'</code> (or specific origins) and legacy <code>X-Frame-Options: DENY</code>; sensitive actions can also require re-auth or user gesture checks.</li>
+<li><b>COOP, COEP, CORP:</b> <code>COOP: same-origin</code> and <code>COEP: require-corp</code> together achieve cross-origin isolation, enabling <code>SharedArrayBuffer</code> and high-resolution timers; they break third-party embeds that do not send CORP/CORS, so adopt deliberately (J23).</li>
+<li><b>Other headers:</b> <code>Cache-Control: no-store</code> on sensitive responses, <code>Clear-Site-Data</code> on logout, <code>Content-Disposition</code> for downloads, <code>X-XSS-Protection</code> is obsolete (remove or set 0), <code>Server</code>/<code>X-Powered-By</code> version leaks should be minimised.</li>
+<li><b>Testing and tooling:</b> securityheaders.com, Mozilla Observatory, CSP Evaluator, browser DevTools Issues and Security panels; add header checks to CI or smoke tests; helmet middleware for Node apps.</li>
+<li><b>Where to set headers:</b> at the CDN or reverse proxy for consistency across apps, or in the framework (Next.js <code>headers()</code>, Express <code>helmet</code>); ensure error pages and static assets also receive them.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>A CSP with <code>'unsafe-inline'</code> in <code>script-src</code> and calling it protection; inline XSS still runs.</li>
+<li>Long domain allowlists that include JSONP or user-content hosts.</li>
+<li>Enabling a CSP straight in enforce mode on a complex site and breaking production.</li>
+<li>Reusing a nonce across responses or caching a nonce-bearing HTML page.</li>
+<li>Applying COOP/COEP casually and breaking embedded third-party content.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does <code>strict-dynamic</code> do?</dt><dd>It lets scripts that carry a valid nonce or hash load further scripts dynamically, ignoring host allowlists, which simplifies policies for modern bundled apps.</dd>
+<dt>How do you handle CSP with third-party tags?</dt><dd>Load them through a nonce-trusted loader or tag manager under governance, restrict their <code>connect-src</code>, and monitor violations.</dd>
+<dt>CSP or input sanitisation?</dt><dd>Both: sanitise and encode to prevent injection, CSP to limit damage if something slips through.</dd>
+<dt>What is a nonce?</dt><dd>A random, single-use token generated per response that marks allowed inline scripts and styles.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Identity and risk</h1>
+
+<!-- ============ P8 ============ -->
+<section class="q" id="p8">
+<header class="qh">
+  <div class="qrow"><span class="qid">P8</span><span class="tag added">Added</span></div>
+  <h2>Authentication: OAuth 2.0, OIDC, JWT</h2>
+  <p class="qtext">“Explain OAuth 2.0 and OpenID Connect. Walk through the authorisation code flow with PKCE. What is a JWT and what are its pitfalls? Where should a single-page app keep tokens?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“OAuth 2.0 is a delegation framework: it lets a user grant an application limited access to their resources without sharing a password, through tokens. OpenID Connect, OIDC, is a thin identity layer on top that adds an ID token proving who the user is. For browser and mobile apps, the recommended flow is the authorisation code flow with PKCE: the app redirects to the identity provider, the user authenticates and consents, the provider redirects back with a short-lived code, and the app exchanges that code, together with the PKCE verifier, for tokens. A JWT is a signed, base64url-encoded JSON token with header, claims and signature; the receiver verifies the signature and claims such as issuer, audience and expiry. Pitfalls include not validating, long lifetimes and hard revocation. For SPAs I prefer a backend-for-frontend keeping tokens server-side behind an HttpOnly cookie.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Authorisation code flow with PKCE as a sequence between user, app, authorisation server and API: redirect with code challenge, login and consent, redirect back with code, code exchange with verifier for tokens, then call API with access token. Right: JWT structure.">
+  <text x="30" y="18" class="bd">User / browser</text><text x="190" y="18" class="bd">Your app</text><text x="320" y="18" class="bd">Auth server (IdP)</text>
+  <line x1="60" y1="26" x2="60" y2="320" class="d"/><line x1="210" y1="26" x2="210" y2="320" class="d"/><line x1="370" y1="26" x2="370" y2="320" class="d"/>
+  <path class="a" d="M62 44H208"/><text x="70" y="40" class="sm">1 click “Sign in”</text>
+  <path class="a" d="M208 70H368"/><text x="216" y="66" class="sm">2 redirect: client_id, scope, state, code_challenge</text>
+  <path class="a" d="M368 96H64"/><text x="150" y="92" class="sm">3 login + consent page</text>
+  <path class="a" d="M62 122H368"/><text x="130" y="118" class="sm">4 user authenticates (password, passkey, MFA)</text>
+  <path class="a" d="M368 148H208"/><text x="216" y="144" class="sm">5 redirect back: code + state</text>
+  <path class="a" d="M208 176H368"/><text x="216" y="172" class="sm">6 POST /token: code + code_verifier</text>
+  <path class="a" d="M368 202H208"/><text x="216" y="198" class="sm">7 access (+ ID, refresh) token</text>
+  <text x="60" y="236" class="sm">8  app calls the API with Authorization: Bearer …</text>
+  <text x="10" y="262" class="sm">PKCE: verifier is random; challenge = hash(verifier). Even if the code is</text><text x="10" y="278" class="sm">intercepted, it is useless without the verifier. state prevents CSRF.</text><text x="10" y="302" class="sm">Implicit flow and password grant are deprecated for new apps.</text>
+  <text x="420" y="18" class="bd">JWT: header . payload . signature</text>
+  <rect x="420" y="30" width="330" height="40" rx="5" class="b"/><text x="428" y="48" class="mono" style="font-size:10px">eyJhbGciOiJSUzI1NiJ9 . eyJzdWIiOiI0MiIs… . MEUCIQ…</text><text x="428" y="63" class="sm">base64url, not encrypted: anyone can read the claims</text>
+  <rect x="420" y="80" width="330" height="86" rx="5" class="g"/><text x="428" y="98" class="bd">Claims to validate</text><text x="428" y="116" class="mono" style="font-size:10px">iss (issuer) aud (audience) exp nbf iat</text><text x="428" y="134" class="mono" style="font-size:10px">sub (user) scope / roles jti (id)</text><text x="428" y="154" class="sm">verify signature, algorithm allowlist, issuer, audience, expiry</text>
+  <rect x="420" y="176" width="330" height="62" rx="5" class="x"/><text x="428" y="196" class="bd">Pitfalls</text><text x="428" y="214" class="sm">accepting alg:none or HS/RS confusion · skipping aud check ·</text><text x="428" y="230" class="sm">secrets in payload · long expiry · no revocation</text>
+  <rect x="420" y="248" width="330" height="72" rx="5" class="h"/><text x="428" y="268" class="bd">Tokens</text><text x="428" y="286" class="sm">access token: short (5 to 15 min), calls the API</text><text x="428" y="302" class="sm">refresh token: rotate on use, bind to client, revocable</text><text x="428" y="316" class="sm">ID token: for the client to learn who logged in (not for APIs)</text>
+</svg></div>
+<figcaption><b>Distinguish.</b> OAuth is about authorisation (access to resources); OIDC adds authentication (who the user is).</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Roles in OAuth 2.0:</b> resource owner (user), client (your app), authorisation server (issues tokens), resource server (API). Scopes limit what a token can do. Public clients (SPAs, mobile) cannot keep a secret; confidential clients (servers) can.</li>
+<li><b>Flows today:</b> authorisation code + PKCE for all clients (OAuth 2.1 direction); client credentials for machine-to-machine; device code for TVs and CLIs; refresh token flow. Avoid implicit flow (tokens in URL fragments) and resource owner password credentials.</li>
+<li><b>OIDC:</b> adds <code>openid</code> scope, ID token (a JWT with identity claims), the UserInfo endpoint, discovery document (<code>/.well-known/openid-configuration</code>) and standard claims (<code>email</code>, <code>name</code>). Use it for “Sign in with Google/Microsoft” and enterprise SSO.</li>
+<li><b>JWT versus opaque tokens:</b> JWTs are self-contained (resources validate locally with a public key from JWKS) but cannot be revoked before expiry without extra infrastructure; opaque tokens need introspection calls to the auth server but are easily revoked. Choose by scale and revocation needs.</li>
+<li><b>Signature algorithms:</b> asymmetric (RS256, ES256) lets APIs verify without holding the signing key; symmetric HS256 shares one secret. Pin allowed algorithms server-side; ignore the header’s claim. Rotate keys with <code>kid</code> and JWKS.</li>
+<li><b>Refresh tokens:</b> long-lived; use rotation (each use returns a new one and invalidates the old, with reuse detection), limit lifetime, bind to the client, and store only where it is safe (HttpOnly cookie or server). In SPAs, silent refresh via iframe is broken by third-party cookie rules; use refresh tokens with rotation or BFF.</li>
+<li><b>Where to store tokens in a SPA:</b> options: memory (safe from persistence, lost on refresh, still reachable by XSS), <code>localStorage</code> (any script can read it: XSS steals tokens), HttpOnly cookies (not readable by JS, need CSRF protection). The current best practice for high-security apps is a BFF: the server performs the OAuth flow, keeps tokens server-side, and gives the browser only a session cookie; the browser app calls the BFF (N11, J29).</li>
+<li><b>State, nonce and redirect URIs:</b> <code>state</code> prevents CSRF on the callback; <code>nonce</code> binds the ID token to the session; register exact redirect URIs (no wildcards) to avoid open-redirect token theft.</li>
+<li><b>Authorisation models:</b> RBAC (roles), ABAC (attributes), scopes for delegation, per-resource ownership checks; claims in tokens can go stale, so for sensitive decisions check current data.</li>
+<li><b>SAML and enterprise SSO:</b> XML-based SSO for corporate identity providers (Okta, Azure AD/Entra); OIDC is the modern equivalent; many enterprise clients require SAML or OIDC federation.</li>
+<li><b>Libraries and hosted services:</b> Auth0, Okta, Azure AD B2C/Entra, Cognito, Keycloak (self-hosted), Clerk, Firebase/Supabase Auth, Auth.js; prefer certified libraries; never implement token validation or cryptography by hand.</li>
+<li><b>Logout and session termination:</b> clear the app session, optionally call the IdP end-session endpoint (single logout), revoke refresh tokens, handle back-channel logout in enterprise setups.</li>
+<li><b>Common attacks:</b> authorisation code interception (PKCE), token theft via XSS, CSRF on callback (state), open redirects, mix-up attacks, replay of tokens, phishing consent screens, and misconfigured audiences letting tokens for one API work on another.</li>
+<li><b>API side:</b> validate the bearer token on every request (signature, <code>exp</code>, <code>aud</code>, scopes), return 401 for invalid tokens and 403 for insufficient scope, and never trust client-provided identity claims.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying OAuth is an authentication protocol. It is authorisation; OIDC adds authentication.</li>
+<li>Treating JWT payloads as secret or encrypted. They are only signed.</li>
+<li>Skipping audience and issuer checks because the signature verifies.</li>
+<li>Keeping long-lived access tokens in <code>localStorage</code> in a SPA without considering XSS.</li>
+<li>Using the implicit flow or wildcard redirect URIs.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What problem does PKCE solve?</dt><dd>It binds the authorisation code to the client that started the flow, so an intercepted code cannot be redeemed by an attacker; essential for public clients.</dd>
+<dt>How do you revoke a JWT?</dt><dd>Short expiry plus refresh tokens that can be revoked, a deny list of token ids, or switch to opaque tokens with introspection.</dd>
+<dt>ID token versus access token?</dt><dd>The ID token is for the client to learn who authenticated; the access token is for calling APIs. Do not send ID tokens to APIs.</dd>
+<dt>What is a backend-for-frontend?</dt><dd>A server component that handles OAuth, holds tokens, and proxies API calls, exposing only a session cookie to the browser.</dd>
+</dl></div>
+</section>
+
+<!-- ============ P9 ============ -->
+<section class="q" id="p9">
+<header class="qh">
+  <div class="qrow"><span class="qid">P9</span><span class="tag added">Added</span></div>
+  <h2>Passkeys, MFA and session management</h2>
+  <p class="qtext">“What are passkeys and WebAuthn? How do MFA methods compare? How do you store passwords safely? How do you design login, reset and session flows securely?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Passwords are the weakest link, so modern authentication moves towards phishing-resistant credentials. WebAuthn, the standard behind passkeys, uses public-key cryptography: the device creates a key pair per site, the private key never leaves the authenticator and is unlocked by biometrics or a PIN, and the server stores only the public key and verifies signed challenges. Because the credential is bound to the origin, it cannot be phished and there is no shared secret to leak. Where passwords still exist, I store them with a slow salted hash such as Argon2id or bcrypt, enforce rate limiting and breached-password checks, add MFA, prefer authenticator apps or security keys to SMS, and make reset flows time-limited, single-use and non-enumerating.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="WebAuthn registration and login: the server sends a challenge, the authenticator signs it after user verification, the server verifies with the stored public key. Right: authentication factors ranked by strength.">
+  <text x="10" y="18" class="bd">WebAuthn / passkey login</text>
+  <rect x="10" y="30" width="170" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">Server</text><text x="18" y="62" class="sm">stores public key</text>
+  <rect x="200" y="30" width="170" height="40" rx="5" class="h"/><text x="208" y="48" class="bd">Browser + authenticator</text><text x="208" y="62" class="sm">holds private key</text>
+  <path class="a" d="M180 44H198"/><text x="130" y="86" class="sm">1 challenge + rpId (site origin)</text>
+  <path class="a" d="M285 70V96"/>
+  <rect x="200" y="98" width="170" height="40" rx="5" class="w"/><text x="208" y="116" class="bd">2 User verification</text><text x="208" y="130" class="sm">biometric or PIN</text>
+  <path class="a" d="M285 138V158"/>
+  <rect x="200" y="160" width="170" height="40" rx="5" class="g"/><text x="208" y="178" class="bd">3 Sign challenge</text><text x="208" y="192" class="sm">only for this origin</text>
+  <path class="a" d="M200 180H100V72"/>
+  <text x="10" y="220" class="sm">4 server verifies signature with the stored public key → logged in.</text><text x="10" y="238" class="sm">No shared secret to steal; the credential only works on the real</text><text x="10" y="254" class="sm">site, so phishing pages get nothing. Synced passkeys (iCloud, Google,</text><text x="10" y="270" class="sm">password managers) add recovery; device-bound keys are stronger.</text><text x="10" y="294" class="sm">Provide fallbacks and recovery paths, but protect them equally.</text>
+  <text x="400" y="18" class="bd">Factors, weakest to strongest</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="x"/><text x="408" y="52" class="sm"><tspan class="bd">Password only</tspan>  phishable, reused, breached</text>
+  <rect x="400" y="68" width="350" height="34" rx="4" class="x"/><text x="408" y="90" class="sm"><tspan class="bd">SMS / email code</tspan>  SIM swap, interception, phishing</text>
+  <rect x="400" y="106" width="350" height="34" rx="4" class="w"/><text x="408" y="128" class="sm"><tspan class="bd">TOTP app</tspan>  (authenticator) better; still phishable</text>
+  <rect x="400" y="144" width="350" height="34" rx="4" class="w"/><text x="408" y="166" class="sm"><tspan class="bd">Push approval</tspan>  fatigue attacks; use number matching</text>
+  <rect x="400" y="182" width="350" height="34" rx="4" class="g"/><text x="408" y="204" class="sm"><tspan class="bd">Security key / passkey</tspan>  phishing-resistant</text>
+  <rect x="400" y="226" width="350" height="84" rx="5" class="b"/><text x="408" y="246" class="bd">Password storage</text><text x="408" y="264" class="sm">Argon2id (or scrypt, bcrypt) with per-user salt, tuned cost;</text><text x="408" y="280" class="sm">never reversible or fast hashes (MD5, SHA-1).</text><text x="408" y="296" class="sm">Add a pepper in a secrets manager; compare in constant time.</text>
+</svg></div>
+<figcaption><b>Direction.</b> Replace shared secrets with origin-bound public-key credentials, and make every fallback as strong as the primary.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>WebAuthn mechanics:</b> <code>navigator.credentials.create()</code> for registration (server provides challenge, relying-party id, user info; gets public key and attestation) and <code>.get()</code> for authentication (server challenge; signed assertion). The relying-party id ties credentials to the domain, so look-alike domains fail. Libraries: SimpleWebAuthn; platforms: Apple, Google, Microsoft, 1Password.</li>
+<li><b>Passkeys:</b> discoverable WebAuthn credentials, often synced across a user’s devices, with cross-device sign-in via QR/Bluetooth. Trade-offs: sync provider trust and account recovery; adoption requires UX for enrolment (“create a passkey”) and fallback. Conditional UI (autofill) shows passkeys in the username field.</li>
+<li><b>MFA types:</b> something you know, have, are. TOTP (RFC 6238) apps, hardware keys (FIDO2), push notifications with number matching, SMS/voice (weakest), recovery codes. Prefer step-up MFA for sensitive actions and risk-based prompts (new device, location).</li>
+<li><b>Password handling:</b> length over complexity (minimum 8 to 12, allow long passphrases and paste), check against breached lists (Have I Been Pwned k-anonymity API), no composition rules that encourage patterns, no periodic forced rotation without cause, use Argon2id or bcrypt with a work factor, and constant-time comparison. Salt prevents rainbow tables; pepper adds a secret outside the database.</li>
+<li><b>Brute force and credential stuffing:</b> rate limit by account and IP, progressive delays or CAPTCHAs, lockouts that do not enable denial of service, device fingerprints and risk scoring, bot detection, and alerts. Return identical messages for unknown users and wrong passwords.</li>
+<li><b>Account recovery and reset:</b> single-use, short-lived, unguessable tokens sent to a verified channel; invalidate on use and on password change; do not reveal whether an email exists; require re-authentication for changing email or MFA; notify on security changes. Recovery is often the weakest link, so it must not bypass MFA.</li>
+<li><b>Session management:</b> new session id after login, idle and absolute timeouts, “remember me” as a separate long-lived token with rotation, device list with revoke, logout everywhere, bind sensitive actions to recent authentication, and secure cookie attributes (P6).</li>
+<li><b>Signup and verification:</b> verify emails, protect against enumeration, handle disposable emails per policy, and apply bot protection on registration.</li>
+<li><b>Authorisation basics:</b> deny by default, check on the server per resource, avoid insecure direct object references (IDOR) by verifying ownership, log access to sensitive data, and separate admin interfaces.</li>
+<li><b>Frontend responsibilities:</b> correct input types and <code>autocomplete</code> attributes (<code>username</code>, <code>current-password</code>, <code>new-password</code>, <code>one-time-code</code>) so password managers and OTP autofill work; accessible error handling; not storing credentials client-side; clearing sensitive state on logout; masking and avoiding logging secrets.</li>
+<li><b>Compliance and privacy:</b> handle credentials and identifiers under GDPR; minimise retained data; follow standards such as OWASP ASVS and NIST 800-63B for authentication guidance.</li>
+<li><b>Build or buy:</b> most teams should use an identity provider rather than building login, because secure storage, recovery, MFA, bot defence and compliance are costly to get right.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Offering SMS as the strongest MFA, or letting account recovery bypass MFA.</li>
+<li>Storing passwords with a fast hash such as SHA-256, or encrypting them reversibly.</li>
+<li>Revealing whether an account exists through different error messages or timing.</li>
+<li>Locking accounts after a few failures so attackers can lock out real users.</li>
+<li>Blocking paste or autofill in password fields.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why are passkeys phishing-resistant?</dt><dd>The credential is bound to the real site’s origin, so a fake site cannot request a valid signature, and there is no secret to type or intercept.</dd>
+<dt>Why a slow hash for passwords?</dt><dd>To make offline brute force after a database leak expensive; fast hashes let attackers test billions of guesses per second.</dd>
+<dt>How do you detect credential stuffing?</dt><dd>Spikes of failed logins across many accounts from distributed IPs, breached-credential checks, rate limits, device and behavioural signals.</dd>
+<dt>What is step-up authentication?</dt><dd>Requiring an additional or stronger factor for sensitive operations such as changing payment details.</dd>
+</dl></div>
+</section>
+
+<!-- ============ P10 ============ -->
+<section class="q" id="p10">
+<header class="qh">
+  <div class="qrow"><span class="qid">P10</span><span class="tag added">Added</span></div>
+  <h2>OWASP Top 10 for frontend engineers</h2>
+  <p class="qtext">“Which OWASP Top 10 risks matter most to frontend developers? Explain broken access control, injection, XSS, insecure design, vulnerable components, SSRF and security misconfiguration with practical frontend mitigations.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The OWASP Top 10 lists the most critical web application risks. For a frontend lead the ones I act on most are broken access control, since hiding a button is not authorisation and every action must be enforced on the server; injection, including XSS, where untrusted data is interpreted as code in a browser context; vulnerable and outdated components, which for frontends means npm dependencies; security misconfiguration such as missing headers, permissive CORS and exposed source maps or secrets; identification and authentication failures; insecure design, meaning threat modelling before building; and logging and monitoring failures. My practice is secure defaults in frameworks, validation and encoding at boundaries, least privilege, dependency hygiene, security headers, and automated scanning in CI.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="A grid mapping OWASP risk categories to what the frontend team does about each: broken access control, cryptographic failures, injection and XSS, insecure design, misconfiguration, vulnerable components, authentication failures, integrity failures, logging, SSRF.">
+  <text x="10" y="18" class="bd">Risk → frontend responsibility</text>
+  <rect x="10" y="30" width="240" height="56" rx="5" class="x"/><text x="18" y="48" class="bd">Broken access control</text><text x="18" y="64" class="sm">server-side authz on every call;</text><text x="18" y="78" class="sm">UI hiding is cosmetic; no IDOR</text>
+  <rect x="260" y="30" width="240" height="56" rx="5" class="x"/><text x="268" y="48" class="bd">Injection / XSS</text><text x="268" y="64" class="sm">escape output, sanitise HTML, CSP,</text><text x="268" y="78" class="sm">avoid eval and unsafe sinks</text>
+  <rect x="510" y="30" width="240" height="56" rx="5" class="x"/><text x="518" y="48" class="bd">Cryptographic failures</text><text x="518" y="64" class="sm">HTTPS + HSTS, no secrets in the</text><text x="518" y="78" class="sm">client, no sensitive data in URLs</text>
+  <rect x="10" y="94" width="240" height="56" rx="5" class="w"/><text x="18" y="112" class="bd">Insecure design</text><text x="18" y="128" class="sm">threat model features, abuse cases,</text><text x="18" y="142" class="sm">rate limits, secure defaults</text>
+  <rect x="260" y="94" width="240" height="56" rx="5" class="w"/><text x="268" y="112" class="bd">Security misconfiguration</text><text x="268" y="128" class="sm">headers, CORS, debug flags, public</text><text x="268" y="142" class="sm">source maps, default credentials</text>
+  <rect x="510" y="94" width="240" height="56" rx="5" class="w"/><text x="518" y="112" class="bd">Vulnerable components</text><text x="518" y="128" class="sm">lockfiles, audits, Renovate, SBOM,</text><text x="518" y="142" class="sm">minimal dependencies, SRI</text>
+  <rect x="10" y="158" width="240" height="56" rx="5" class="h"/><text x="18" y="176" class="bd">Authentication failures</text><text x="18" y="192" class="sm">MFA/passkeys, safe sessions, rate</text><text x="18" y="206" class="sm">limits, no tokens in localStorage</text>
+  <rect x="260" y="158" width="240" height="56" rx="5" class="h"/><text x="268" y="176" class="bd">Integrity failures</text><text x="268" y="192" class="sm">supply chain, CI/CD security, signed</text><text x="268" y="206" class="sm">artifacts, trusted CDNs only</text>
+  <rect x="510" y="158" width="240" height="56" rx="5" class="h"/><text x="518" y="176" class="bd">Logging and monitoring</text><text x="518" y="192" class="sm">error tracking, security events,</text><text x="518" y="206" class="sm">alerts; no PII or secrets in logs</text>
+  <rect x="10" y="222" width="360" height="56" rx="5" class="b"/><text x="18" y="240" class="bd">SSRF</text><text x="18" y="256" class="sm">server-side fetch of user URLs (SSR, image proxies, previews):</text><text x="18" y="270" class="sm">allowlist hosts, block internal IP ranges, no redirects to internal</text>
+  <rect x="390" y="222" width="360" height="56" rx="5" class="b"/><text x="398" y="240" class="bd">Frontend-specific extras</text><text x="398" y="256" class="sm">clickjacking, open redirects, postMessage origin checks,</text><text x="398" y="270" class="sm">prototype pollution, DOM clobbering, tabnabbing, ReDoS</text>
+  <text x="10" y="304" class="sm">Categories are reordered between editions (2021 list shown by theme); check the current OWASP Top 10 and the OWASP ASVS checklist.</text>
+</svg></div>
+<figcaption><b>Mapping.</b> Most categories have a frontend component even when the root fix is on the server.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Broken access control (A01):</b> missing server checks, IDOR (changing an id in a URL returns someone else’s data), privilege escalation, forced browsing to admin routes, missing function-level checks, CORS misconfig, JWT claim tampering. Mitigate: deny by default, check ownership and role on every request, centralise authorisation, test with multiple user roles, and never trust client-side checks.</li>
+<li><b>Injection and XSS (A03):</b> SQL, NoSQL, command and template injection on the server; XSS in the browser (stored, reflected, DOM-based). Frontend: output encoding via framework defaults, avoid <code>innerHTML</code> and <code>dangerouslySetInnerHTML</code>, sanitise with DOMPurify, validate URL schemes, strict CSP and Trusted Types (J29, P7).</li>
+<li><b>Cryptographic failures (A02):</b> sensitive data over HTTP, weak ciphers, secrets in code or bundles, tokens in URLs or logs, caching of sensitive responses. Mitigate: TLS everywhere, <code>Cache-Control: no-store</code> for sensitive pages, never expose API keys with privileges in the client, rotate leaked secrets.</li>
+<li><b>Insecure design (A04):</b> flaws at the design level (no rate limiting on password reset, business logic abuse such as coupon stacking). Mitigate with threat modelling, abuse-case tests, and security requirements in user stories (P11).</li>
+<li><b>Security misconfiguration (A05):</b> missing security headers, verbose error pages and stack traces, directory listing, public cloud buckets, debug mode in production, default accounts, exposed <code>.env</code> or <code>.git</code>, source maps and admin tools public. Mitigate: hardened templates, automated config scans, environment parity, least privilege.</li>
+<li><b>Vulnerable and outdated components (A06):</b> npm dependency CVEs and abandoned packages; mitigate with automated updates, <code>npm audit</code>, Dependabot/Renovate, software composition analysis (Snyk, Socket, GitHub advisories), minimal dependencies, and a policy for patch timelines (B8, J29).</li>
+<li><b>Identification and authentication failures (A07):</b> weak passwords, credential stuffing, session fixation, missing MFA, tokens that never expire (P8, P9).</li>
+<li><b>Software and data integrity failures (A08):</b> unsigned updates, insecure CI/CD, untrusted CDNs, deserialisation of untrusted data, dependency confusion. Mitigate: pinned and verified dependencies, signed builds and provenance, SRI, protected pipelines and branches.</li>
+<li><b>Logging and monitoring failures (A09):</b> no visibility into attacks. Log authentication events, access control failures and input validation failures; ship to a central system; alert on anomalies; avoid logging PII, tokens and passwords; frontend error and abuse telemetry with privacy in mind.</li>
+<li><b>SSRF (A10):</b> server fetches an attacker-supplied URL (link previews, import by URL, webhooks, image optimisers), reaching internal services or cloud metadata. Mitigate: allowlists, resolve and validate IPs, block private ranges and metadata endpoints, disable unnecessary redirects, run in a network-restricted sandbox. Relevant for Next.js image optimisation and server-side fetching.</li>
+<li><b>Other frontend topics:</b> open redirects (<code>?next=</code> validation), clickjacking, <code>postMessage</code> with wildcard origins, DOM clobbering, prototype pollution, ReDoS, <code>target="_blank"</code> tabnabbing (<code>rel="noopener"</code>), unsafe file uploads (type and size checks, store outside web root, scan), and client-side feature flags that expose hidden features.</li>
+<li><b>Testing and tooling:</b> SAST (ESLint security plugins, CodeQL, Semgrep), DAST (OWASP ZAP), dependency scanning, secret scanning (gitleaks), penetration tests, bug bounty, and security unit tests for authz rules. Include security checks as CI gates.</li>
+<li><b>Culture:</b> security champions, threat-modelling sessions at design time, secure code review checklists, training with real examples, incident drills, and responsible disclosure policy.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Reciting the list without tying items to concrete frontend actions or examples.</li>
+<li>Treating security as the backend team’s job.</li>
+<li>Believing client-side validation or hidden routes provide protection.</li>
+<li>Running scanners but ignoring findings and patch deadlines.</li>
+<li>Shipping source maps, debug tools or verbose errors to production.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is IDOR and how do you prevent it?</dt><dd>Accessing another user’s object by changing an identifier; prevent with server-side ownership checks on every request, not by hiding ids.</dd>
+<dt>How do you secure a file upload?</dt><dd>Validate type and size on the server, rename and store outside the web root or in object storage, scan for malware, serve with safe headers, and avoid executing uploaded content.</dd>
+<dt>What would you do in the first week after discovering a vulnerable dependency?</dt><dd>Assess exposure and exploitability, patch or mitigate, deploy with tests, check logs for exploitation, and add automation to prevent recurrence.</dd>
+<dt>How do you bring security into agile delivery?</dt><dd>Threat model new features, add security acceptance criteria, automate scans in CI, review high-risk changes, and track findings like bugs.</dd>
+</dl></div>
+</section>
+
+<!-- ============ P11 ============ -->
+<section class="q" id="p11">
+<header class="qh">
+  <div class="qrow"><span class="qid">P11</span><span class="tag added">Added</span></div>
+  <h2>Threat modelling, privacy and secure delivery</h2>
+  <p class="qtext">“How do you threat-model a feature? How do you handle privacy requirements such as GDPR in a frontend? How do you secure the delivery pipeline and respond to a security incident?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Threat modelling asks four questions: what are we building, what can go wrong, what are we going to do about it, and did we do a good job. I draw the data flows and trust boundaries, then walk through STRIDE categories such as spoofing, tampering and information disclosure to list threats and rank them by impact and likelihood, then assign mitigations and tests. For privacy I practise data minimisation, collect consent for non-essential tracking, support access and deletion requests, and keep personal data out of logs and URLs. For delivery security I protect branches and pipelines, scan code and dependencies, manage secrets in a vault, sign and verify artifacts, and apply least privilege. When an incident happens I contain, eradicate, recover, communicate and write a blameless post-incident review.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a data flow diagram of browser, CDN, API and database with trust boundaries and STRIDE threats annotated. Right: a secure delivery pipeline with checks at each stage.">
+  <text x="10" y="18" class="bd">Data flow with trust boundaries</text>
+  <rect x="10" y="30" width="110" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">Browser</text><text x="18" y="66" class="sm">untrusted</text>
+  <rect x="150" y="30" width="100" height="46" rx="5" class="b"/><text x="158" y="50" class="bd">CDN / WAF</text><text x="158" y="66" class="sm">edge</text>
+  <rect x="280" y="30" width="90" height="46" rx="5" class="h"/><text x="288" y="50" class="bd">API</text><text x="288" y="66" class="sm">trusted</text>
+  <path class="a" d="M120 53H148"/><path class="a" d="M250 53H278"/>
+  <rect x="280" y="96" width="90" height="40" rx="5" class="g"/><text x="288" y="114" class="bd">Database</text><text x="288" y="128" class="sm">crown jewels</text>
+  <path class="a" d="M325 76V94"/>
+  <path class="d" d="M135 20V150"/><text x="138" y="146" class="sm">boundary 1</text><path class="d" d="M265 20V150"/><text x="268" y="150" class="sm">2</text>
+  <rect x="10" y="164" width="360" height="146" rx="5" class="w"/><text x="18" y="182" class="bd">STRIDE questions per element</text><text x="18" y="200" class="sm"><tspan class="bd">S</tspan>poofing: can someone pretend to be a user or service?</text><text x="18" y="216" class="sm"><tspan class="bd">T</tspan>ampering: can data be modified in transit or at rest?</text><text x="18" y="232" class="sm"><tspan class="bd">R</tspan>epudiation: can actions be denied without audit logs?</text><text x="18" y="248" class="sm"><tspan class="bd">I</tspan>nformation disclosure: can data leak (logs, errors, caches)?</text><text x="18" y="264" class="sm"><tspan class="bd">D</tspan>enial of service: can it be overloaded or locked out?</text><text x="18" y="280" class="sm"><tspan class="bd">E</tspan>levation of privilege: can a user gain more access?</text><text x="18" y="300" class="sm">Rank by impact × likelihood; mitigate, accept, transfer or avoid.</text>
+  <text x="400" y="18" class="bd">Secure delivery pipeline</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">Code</tspan>  protected branches, reviews, signed commits</text>
+  <rect x="400" y="68" width="350" height="34" rx="4" class="h"/><text x="408" y="90" class="sm"><tspan class="bd">Build</tspan>  SAST, dependency and secret scanning, lockfile</text>
+  <rect x="400" y="106" width="350" height="34" rx="4" class="h"/><text x="408" y="128" class="sm"><tspan class="bd">Package</tspan>  SBOM, signed artifacts, provenance</text>
+  <rect x="400" y="144" width="350" height="34" rx="4" class="w"/><text x="408" y="166" class="sm"><tspan class="bd">Deploy</tspan>  least-privilege roles, secrets from a vault, IaC checks</text>
+  <rect x="400" y="182" width="350" height="34" rx="4" class="g"/><text x="408" y="204" class="sm"><tspan class="bd">Run</tspan>  WAF, rate limits, monitoring, patching, backups</text>
+  <rect x="400" y="226" width="350" height="84" rx="5" class="x"/><text x="408" y="246" class="bd">Incident response</text><text x="408" y="264" class="sm">detect → contain → eradicate → recover → communicate →</text><text x="408" y="280" class="sm">learn (blameless review, action items). Rotate secrets, preserve</text><text x="408" y="296" class="sm">evidence, notify per law (GDPR: 72 hours to regulator).</text>
+</svg></div>
+<figcaption><b>Habit.</b> Think like an attacker at design time, automate checks in the pipeline, and rehearse the response.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Threat modelling process:</b> scope the system and assets; draw data flow diagrams with trust boundaries; enumerate threats with STRIDE (or attack trees, PASTA, LINDDUN for privacy); rate risk (impact × likelihood, DREAD is outdated); decide mitigations; track as backlog items with owners; revisit on change. Keep it lightweight and collaborative.</li>
+<li><b>Frontend assets and threats:</b> session tokens, personal data, payment forms, admin features, feature flags, source code (public), third-party scripts (skimming, Magecart), supply chain, and user-generated content. Typical mitigations: CSP, SRI, sandboxed iframes for payments (hosted fields), segregated admin apps, rate limiting.</li>
+<li><b>Privacy by design and GDPR basics:</b> lawful basis, data minimisation, purpose limitation, consent for non-essential cookies and tracking, transparency (privacy notice), data subject rights (access, rectification, erasure, portability), data retention limits, DPA with processors, breach notification (72 hours). CCPA/CPRA and other laws have similar themes.</li>
+<li><b>Frontend privacy practices:</b> consent management platforms that truly block scripts until consent; load analytics conditionally; do not put PII in URLs, local storage or analytics events; mask data in session replay; anonymise IPs; respect Do Not Track/Global Privacy Control where required; cookie banner with equal-weight options; document third parties.</li>
+<li><b>Data classification:</b> public, internal, confidential, restricted; handle PII, financial and health data with stricter controls (encryption, access logging, retention). Never log secrets or full personal records.</li>
+<li><b>Secure SDLC practices:</b> security requirements and acceptance criteria, secure coding guidelines, peer review for sensitive code, SAST and DAST, dependency management, penetration testing before major releases, bug bounty, and security champions embedded in teams.</li>
+<li><b>Supply-chain security:</b> pin and verify dependencies, restrict install scripts, use provenance and signed packages, protect CI secrets (short-lived OIDC credentials rather than long-lived keys), isolate build environments, review third-party GitHub Actions (pin by commit SHA), and monitor for typosquats and compromised packages.</li>
+<li><b>Secrets management:</b> never in code or images; use vaults (HashiCorp Vault, AWS Secrets Manager), environment injection at deploy, rotation, scoped credentials, and secret scanning with pre-commit and server-side checks; if leaked, revoke immediately.</li>
+<li><b>Least privilege and zero trust:</b> minimal IAM roles, per-service credentials, network segmentation, short-lived tokens, verify every request regardless of network location.</li>
+<li><b>Incident response lifecycle:</b> preparation (runbooks, contacts, logging), detection and triage (severity), containment (disable accounts, revoke tokens, isolate), eradication and recovery (patch, redeploy, restore), communication (internal, customers, regulators), and post-incident review with actions. Frontend incidents: compromised third-party script (remove tag, rotate, CSP report), leaked key in bundle (revoke, scrub), XSS (patch, invalidate sessions).</li>
+<li><b>Resilience and abuse controls:</b> rate limiting, bot management, CAPTCHAs and proof-of-work only where needed, WAF rules, DDoS protection at the CDN, graceful degradation.</li>
+<li><b>Accessibility and security overlap:</b> clear error messages without leaking details; accessible MFA and recovery; avoid security measures that exclude users (CAPTCHA alternatives).</li>
+<li><b>Communicating risk:</b> explain impact in business terms, offer options with cost and mitigation, document accepted risks with owner and review date.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Doing threat modelling once, as a document, instead of continuously with the design.</li>
+<li>Loading analytics and ad scripts before consent and calling it compliant.</li>
+<li>Long-lived cloud keys in CI secrets instead of short-lived federated credentials.</li>
+<li>Third-party GitHub Actions referenced by mutable tags.</li>
+<li>Blaming individuals in incident reviews instead of fixing the system.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How would you threat-model a checkout page?</dt><dd>Diagram the flow with the payment provider; consider tampering with prices, card skimming through third-party scripts, replay, and session theft; mitigate with server-side pricing, hosted payment fields, CSP and SRI, and idempotency.</dd>
+<dt>What are the obligations after a data breach?</dt><dd>Contain it, assess the data affected, and notify the regulator within 72 hours and affected users where required, while documenting the response.</dd>
+<dt>How do you reduce third-party script risk?</dt><dd>Fewer scripts, tag governance, CSP and SRI, sandboxed iframes, performance and security review before adding, and monitoring for changes.</dd>
+<dt>What is least privilege?</dt><dd>Granting each user, service and pipeline only the access needed for its task, limiting damage from compromise.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>36 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>HTTP/2 versus HTTP/1.1?</td><td>One TCP connection with multiplexed binary streams and header compression.</td><td>P1</td></tr>
+<tr><td>2</td><td>What does HTTP/3 change?</td><td>QUIC over UDP: independent streams, built-in TLS 1.3, faster setup, connection migration.</td><td>P1</td></tr>
+<tr><td>3</td><td>Which methods are idempotent?</td><td>GET, PUT, DELETE (and HEAD, OPTIONS); POST is not.</td><td>P1</td></tr>
+<tr><td>4</td><td>401 versus 403?</td><td>401: not authenticated. 403: authenticated but not allowed.</td><td>P1</td></tr>
+<tr><td>5</td><td>301 versus 308?</td><td>Both permanent; 308 preserves the method and body.</td><td>P1</td></tr>
+<tr><td>6</td><td>Steps before the first byte of a new HTTPS request?</td><td>DNS, TCP handshake, TLS handshake, then the HTTP request.</td><td>P2</td></tr>
+<tr><td>7</td><td>What does HSTS do?</td><td>Forces browsers to use HTTPS for the domain, blocking downgrades.</td><td>P2</td></tr>
+<tr><td>8</td><td>What is forward secrecy?</td><td>Ephemeral keys so a later key compromise cannot decrypt recorded traffic.</td><td>P2</td></tr>
+<tr><td>9</td><td><code>no-cache</code> versus <code>no-store</code>?</td><td>no-cache: store but revalidate each time. no-store: do not store.</td><td>P3</td></tr>
+<tr><td>10</td><td>How do you cache hashed assets?</td><td><code>public, max-age=31536000, immutable</code>.</td><td>P3</td></tr>
+<tr><td>11</td><td>What is <code>ETag</code> for?</td><td>A validator for conditional requests; 304 Not Modified avoids resending the body.</td><td>P3</td></tr>
+<tr><td>12</td><td>What does <code>Vary</code> do?</td><td>Names request headers that change the response, so caches key on them.</td><td>P3</td></tr>
+<tr><td>13</td><td>WebSocket handshake?</td><td>HTTP request with <code>Upgrade: websocket</code>; server replies 101 and the connection switches protocol.</td><td>P4</td></tr>
+<tr><td>14</td><td>SSE versus WebSocket?</td><td>SSE is one-way over HTTP with auto-reconnect; WebSocket is two-way and stateful.</td><td>P4</td></tr>
+<tr><td>15</td><td>How do you secure a webhook?</td><td>Verify an HMAC signature on the raw body, use idempotent processing.</td><td>P4</td></tr>
+<tr><td>16</td><td>What is an origin?</td><td>Scheme plus host plus port.</td><td>P5</td></tr>
+<tr><td>17</td><td>Is CORS a server security feature?</td><td>No: the browser enforces it to protect users; servers must still authorise requests.</td><td>P5</td></tr>
+<tr><td>18</td><td>When is a preflight sent?</td><td>For non-simple requests: custom headers, JSON content type, or methods like PUT and DELETE.</td><td>P5</td></tr>
+<tr><td>19</td><td>CORS with credentials rule?</td><td>No wildcard origin: echo an exact allowlisted origin and allow credentials.</td><td>P5</td></tr>
+<tr><td>20</td><td>What do <code>HttpOnly</code> and <code>Secure</code> do?</td><td>HttpOnly hides the cookie from JavaScript; Secure restricts it to HTTPS.</td><td>P6</td></tr>
+<tr><td>21</td><td><code>SameSite=Lax</code> effect?</td><td>Not sent on cross-site subrequests or POSTs, but on top-level navigations.</td><td>P6</td></tr>
+<tr><td>22</td><td>What is CSRF?</td><td>A forged request using the victim’s ambient cookies; fix with SameSite, tokens, Origin checks.</td><td>P6</td></tr>
+<tr><td>23</td><td>Same-site versus same-origin?</td><td>Same-site compares registrable domains; same-origin compares scheme, host and port.</td><td>P6</td></tr>
+<tr><td>24</td><td>What is CSP?</td><td>A header limiting which sources of script, style, frames and connections the page may use.</td><td>P7</td></tr>
+<tr><td>25</td><td>Strict CSP approach?</td><td>Per-request nonces or hashes with <code>strict-dynamic</code>, no <code>unsafe-inline</code>; report-only first.</td><td>P7</td></tr>
+<tr><td>26</td><td>What does SRI do?</td><td>Verifies a third-party file’s hash so a compromised CDN cannot alter it.</td><td>P7</td></tr>
+<tr><td>27</td><td>How do you stop clickjacking?</td><td><code>frame-ancestors</code> in CSP (or <code>X-Frame-Options</code>).</td><td>P7</td></tr>
+<tr><td>28</td><td>OAuth versus OIDC?</td><td>OAuth delegates authorisation; OIDC adds authentication via an ID token.</td><td>P8</td></tr>
+<tr><td>29</td><td>What does PKCE protect?</td><td>The authorisation code from interception, by binding it to a client-held verifier.</td><td>P8</td></tr>
+<tr><td>30</td><td>Is a JWT encrypted?</td><td>No: it is signed and readable; validate signature, issuer, audience and expiry.</td><td>P8</td></tr>
+<tr><td>31</td><td>Best token storage for a SPA?</td><td>A BFF with HttpOnly session cookie; avoid long-lived tokens in <code>localStorage</code>.</td><td>P8</td></tr>
+<tr><td>32</td><td>Why are passkeys phishing-resistant?</td><td>Credentials are origin-bound public-key pairs; there is no shared secret.</td><td>P9</td></tr>
+<tr><td>33</td><td>How to store passwords?</td><td>Argon2id or bcrypt with per-user salt, tuned cost; never fast or reversible.</td><td>P9</td></tr>
+<tr><td>34</td><td>What is IDOR?</td><td>Accessing another user’s object by changing an id; prevent with server-side ownership checks.</td><td>P10</td></tr>
+<tr><td>35</td><td>What is SSRF?</td><td>Tricking the server into fetching internal or attacker-chosen URLs; use allowlists and block internal ranges.</td><td>P10</td></tr>
+<tr><td>36</td><td>What is STRIDE?</td><td>Threat categories: spoofing, tampering, repudiation, disclosure, denial of service, elevation of privilege.</td><td>P11</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer protocol and security questions at L4</h4>
+<ul>
+<li>Explain the mechanism, then the attack it prevents, then the residual risk. “CORS relaxes the browser’s rule; it does not protect the API” is the model answer shape.</li>
+<li>Layer defences: input validation, output encoding, authentication, authorisation on the server, headers, monitoring. Never rely on a single control.</li>
+<li>Distinguish origin, site and domain, authentication and authorisation, encoding and encryption and hashing.</li>
+<li>Use real incidents or findings from your work: a CORS misconfiguration, an expired certificate, a leaked key, a dependency CVE, and what changed afterwards.</li>
+<li>For standards and browser policies that change (third-party cookies, Trusted Types support, OWASP editions) say you would confirm the current state.</li>
+<li>The interview is theoretical: expect “explain”, “compare”, “how would you secure” and “what are the trade-offs”, not live coding.</li>
+</ul></div>
+</section>
+
+</div>

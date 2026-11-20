@@ -1,0 +1,1034 @@
+<title>TypeScript Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"TypeScript Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"TypeScript Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · TypeScript · Advanced level</div>
+  <h1>TypeScript Study Guide</h1>
+  <p>How the type system works and how to use it on real projects: structural typing, narrowing, generics, utility, mapped and conditional types, classes and overloads, modules and <code>tsconfig</code>, TypeScript with React, runtime validation at boundaries, the places where types lie, and adopting TypeScript on a large codebase. The interview is theoretical, so every topic is written as something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Code is kept to small illustrations. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> check the TypeScript release notes before stating as fact</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · The language of types</h3>
+    <ol>
+      <li><b>T1</b><a href="#t1">How TypeScript works</a></li>
+      <li><b>T2</b><a href="#t2">Basic and special types</a></li>
+      <li><b>T3</b><a href="#t3">Objects: type versus interface</a></li>
+      <li><b>T4</b><a href="#t4">Narrowing and type guards</a></li>
+    </ol>
+    <h3 style="margin-top:16px">2 · Generics and type-level programming</h3>
+    <ol>
+      <li><b>T5</b><a href="#t5">Generics</a></li>
+      <li><b>T6</b><a href="#t6">Utility types</a></li>
+      <li><b>T7</b><a href="#t7">Mapped, conditional and template types</a></li>
+      <li><b>T8</b><a href="#t8">Functions, overloads, classes, decorators</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>3 · Real projects</h3>
+    <ol>
+      <li><b>T9</b><a href="#t9">Modules, declaration files, <code>tsconfig</code></a></li>
+      <li><b>T10</b><a href="#t10">TypeScript with React</a></li>
+      <li><b>T11</b><a href="#t11">Types at the boundary: validation and APIs</a></li>
+      <li><b>T12</b><a href="#t12">Soundness and common pitfalls</a></li>
+      <li><b>T13</b><a href="#t13">Adopting TypeScript at scale</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">T1 to T4 are the foundation and are asked in almost every interview. T5 to T7 separate “uses TypeScript” from “understands TypeScript”. T9 to T13 are the practical, lead-level material: configuration, React, boundaries and migration.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">TypeScript changes quickly. Version-specific points carry a <span class="verify">verify</span> tag.</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · The language of types</h1>
+
+<!-- ============ T1 ============ -->
+<section class="q" id="t1">
+<header class="qh">
+  <div class="qrow"><span class="qid">T1</span><span class="tag added">Added</span></div>
+  <h2>How TypeScript works</h2>
+  <p class="qtext">“What is TypeScript and why use it? What happens at compile time versus run time? What is structural typing? Is TypeScript sound?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“TypeScript is JavaScript with a static type system. The compiler checks types, then erases them and emits plain JavaScript, so there is no type information at run time and no performance cost. The type system is structural: compatibility depends on the shape of a value, not on its declared name, so two unrelated types with the same members are interchangeable. It is intentionally not fully sound; it favours usability, so there are escape hatches such as <code>any</code> and assertions. The value is catching mistakes before they ship, safer refactoring across a large codebase, editor tooling such as autocomplete and rename, and types as living documentation. It does not validate data at run time, which is why I still validate at system boundaries.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Top: source files go through the TypeScript compiler, which reports type errors and emits JavaScript with types erased; the runtime never sees types. Middle: transpilers like swc and esbuild strip types without checking. Bottom: structural typing, where two differently named types with the same shape are compatible.">
+  <text x="10" y="18" class="bd">Compile time versus run time</text>
+  <rect x="10" y="30" width="120" height="50" rx="5" class="b"/><text x="20" y="52" class="bd">app.ts</text><text x="20" y="68" class="sm">code + types</text>
+  <rect x="170" y="30" width="230" height="50" rx="5" class="h"/><text x="180" y="50" class="bd">Compiler (tsc)</text><text x="180" y="66" class="sm">parse → type-check → emit</text>
+  <rect x="440" y="30" width="130" height="50" rx="5" class="g"/><text x="450" y="52" class="bd">app.js</text><text x="450" y="68" class="sm">types erased</text>
+  <rect x="610" y="30" width="140" height="50" rx="5" class="b"/><text x="620" y="52" class="bd">Browser / Node</text><text x="620" y="68" class="sm">runs plain JS</text>
+  <path class="a" d="M130 55H168"/><path class="a" d="M400 55H438"/><path class="a" d="M570 55H608"/>
+  <rect x="170" y="100" width="230" height="30" rx="4" class="x"/><text x="180" y="120" class="sm">type errors reported here only</text>
+  <path class="ax" d="M285 80V98"/>
+  <text x="440" y="108" class="sm">interfaces, generics, annotations: gone at run time.</text><text x="440" y="124" class="sm">You cannot do typeof T or interface checks in JS.</text>
+  <rect x="10" y="150" width="740" height="52" rx="5" class="w"/><text x="20" y="170" class="bd">In practice the two jobs are split</text><text x="20" y="188" class="sm">Vite, esbuild, swc, Babel strip types fast WITHOUT checking · tsc --noEmit (or the IDE) does the checking · CI runs the check</text>
+  <text x="10" y="228" class="bd">Structural typing: shape decides, name does not</text>
+  <rect x="10" y="240" width="250" height="62" rx="5" class="b"/><text x="20" y="260" class="mono" style="font-size:10.5px">type Point = { x: number; y: number }</text><text x="20" y="280" class="mono" style="font-size:10.5px">type Vec2  = { x: number; y: number }</text>
+  <path class="a" d="M260 262H298"/>
+  <rect x="300" y="240" width="210" height="62" rx="5" class="g"/><text x="310" y="260" class="mono" style="font-size:11px">const p: Point = vec2</text><text x="310" y="280" class="sm">no relationship was declared</text>
+  <rect x="540" y="240" width="210" height="62" rx="5" class="x"/><text x="550" y="260" class="bd">Nominal languages</text><text x="550" y="278" class="sm">Java, C#: need an explicit</text><text x="550" y="292" class="sm">implements / inheritance link</text>
+</svg></div>
+<figcaption><b>Two facts to state precisely.</b> Types exist only at compile time, and compatibility is decided by structure.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Superset of JavaScript:</b> any valid JavaScript is valid TypeScript syntax (types may be inferred as <code>any</code> or error under strict settings). TypeScript adds a type layer and a few syntax extensions (enums, parameter properties, decorators, namespaces) that need transformation.</li>
+<li><b>Type inference:</b> you do not annotate everything. The compiler infers from initialisers, return values, contextual typing (a callback’s parameter types come from where it is passed), and control-flow analysis. Annotate public boundaries (exported functions, props, API responses) and let inference handle locals.</li>
+<li><b>Gradual typing:</b> you can adopt it file by file (T13). <code>any</code> opts out of checking for a value.</li>
+<li><b>Structural typing consequences:</b> a function accepting <code>{ id: string }</code> accepts any object with an <code>id: string</code>, including bigger ones. Excess properties are only flagged on fresh object literals (T3). To get nominal-like safety use branded types (T11).</li>
+<li><b>Soundness:</b> a sound type system never lets a value of the wrong type through. TypeScript deliberately is not sound; known holes include <code>any</code>, type assertions, array and method-parameter variance, index access without <code>noUncheckedIndexedAccess</code>, and mutation through aliases (T12). Its goal is to be useful and catch most bugs, not to prove correctness.</li>
+<li><b>Erasure implications:</b> no <code>instanceof</code> against an interface, no overload by type at run time, no reflection on generics. Use discriminant fields, type guards and schemas instead. Enums and decorators are the exceptions that emit code.</li>
+<li><b>Tooling:</b> the compiler API powers the language server (autocomplete, go to definition, safe rename, auto-imports), which is a main productivity benefit, plus <code>typescript-eslint</code> for type-aware lint rules.</li>
+<li><b>Trade-offs:</b> build and config complexity, learning curve, slower builds on huge projects, time spent on types for dynamic code, and types that drift from reality when they describe external data. The payoff grows with team size and codebase lifetime.</li>
+<li><b>Compiler evolution:</b> modern versions added <code>satisfies</code>, const type parameters, standard decorators, and <code>using</code>. A native (Go) port of the compiler for much faster builds has been announced <span class="verify">verify current status</span>.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“TypeScript checks types at run time.” It does not; data from the network is whatever it is.</li>
+<li>“TypeScript makes code faster.” It has no run-time effect; it prevents bugs.</li>
+<li>Claiming it is sound or “type-safe” without qualification.</li>
+<li>Treating TypeScript as Java-style nominal typing and reaching for classes and <code>instanceof</code> everywhere.</li>
+<li>Saying Babel/esbuild “compile TypeScript”. They strip types; they do not check them.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why use TypeScript on a team?</dt><dd>Contracts between modules are checked, refactors are safer, new developers learn the code by reading types, and many bugs (undefined access, wrong arguments, missing cases) are caught before review.</dd>
+<dt>How do you type data from an API?</dt><dd>Declare the type, but verify it at the boundary with a schema validator (T11); the type alone is a promise, not a check.</dd>
+<dt>What does <code>tsc</code> emit for older browsers?</dt><dd>Controlled by <code>target</code> and <code>lib</code>. In most apps a bundler or Babel handles transpilation and polyfills; <code>tsc</code> is used for checking and for emitting libraries and <code>.d.ts</code> files.</dd>
+<dt>What is the difference between TypeScript and Flow?</dt><dd>Both add static types; TypeScript won on ecosystem, tooling and community, and nearly all libraries ship TypeScript types.</dd>
+</dl></div>
+</section>
+
+<!-- ============ T2 ============ -->
+<section class="q" id="t2">
+<header class="qh">
+  <div class="qrow"><span class="qid">T2</span><span class="tag added">Added</span></div>
+  <h2>Basic and special types</h2>
+  <p class="qtext">“What is the difference between <code>any</code>, <code>unknown</code> and <code>never</code>? What are literal types, tuples and enums? When do you use <code>as</code>, <code>!</code> and <code>satisfies</code>?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“<code>any</code> turns off type checking for a value and spreads silently, so I avoid it. <code>unknown</code> is the type-safe top type: it accepts anything, but I must narrow it before using it, so it is what I use for data I do not control. <code>never</code> is the bottom type: no value exists, used for functions that never return and for exhaustiveness checks. <code>void</code> is a function that returns nothing useful. Literal types such as <code>'GET' | 'POST'</code> narrow a type to exact values, and <code>as const</code> freezes an object into literal readonly types. For enums I prefer a union of string literals or an <code>as const</code> object. An assertion with <code>as</code> overrides the compiler and can lie, so I prefer narrowing; <code>satisfies</code> validates a value against a type while keeping its precise inferred type.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="The type hierarchy: unknown at the top accepts every type, below it string, number, boolean, object, null and undefined, below those literal types such as the string 'a', and never at the bottom assignable to everything. any sits to the side as a dashed escape hatch that is assignable both ways.">
+  <rect x="250" y="20" width="200" height="36" rx="5" class="h"/><text x="262" y="43" class="bd">unknown</text><text x="330" y="43" class="sm">top type: any value</text>
+  <text x="250" y="76" class="sm">everything is assignable TO unknown; you must narrow before use</text>
+  <rect x="40" y="96" width="90" height="34" rx="5" class="b"/><text x="52" y="118" class="mono">string</text>
+  <rect x="150" y="96" width="90" height="34" rx="5" class="b"/><text x="162" y="118" class="mono">number</text>
+  <rect x="260" y="96" width="90" height="34" rx="5" class="b"/><text x="268" y="118" class="mono">boolean</text>
+  <rect x="370" y="96" width="90" height="34" rx="5" class="b"/><text x="382" y="118" class="mono">object</text>
+  <rect x="480" y="96" width="80" height="34" rx="5" class="b"/><text x="494" y="118" class="mono">null</text>
+  <rect x="570" y="96" width="100" height="34" rx="5" class="b"/><text x="580" y="118" class="mono">undefined</text>
+  <rect x="40" y="170" width="90" height="34" rx="5" class="g"/><text x="52" y="192" class="mono">"a" | "b"</text>
+  <rect x="150" y="170" width="90" height="34" rx="5" class="g"/><text x="162" y="192" class="mono">1 | 2 | 3</text>
+  <rect x="260" y="170" width="90" height="34" rx="5" class="g"/><text x="276" y="192" class="mono">true</text>
+  <rect x="370" y="170" width="160" height="34" rx="5" class="g"/><text x="380" y="192" class="mono">{ a: 1 } / tuples</text>
+  <text x="40" y="226" class="sm">literal types are subtypes of their widened type</text>
+  <rect x="250" y="250" width="200" height="36" rx="5" class="x"/><text x="262" y="273" class="bd">never</text><text x="312" y="273" class="sm">bottom: no values</text>
+  <text x="250" y="304" class="sm">assignable to everything; used for impossible branches</text>
+  <path class="a" d="M350 250V222"/><path class="a" d="M85 170V132"/><path class="a" d="M195 170V132"/><path class="a" d="M305 170V132"/><path class="a" d="M450 170V132"/>
+  <path class="a" d="M85 96C85 70 240 40 248 40"/>
+  <rect x="580" y="170" width="170" height="98" rx="6" class="x"/><text x="592" y="192" class="bd">any</text><text x="592" y="210" class="sm">assignable to and from</text><text x="592" y="226" class="sm">everything: checking is off,</text><text x="592" y="242" class="sm">and it spreads through any</text><text x="592" y="258" class="sm">value it touches</text>
+</svg></div>
+<figcaption><b>Mental model.</b> <code>unknown</code> and <code>never</code> are the two ends of the lattice. <code>any</code> is outside it: an escape hatch that breaks the rules.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b><code>any</code> versus <code>unknown</code>:</b> with <code>any</code> you can call it, index it and assign it anywhere with no error. With <code>unknown</code> you can assign anything to it but cannot use it until you narrow with <code>typeof</code>, <code>instanceof</code>, a guard or a schema. Use <code>unknown</code> for <code>catch</code> variables (<code>useUnknownInCatchVariables</code>), <code>JSON.parse</code> results, message payloads and generic “I do not know yet” values.</li>
+<li><b><code>never</code>:</b> the return type of functions that throw or loop forever; the type of an impossible branch after exhaustive narrowing, which gives you compile-time exhaustiveness (T4); the result of impossible intersections such as <code>string &amp; number</code>.</li>
+<li><b><code>void</code> versus <code>undefined</code>:</b> <code>void</code> on a function type means “ignore the return value”, so a callback typed <code>() =&gt; void</code> may legally return something. <code>undefined</code> is an actual value type.</li>
+<li><b><code>null</code> and <code>undefined</code>:</b> with <code>strictNullChecks</code> (part of <code>strict</code>) they are distinct types that must be handled. Always enable it. Optional chaining <code>?.</code> and nullish coalescing <code>??</code> are the idioms.</li>
+<li><b>Primitive wrapper types:</b> use <code>string</code>, <code>number</code>, <code>boolean</code>; never <code>String</code>, <code>Number</code>, <code>Object</code>. <code>object</code> means any non-primitive; <code>{}</code> means any non-null value (including primitives), which surprises people.</li>
+<li><b>Literal types and widening:</b> <code>const x = 'a'</code> has type <code>'a'</code>; <code>let x = 'a'</code> widens to <code>string</code>. Object properties widen too unless you write <code>as const</code>. <code>as const</code> makes everything deeply <code>readonly</code> with literal types, and is the standard way to define fixed lists: <code>const ROLES = ['admin','user'] as const; type Role = typeof ROLES[number];</code></li>
+<li><b>Union and intersection:</b> <code>A | B</code> is “either” (you can use only what both share until narrowed); <code>A &amp; B</code> is “both” (combines members; conflicting property types collapse to <code>never</code>).</li>
+<li><b>Tuples:</b> fixed-length arrays with positional types, optional and rest elements, and labels: <code>type Range = [start: number, end?: number]</code>. Used for <code>useState</code>-like returns. <code>readonly</code> tuples for constants.</li>
+<li><b>Enums:</b> numeric enums have a reverse mapping and accept any number (loose); string enums are nominal and emit run-time objects; <code>const enum</code> is inlined but problematic with <code>isolatedModules</code> and libraries. Many teams prefer <code>type Status = 'idle' | 'loading'</code> or an <code>as const</code> object plus a derived union, which emit nothing, work with erasable-syntax-only tooling, and interoperate easily with JSON.</li>
+<li><b>Assertions:</b> <code>value as T</code> tells the compiler “trust me”; it only allows sufficiently overlapping types (otherwise <code>as unknown as T</code>, a red flag). <code>x!</code> asserts non-null. Both are unchecked, so prefer narrowing, defaults, or guards; use assertions at proven boundaries and comment why.</li>
+<li><b><code>satisfies</code>:</b> <code>const config = { port: 3000, mode: 'dev' } satisfies Config</code> checks the value against <code>Config</code> (catching typos and wrong values) but keeps the narrow inferred type, so <code>config.mode</code> is <code>'dev'</code>, not <code>string</code>. Annotation (<code>: Config</code>) widens; assertion (<code>as Config</code>) skips checking. TypeScript 4.9 <span class="verify">verify</span>.</li>
+<li><b>Definite assignment:</b> <code>let x!: number</code> and class field <code>!</code> tell the compiler a value will be set later; use sparingly.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using <code>any</code> “temporarily” and leaving it. It disables checks for everything it flows into.</li>
+<li>Saying <code>unknown</code> and <code>any</code> are the same because both accept anything.</li>
+<li>Using <code>Object</code>, <code>Function</code> or <code>{}</code> as general-purpose types; they are much looser than they look.</li>
+<li>Assuming enums are free. They add run-time code and numeric enums accept arbitrary numbers.</li>
+<li>Using <code>as</code> to silence an error, which hides a real mismatch.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you get a union type from an array of values?</dt><dd>Declare the array <code>as const</code> and use <code>typeof ARR[number]</code>.</dd>
+<dt>Why use <code>unknown</code> in a catch clause?</dt><dd>Anything can be thrown, not only <code>Error</code>. You narrow with <code>instanceof Error</code> before reading <code>message</code>.</dd>
+<dt>What is the difference between <code>readonly</code> and <code>const</code>?</dt><dd><code>const</code> prevents rebinding a variable; <code>readonly</code> is a compile-time modifier on properties and arrays. Neither freezes at run time.</dd>
+<dt>When is the non-null assertion acceptable?</dt><dd>When an invariant guarantees presence that the compiler cannot see (for example, a DOM element your template always renders), ideally with a runtime check or a comment.</dd>
+</dl></div>
+</section>
+
+<!-- ============ T3 ============ -->
+<section class="q" id="t3">
+<header class="qh">
+  <div class="qrow"><span class="qid">T3</span><span class="tag added">Added</span></div>
+  <h2>Objects: type versus interface</h2>
+  <p class="qtext">“What is the difference between <code>type</code> and <code>interface</code>? When do you use each? What are optional, readonly and index-signature properties, and what are excess property checks?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Both describe the shape of an object and are interchangeable in most cases. An interface can be extended with <code>extends</code> and can be reopened and merged by declaring it again, which is how libraries are augmented. A type alias can name anything, not just objects: unions, tuples, primitives, mapped and conditional types, but it cannot be merged. My rule is to use <code>interface</code> for public object shapes that others may extend, and <code>type</code> for unions, utility compositions and everything else, and to be consistent within the codebase. Excess property checking flags unknown properties only on fresh object literals, which is a common surprise because the type system is structural.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Left: declaration merging, two interface declarations with the same name merge into one. Right: excess property checks apply to a fresh object literal assigned directly but not to a variable that already exists.">
+  <text x="10" y="18" class="bd">Interface declarations merge</text>
+  <rect x="10" y="30" width="170" height="56" rx="5" class="b"/><text x="20" y="50" class="mono" style="font-size:11px">interface Window {</text><text x="20" y="66" class="mono" style="font-size:11px">  appVersion: string }</text>
+  <rect x="10" y="100" width="170" height="56" rx="5" class="b"/><text x="20" y="120" class="mono" style="font-size:11px">interface Window {</text><text x="20" y="136" class="mono" style="font-size:11px">  analytics: Tracker }</text>
+  <path class="a" d="M180 58H230"/><path class="a" d="M180 128H230"/>
+  <rect x="230" y="64" width="150" height="58" rx="5" class="g"/><text x="240" y="86" class="bd">One Window with</text><text x="240" y="104" class="sm">both members</text>
+  <text x="10" y="184" class="sm">type Window = … twice is an error (duplicate identifier).</text><text x="10" y="202" class="sm">Merging is how you add globals, extend Express Request,</text><text x="10" y="218" class="sm">or augment a library (module augmentation).</text>
+  <rect x="10" y="236" width="370" height="52" rx="5" class="w"/><text x="20" y="256" class="bd">Performance note</text><text x="20" y="274" class="sm">interface extends is cached; long &amp; chains are slower.</text>
+  <text x="410" y="18" class="bd">Excess property check: fresh literals only</text>
+  <rect x="410" y="30" width="340" height="62" rx="5" class="x"/><text x="420" y="50" class="mono" style="font-size:11px">const a: Point = { x: 1, y: 2, z: 3 };</text><text x="420" y="70" class="sm">Error: “z” does not exist in Point</text><text x="420" y="84" class="sm">(a literal written in place is checked strictly)</text>
+  <rect x="410" y="108" width="340" height="86" rx="5" class="g"/><text x="420" y="128" class="mono" style="font-size:11px">const p = { x: 1, y: 2, z: 3 };</text><text x="420" y="146" class="mono" style="font-size:11px">const b: Point = p;</text><text x="420" y="168" class="sm">OK: p is not fresh; extra members are allowed</text><text x="420" y="184" class="sm">because assignability is structural.</text>
+  <rect x="410" y="210" width="340" height="78" rx="5" class="b"/><text x="420" y="230" class="bd">Property modifiers</text><text x="420" y="248" class="mono" style="font-size:11px">name?: string</text><text x="590" y="248" class="sm">optional</text><text x="420" y="264" class="mono" style="font-size:11px">readonly id: string</text><text x="590" y="264" class="sm">compile-time only</text><text x="420" y="280" class="mono" style="font-size:11px">[key: string]: number</text><text x="590" y="280" class="sm">index signature</text>
+</svg></div>
+<figcaption><b>Two ideas.</b> Interfaces merge; fresh literals are checked for extra properties and existing variables are not.</figcaption></figure>
+
+<h3>Comparison</h3>
+<div class="tw"><table>
+<tr><th></th><th><code>interface</code></th><th><code>type</code> alias</th></tr>
+<tr><td>Describes</td><td>object shapes, function and class shapes</td><td>anything: primitives, unions, tuples, mapped and conditional types</td></tr>
+<tr><td>Extending</td><td><code>extends</code>; conflicting members are an error</td><td>intersection <code>&amp;</code>; conflicts silently become <code>never</code></td></tr>
+<tr><td>Merging</td><td>yes (declaration merging)</td><td>no</td></tr>
+<tr><td>Classes</td><td>a class can <code>implements</code> either, if it is an object shape</td><td>same</td></tr>
+<tr><td>Computed or mapped forms</td><td>no</td><td>yes</td></tr>
+<tr><td>Error messages and speed</td><td>usually clearer and cached</td><td>fine for most uses</td></tr>
+<tr><td>Typical use</td><td>public contracts, props, library APIs, augmentation</td><td>unions, utilities, derived types, function types</td></tr>
+</table></div>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Optional versus <code>| undefined</code>:</b> <code>a?: string</code> may be missing or <code>undefined</code>; <code>a: string | undefined</code> must be present. With <code>exactOptionalPropertyTypes</code> the difference is enforced.</li>
+<li><b><code>readonly</code>:</b> shallow and compile-time only: it does not freeze the object, and a readonly-typed object can still be mutated through a mutable alias. <code>Readonly&lt;T&gt;</code> and <code>ReadonlyArray&lt;T&gt;</code> help express intent (props and state treated as immutable).</li>
+<li><b>Index signatures:</b> <code>{ [key: string]: number }</code> or <code>Record&lt;string, number&gt;</code> for dictionaries. All known properties must match the value type. With <code>noUncheckedIndexedAccess</code>, reads become <code>number | undefined</code>, which is safer. Prefer <code>Map</code> when keys are dynamic.</li>
+<li><b>Function types:</b> <code>type Fn = (a: number) =&gt; string</code> or an interface with a call signature; add properties to model callable objects.</li>
+<li><b>Extending and combining:</b> <code>interface B extends A</code>, <code>type B = A &amp; { extra: string }</code>; use <code>Omit</code> first if you need to change a property’s type.</li>
+<li><b>Implements:</b> <code>class X implements Y</code> only <em>checks</em> that X conforms; it does not inherit anything or change X’s type.</li>
+<li><b>Excess property checks</b> catch typos in options objects (<code>{ colour: 'red' }</code>). To allow extras intentionally add an index signature or build the object in a variable first.</li>
+<li><b>Weak type detection:</b> assigning an object with no matching properties to a type whose properties are all optional is an error.</li>
+<li><b>Global augmentation:</b> <code>declare global { interface Window { … } }</code> inside a module file; for libraries use <code>declare module 'lib' { … }</code> (T9).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“Interfaces are for objects, types are for everything; they are completely different.” They overlap heavily; know the real differences (merging, unions, mapped types).</li>
+<li>Believing <code>readonly</code> makes data immutable at run time.</li>
+<li>Expecting the excess property check to run on any assignment.</li>
+<li>Building huge intersections of intersections, which slow the compiler and produce unreadable errors.</li>
+<li>Typing a dictionary as <code>object</code> or <code>{}</code> and then being unable to index it.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why might you prefer <code>interface</code> in a library?</dt><dd>Consumers can augment it through declaration merging, and it gives clearer errors and better caching.</dd>
+<dt>Why does an object with extra props pass in one place and fail in another?</dt><dd>Fresh-literal excess property checking applies only to direct literal assignment, not to variables.</dd>
+<dt>How do you type an object whose keys are dynamic but values are fixed?</dt><dd><code>Record&lt;string, V&gt;</code>, an index signature, or a <code>Map&lt;string, V&gt;</code>.</dd>
+<dt>Can a class implement a union type?</dt><dd>No, only object types with statically known members.</dd>
+</dl></div>
+</section>
+
+<!-- ============ T4 ============ -->
+<section class="q" id="t4">
+<header class="qh">
+  <div class="qrow"><span class="qid">T4</span><span class="tag added">Added</span></div>
+  <h2>Narrowing and type guards</h2>
+  <p class="qtext">“What is type narrowing? Explain type guards, discriminated unions, user-defined guards and how you make a switch exhaustive.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Narrowing is how TypeScript refines a broad type, such as a union, to a more specific one inside a branch, using control-flow analysis. The built-in guards are <code>typeof</code>, <code>instanceof</code>, <code>in</code>, equality and truthiness checks. For objects the best pattern is a discriminated union: each member has a literal tag such as <code>kind</code>, so a <code>switch</code> on the tag narrows to the exact member. When built-in checks are not enough I write a user-defined type guard that returns <code>x is T</code>, or an assertion function. To guarantee I handle every case, I assign the leftover value to <code>never</code> in the default branch, so adding a new variant produces a compile error where it is unhandled.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="Left: a value of type string, number or null is narrowed step by step by a null check and a typeof check. Right: a discriminated union Shape with kind circle or square, narrowed by switch on kind, with a default branch that assigns to never for exhaustiveness.">
+  <text x="10" y="18" class="bd">Control-flow narrowing</text>
+  <rect x="10" y="30" width="250" height="36" rx="5" class="b"/><text x="20" y="53" class="mono" style="font-size:11px">v: string | number | null</text>
+  <path class="a" d="M135 66V92"/><text x="145" y="84" class="sm">if (v == null) return;</text>
+  <rect x="10" y="94" width="250" height="36" rx="5" class="h"/><text x="20" y="117" class="mono" style="font-size:11px">v: string | number</text>
+  <path class="a" d="M60 130V160"/><path class="a" d="M205 130V160"/>
+  <text x="68" y="150" class="sm">typeof v === "string"</text><text x="213" y="150" class="sm">else</text>
+  <rect x="10" y="162" width="115" height="34" rx="5" class="g"/><text x="20" y="184" class="mono" style="font-size:11px">v: string</text>
+  <rect x="145" y="162" width="115" height="34" rx="5" class="g"/><text x="155" y="184" class="mono" style="font-size:11px">v: number</text>
+  <text x="10" y="224" class="sm">Guards the compiler understands: typeof, instanceof, in,</text><text x="10" y="240" class="sm">=== / !==, truthiness, Array.isArray, optional chaining,</text><text x="10" y="256" class="sm">and your own predicates (x is T).</text>
+  <text x="10" y="284" class="sm">Narrowing can be lost inside callbacks.</text>
+  <text x="300" y="18" class="bd">Discriminated union and exhaustiveness</text>
+  <rect x="300" y="30" width="450" height="64" rx="5" class="b"/><text x="310" y="50" class="mono" style="font-size:11px">type Shape =</text><text x="310" y="66" class="mono" style="font-size:11px">  | { kind: "circle"; r: number }</text><text x="310" y="82" class="mono" style="font-size:11px">  | { kind: "square"; side: number }</text>
+  <path class="a" d="M400 94V120"/>
+  <rect x="300" y="122" width="450" height="96" rx="5" class="h"/><text x="310" y="142" class="mono" style="font-size:11px">switch (s.kind) {</text><text x="310" y="158" class="mono" style="font-size:11px">  case "circle": return Math.PI * s.r ** 2;   // s: circle</text><text x="310" y="174" class="mono" style="font-size:11px">  case "square": return s.side ** 2;          // s: square</text><text x="310" y="190" class="mono" style="font-size:11px">  default: { const _x: never = s; throw … }</text><text x="310" y="206" class="mono" style="font-size:11px">}</text>
+  <rect x="300" y="234" width="450" height="58" rx="5" class="w"/><text x="310" y="254" class="bd">Add { kind: "triangle" } to Shape</text><text x="310" y="272" class="sm">default branch now has s: triangle, not never → compile error</text><text x="310" y="286" class="sm">at every unhandled switch. The compiler finds all places to update.</text>
+</svg></div>
+<figcaption><b>The core pattern.</b> Model variants as a tagged union, switch on the tag, and let <code>never</code> prove you covered everything.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Built-in guards:</b> <code>typeof x === 'string'</code> (primitives; <code>typeof null</code> is <code>'object'</code>), <code>instanceof</code> (classes, not interfaces), <code>'prop' in obj</code> (checks presence of a property to pick a union member), equality narrowing, truthiness narrowing (beware <code>0</code> and <code>''</code>), <code>Array.isArray</code>.</li>
+<li><b>Discriminated unions:</b> a shared literal-typed property (the discriminant) such as <code>kind</code>, <code>type</code>, or <code>status</code>. Ideal for Redux actions, <code>useReducer</code>, API results (<code>{ status: 'ok', data } | { status: 'error', error }</code>), state machines and AST nodes. It beats optional-property bags such as <code>{ data?: T; error?: E; loading: boolean }</code>, which allow impossible states.</li>
+<li><b>User-defined type guards:</b> <code>function isUser(x: unknown): x is User { … }</code>. The compiler trusts the predicate, so it is only as safe as your check; a wrong body is an unchecked lie. Inferred type predicates arrive in newer versions <span class="verify">verify (5.5)</span>.</li>
+<li><b>Assertion functions:</b> <code>function assert(c: unknown, msg?: string): asserts c</code> and <code>asserts x is T</code> narrow the value after the call (used by testing and validation libraries).</li>
+<li><b>Exhaustiveness:</b> assign to <code>never</code> in a default branch, or write an <code>assertNever(x: never): never</code> helper that also throws at run time. Alternatively use a <code>Record&lt;Union, …&gt;</code> lookup, which forces a key for every variant, or the <code>satisfies</code> operator.</li>
+<li><b>Narrowing with generics and <code>unknown</code>:</b> validate unknown input step by step, or hand it to a schema library (T11) that returns a typed result.</li>
+<li><b>Limits:</b> narrowing is lost across function boundaries (a guard on a property does not persist into a callback if it may change), for <code>let</code> variables reassigned later, and on mutable property access after a function call. Copy to a <code>const</code> first.</li>
+<li><b>Branching on type at run time</b> is impossible for interfaces or generics because types are erased, so models carry a run-time discriminant.</li>
+<li><b>Optional chaining and narrowing:</b> <code>a?.b</code> yields <code>undefined</code> when <code>a</code> is nullish; after <code>if (a?.b)</code> the compiler knows <code>a</code> is defined.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Writing a type guard whose body does not actually verify the shape: <code>return true</code> or only checking one field. It turns a lie into compiler-approved code.</li>
+<li>Modelling variants with many optional fields and booleans instead of a tagged union.</li>
+<li>Forgetting <code>never</code> exhaustiveness, so a new variant silently falls through.</li>
+<li>Using <code>typeof x === 'object'</code> without excluding <code>null</code>.</li>
+<li>Relying on narrowing after the variable is captured by a closure and reassigned.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How would you type an async request state?</dt><dd>A discriminated union: <code>idle | loading | { status: 'success'; data: T } | { status: 'error'; error: Error }</code>, so <code>data</code> exists only in the success branch.</dd>
+<dt>What is the difference between a type guard and an assertion function?</dt><dd>A guard returns a boolean and narrows in the branch; an assertion function throws on failure and narrows for the rest of the scope.</dd>
+<dt>How does <code>in</code> narrowing work?</dt><dd><code>'swim' in animal</code> narrows to the union members that have (or may have) that property.</dd>
+<dt>Why is exhaustiveness valuable in a lead’s codebase?</dt><dd>It turns “find every place this enum is used” into a compiler error list when requirements change.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Generics and type-level programming</h1>
+
+<!-- ============ T5 ============ -->
+<section class="q" id="t5">
+<header class="qh">
+  <div class="qrow"><span class="qid">T5</span><span class="tag added">Added</span></div>
+  <h2>Generics</h2>
+  <p class="qtext">“What are generics and why use them? Explain constraints, defaults, inference and <code>keyof</code>. How would you type a reusable function or a generic React component?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Generics are type parameters: they let a function, type or class work with many types while keeping the relationship between input and output types, instead of falling back to <code>any</code>. For example, <code>first&lt;T&gt;(items: T[]): T | undefined</code> returns the same element type it receives. Usually the compiler infers <code>T</code> from the arguments, so callers do not write it. I add constraints with <code>extends</code> when the function needs certain members, such as <code>T extends { id: string }</code>, and defaults when a parameter is usually the same. <code>keyof</code> and indexed access types let me write type-safe property accessors. The rule I follow is that a type parameter should appear at least twice, otherwise it is not relating anything and a plain type would do.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 290" role="img" aria-label="Three panels: inference of T from an argument, a constraint that T must have an id, and keyof with indexed access so a get function returns the type of the chosen property.">
+  <text x="10" y="18" class="bd">Inference</text>
+  <rect x="10" y="30" width="230" height="58" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10.5px">function first&lt;T&gt;(a: T[])</text><text x="18" y="63" class="mono" style="font-size:10.5px">  : T | undefined</text><text x="18" y="80" class="sm">T is a placeholder</text>
+  <path class="a" d="M125 88V108"/>
+  <rect x="10" y="110" width="230" height="40" rx="5" class="h"/><text x="18" y="128" class="mono" style="font-size:10.5px">first([1, 2, 3])</text><text x="18" y="143" class="sm">argument number[] → T = number</text>
+  <path class="a" d="M125 150V170"/>
+  <rect x="10" y="172" width="230" height="34" rx="5" class="g"/><text x="18" y="194" class="mono" style="font-size:10.5px">number | undefined</text>
+  <text x="10" y="230" class="sm">Callers rarely write first&lt;number&gt;().</text><text x="10" y="246" class="sm">The output type depends on the input</text><text x="10" y="262" class="sm">type; any would lose that link.</text>
+  <text x="270" y="18" class="bd">Constraint</text>
+  <rect x="270" y="30" width="230" height="58" rx="5" class="b"/><text x="278" y="48" class="mono" style="font-size:10.5px">function byId&lt;T extends</text><text x="278" y="63" class="mono" style="font-size:10.5px">  { id: string }&gt;(list: T[]):</text><text x="278" y="78" class="mono" style="font-size:10.5px">  T | undefined</text>
+  <rect x="270" y="104" width="110" height="34" rx="5" class="g"/><text x="278" y="126" class="sm">User has id ✓</text>
+  <rect x="390" y="104" width="110" height="34" rx="5" class="x"/><text x="398" y="126" class="sm">number[] ✗</text>
+  <text x="270" y="162" class="sm">Without it, T has no known members,</text><text x="270" y="178" class="sm">so t.id is an error. With it you get id</text><text x="270" y="194" class="sm">and still return the caller’s full T.</text><text x="270" y="222" class="sm">Default: type Box&lt;T = string&gt;</text>
+  <text x="530" y="18" class="bd">keyof and indexed access</text>
+  <rect x="530" y="30" width="220" height="58" rx="5" class="b"/><text x="538" y="48" class="mono" style="font-size:10.5px">function get&lt;T, K extends</text><text x="538" y="63" class="mono" style="font-size:10.5px">  keyof T&gt;(o: T, k: K): T[K]</text><text x="538" y="80" class="sm">K is tied to the keys of T</text>
+  <rect x="530" y="104" width="220" height="40" rx="5" class="g"/><text x="538" y="122" class="mono" style="font-size:10.5px">get(user, "name") // string</text><text x="538" y="137" class="mono" style="font-size:10.5px">get(user, "age")  // number</text>
+  <rect x="530" y="154" width="220" height="26" rx="5" class="x"/><text x="538" y="171" class="mono" style="font-size:10.5px">get(user, "nmae") // error</text>
+  <text x="530" y="204" class="sm">T[K]: the type of property K on T.</text><text x="530" y="220" class="sm">keyof T: the union of its keys.</text>
+</svg></div>
+<figcaption><b>Generics relate types.</b> Inference links the output to the input, constraints say what the type must have, <code>keyof</code> ties keys to objects.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Where generics appear:</b> functions, type aliases and interfaces (<code>ApiResponse&lt;T&gt;</code>), classes (<code>Repository&lt;T&gt;</code>), and built-ins (<code>Array&lt;T&gt;</code>, <code>Promise&lt;T&gt;</code>, <code>Map&lt;K, V&gt;</code>).</li>
+<li><b>Inference:</b> the compiler infers from arguments, from the return position (contextual), and from defaults. If it cannot infer, it falls back to the constraint or <code>unknown</code>. Specify type arguments explicitly only when inference fails.</li>
+<li><b>Constraints:</b> <code>T extends U</code> limits what can be passed; multiple parameters can reference each other (<code>K extends keyof T</code>). You can constrain to a shape (<code>{ length: number }</code>), a union, or a function type.</li>
+<li><b>Defaults:</b> <code>type State&lt;T = unknown&gt;</code>. Required parameters must precede defaulted ones.</li>
+<li><b>Generic constraints with <code>const</code>:</b> <code>function f&lt;const T&gt;(x: T)</code> infers literal, readonly types without the caller writing <code>as const</code> <span class="verify">verify (5.0)</span>. <code>NoInfer&lt;T&gt;</code> stops a parameter from contributing to inference <span class="verify">verify (5.4)</span>.</li>
+<li><b>Generic components and hooks:</b> <code>function Table&lt;T&gt;({ rows, render }: { rows: T[]; render: (row: T) =&gt; ReactNode })</code>. In <code>.tsx</code> arrow functions write <code>&lt;T,&gt;</code> or <code>&lt;T extends unknown&gt;</code> to avoid being parsed as JSX. A custom hook <code>useFetch&lt;T&gt;(url): { data: T | null }</code> shows the caller’s type, but remember the type is not validated at run time (T11).</li>
+<li><b>Generic classes and variance:</b> a <code>Box&lt;Dog&gt;</code> is usually assignable to <code>Box&lt;Animal&gt;</code> if T is only read (covariant), not if it is also written. Variance annotations <code>in</code> and <code>out</code> exist for explicitness and performance <span class="verify">verify (4.7)</span>.</li>
+<li><b>Avoid over-generalising:</b> a generic with one use of <code>T</code> (<code>f&lt;T&gt;(x: T): void</code>) adds nothing. Too many type parameters make signatures unreadable and slow type checking; prefer a few well-named ones (<code>TItem</code>, <code>TKey</code>) or an options type.</li>
+<li><b>Generics versus overloads versus unions:</b> use generics when output depends on input type; overloads (T8) when distinct signatures differ in arity or specific mappings; unions when the function treats alternatives uniformly.</li>
+<li><b>Type-safe patterns built on generics:</b> typed event emitters (<code>on&lt;K extends keyof Events&gt;(name: K, cb: (p: Events[K]) =&gt; void)</code>), a typed <code>fetch</code> wrapper, repository and store factories, builder APIs, <code>Result&lt;T, E&gt;</code>.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Writing <code>function f&lt;T&gt;(x: T): T</code> and then casting inside with <code>as any</code>. If you need a cast, the signature probably lies.</li>
+<li>Explaining generics as “just a way to avoid <code>any</code>” without mentioning that they preserve relationships between types.</li>
+<li>Forgetting the <code>&lt;T,&gt;</code> trick in <code>.tsx</code> files.</li>
+<li>Returning <code>T</code> from a function that actually fetches unvalidated data. It looks safe and is not.</li>
+<li>Giant generic signatures that no one can read; prefer simpler, concrete types for application code.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does <code>T extends keyof U</code> mean?</dt><dd>T must be one of the property names of U; it is the standard way to accept a key safely.</dd>
+<dt>How do you type a function that returns the same type as its argument but wrapped in a Promise?</dt><dd><code>function wrap&lt;T&gt;(x: T): Promise&lt;T&gt;</code> or, for async input, <code>Awaited&lt;T&gt;</code>.</dd>
+<dt>Generic default versus constraint?</dt><dd>A constraint restricts what is allowed; a default supplies a type when none is given or inferred. They can be combined.</dd>
+<dt>How would you type a data table component?</dt><dd>Generic over the row type, columns keyed by <code>keyof Row</code>, render callbacks receiving typed values.</dd>
+</dl></div>
+</section>
+
+<!-- ============ T6 ============ -->
+<section class="q" id="t6">
+<header class="qh">
+  <div class="qrow"><span class="qid">T6</span><span class="tag added">Added</span></div>
+  <h2>Utility types</h2>
+  <p class="qtext">“Which built-in utility types do you use? Explain <code>Partial</code>, <code>Pick</code>, <code>Omit</code>, <code>Record</code>, <code>Exclude</code>, <code>ReturnType</code> and <code>Awaited</code>. How would you derive types instead of duplicating them?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Utility types are generic helpers built into TypeScript that derive new types from existing ones, so I define a shape once and derive the variants. For object shapes: <code>Partial</code> makes everything optional, <code>Required</code> the opposite, <code>Readonly</code> freezes properties, <code>Pick</code> and <code>Omit</code> select or drop keys, and <code>Record</code> builds a dictionary. For unions: <code>Exclude</code>, <code>Extract</code> and <code>NonNullable</code>. For functions: <code>ReturnType</code>, <code>Parameters</code>, and <code>Awaited</code> to unwrap promises. Deriving types keeps one source of truth: for example, a form’s update payload is <code>Partial&lt;Omit&lt;User, 'id'&gt;&gt;</code> and an action type can come from <code>typeof</code> a value.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="A base User type with id, name and optional email, and the types derived from it by Partial, Required, Pick, Omit, Readonly and Record, each shown with its resulting members.">
+  <rect x="10" y="20" width="210" height="96" rx="6" class="h"/><text x="20" y="40" class="bd">interface User</text><text x="20" y="60" class="mono" style="font-size:11.5px">id: string</text><text x="20" y="78" class="mono" style="font-size:11.5px">name: string</text><text x="20" y="96" class="mono" style="font-size:11.5px">email?: string</text>
+  <path class="a" d="M220 68H262"/>
+  <rect x="264" y="20" width="150" height="62" rx="5" class="b"/><text x="272" y="38" class="bd">Partial&lt;User&gt;</text><text x="272" y="56" class="sm">id?  name?  email?</text><text x="272" y="72" class="sm">all optional (edits, patches)</text>
+  <rect x="424" y="20" width="150" height="62" rx="5" class="b"/><text x="432" y="38" class="bd">Required&lt;User&gt;</text><text x="432" y="56" class="sm">id  name  email</text><text x="432" y="72" class="sm">all required</text>
+  <rect x="584" y="20" width="166" height="62" rx="5" class="b"/><text x="592" y="38" class="bd">Readonly&lt;User&gt;</text><text x="592" y="56" class="sm">same keys, readonly</text><text x="592" y="72" class="sm">shallow, compile time only</text>
+  <rect x="264" y="98" width="230" height="62" rx="5" class="g"/><text x="272" y="116" class="bd">Pick&lt;User, "id" | "name"&gt;</text><text x="272" y="136" class="sm">{ id; name } only these keys</text><text x="272" y="152" class="sm">list rows, props subsets</text>
+  <rect x="504" y="98" width="246" height="62" rx="5" class="g"/><text x="512" y="116" class="bd">Omit&lt;User, "id"&gt;</text><text x="512" y="136" class="sm">{ name; email? } everything else</text><text x="512" y="152" class="sm">create payload without the id</text>
+  <rect x="10" y="130" width="244" height="62" rx="5" class="w"/><text x="18" y="148" class="bd">Record&lt;"admin" | "user", string&gt;</text><text x="18" y="168" class="sm">{ admin: string; user: string }</text><text x="18" y="184" class="sm">forces a key per union member</text>
+  <text x="10" y="224" class="bd">Union and function helpers</text>
+  <rect x="10" y="234" width="360" height="66" rx="5" class="b"/><text x="18" y="252" class="mono" style="font-size:11px">Exclude&lt;"a"|"b"|"c", "a"&gt;   → "b" | "c"</text><text x="18" y="270" class="mono" style="font-size:11px">Extract&lt;"a"|"b", "a"|"z"&gt;   → "a"</text><text x="18" y="288" class="mono" style="font-size:11px">NonNullable&lt;string | null&gt;   → string</text>
+  <rect x="390" y="234" width="360" height="66" rx="5" class="b"/><text x="398" y="252" class="mono" style="font-size:11px">ReturnType&lt;typeof fn&gt;        result type</text><text x="398" y="270" class="mono" style="font-size:11px">Parameters&lt;typeof fn&gt;        tuple of args</text><text x="398" y="288" class="mono" style="font-size:11px">Awaited&lt;Promise&lt;User&gt;&gt;       → User</text>
+</svg></div>
+<figcaption><b>Single source of truth.</b> Write the model once; derive create, update, list and display shapes from it.</figcaption></figure>
+
+<h3>Reference</h3>
+<div class="tw"><table>
+<tr><th>Utility</th><th>What it does</th><th>Typical use</th></tr>
+<tr><td><code>Partial&lt;T&gt;</code>, <code>Required&lt;T&gt;</code></td><td>Make all properties optional or required</td><td>PATCH payloads, defaults objects</td></tr>
+<tr><td><code>Readonly&lt;T&gt;</code></td><td>Mark properties readonly (shallow)</td><td>Props, state, config constants</td></tr>
+<tr><td><code>Pick&lt;T, K&gt;</code>, <code>Omit&lt;T, K&gt;</code></td><td>Keep or drop keys</td><td>Variants of a model; component props subsets</td></tr>
+<tr><td><code>Record&lt;K, V&gt;</code></td><td>Object with keys K and values V</td><td>Lookup tables, exhaustive maps over a union</td></tr>
+<tr><td><code>Exclude</code>, <code>Extract</code>, <code>NonNullable</code></td><td>Filter union members</td><td>Remove <code>null</code>, split a union</td></tr>
+<tr><td><code>ReturnType</code>, <code>Parameters</code>, <code>ConstructorParameters</code>, <code>InstanceType</code></td><td>Extract parts of function or class types</td><td>Wrapping or mocking functions; typing from a factory</td></tr>
+<tr><td><code>Awaited&lt;T&gt;</code></td><td>Recursively unwrap Promise types</td><td>Result type of an async function: <code>Awaited&lt;ReturnType&lt;typeof load&gt;&gt;</code></td></tr>
+<tr><td><code>ThisParameterType</code>, <code>OmitThisParameter</code>, <code>ThisType</code></td><td>Handle <code>this</code> in function types</td><td>Rare; library typing</td></tr>
+<tr><td><code>Uppercase</code>, <code>Lowercase</code>, <code>Capitalize</code>, <code>Uncapitalize</code></td><td>Intrinsic string manipulation</td><td>Template literal types (T7)</td></tr>
+<tr><td><code>NoInfer&lt;T&gt;</code></td><td>Block inference from one position</td><td>Generic APIs with a “source of truth” parameter <span class="verify">verify</span></td></tr>
+</table></div>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Derive, do not duplicate:</b> <code>type Props = ComponentProps&lt;typeof Button&gt;</code>, <code>type State = ReturnType&lt;typeof store.getState&gt;</code>, <code>type Role = typeof ROLES[number]</code>, <code>type Keys = keyof typeof config</code>. When the source changes, derived types follow.</li>
+<li><b>Omit is not distributive over unions</b> and does not check that keys exist (its key parameter is <code>keyof any</code>), so a typo in the key silently omits nothing. <code>Pick</code> does check. A stricter custom <code>StrictOmit</code> is common.</li>
+<li><b>Partial is shallow:</b> nested objects stay required. A <code>DeepPartial</code> needs a recursive mapped type (T7).</li>
+<li><b>Record with a union key</b> forces completeness (every key must be present), which makes it an exhaustiveness tool for configuration maps. With <code>string</code> keys it is just a dictionary.</li>
+<li><b>Practical combos:</b> <code>Partial&lt;Omit&lt;User, 'id'&gt;&gt;</code> for updates; <code>Pick&lt;User, 'id' | 'name'&gt;</code> for list items; <code>Required&lt;Pick&lt;Options, 'a' | 'b'&gt;&gt;</code> to make some options mandatory; <code>Readonly&lt;Record&lt;…&gt;&gt;</code> for constant lookup tables.</li>
+<li><b>Overuse:</b> deeply nested utility chains become unreadable; name intermediate types and add a short comment.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Believing <code>Omit</code> validates keys. Use <code>Pick</code> or a strict variant when typos matter.</li>
+<li>Expecting <code>Partial</code> or <code>Readonly</code> to be deep.</li>
+<li>Reaching for utility types when a separate small interface would be clearer.</li>
+<li>Duplicating an interface and slightly editing the copy instead of deriving, so types drift apart.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Difference between <code>Pick</code> and <code>Omit</code>?</dt><dd>Pick keeps listed keys, Omit removes them. Prefer the one with the shorter list; Pick additionally validates that the keys exist.</dd>
+<dt>How do you get the type of an array’s items?</dt><dd><code>T[number]</code> for an array type T, or <code>(typeof arr)[number]</code> for a value.</dd>
+<dt>How do you get the type of a function’s resolved value?</dt><dd><code>Awaited&lt;ReturnType&lt;typeof fn&gt;&gt;</code>.</dd>
+<dt>Write <code>Partial</code> yourself in words.</dt><dd>A mapped type over <code>keyof T</code> that adds <code>?</code> to every property and keeps the value type: <code>{ [K in keyof T]?: T[K] }</code>.</dd>
+</dl></div>
+</section>
+
+<!-- ============ T7 ============ -->
+<section class="q" id="t7">
+<header class="qh">
+  <div class="qrow"><span class="qid">T7</span><span class="tag added">Added</span></div>
+  <h2>Mapped, conditional and template literal types</h2>
+  <p class="qtext">“Explain mapped types, conditional types, <code>infer</code> and template literal types. What is a distributive conditional type? When is advanced type-level code worth it?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“These are the building blocks of type-level programming. A mapped type iterates over keys to create a new object type, <code>{ [K in keyof T]: … }</code>, and can add or remove modifiers and rename keys. A conditional type chooses between two types, <code>T extends U ? X : Y</code>, and with <code>infer</code> it can extract a type from within another, such as a function’s return type. Conditional types distribute over unions when the checked type is a naked type parameter. Template literal types build string types, like <code>on${Capitalize&lt;K&gt;}</code>, so event names and route strings can be type-checked. I use them to build well-typed library APIs and helpers, but in application code I keep types simple, because clever types are expensive to read, slow to compile and hard to debug.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Mapped types iterate keys to build a new type; a conditional type applied to a union distributes over each member; infer extracts a type from within another; template literal types combine string unions.">
+  <text x="10" y="18" class="bd">Mapped type</text>
+  <rect x="10" y="30" width="360" height="58" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10px">type Getters&lt;T&gt; = {</text><text x="18" y="63" class="mono" style="font-size:10px">  [K in keyof T as `get${Capitalize&lt;K &amp; string&gt;}`]:</text><text x="18" y="78" class="mono" style="font-size:10px">    () =&gt; T[K] }</text>
+  <rect x="10" y="100" width="120" height="52" rx="5" class="h"/><text x="18" y="120" class="mono" style="font-size:11px">{ name: string;</text><text x="18" y="136" class="mono" style="font-size:11px">  age: number }</text>
+  <path class="a" d="M130 126H160"/>
+  <rect x="162" y="100" width="208" height="52" rx="5" class="g"/><text x="170" y="120" class="mono" style="font-size:11px">{ getName: () =&gt; string;</text><text x="170" y="136" class="mono" style="font-size:11px">  getAge: () =&gt; number }</text>
+  <text x="10" y="176" class="sm">Modifiers: +readonly / -readonly, +? / -?  (Required is -?)</text><text x="10" y="192" class="sm">Key remapping with “as”; map a key to never to drop it.</text>
+  <text x="400" y="18" class="bd">Conditional types distribute over unions</text>
+  <rect x="400" y="30" width="350" height="58" rx="5" class="b"/><text x="408" y="48" class="mono" style="font-size:10.5px">type ToArray&lt;T&gt; =</text><text x="408" y="63" class="mono" style="font-size:10.5px">  T extends unknown ? T[] : never</text><text x="408" y="80" class="sm">T is a naked type parameter: it distributes</text>
+  <rect x="400" y="100" width="170" height="34" rx="5" class="h"/><text x="408" y="122" class="mono" style="font-size:10.5px">ToArray&lt;string | number&gt;</text>
+  <path class="a" d="M570 117H600"/>
+  <rect x="602" y="100" width="148" height="34" rx="5" class="g"/><text x="610" y="122" class="mono" style="font-size:11px">string[] | number[]</text>
+  <text x="400" y="158" class="sm">Applied to each member, results unioned.</text><text x="400" y="174" class="sm">To treat the union as one: [T] extends [U]</text><text x="400" y="190" class="sm">Exclude and Extract distribute too.</text>
+  <text x="10" y="226" class="bd">infer: pattern-match a type</text>
+  <rect x="10" y="238" width="360" height="62" rx="5" class="b"/><text x="18" y="256" class="mono" style="font-size:10.5px">type Ret&lt;F&gt; = F extends</text><text x="18" y="271" class="mono" style="font-size:10.5px">  (...a: any[]) =&gt; infer R ? R : never</text><text x="18" y="290" class="sm">“if F is a function, name its return type R”</text>
+  <text x="400" y="226" class="bd">Template literal types</text>
+  <rect x="400" y="238" width="350" height="62" rx="5" class="b"/><text x="408" y="256" class="mono" style="font-size:10px">type Ev = `${"click"|"focus"}:${"start"|"end"}`</text><text x="408" y="272" class="sm">→ click:start | click:end | focus:start | focus:end</text><text x="408" y="290" class="sm">typed routes, CSS units, event names, i18n keys</text>
+</svg></div>
+<figcaption><b>Type-level toolkit.</b> Loop over keys, branch on a condition, extract with <code>infer</code>, and generate strings from unions.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Mapped types:</b> <code>{ [K in keyof T]: Transform&lt;T[K]&gt; }</code> is homomorphic (preserves optional and readonly modifiers of T). <code>-?</code> removes optionality, <code>+readonly</code> adds it, and <code>as</code> renames or filters keys (<code>as never</code> drops a key). They power <code>Partial</code>, <code>Readonly</code>, <code>Pick</code>, <code>Record</code>.</li>
+<li><b>Conditional types:</b> evaluated when the type is known; deferred while generic. The <code>extends</code> check is assignability, not equality. Branches can be nested and recursive.</li>
+<li><b>Distribution:</b> happens only when the checked type is a bare type parameter. <code>never</code> distributes to <code>never</code> (empty union), a known gotcha; wrap in a tuple to avoid it.</li>
+<li><b><code>infer</code>:</b> introduces a type variable inside the <code>extends</code> clause: element type of an array (<code>T extends (infer U)[]</code>), Promise payload, first parameter, props of a component. Constraints on <code>infer</code> (<code>infer U extends string</code>) exist <span class="verify">verify (4.7)</span>.</li>
+<li><b>Template literal types</b> combine with unions to produce the Cartesian product, and with <code>infer</code> to parse strings: extract route parameters from <code>'/users/:id'</code> to type a router’s <code>params</code>. Beware union explosion in big combinations.</li>
+<li><b>Recursive types:</b> <code>type Json = string | number | boolean | null | Json[] | { [k: string]: Json }</code>; <code>DeepPartial</code>, <code>DeepReadonly</code>, path types (<code>'a.b.c'</code>). Recursion depth is limited, and deep recursion is slow.</li>
+<li><b><code>typeof</code>, <code>keyof</code>, indexed access, <code>as const</code>:</b> the everyday toolkit to derive types from values: <code>type Action = ReturnType&lt;typeof actions[keyof typeof actions]&gt;</code>.</li>
+<li><b>Real examples:</b> typed <code>Object.keys</code> wrapper, typed event emitters, form libraries inferring field names from a schema, ORM query builders, tRPC and Zod inference, typed i18n keys, <code>styled-system</code> props.</li>
+<li><b>When it is worth it:</b> in shared libraries and design-system code used by many teams, where a good type prevents widespread misuse. Avoid in feature code: prefer simple explicit types, comments and runtime checks. Type-level code is code: it needs tests (T13), naming and a maintainer.</li>
+<li><b>Costs:</b> slow compile and editor latency, unreadable error messages, brittle behaviour across TypeScript versions. If a type needs a PhD to read, simplify the design.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Forgetting distribution and being surprised that a conditional type returns a union of results.</li>
+<li>Using <code>extends</code> thinking it means equality; <code>string extends 'a'</code> is false but <code>'a' extends string</code> is true.</li>
+<li>Over-engineering application types for the sake of cleverness.</li>
+<li>Skipping tests for type utilities, then breaking consumers on a version upgrade.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How would you implement <code>Pick</code>?</dt><dd><code>{ [P in K]: T[P] }</code> where <code>K extends keyof T</code>.</dd>
+<dt>How do you extract the element type of an array type?</dt><dd><code>T extends (infer U)[] ? U : never</code>, or <code>T[number]</code>.</dd>
+<dt>How would you type route params from a path string?</dt><dd>A recursive template literal type that splits on <code>/</code> and maps segments starting with <code>:</code> to keys. Mention the compile-time cost and use it only in the router library.</dd>
+<dt>What does <code>keyof typeof obj</code> give?</dt><dd>The union of the object value’s property names, derived from the value so it cannot drift.</dd>
+</dl></div>
+</section>
+
+<!-- ============ T8 ============ -->
+<section class="q" id="t8">
+<header class="qh">
+  <div class="qrow"><span class="qid">T8</span><span class="tag added">Added</span></div>
+  <h2>Functions, overloads, classes and decorators</h2>
+  <p class="qtext">“How do you type functions, optional and rest parameters, <code>this</code>, and overloads? How do TypeScript classes differ from JavaScript classes? What are access modifiers, abstract classes and decorators?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Functions are typed by their parameters and return type; I annotate exported functions and let inference handle the rest. Optional, default and rest parameters have their own syntax, and a <code>this</code> parameter can declare what <code>this</code> must be. Overloads let one function expose several call signatures with different parameter and return types; callers see only the overload signatures, not the implementation signature. TypeScript classes add <code>public</code>, <code>protected</code> and <code>private</code> (compile-time only), <code>readonly</code>, parameter properties, <code>abstract</code> classes and <code>override</code>; for true privacy at run time use JavaScript’s <code>#private</code> fields. Decorators are functions that annotate or wrap classes and members; the standard version arrived in TypeScript 5, while Angular still uses the older experimental form.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="Left: an overloaded function with two public overload signatures and one hidden implementation signature. Right: an abstract class with a subclass, and a table of access modifiers.">
+  <text x="10" y="18" class="bd">Overloads: signatures versus implementation</text>
+  <rect x="10" y="30" width="360" height="86" rx="5" class="g"/><text x="18" y="48" class="sm">visible to callers:</text><text x="18" y="66" class="mono" style="font-size:11px">function parse(x: string): number;</text><text x="18" y="82" class="mono" style="font-size:11px">function parse(x: number): string;</text><text x="18" y="102" class="sm">each call is matched top to bottom to one signature</text>
+  <path class="a" d="M190 116V136"/>
+  <rect x="10" y="138" width="360" height="62" rx="5" class="x"/><text x="18" y="154" class="sm">implementation (not callable from outside):</text><text x="18" y="171" class="mono" style="font-size:10.5px">function parse(x: string | number):</text><text x="18" y="186" class="mono" style="font-size:10.5px">  string | number {…}</text>
+  <text x="10" y="224" class="sm">The implementation must fit every overload.</text><text x="10" y="240" class="sm">Put specific overloads before general ones.</text><text x="10" y="256" class="sm">Prefer a union or a generic if one signature works.</text>
+  <text x="10" y="282" class="mono" style="font-size:10.5px">function f(this: HTMLElement, e: Event) {…}</text><text x="10" y="298" class="sm">a this parameter is erased at compile time</text>
+  <text x="400" y="18" class="bd">Classes</text>
+  <rect x="400" y="30" width="170" height="60" rx="5" class="b"/><text x="408" y="48" class="mono" style="font-size:10.5px">abstract class Shape {</text><text x="408" y="64" class="mono" style="font-size:10.5px">  abstract area():</text><text x="408" y="80" class="mono" style="font-size:10.5px">  number }</text>
+  <rect x="590" y="30" width="160" height="60" rx="5" class="h"/><text x="598" y="48" class="mono" style="font-size:10.5px">class Circle extends</text><text x="598" y="64" class="mono" style="font-size:10.5px">  Shape {</text><text x="598" y="80" class="mono" style="font-size:10.5px">  override area() {…} }</text>
+  <path class="a" d="M590 60H572"/>
+  <text x="400" y="108" class="sm">abstract: not instantiable; subclasses implement it</text>
+  <rect x="400" y="120" width="350" height="118" rx="5" class="b"/>
+  <text x="410" y="138" class="bd">Modifier</text><text x="520" y="138" class="bd">Visible in</text><text x="640" y="138" class="bd">Run time?</text>
+  <text x="410" y="156" class="mono" style="font-size:11px">public</text><text x="520" y="156" class="sm">everywhere (default)</text><text x="640" y="156" class="sm">no effect</text>
+  <text x="410" y="174" class="mono" style="font-size:11px">protected</text><text x="520" y="174" class="sm">class + subclasses</text><text x="640" y="174" class="sm">no effect</text>
+  <text x="410" y="192" class="mono" style="font-size:11px">private</text><text x="520" y="192" class="sm">class only (checked)</text><text x="640" y="192" class="sm">still reachable</text>
+  <text x="410" y="210" class="mono" style="font-size:11px">#field</text><text x="520" y="210" class="sm">class only (JS)</text><text x="640" y="210" class="sm">truly private</text>
+  <text x="410" y="228" class="mono" style="font-size:11px">readonly</text><text x="520" y="228" class="sm">no reassignment</text><text x="640" y="228" class="sm">no effect</text>
+  <rect x="400" y="252" width="350" height="50" rx="5" class="w"/><text x="408" y="270" class="mono" style="font-size:10.5px">constructor(private readonly repo: Repo) {}</text><text x="408" y="288" class="sm">parameter property: declares and assigns the field</text>
+</svg></div>
+<figcaption><b>Key points.</b> Overload signatures are the public contract. <code>private</code> is a compile-time rule; <code>#private</code> is real privacy.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Function typing:</b> optional (<code>x?: T</code>, must come after required), default (<code>x = 1</code>, type inferred), rest (<code>...args: number[]</code> or a tuple), return type inference versus an explicit annotation (explicit on exported functions improves errors and speed). <code>(a: number) =&gt; string</code> is a function type; <code>void</code> return means “ignored”.</li>
+<li><b>Contextual typing:</b> callback parameter types are inferred from the expected function type, so inline arrow functions need no annotations.</li>
+<li><b>Parameter bivariance:</b> with <code>strictFunctionTypes</code>, function-type parameters are checked contravariantly, but method shorthand declarations remain bivariant, which is a known unsoundness (T12).</li>
+<li><b>Overload design:</b> overloads give precise mappings (<code>(el: 'a'): HTMLAnchorElement</code>); a conditional or generic return type is an alternative. Callers do not see the implementation signature. Do not write overloads that differ only in trailing optional parameters.</li>
+<li><b>Type predicates and assertion signatures</b> are function return types too (T4).</li>
+<li><b>TypeScript class features:</b> property declarations, access modifiers, parameter properties, <code>readonly</code>, <code>abstract</code>, <code>override</code> (with <code>noImplicitOverride</code> to catch accidental shadowing), index signatures, <code>implements</code> for interface conformance, generics. Classes are both a value and a type.</li>
+<li><b>Class fields and run time:</b> with <code>useDefineForClassFields</code> (default for modern targets) fields use define semantics, which affects initialisation order with inheritance and parameter properties. <code>strictPropertyInitialization</code> requires fields to be assigned in the constructor or marked <code>!</code>.</li>
+<li><b>Interfaces versus abstract classes:</b> interfaces are erased and carry no code; abstract classes can share implementation and exist at run time (usable with <code>instanceof</code>). Prefer composition and functions in frontend code; classes mainly appear in Angular, NestJS and domain models.</li>
+<li><b>Decorators:</b> TypeScript 5 supports the standard (TC39 stage 3) decorators; <code>experimentalDecorators</code> enables the older form used by Angular, NestJS and TypeORM (with <code>emitDecoratorMetadata</code>). They are different, incompatible APIs <span class="verify">verify the framework’s current requirement</span>. Use cases: dependency injection, validation metadata, logging, routing.</li>
+<li><b>Other non-erasable syntax:</b> enums, namespaces, parameter properties and (legacy) decorators generate code. <code>erasableSyntaxOnly</code> and Node’s type-stripping mode reject them <span class="verify">verify (5.8, Node 22.6+ and later)</span>.</li>
+<li><b><code>this</code> types:</b> a method can return <code>this</code> for fluent APIs, which keeps subclass types.</li>
+<li><b>Explicit resource management:</b> <code>using</code> and <code>await using</code> with <code>Symbol.dispose</code> for cleanup <span class="verify">verify (5.2)</span>.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Believing <code>private</code> prevents access at run time. It does not; use <code>#</code> for real privacy.</li>
+<li>Writing many overloads when a generic or union signature expresses the same thing.</li>
+<li>Calling <code>implements</code> inheritance. It checks shape only.</li>
+<li>Mixing the two decorator systems or assuming <code>experimentalDecorators</code> works with the standard syntax.</li>
+<li>Using enums, namespaces or parameter properties in a project that must work with type stripping.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Interface versus abstract class?</dt><dd>Interface: pure type, erased. Abstract class: type plus shared implementation and a run-time value.</dd>
+<dt>What does <code>override</code> add?</dt><dd>With <code>noImplicitOverride</code> the compiler errors if you override without the keyword or the base member no longer exists, catching renames.</dd>
+<dt>How do you type a function that accepts a callback with a variable number of arguments?</dt><dd>A generic over a tuple: <code>function call&lt;A extends unknown[], R&gt;(fn: (...a: A) =&gt; R, ...a: A): R</code>.</dd>
+<dt>Why do some TypeScript features break with Babel or esbuild?</dt><dd>They transpile file by file; <code>const enum</code>, namespaces merging across files and decorator metadata need whole-program knowledge or special support.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Real projects</h1>
+
+<!-- ============ T9 ============ -->
+<section class="q" id="t9">
+<header class="qh">
+  <div class="qrow"><span class="qid">T9</span><span class="tag added">Added</span></div>
+  <h2>Modules, declaration files and <code>tsconfig</code></h2>
+  <p class="qtext">“How does TypeScript find types for a JavaScript library? What are <code>.d.ts</code> files and <code>@types</code>? Which <code>tsconfig</code> options matter, and what does <code>strict</code> include?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“When I import a package, TypeScript resolves types in order: the package’s own bundled types from the <code>types</code> or <code>exports</code> fields, then <code>@types/<em>name</em></code> from DefinitelyTyped, then any ambient <code>declare module</code> in my project; otherwise under <code>noImplicitAny</code> it is an error. Declaration files, <code>.d.ts</code>, contain only types and describe JavaScript that exists elsewhere. In <code>tsconfig.json</code> the key choices are <code>strict: true</code>, which turns on a family of checks including <code>strictNullChecks</code> and <code>noImplicitAny</code>; <code>target</code> and <code>lib</code> for emitted syntax and available APIs; <code>module</code> and <code>moduleResolution</code> to match the bundler or Node; and <code>isolatedModules</code> or <code>verbatimModuleSyntax</code> so every file can be transpiled alone. In large repos I use project references and an incremental build.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: the order TypeScript looks for types when importing a package: bundled types, then DefinitelyTyped at-types package, then a local declare module, otherwise an implicit any error. Right: a monorepo with project references where app depends on ui and shared and each has its own tsconfig and declaration output.">
+  <text x="10" y="18" class="bd">import x from "lib": where do the types come from?</text>
+  <rect x="10" y="30" width="360" height="52" rx="5" class="g"/><text x="20" y="50" class="bd">1 · The package ships types</text><text x="20" y="68" class="sm">package.json “types” / “exports”: { "types": … } → lib.d.ts</text>
+  <path class="a" d="M190 82V98"/><text x="200" y="94" class="sm">not found</text>
+  <rect x="10" y="100" width="360" height="52" rx="5" class="h"/><text x="20" y="120" class="bd">2 · DefinitelyTyped</text><text x="20" y="138" class="sm">npm i -D @types/lib (community-maintained, versioned with lib)</text>
+  <path class="a" d="M190 152V168"/><text x="200" y="164" class="sm">not found</text>
+  <rect x="10" y="170" width="360" height="52" rx="5" class="w"/><text x="20" y="190" class="bd">3 · Your own ambient declaration</text><text x="20" y="208" class="mono" style="font-size:11px">declare module "lib";  // or write types in lib.d.ts</text>
+  <path class="a" d="M190 222V238"/><text x="200" y="234" class="sm">not found</text>
+  <rect x="10" y="240" width="360" height="52" rx="5" class="x"/><text x="20" y="260" class="bd">4 · Error: implicit any</text><text x="20" y="278" class="sm">“Could not find a declaration file for module” (noImplicitAny)</text>
+  <text x="420" y="18" class="bd">Project references (monorepo)</text>
+  <rect x="420" y="30" width="150" height="46" rx="5" class="h"/><text x="430" y="50" class="bd">apps/web</text><text x="430" y="66" class="sm">references ui, shared</text>
+  <rect x="420" y="110" width="150" height="46" rx="5" class="b"/><text x="430" y="130" class="bd">packages/ui</text><text x="430" y="146" class="sm">composite: true</text>
+  <rect x="600" y="110" width="150" height="46" rx="5" class="b"/><text x="610" y="130" class="bd">packages/shared</text><text x="610" y="146" class="sm">composite: true</text>
+  <path class="a" d="M470 76V108"/><path class="a" d="M540 76L630 108"/><path class="a" d="M570 133H598"/>
+  <text x="420" y="182" class="sm">tsc -b builds in dependency order, reuses .d.ts outputs and</text><text x="420" y="198" class="sm">.tsbuildinfo, so only changed projects are rechecked.</text>
+  <rect x="420" y="214" width="330" height="78" rx="5" class="b"/><text x="430" y="234" class="bd">Config layering</text><text x="430" y="252" class="mono" style="font-size:11px">tsconfig.base.json   shared strict options</text><text x="430" y="268" class="mono" style="font-size:11px">extends → per package, per environment</text><text x="430" y="284" class="sm">(app, node scripts, tests have different lib/types)</text>
+</svg></div>
+<figcaption><b>Two ideas.</b> Types are found by a fixed lookup order; big codebases split into referenced projects for speed and boundaries.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Declaration files:</b> <code>.d.ts</code> has types only and no code. A library publishes them next to its JavaScript (<code>tsc --declaration</code>) so consumers get types. Ambient declarations (<code>declare const</code>, <code>declare function</code>, <code>declare module 'x'</code>) describe things that exist at run time but were not written in TypeScript, such as a global injected by a script.</li>
+<li><b>Global and module augmentation:</b> in a module file, <code>declare global { interface Window { analytics: Analytics } }</code> adds a global; <code>declare module 'express-serve-static-core' { interface Request { user?: User } }</code> extends a library type. A file is a module if it has a top-level <code>import</code> or <code>export</code>; otherwise its declarations are global.</li>
+<li><b>Typing an untyped library:</b> check <code>@types</code> first; otherwise write a minimal <code>declare module</code> with only the functions you use, and contribute upstream if it is widely used. Prefer a typed alternative if one exists.</li>
+<li><b><code>package.json</code> and types:</b> libraries use <code>"types"</code> and, for modern resolution, conditional <code>"exports"</code> with <code>"types"</code> first. Dual ESM/CJS packages need matching declarations (<code>.d.mts</code>/<code>.d.cts</code>); tools such as <code>publint</code> and <code>arethetypeswrong</code> check this.</li>
+<li><b><code>strict</code> bundle:</b> <code>strictNullChecks</code>, <code>noImplicitAny</code>, <code>strictFunctionTypes</code>, <code>strictBindCallApply</code>, <code>strictPropertyInitialization</code>, <code>noImplicitThis</code>, <code>alwaysStrict</code>, <code>useUnknownInCatchVariables</code>. New projects should start strict. Extra flags worth knowing: <code>noUncheckedIndexedAccess</code> (index reads may be undefined), <code>exactOptionalPropertyTypes</code>, <code>noImplicitOverride</code>, <code>noImplicitReturns</code>, <code>noFallthroughCasesInSwitch</code>, <code>noUnusedLocals</code>/<code>noUnusedParameters</code> (often left to ESLint).</li>
+<li><b><code>target</code> and <code>lib</code>:</b> <code>target</code> sets emitted syntax (ES2022 and so on); <code>lib</code> declares which built-in APIs exist for the type checker (<code>DOM</code>, <code>ES2023</code>). Setting <code>lib</code> does not add polyfills.</li>
+<li><b><code>module</code> and <code>moduleResolution</code>:</b> <code>bundler</code> for apps built with Vite, webpack or esbuild (allows extensionless imports and <code>exports</code>); <code>node16</code>/<code>nodenext</code> for Node ESM and libraries (requires file extensions and honours <code>package.json</code> type); older <code>node</code>/<code>classic</code> are legacy <span class="verify">verify option names for your TypeScript version</span>.</li>
+<li><b>Transpile-per-file safety:</b> <code>isolatedModules</code> flags code that cannot be compiled without other files (re-exporting types without <code>export type</code>, <code>const enum</code>). <code>verbatimModuleSyntax</code> keeps imports and exports as written and forces <code>import type</code> for types, so emit is predictable. <code>import type { X }</code> is erased entirely.</li>
+<li><b>Paths and baseUrl:</b> <code>paths</code> only affects type checking; the bundler or runtime needs matching aliases (Vite <code>resolve.alias</code>, <code>vite-tsconfig-paths</code>, Jest <code>moduleNameMapper</code>, Node subpath imports).</li>
+<li><b>Other options:</b> <code>jsx</code> (<code>react-jsx</code>), <code>esModuleInterop</code> and <code>allowSyntheticDefaultImports</code> for CJS interop, <code>resolveJsonModule</code>, <code>skipLibCheck</code> (skips checking <code>.d.ts</code> in dependencies: faster, can hide conflicts), <code>noEmit</code> when a bundler emits, <code>declaration</code>/<code>declarationMap</code> for libraries, <code>incremental</code> and <code>composite</code> for speed.</li>
+<li><b><code>types</code> and <code>typeRoots</code>:</b> by default every <code>@types/*</code> package is loaded globally; restrict with <code>"types": ["node"]</code> to avoid global type pollution (for example Jest globals appearing in app code).</li>
+<li><b>Type-only imports and circularity:</b> <code>import type</code> avoids run-time circular imports caused only by types.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Thinking <code>lib</code> or <code>target</code> polyfills missing APIs. They only tell the compiler what exists.</li>
+<li>Setting <code>paths</code> and forgetting the bundler alias, so code type-checks and then fails at run time.</li>
+<li>Leaving <code>strict</code> off “for now” in a new project.</li>
+<li>Using <code>skipLibCheck</code> without understanding it hides type errors inside dependencies.</li>
+<li>Installing <code>@types/*</code> with a version unrelated to the library version, causing mismatched APIs.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Difference between <code>tsc</code> and the bundler?</dt><dd><code>tsc</code> type-checks (and can emit); the bundler resolves, bundles and minifies. Many projects use only <code>tsc --noEmit</code> for checking.</dd>
+<dt>How do you add a property to Express’s <code>Request</code>?</dt><dd>Module augmentation in a <code>.d.ts</code> included by <code>tsconfig</code>.</dd>
+<dt>What does <code>declare</code> do?</dt><dd>It states that something exists without implementing it; it emits no code.</dd>
+<dt>How do you speed up type checking on a large repo?</dt><dd>Project references with <code>composite</code>, <code>incremental</code>, <code>skipLibCheck</code>, narrower <code>include</code>, explicit return types on exported functions, and avoiding extreme type-level code (T13).</dd>
+</dl></div>
+</section>
+
+<!-- ============ T10 ============ -->
+<section class="q" id="t10">
+<header class="qh">
+  <div class="qrow"><span class="qid">T10</span><span class="tag added">Added</span></div>
+  <h2>TypeScript with React</h2>
+  <p class="qtext">“How do you type React components, props, children, state, refs, events and context? How do you type generic components and custom hooks? Is <code>React.FC</code> still recommended?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I type props with an interface or type and annotate the parameter directly, <code>function Button({ label }: ButtonProps)</code>, instead of <code>React.FC</code>, which adds little and used to inject implicit children. <code>children</code> is typed as <code>React.ReactNode</code>. State uses inference, with an explicit generic when the initial value does not show the full type, like <code>useState&lt;User | null&gt;(null)</code>. For complex state I use <code>useReducer</code> with a discriminated union of actions. Events use types like <code>React.ChangeEvent&lt;HTMLInputElement&gt;</code>, and I extend native element props with <code>React.ComponentProps&lt;'button'&gt;</code>. Reusable components are generic, for example a list over <code>T</code>. Context needs a null default plus a hook that throws, so consumers get a non-null type.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="A typed component: Props flows into a component; the component renders JSX checked against child component props; hooks take generics; events are typed by element; and a generic Table component infers its row type from the rows prop.">
+  <text x="10" y="18" class="bd">Typed props flow</text>
+  <rect x="10" y="30" width="170" height="70" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:11px">type ButtonProps =</text><text x="18" y="64" class="mono" style="font-size:11px"> ComponentProps&lt;'button'&gt;</text><text x="18" y="80" class="mono" style="font-size:11px"> &amp; { variant: 'a'|'b' }</text>
+  <path class="a" d="M180 65H218"/>
+  <rect x="220" y="30" width="170" height="70" rx="5" class="h"/><text x="228" y="52" class="mono" style="font-size:11px">function Button(</text><text x="228" y="68" class="mono" style="font-size:11px">  p: ButtonProps) {…}</text><text x="228" y="88" class="sm">native attrs + variant</text>
+  <path class="a" d="M390 65H428"/>
+  <rect x="430" y="30" width="170" height="70" rx="5" class="g"/><text x="438" y="50" class="mono" style="font-size:11px">&lt;Button variant="c"/&gt;</text><text x="438" y="68" class="sm">error: "c" not assignable</text><text x="438" y="84" class="sm">to 'a' | 'b'</text>
+  <rect x="620" y="30" width="130" height="70" rx="5" class="w"/><text x="628" y="50" class="bd">Don’t</text><text x="628" y="68" class="sm">React.FC adds little;</text><text x="628" y="84" class="sm">type the param</text>
+  <text x="10" y="128" class="bd">Hooks and events</text>
+  <rect x="10" y="140" width="360" height="100" rx="5" class="b"/>
+  <text x="18" y="158" class="mono" style="font-size:10.5px">const [user, setUser] = useState&lt;User | null&gt;(null);</text>
+  <text x="18" y="176" class="mono" style="font-size:10.5px">const ref = useRef&lt;HTMLInputElement&gt;(null);</text>
+  <text x="18" y="194" class="mono" style="font-size:10.5px">const [s, dispatch] = useReducer(reducer, init);</text>
+  <text x="18" y="212" class="mono" style="font-size:10.5px">const onChange = (e: ChangeEvent&lt;HTMLInputElement&gt;)</text>
+  <text x="18" y="230" class="sm">inference covers most; add a generic for null or []</text>
+  <text x="400" y="128" class="bd">Generic component infers T from props</text>
+  <rect x="400" y="140" width="350" height="62" rx="5" class="b"/><text x="408" y="158" class="mono" style="font-size:10.5px">function List&lt;T&gt;({ items, render }: {</text><text x="408" y="174" class="mono" style="font-size:10.5px">  items: T[]; render: (i: T) =&gt; ReactNode })</text><text x="408" y="192" class="sm">&lt;List items={users} render={(u) =&gt; u.name} /&gt; → u: User</text>
+  <rect x="400" y="212" width="350" height="28" rx="5" class="g"/><text x="408" y="231" class="sm">createContext&lt;Ctx | null&gt;(null) + a hook that throws</text>
+  <text x="10" y="270" class="sm">Prop types are checked at compile time only: they do not validate data at run time (T11).</text><text x="10" y="288" class="sm">Server Components: props crossing the server/client boundary must be serialisable.</text>
+</svg></div>
+<figcaption><b>Practical rule.</b> Type the edges (props, context, reducers) and let inference fill in the middle.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Props:</b> <code>interface</code> or <code>type</code>; optional props with <code>?</code> and defaults via destructuring; callbacks typed precisely (<code>onSelect: (id: string) =&gt; void</code>). Avoid <code>any</code> in props and avoid <code>Function</code>.</li>
+<li><b><code>React.FC</code>:</b> older versions added implicit <code>children</code>; it also hampers generics and defaults. The community default is to annotate the props parameter. Either works; be consistent and know why.</li>
+<li><b>Children and return types:</b> <code>children: React.ReactNode</code> (anything renderable); <code>React.ReactElement</code> or <code>JSX.Element</code> for a single element; <code>PropsWithChildren</code> is a helper. Do not annotate component return types unless needed.</li>
+<li><b>Native element props:</b> <code>React.ComponentProps&lt;'input'&gt;</code> or <code>ComponentPropsWithoutRef</code> plus <code>Omit</code> for conflicts, to wrap native elements in a design system and still accept <code>aria-*</code>, <code>onClick</code> and so on.</li>
+<li><b>Refs:</b> <code>useRef&lt;HTMLDivElement&gt;(null)</code> gives a read-only <code>current</code> that is <code>null</code> until mounted; mutable value refs use <code>useRef&lt;number&gt;(0)</code>. React 19 passes <code>ref</code> as a regular prop; before that use <code>forwardRef&lt;El, Props&gt;</code> <span class="verify">verify version</span>.</li>
+<li><b>Events:</b> <code>React.MouseEvent&lt;HTMLButtonElement&gt;</code>, <code>ChangeEvent</code>, <code>FormEvent</code>, <code>KeyboardEvent</code>; the generic is the element type. <code>e.currentTarget</code> is typed to the element you attached to; <code>e.target</code> is a broader <code>EventTarget</code> and needs narrowing.</li>
+<li><b>State and reducers:</b> model state as a discriminated union (loading, success, error) and actions as a union with a <code>type</code> tag, so the reducer’s switch is exhaustive.</li>
+<li><b>Context:</b> <code>createContext&lt;Value | null&gt;(null)</code> with a <code>useValue()</code> hook that throws if the provider is missing, so consumers see a non-null type.</li>
+<li><b>Custom hooks:</b> generic over data (<code>useQuery&lt;TData&gt;</code>); return tuples with <code>as const</code> or typed tuples, or objects. Typing <code>useFetch&lt;T&gt;</code> does not validate T.</li>
+<li><b>Polymorphic components:</b> an <code>as</code> prop typed with a generic over <code>ElementType</code> and <code>ComponentPropsWithoutRef&lt;E&gt;</code>; powerful but heavy. Use it in design systems only.</li>
+<li><b>HOCs:</b> hard to type; hooks and composition replace most uses.</li>
+<li><b>Frameworks:</b> Next.js gives typed route handlers, <code>Metadata</code> and typed params; React Query infers data types from the query function; Redux Toolkit uses <code>RootState</code>/<code>AppDispatch</code> and typed hooks <code>useAppSelector</code>; forms libraries infer from a schema (React Hook Form with Zod).</li>
+<li><b><code>as const</code> and <code>satisfies</code> for configuration:</b> route tables, theme tokens and variant maps keep literal types and are checked against a shape.</li>
+<li><b>JSX typing:</b> the <code>jsx</code> setting (<code>react-jsx</code>) and the <code>JSX</code> namespace; types come from <code>@types/react</code> (matching React’s major version).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Trusting <code>useState&lt;User&gt;</code> or <code>useFetch&lt;User&gt;</code> as validation of server data.</li>
+<li>Passing a mutable-typed value where props are treated as immutable and then mutating it.</li>
+<li>Using <code>any</code> for event handlers or <code>ref</code>s instead of the right element type.</li>
+<li>Declaring generic arrow components in <code>.tsx</code> without <code>&lt;T,&gt;</code>.</li>
+<li>Over-engineering polymorphic prop types in application code.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you type default props?</dt><dd>Use default parameter values in destructuring; the prop stays optional in the type and is non-optional inside.</dd>
+<dt>How do you type <code>children</code> that must be a function?</dt><dd><code>children: (value: T) =&gt; ReactNode</code> (a render-prop pattern).</dd>
+<dt>How do you extend a button’s native props?</dt><dd><code>interface Props extends React.ComponentProps&lt;'button'&gt; { variant: Variant }</code>, using <code>Omit</code> when overriding a native prop.</dd>
+<dt>Typing Redux Toolkit?</dt><dd>Infer <code>RootState</code> and <code>AppDispatch</code> from the store, export typed hooks and use them everywhere.</dd>
+</dl></div>
+</section>
+
+<!-- ============ T11 ============ -->
+<section class="q" id="t11">
+<header class="qh">
+  <div class="qrow"><span class="qid">T11</span><span class="tag added">Added</span></div>
+  <h2>Types at the boundary: validation and APIs</h2>
+  <p class="qtext">“TypeScript types disappear at run time, so how do you make sure data from an API or user input matches your types? What are branded types, <code>zod</code>, and end-to-end type safety?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Types are a compile-time promise, but network responses, <code>localStorage</code>, query strings and form input are untrusted at run time. At those boundaries I treat the value as <code>unknown</code> and validate it with a schema library such as Zod, Valibot or ArkType. The schema is the single source of truth: it validates at run time and I infer the static type from it, so they cannot drift. Inside the validated core I rely on types. For stronger domain safety I use branded types to separate values like <code>UserId</code> and <code>OrderId</code> that are both strings. For API contracts I prefer generating types from an OpenAPI or GraphQL schema or using tRPC, so client and server share a contract instead of hand-copying interfaces.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Untrusted sources such as the network, local storage, URL parameters and form input enter as unknown, pass through a schema parse step that validates at run time and infers a static type, and then flow into the typed application core. Failures are handled at the boundary.">
+  <text x="10" y="18" class="bd">Validate where data enters; trust types inside</text>
+  <rect x="10" y="34" width="170" height="130" rx="5" class="x"/><text x="20" y="54" class="bd">Untrusted input</text><text x="20" y="76" class="sm">fetch().json()  → any</text><text x="20" y="94" class="sm">JSON.parse()    → any</text><text x="20" y="112" class="sm">localStorage    → string</text><text x="20" y="130" class="sm">URL params, forms</text><text x="20" y="148" class="sm">postMessage, files</text>
+  <path class="a" d="M180 99H238"/><text x="186" y="92" class="sm">unknown</text>
+  <rect x="240" y="34" width="250" height="130" rx="5" class="h"/><text x="250" y="54" class="bd">Parse at the boundary</text><text x="250" y="76" class="mono" style="font-size:11px">const User = z.object({</text><text x="250" y="92" class="mono" style="font-size:11px">  id: z.string().uuid(),</text><text x="250" y="108" class="mono" style="font-size:11px">  email: z.string().email() })</text><text x="250" y="124" class="mono" style="font-size:11px">type User = z.infer&lt;typeof User&gt;</text><text x="250" y="148" class="sm">one schema: run-time check + static type</text>
+  <path class="a" d="M490 99H548"/><text x="496" y="92" class="sm">User</text>
+  <rect x="550" y="34" width="200" height="130" rx="5" class="g"/><text x="560" y="54" class="bd">Typed core</text><text x="560" y="76" class="sm">components, state, logic</text><text x="560" y="94" class="sm">no further checks needed</text><text x="560" y="112" class="sm">branded ids, exhaustive</text><text x="560" y="130" class="sm">unions, domain functions</text>
+  <path class="ax" d="M365 164V196"/><rect x="240" y="198" width="250" height="34" rx="5" class="w"/><text x="250" y="219" class="sm">invalid → show error, log, fall back</text>
+  <text x="10" y="262" class="sm">Without the parse step, “const u = (await res.json()) as User” is an unchecked lie: it compiles and fails later.</text>
+  <text x="10" y="280" class="sm">Related: server-side validation is still mandatory; client types never replace it.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Parse, don’t cast. After parsing, the type is true by construction.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Why assertions are unsafe:</b> <code>as User</code> on <code>any</code> or <code>unknown</code> data tells the compiler to believe you. A backend change then produces a run-time <code>undefined</code> far from the cause.</li>
+<li><b>Schema libraries:</b> Zod (popular, rich API), Valibot (smaller, tree-shakable), ArkType (type-syntax based), Yup, io-ts. Features: transforms, defaults, coercion, discriminated unions, error formatting, <code>safeParse</code> returning a result instead of throwing. Cost: bundle size and parse time on very large payloads; validate at the edge once.</li>
+<li><b>Forms:</b> React Hook Form plus a Zod resolver reuses the same schema for field validation and the submitted type. Share schemas between client and server where possible.</li>
+<li><b>Environment variables and config:</b> parse <code>process.env</code> or <code>import.meta.env</code> at startup with a schema so missing values fail early with a readable message.</li>
+<li><b>Branded (opaque) types:</b> <code>type UserId = string &amp; { readonly __brand: 'UserId' }</code> with a constructor function that validates. They stop mixing up ids, validated and unvalidated strings, or currencies, at zero run-time cost. They are a convention, not enforced by the language.</li>
+<li><b>Result types:</b> <code>type Result&lt;T, E&gt; = { ok: true; value: T } | { ok: false; error: E }</code> for expected failures makes error handling explicit and exhaustive (J21 explains throwing versus returning).</li>
+<li><b>End-to-end type safety options:</b> <em>OpenAPI</em> with a generator (<code>openapi-typescript</code>, orval) for REST; <em>GraphQL Code Generator</em> for typed queries; <em>tRPC</em> when client and server are both TypeScript in a monorepo (types flow without a schema file); <em>Protobuf/gRPC-web</em> for contracts. Generated types still need run-time validation if the server is not fully trusted or versions can drift.</li>
+<li><b>Data fetching libraries:</b> TanStack Query infers the data type from the query function; pair the function with a parse step so the cache holds validated data.</li>
+<li><b>Serialisation gaps:</b> <code>JSON</code> turns <code>Date</code> into a string, drops <code>undefined</code> and functions, and cannot carry <code>Map</code> or <code>bigint</code>. A type claiming <code>createdAt: Date</code> for parsed JSON is wrong; schemas with transforms (<code>z.coerce.date()</code>) fix it.</li>
+<li><b>Versioning:</b> when APIs evolve, make new fields optional in the client schema, use unions for versioned payloads, and keep the contract in one place.</li>
+<li><b>Security link:</b> validation at the boundary also guards against malformed input and prototype pollution style payloads (J29), but the server must still validate and authorise.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Writing interfaces by hand to “match” an API and treating them as guaranteed.</li>
+<li>Validating in many places instead of once at the boundary, or not at all.</li>
+<li>Thinking a TypeScript type on a request body validates it on the server.</li>
+<li>Declaring <code>Date</code> fields for JSON data without conversion.</li>
+<li>Using a branded type but creating values with unchecked casts everywhere, which defeats it.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you keep frontend types in sync with the backend?</dt><dd>Generate them from the API schema in CI, or share a schema package in a monorepo, and fail the build on drift. Add run-time parsing for external data.</dd>
+<dt>What is the difference between a type guard and a schema parse?</dt><dd>A hand-written guard checks only what you coded; a schema is a declarative description that checks, reports errors and derives the type.</dd>
+<dt>Where exactly do you validate in a React app?</dt><dd>In the fetch layer (or query function) before data enters state or the cache, and in form handlers before submission.</dd>
+<dt>What do branded types cost?</dt><dd>No run-time cost, but a helper to create values; they add discipline rather than enforcement.</dd>
+</dl></div>
+</section>
+
+<!-- ============ T12 ============ -->
+<section class="q" id="t12">
+<header class="qh">
+  <div class="qrow"><span class="qid">T12</span><span class="tag added">Added</span></div>
+  <h2>Soundness and common pitfalls</h2>
+  <p class="qtext">“Where does TypeScript’s type system lie? What are common mistakes teams make? Explain variance, <code>any</code> leakage and why <code>Object.keys</code> returns <code>string[]</code>.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“TypeScript is deliberately unsound in a few places so that common JavaScript patterns type-check. <code>any</code> disables checking and spreads to everything it touches. Assertions and non-null <code>!</code> are unchecked claims. Arrays are covariant, so a <code>Dog[]</code> can be used as an <code>Animal[]</code> and then polluted with a cat. Method parameters are bivariant even under strict mode. Index access returns the element type without <code>undefined</code> unless <code>noUncheckedIndexedAccess</code> is on. <code>readonly</code> is shallow and compile-time only. And <code>Object.keys</code> returns <code>string[]</code> because objects can have more properties than their type says. My mitigations are strict flags, banning <code>any</code> with lint, schemas at boundaries, and treating every assertion as a code-review flag.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="Left: any leakage, where a value typed any from JSON parse is assigned to a typed variable with no error and crashes at run time. Right: array covariance, where an array of Dog is assigned to a variable of type array of Animal, then a Cat is pushed, breaking the original array.">
+  <text x="10" y="18" class="bd">any leaks through every assignment</text>
+  <rect x="10" y="30" width="200" height="46" rx="5" class="x"/><text x="18" y="50" class="mono" style="font-size:11px">const d = JSON.parse(s)</text><text x="18" y="66" class="sm">d: any</text>
+  <path class="a" d="M110 76V100"/>
+  <rect x="10" y="102" width="200" height="46" rx="5" class="w"/><text x="18" y="122" class="mono" style="font-size:11px">const user: User = d</text><text x="18" y="138" class="sm">no error: any fits anywhere</text>
+  <path class="a" d="M110 148V172"/>
+  <rect x="10" y="174" width="200" height="46" rx="5" class="g"/><text x="18" y="194" class="mono" style="font-size:11px">user.address.city</text><text x="18" y="210" class="sm">type says OK, data says not</text>
+  <path class="ax" d="M210 197H250"/><rect x="252" y="174" width="130" height="46" rx="5" class="x"/><text x="260" y="194" class="bd">TypeError</text><text x="260" y="210" class="sm">at run time</text>
+  <text x="10" y="248" class="sm">Defence: noImplicitAny, no-explicit-any, no-unsafe-* lint rules,</text><text x="10" y="264" class="sm">unknown + schemas, typed wrappers around JSON.parse and fetch.</text>
+  <text x="410" y="18" class="bd">Array covariance (unsound)</text>
+  <rect x="410" y="30" width="340" height="86" rx="5" class="b"/><text x="418" y="50" class="mono" style="font-size:11px">const dogs: Dog[] = [new Dog()];</text><text x="418" y="68" class="mono" style="font-size:11px">const animals: Animal[] = dogs;   // allowed</text><text x="418" y="86" class="mono" style="font-size:11px">animals.push(new Cat());          // allowed</text><text x="418" y="106" class="sm">dogs now contains a Cat though typed Dog[]</text>
+  <text x="410" y="140" class="bd">Other known holes</text>
+  <rect x="410" y="150" width="340" height="146" rx="5" class="b"/>
+  <text x="418" y="170" class="sm">• method parameters are bivariant (strictFunctionTypes</text><text x="428" y="184" class="sm">covers function-typed properties, not method syntax)</text>
+  <text x="418" y="202" class="sm">• arr[i] and record[key] are not “| undefined” by default</text>
+  <text x="418" y="220" class="sm">• readonly and const are shallow, compile-time only</text>
+  <text x="418" y="238" class="sm">• Object.keys(o): string[] (objects may have extra keys)</text>
+  <text x="418" y="256" class="sm">• assertions (as, !) and unchecked type guards</text>
+  <text x="418" y="274" class="sm">• structural typing lets wider objects through</text>
+</svg></div>
+<figcaption><b>The honest answer.</b> Most holes are conveniences. Know them so you can close the ones that matter with flags, lint and validation.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Variance in one minute:</b> <em>covariant</em> positions (read, outputs) allow a subtype where a supertype is expected; <em>contravariant</em> positions (function parameters) work the other way. Correct typing makes function parameters contravariant. TypeScript does this for function-typed properties under <code>strictFunctionTypes</code>, but treats method-shorthand parameters bivariantly, and treats arrays as covariant, trading safety for convenience.</li>
+<li><b><code>Object.keys</code> and <code>for…in</code>:</b> return <code>string[]</code>/<code>string</code> because a value of type <code>{ a: number }</code> may have more keys at run time. Use a typed helper with a documented cast, <code>Object.entries</code> carefully, or <code>Record</code>/<code>Map</code> structures when keys are known.</li>
+<li><b>Unchecked index access:</b> enable <code>noUncheckedIndexedAccess</code> so <code>arr[0]</code> and <code>dict[key]</code> include <code>undefined</code>, then handle it. It forces many small checks but removes a common source of run-time errors.</li>
+<li><b>Widening surprises:</b> <code>let x = 'a'</code> is <code>string</code>; object literal properties are widened (<code>{ mode: 'dev' }</code> has <code>mode: string</code>) so passing it to a function expecting <code>'dev' | 'prod'</code> fails. Use <code>as const</code>, <code>satisfies</code> or annotate.</li>
+<li><b>Enum quirks:</b> numeric enums accept any number; reverse mappings add noise; <code>const enum</code> can break across packages. Use unions of literals.</li>
+<li><b><code>{}</code>, <code>object</code>, <code>Object</code>:</b> three different things; avoid <code>{}</code> and <code>Object</code>.</li>
+<li><b>Optional versus undefined versus null:</b> choose a convention (often <code>undefined</code> for “missing” and <code>null</code> for “explicitly empty”, mirroring APIs) and use <code>??</code> and <code>?.</code>.</li>
+<li><b>Overly broad return types:</b> returning <code>any</code> from helper functions or leaving inferred <code>any[]</code> in an array (<code>const a = []</code> evolving types) hides problems.</li>
+<li><b>Unsafe casts:</b> <code>as unknown as T</code> is a loud red flag; <code>@ts-ignore</code> hides errors for the whole next line, while <code>@ts-expect-error</code> fails when the error disappears, so use it with a reason.</li>
+<li><b>Type-only dependencies:</b> mixing runtime and type imports creates cycles; use <code>import type</code>.</li>
+<li><b>Mutation:</b> TypeScript does not prevent mutation; immutability still needs discipline, <code>readonly</code> types, or libraries like Immer.</li>
+<li><b>Promise pitfalls:</b> a <code>() =&gt; void</code> callback accepts an async function, so a returned promise (and its errors) is ignored; the <code>no-misused-promises</code> and <code>no-floating-promises</code> lint rules catch this.</li>
+<li><b>Team anti-patterns:</b> using <code>any</code> to unblock a deadline and never returning, duplicating types by hand, giant “God” types, deeply clever generics, <code>interface</code> and <code>type</code> chosen randomly, ignoring compile errors in CI.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Claiming “TypeScript guarantees no run-time type errors”. It does not.</li>
+<li>Answering the variance question with definitions only; give the array and callback examples.</li>
+<li>Silencing errors with <code>@ts-ignore</code> or <code>as any</code> instead of fixing the type.</li>
+<li>Believing <code>readonly</code> or <code>as const</code> freeze data at run time (use <code>Object.freeze</code>, J9, if needed).</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is the difference between <code>@ts-ignore</code> and <code>@ts-expect-error</code>?</dt><dd>Both suppress the next line’s error. <code>@ts-expect-error</code> becomes an error itself once the underlying problem is fixed, so stale suppressions are found.</dd>
+<dt>Why is <code>strictFunctionTypes</code> not enough for methods?</dt><dd>Methods are intentionally exempt, because common patterns such as <code>Array&lt;T&gt;</code> assignability rely on bivariance.</dd>
+<dt>How do you stop <code>any</code> entering the codebase?</dt><dd><code>noImplicitAny</code>, <code>@typescript-eslint/no-explicit-any</code> and the <code>no-unsafe-*</code> rules, wrapped JSON/fetch helpers returning <code>unknown</code>, and review.</dd>
+<dt>Is <code>as const</code> the same as <code>Object.freeze</code>?</dt><dd>No: <code>as const</code> affects the types only; <code>Object.freeze</code> changes run-time behaviour (shallowly).</dd>
+</dl></div>
+</section>
+
+<!-- ============ T13 ============ -->
+<section class="q" id="t13">
+<header class="qh">
+  <div class="qrow"><span class="qid">T13</span><span class="tag added">Added</span></div>
+  <h2>Adopting TypeScript at scale</h2>
+  <p class="qtext">“How would you migrate a large JavaScript codebase to TypeScript? How do you keep type checking fast, enforce quality in CI, and test types? How do you set conventions for a team?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I migrate incrementally, never with a big-bang rewrite. First allow JavaScript and TypeScript to coexist with <code>allowJs</code>, add TypeScript to the build and CI, and start with <code>strict</code> off or per-directory. Then type the most shared and highest-risk modules first: API clients, domain models, shared utilities. Tighten flags one at a time, until <code>strict</code> is on, and block new <code>any</code> with lint. I separate transpilation from checking: a fast tool such as esbuild or swc emits code, and <code>tsc --noEmit</code> runs in CI and the editor. For performance in large repos I use project references, incremental builds and avoid very expensive types. I add conventions, templates and a short guide, and I measure progress, for example the percentage of files migrated and the count of <code>any</code>.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="A migration ladder in five steps from allowing JavaScript, to adding checkJs or JSDoc, to renaming files to TypeScript, to enabling strict flags one by one, to strict mode plus lint rules and CI gates. Below, the build and check pipeline: bundler transpiles quickly while tsc noEmit checks in CI and the editor.">
+  <text x="10" y="18" class="bd">Incremental migration ladder</text>
+  <rect x="10" y="190" width="130" height="54" rx="5" class="b"/><text x="18" y="210" class="bd">1 · Coexist</text><text x="18" y="228" class="sm">allowJs, tsc in CI</text>
+  <rect x="160" y="160" width="140" height="84" rx="5" class="b"/><text x="168" y="180" class="bd">2 · Check JS</text><text x="168" y="198" class="sm">checkJs, JSDoc types</text><text x="168" y="214" class="sm">on critical files only</text>
+  <rect x="320" y="130" width="140" height="114" rx="5" class="h"/><text x="328" y="150" class="bd">3 · Convert</text><text x="328" y="168" class="sm">rename .js → .ts</text><text x="328" y="184" class="sm">leaf modules first,</text><text x="328" y="200" class="sm">shared code early</text>
+  <rect x="480" y="100" width="130" height="144" rx="5" class="w"/><text x="488" y="120" class="bd">4 · Tighten</text><text x="488" y="138" class="sm">noImplicitAny, then</text><text x="488" y="154" class="sm">strictNullChecks,</text><text x="488" y="170" class="sm">one flag at a time,</text><text x="488" y="186" class="sm">per directory</text>
+  <rect x="630" y="70" width="120" height="174" rx="5" class="g"/><text x="638" y="90" class="bd">5 · Enforce</text><text x="638" y="108" class="sm">strict: true</text><text x="638" y="124" class="sm">no-explicit-any</text><text x="638" y="140" class="sm">CI gates, templates,</text><text x="638" y="156" class="sm">conventions, metrics</text>
+  <path class="a" d="M140 217H158"/><path class="a" d="M300 217H318"/><path class="a" d="M460 217H478"/><path class="a" d="M610 217H628"/>
+  <text x="10" y="272" class="bd">Split transpile and check</text>
+  <text x="10" y="292" class="sm">Vite / esbuild / swc: strip types in milliseconds (dev server, build)  ·  tsc --noEmit: full type check in CI and pre-push  ·  IDE: live checking</text>
+</svg></div>
+<figcaption><b>Principle.</b> Keep the project shippable at every step, with the compiler’s coverage growing monotonically.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Planning:</b> inventory the codebase, choose a pilot team and module, agree on <code>tsconfig</code> and conventions, decide who reviews types, and set exit criteria. Communicate the benefit (fewer incidents, easier refactors) and the cost.</li>
+<li><b>Tactics:</b> <code>allowJs</code>/<code>checkJs</code> with <code>// @ts-check</code> and JSDoc to get value from JavaScript files without renaming; automated codemods (ts-migrate, jscodeshift) to rename and insert temporary suppressions; <code>@ts-expect-error</code> with a ticket reference as migration debt; strictness per directory via multiple <code>tsconfig</code> files; ratchet scripts that fail CI if the count of <code>any</code> or suppressions increases.</li>
+<li><b>Order of work:</b> shared types and API layer first (biggest payoff), then state management, utilities, then leaf components. Leave volatile, soon-to-be-deleted code for last.</li>
+<li><b>Tooling split:</b> bundlers do not type-check. Run <code>tsc --noEmit</code> (or <code>vue-tsc</code>/framework equivalents) in CI as a required check, in a pre-push hook, and keep the IDE check on. Use <code>typescript-eslint</code> with type-aware rules: <code>no-explicit-any</code>, <code>no-floating-promises</code>, <code>no-misused-promises</code>, <code>consistent-type-imports</code>, <code>no-unnecessary-condition</code>, <code>switch-exhaustiveness-check</code>.</li>
+<li><b>Performance:</b> measure with <code>tsc --extendedDiagnostics</code> and <code>--generateTrace</code>. Remedies: project references with <code>composite</code> and <code>incremental</code>, narrow <code>include</code>/<code>exclude</code>, <code>skipLibCheck</code>, explicit return types on exported functions (and <code>isolatedDeclarations</code> where applicable <span class="verify">verify (5.5)</span>), prefer <code>interface extends</code> to large intersections, avoid giant unions and deeply recursive conditional types, and reduce <code>@types</code> globals. A native compiler port promises large speedups <span class="verify">verify status</span>.</li>
+<li><b>Testing types:</b> type-level tests with <code>expectTypeOf</code> (Vitest), <code>tsd</code>, <code>dtslint</code>, or <code>// @ts-expect-error</code> lines that prove misuse fails; <code>satisfies</code> in fixtures; compile checks for public API changes in libraries. Run-time tests still cover behaviour; types do not replace them.</li>
+<li><b>Library authors:</b> ship <code>.d.ts</code> (and maps), verify the packaging with <code>publint</code> and <code>arethetypeswrong</code>, keep public types stable (types are part of the semver contract), avoid exposing internal types, document generics.</li>
+<li><b>Conventions to agree on:</b> <code>interface</code> versus <code>type</code> rule, <code>unknown</code> over <code>any</code>, no enums (or only string enums), naming (<code>TItem</code> for generics, no <code>I</code> prefix), where to put shared types, assertion policy (comment required), file organisation, how to handle <code>null</code> and <code>undefined</code>, error and result types.</li>
+<li><b>Monorepos:</b> a base <code>tsconfig</code>, per-package configs, project references, shared types package, consistent TypeScript version, and dependency checks (<code>syncpack</code>, workspace protocols).</li>
+<li><b>Upgrading TypeScript:</b> pin the version, upgrade regularly in small steps, read breaking changes, and run the full check in CI; type-level utilities are the usual breakage.</li>
+<li><b>Measuring success:</b> percentage of files in TypeScript, number of <code>any</code> and suppressions over time, type-check duration, and production error rates for typed modules. Tie it to outcomes, not coverage numbers alone.</li>
+<li><b>Culture:</b> pair on the first conversions, review types in PRs as carefully as logic, and keep types simple. Over-typing slows teams more than it helps.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Proposing a stop-the-world rewrite to TypeScript.</li>
+<li>Turning on <code>strict</code> for the whole repo in one commit, producing thousands of errors and a flood of <code>any</code>.</li>
+<li>Assuming the bundler checks types. A green build does not mean types are valid.</li>
+<li>Letting <code>@ts-ignore</code> and <code>any</code> accumulate without a ratchet.</li>
+<li>Optimising type-checking speed by weakening types rather than measuring where time goes.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What would you convert first?</dt><dd>The shared API layer and domain models, because they are imported everywhere and their types give the most downstream safety.</dd>
+<dt>How do you stop regressions during a long migration?</dt><dd>A ratchet in CI: new files must be TypeScript, the count of <code>any</code> and suppressions may not grow, and converted directories enable <code>strict</code>.</dd>
+<dt>How do you justify the effort to stakeholders?</dt><dd>Point to defect classes eliminated (undefined access, wrong arguments), faster onboarding and safer refactors; propose a pilot with measurable results.</dd>
+<dt>What is your position on <code>any</code>?</dt><dd>Forbidden by default, allowed with a comment at boundaries or in tests, and tracked.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>36 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>What happens to types at run time?</td><td>They are erased; the emitted JavaScript has no type information.</td><td>T1</td></tr>
+<tr><td>2</td><td>What is structural typing?</td><td>Compatibility is decided by shape (members), not by declared names.</td><td>T1</td></tr>
+<tr><td>3</td><td>Is TypeScript sound?</td><td>No, deliberately: <code>any</code>, assertions, array and method variance, unchecked index access.</td><td>T1</td></tr>
+<tr><td>4</td><td>Do Babel and esbuild type-check?</td><td>No, they only strip types; run <code>tsc --noEmit</code> to check.</td><td>T1</td></tr>
+<tr><td>5</td><td><code>any</code> versus <code>unknown</code>?</td><td><code>any</code> disables checks; <code>unknown</code> accepts anything but must be narrowed before use.</td><td>T2</td></tr>
+<tr><td>6</td><td>What is <code>never</code> used for?</td><td>Functions that never return, impossible branches and exhaustiveness checks.</td><td>T2</td></tr>
+<tr><td>7</td><td><code>void</code> versus <code>undefined</code>?</td><td><code>void</code> means “ignore the return value”; <code>undefined</code> is a real value type.</td><td>T2</td></tr>
+<tr><td>8</td><td>What does <code>as const</code> do?</td><td>Makes values deeply readonly with literal types, usable to derive unions.</td><td>T2</td></tr>
+<tr><td>9</td><td>What does <code>satisfies</code> do?</td><td>Checks a value against a type but keeps its narrower inferred type.</td><td>T2</td></tr>
+<tr><td>10</td><td>Why avoid enums?</td><td>They emit code, numeric ones are loose, <code>const enum</code> breaks with isolated modules; use literal unions.</td><td>T2</td></tr>
+<tr><td>11</td><td><code>type</code> versus <code>interface</code>?</td><td>Interfaces merge and extend; types can alias anything (unions, mapped, conditional) but cannot merge.</td><td>T3</td></tr>
+<tr><td>12</td><td>When do excess property checks run?</td><td>Only on fresh object literals assigned directly to a typed target.</td><td>T3</td></tr>
+<tr><td>13</td><td>Does <code>readonly</code> freeze an object?</td><td>No: compile-time and shallow only.</td><td>T3</td></tr>
+<tr><td>14</td><td>What is a discriminated union?</td><td>A union whose members share a literal-typed tag, so checking the tag narrows the type.</td><td>T4</td></tr>
+<tr><td>15</td><td>How do you make a switch exhaustive?</td><td>Assign the remaining value to <code>never</code> in the default branch.</td><td>T4</td></tr>
+<tr><td>16</td><td>What is a user-defined type guard?</td><td>A function returning <code>x is T</code>; trusted by the compiler, so only as safe as its body.</td><td>T4</td></tr>
+<tr><td>17</td><td>Why use generics?</td><td>To keep relationships between types (input to output) instead of using <code>any</code>.</td><td>T5</td></tr>
+<tr><td>18</td><td>What does <code>T extends keyof U</code> mean?</td><td>T must be one of the property names of U.</td><td>T5</td></tr>
+<tr><td>19</td><td>How do you write a generic arrow in a <code>.tsx</code> file?</td><td>Use <code>&lt;T,&gt;</code> (or <code>&lt;T extends unknown&gt;</code>) so it is not parsed as JSX.</td><td>T5</td></tr>
+<tr><td>20</td><td><code>Pick</code> versus <code>Omit</code>?</td><td>Pick keeps listed keys (and validates them); Omit removes keys (and does not validate them).</td><td>T6</td></tr>
+<tr><td>21</td><td>How do you get a function’s resolved result type?</td><td><code>Awaited&lt;ReturnType&lt;typeof fn&gt;&gt;</code>.</td><td>T6</td></tr>
+<tr><td>22</td><td>Is <code>Partial</code> deep?</td><td>No, shallow; deep versions need a recursive mapped type.</td><td>T6</td></tr>
+<tr><td>23</td><td>What is a mapped type?</td><td>A type that iterates keys: <code>{ [K in keyof T]: … }</code>, with modifier and key-remapping support.</td><td>T7</td></tr>
+<tr><td>24</td><td>What is a distributive conditional type?</td><td>A conditional on a naked type parameter that applies to each union member separately.</td><td>T7</td></tr>
+<tr><td>25</td><td>What does <code>infer</code> do?</td><td>Captures a type from inside another type in a conditional, e.g. a return type.</td><td>T7</td></tr>
+<tr><td>26</td><td>What are overloads?</td><td>Several call signatures for one function; callers see only the overloads, not the implementation.</td><td>T8</td></tr>
+<tr><td>27</td><td><code>private</code> versus <code>#private</code>?</td><td><code>private</code> is compile-time only; <code>#</code> is real run-time privacy.</td><td>T8</td></tr>
+<tr><td>28</td><td>What does <code>implements</code> do?</td><td>Checks that a class conforms to a shape; it inherits nothing.</td><td>T8</td></tr>
+<tr><td>29</td><td>Where does TypeScript look for a library’s types?</td><td>Bundled types, then <code>@types/*</code>, then your <code>declare module</code>, else implicit-any error.</td><td>T9</td></tr>
+<tr><td>30</td><td>What does <code>strict</code> enable?</td><td>A family of flags: strictNullChecks, noImplicitAny, strictFunctionTypes, and others.</td><td>T9</td></tr>
+<tr><td>31</td><td>Is <code>React.FC</code> recommended?</td><td>Not usually; annotate the props parameter directly.</td><td>T10</td></tr>
+<tr><td>32</td><td>How do you validate API data?</td><td>Treat it as <code>unknown</code> and parse with a schema (Zod and similar); infer the type from the schema.</td><td>T11</td></tr>
+<tr><td>33</td><td>What is a branded type?</td><td>A string or number intersected with a phantom tag to prevent mixing ids; no run-time cost.</td><td>T11</td></tr>
+<tr><td>34</td><td>Why does <code>Object.keys</code> return <code>string[]</code>?</td><td>An object may have more keys at run time than its type declares.</td><td>T12</td></tr>
+<tr><td>35</td><td><code>@ts-ignore</code> versus <code>@ts-expect-error</code>?</td><td>The second errors when the suppressed problem is gone, so stale suppressions are found.</td><td>T12</td></tr>
+<tr><td>36</td><td>How do you migrate a large JS repo?</td><td>Incrementally: allowJs, convert shared code first, tighten flags one by one, ratchet <code>any</code>, enforce in CI.</td><td>T13</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer TypeScript questions at L4</h4>
+<ul>
+<li>Lead with the mental model (types are erased, structure decides compatibility), then the practical rule. “Parse, don’t cast” and “derive, don’t duplicate” are strong one-liners.</li>
+<li>Show judgement about complexity: say when you would use advanced types (shared libraries, design systems) and when you would keep types simple (feature code).</li>
+<li>Always connect to production: an <code>any</code> that leaked, an unchecked API response, a migration you led, a type that caught a regression during a refactor.</li>
+<li>Be honest about limits: unsoundness, compile-time cost, build tooling that does not type-check.</li>
+<li>For version-specific features say the feature and “I would confirm the version in the release notes”.</li>
+<li>The interview is theoretical: expect “explain”, “compare”, “when would you use” and “how would you design”, not live type puzzles.</li>
+</ul></div>
+</section>
+
+</div>

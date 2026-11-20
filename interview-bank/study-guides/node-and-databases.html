@@ -1,0 +1,1002 @@
+<title>Node, Databases and Supabase Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"Node, Databases and Supabase Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"Node, Databases and Supabase Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · Backend for frontend leads · Working depth</div>
+  <h1>Node, Databases and Supabase Study Guide</h1>
+  <p>The backend knowledge a frontend lead is expected to have: the Node.js runtime and event loop, Express and middleware, REST API design, authentication and authorisation in Node, choosing between SQL and NoSQL, SQL fundamentals (joins, indexes, transactions), PostgreSQL and Supabase, MongoDB, caching with Redis, background jobs and messaging, testing and observability for APIs, and scaling and hardening a Node service. The level is interview-ready working depth, not exhaustive. Every topic is something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> product features and versions change: check current docs</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Node.js and APIs</h3>
+    <ol>
+      <li><b>D1</b><a href="#d1">Node.js runtime and event loop</a></li>
+      <li><b>D2</b><a href="#d2">Express and middleware</a></li>
+      <li><b>D3</b><a href="#d3">REST API design</a></li>
+      <li><b>D4</b><a href="#d4">Authentication and authorisation in Node</a></li>
+    </ol>
+    <h3 style="margin-top:16px">2 · Data stores</h3>
+    <ol>
+      <li><b>D5</b><a href="#d5">SQL versus NoSQL, ACID, CAP, ORMs</a></li>
+      <li><b>D6</b><a href="#d6">SQL essentials: joins, indexes, transactions</a></li>
+      <li><b>D7</b><a href="#d7">PostgreSQL and Supabase</a></li>
+      <li><b>D8</b><a href="#d8">MongoDB</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>3 · Systems around the API</h3>
+    <ol>
+      <li><b>D9</b><a href="#d9">Caching and Redis</a></li>
+      <li><b>D10</b><a href="#d10">Background jobs and messaging</a></li>
+      <li><b>D11</b><a href="#d11">Testing, logging and observability</a></li>
+      <li><b>D12</b><a href="#d12">Scaling and hardening a Node service</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">D1 to D4 are the standard Node and API questions. D5 and D6 cover data fundamentals that every lead is asked. D7 and D8 are the specific stores in the role requirements.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Related: Web protocols and security (auth, cookies, headers), Architecture and DevOps (deployment, containers), Java guide (the alternative backend you may meet).</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Node.js and APIs</h1>
+
+<!-- ============ D1 ============ -->
+<section class="q" id="d1">
+<header class="qh">
+  <div class="qrow"><span class="qid">D1</span><span class="tag added">Added</span></div>
+  <h2>Node.js runtime and event loop</h2>
+  <p class="qtext">“How does Node.js work? Explain the event loop phases, libuv and the thread pool, non-blocking I/O, streams, buffers, CommonJS versus ES modules, and when Node is a poor fit.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Node.js runs JavaScript on V8 outside the browser, with a single main thread and an event-driven, non-blocking I/O model implemented by libuv. When my code starts an I/O operation such as a file read or a network call, libuv hands it to the operating system or a small thread pool, and the callback or promise resolves later through the event loop, so one thread can serve thousands of concurrent connections. The event loop cycles through phases: timers, pending callbacks, poll for I/O, check for <code>setImmediate</code>, and close callbacks, with microtasks and <code>process.nextTick</code> drained between them. Node is excellent for I/O-heavy APIs, real-time and tooling; it is a poor fit for CPU-bound work on the main thread, which blocks every request, unless moved to worker threads or other services.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: Node architecture with V8, libuv, the thread pool and the OS. Right: event loop phases in order with what runs in each.">
+  <text x="10" y="18" class="bd">Architecture</text>
+  <rect x="10" y="30" width="360" height="52" rx="5" class="h"/><text x="18" y="50" class="bd">Your JavaScript + Node APIs (fs, http, crypto, streams)</text><text x="18" y="68" class="sm">single main thread, one call stack, V8 engine</text>
+  <rect x="10" y="94" width="360" height="52" rx="5" class="w"/><text x="18" y="114" class="bd">libuv: event loop + async I/O</text><text x="18" y="132" class="sm">epoll / kqueue / IOCP for sockets · timers · signals</text>
+  <rect x="10" y="158" width="170" height="52" rx="5" class="b"/><text x="18" y="178" class="bd">Thread pool (4 default)</text><text x="18" y="196" class="sm">fs, dns.lookup, crypto, zlib</text>
+  <rect x="200" y="158" width="170" height="52" rx="5" class="b"/><text x="208" y="178" class="bd">Operating system</text><text x="208" y="196" class="sm">network, disk, processes</text>
+  <path class="a" d="M190 82V92"/><path class="a" d="M95 146V156"/><path class="a" d="M285 146V156"/>
+  <text x="10" y="236" class="sm">CPU-heavy code on the main thread blocks the loop: all requests wait.</text><text x="10" y="252" class="sm">Use worker_threads, child processes, a queue, or another service.</text><text x="10" y="272" class="sm">UV_THREADPOOL_SIZE tunes the pool. Network I/O does not use the pool.</text>
+  <text x="400" y="18" class="bd">Event loop phases (one iteration)</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">1 timers</tspan>  setTimeout / setInterval callbacks due</text>
+  <rect x="400" y="68" width="350" height="34" rx="4" class="b"/><text x="408" y="90" class="sm"><tspan class="bd">2 pending</tspan>  deferred system callbacks (some TCP errors)</text>
+  <rect x="400" y="106" width="350" height="34" rx="4" class="h"/><text x="408" y="128" class="sm"><tspan class="bd">3 poll</tspan>  retrieve I/O events, run I/O callbacks (may wait)</text>
+  <rect x="400" y="144" width="350" height="34" rx="4" class="g"/><text x="408" y="166" class="sm"><tspan class="bd">4 check</tspan>  setImmediate callbacks</text>
+  <rect x="400" y="182" width="350" height="34" rx="4" class="b"/><text x="408" y="204" class="sm"><tspan class="bd">5 close</tspan>  socket.on('close') and cleanup</text>
+  <rect x="400" y="226" width="350" height="84" rx="5" class="w"/><text x="408" y="246" class="bd">Between callbacks</text><text x="408" y="264" class="sm">process.nextTick queue first, then promise microtasks.</text><text x="408" y="280" class="sm">Recursive nextTick or microtasks starve I/O (J18).</text><text x="408" y="296" class="sm">Inside an I/O callback, setImmediate runs before setTimeout(0).</text>
+</svg></div>
+<figcaption><b>Key idea.</b> Concurrency without threads for I/O; parallelism only through workers, processes and the thread pool.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Single-threaded, but not single-process:</b> the JavaScript runs on one thread; libuv and the OS do I/O work in parallel; <code>worker_threads</code> give additional JavaScript threads with message passing and <code>SharedArrayBuffer</code>; the <code>cluster</code> module or process managers (PM2, containers) run one process per core.</li>
+<li><b>Blocking versus non-blocking:</b> <code>fs.readFileSync</code> blocks the loop; <code>fs.promises.readFile</code> does not. Synchronous APIs are acceptable at startup (config loading) but not in request handlers. CPU work such as large JSON parsing, crypto hashing (use async <code>crypto.scrypt</code>/<code>argon2</code> libraries that use the pool), image processing and regex backtracking can freeze the server (J14).</li>
+<li><b>Streams:</b> process data in chunks without loading it all: Readable, Writable, Duplex, Transform. <code>pipeline()</code> from <code>stream/promises</code> handles errors and cleanup; backpressure signals (<code>write()</code> returns false, <code>drain</code> event) prevent memory blowup. Use for file uploads, large downloads, compression, and proxying; HTTP request and response objects are streams.</li>
+<li><b>Buffers:</b> raw binary data (<code>Buffer</code>, a <code>Uint8Array</code> subclass) for files, network and crypto; allocate with <code>Buffer.alloc</code>; encoding conversions (utf8, base64, hex).</li>
+<li><b>Modules:</b> CommonJS (<code>require</code>, synchronous, cached, <code>module.exports</code>) and ES modules (<code>import</code>, static, async, <code>"type": "module"</code> or <code>.mjs</code>); interop caveats: <code>require</code> of ESM is limited (improving in newer versions <span class="verify">verify</span>), ESM lacks <code>__dirname</code> (use <code>import.meta.dirname</code>/<code>url</code>), file extensions required, top-level await available (J15).</li>
+<li><b>Process and environment:</b> <code>process.env</code>, <code>process.argv</code>, signals (<code>SIGTERM</code> for graceful shutdown), <code>uncaughtException</code> and <code>unhandledRejection</code> handlers (log and exit, do not continue), exit codes, <code>process.memoryUsage()</code>.</li>
+<li><b>Built-in modules worth knowing:</b> <code>http</code>/<code>https</code>, <code>fs</code>, <code>path</code>, <code>os</code>, <code>events</code> (EventEmitter), <code>stream</code>, <code>crypto</code>, <code>url</code>, <code>util.promisify</code>, <code>child_process</code>, <code>worker_threads</code>, <code>perf_hooks</code>, <code>async_hooks</code>/<code>AsyncLocalStorage</code> for request context, and a built-in test runner (<code>node:test</code>) and <code>fetch</code> in recent versions.</li>
+<li><b>EventEmitter:</b> the base of many APIs (observer pattern, J28); remember to remove listeners, handle the <code>'error'</code> event (an unhandled <code>error</code> event throws), and watch for listener leak warnings.</li>
+<li><b>Error handling:</b> callbacks use error-first convention; promises and <code>async/await</code> are the norm; wrap route handlers so rejected promises reach error middleware (Express 5 does this natively); distinguish operational errors (expected) from programmer errors (bugs) (J21).</li>
+<li><b>Versions and LTS:</b> use even-numbered LTS releases in production; check the end-of-life schedule; manage versions with nvm/fnm/Volta; pin in <code>.nvmrc</code> and Docker images.</li>
+<li><b>When Node fits:</b> API gateways and BFFs, real-time (WebSockets), microservices with I/O-bound work, SSR, build tooling, serverless functions. <b>When not:</b> heavy computation, machine learning training, long-lived CPU-bound batch processing (use Go, Java, Rust, Python) unless offloaded.</li>
+<li><b>Performance tips:</b> avoid sync calls in handlers, reuse connections (HTTP keep-alive agents, DB pools), cache hot data, stream large payloads, profile with <code>--inspect</code>/<code>clinic</code>, and watch event-loop lag (<code>perf_hooks.monitorEventLoopDelay</code>).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying Node is “single-threaded” without mentioning libuv, the thread pool and workers.</li>
+<li>Running CPU-heavy work in a request handler and wondering why latency spikes for everyone.</li>
+<li>Using synchronous filesystem or crypto calls in handlers.</li>
+<li>Letting an <code>unhandledRejection</code> go unnoticed in older Node versions, or continuing after <code>uncaughtException</code>.</li>
+<li>Ignoring backpressure when piping streams manually.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt><code>setImmediate</code> versus <code>setTimeout(0)</code> versus <code>nextTick</code>?</dt><dd><code>nextTick</code> runs before the loop continues (before promise microtasks); <code>setImmediate</code> runs in the check phase after poll; <code>setTimeout(0)</code> runs in the timers phase after at least one millisecond; their order from the main module is non-deterministic.</dd>
+<dt>How do you use all CPU cores?</dt><dd>Run multiple processes (cluster, PM2, containers behind a load balancer) or worker threads for CPU work.</dd>
+<dt>What is backpressure?</dt><dd>A signal from a slow consumer telling the producer to pause so buffers do not grow without bound; <code>pipeline</code> handles it.</dd>
+<dt>How do you find event-loop blocking?</dt><dd>Measure event-loop delay, CPU profile with <code>--cpu-prof</code>, and look for long synchronous functions.</dd>
+</dl></div>
+</section>
+
+<!-- ============ D2 ============ -->
+<section class="q" id="d2">
+<header class="qh">
+  <div class="qrow"><span class="qid">D2</span><span class="tag added">Added</span></div>
+  <h2>Express and middleware</h2>
+  <p class="qtext">“How does Express work? Explain middleware, the request lifecycle, routing, error handling, async errors, validation and project structure. What are alternatives like Fastify, NestJS and Hono?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Express is a minimal web framework built around middleware: functions that receive the request, the response and <code>next</code>, run in the order they were registered, and either end the response or call <code>next</code> to pass control on. A request flows through global middleware such as logging, security headers, body parsing and authentication, then the matching route handler, and errors flow to error-handling middleware with four arguments. The order matters. I structure apps in layers: routes, controllers, services and data access, validate input with a schema, centralise error handling, and keep configuration and secrets in the environment. Alternatives include Fastify for speed and schema-based validation, NestJS for opinionated structure with dependency injection, and Hono for edge runtimes.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="An Express request passing through a chain of middleware: logger, security headers, CORS, body parser, authentication, validation, then the route handler, with an error handler catching failures. Right: layered project structure.">
+  <text x="10" y="18" class="bd">Request pipeline (order matters)</text>
+  <rect x="10" y="30" width="90" height="36" rx="4" class="b"/><text x="18" y="52" class="sm">Request</text>
+  <rect x="110" y="30" width="80" height="36" rx="4" class="h"/><text x="118" y="52" class="sm">logger</text>
+  <rect x="200" y="30" width="90" height="36" rx="4" class="h"/><text x="208" y="52" class="sm">helmet+cors</text>
+  <rect x="300" y="30" width="70" height="36" rx="4" class="h"/><text x="308" y="52" class="sm">json()</text>
+  <path class="a" d="M100 48H108"/><path class="a" d="M190 48H198"/><path class="a" d="M290 48H298"/>
+  <rect x="10" y="84" width="90" height="36" rx="4" class="w"/><text x="18" y="106" class="sm">rate limit</text>
+  <rect x="110" y="84" width="80" height="36" rx="4" class="w"/><text x="118" y="106" class="sm">auth</text>
+  <rect x="200" y="84" width="90" height="36" rx="4" class="w"/><text x="208" y="106" class="sm">validate</text>
+  <rect x="300" y="84" width="70" height="36" rx="4" class="g"/><text x="308" y="106" class="sm">handler</text>
+  <path class="a" d="M340 66V82"/><path class="a" d="M100 102H108"/><path class="a" d="M190 102H198"/><path class="a" d="M290 102H298"/>
+  <rect x="10" y="138" width="360" height="40" rx="5" class="x"/><text x="18" y="156" class="bd">Error middleware (err, req, res, next)</text><text x="18" y="171" class="sm">registered last; maps errors to status + safe message; logs details</text>
+  <rect x="10" y="190" width="360" height="62" rx="5" class="b"/><text x="18" y="208" class="mono" style="font-size:10px">app.use((req, res, next) =&gt; { …; next(); });</text><text x="18" y="224" class="mono" style="font-size:10px">app.get('/users/:id', auth, validate(schema), handler);</text><text x="18" y="244" class="sm">next() continues; next(err) jumps to error handlers; res.send() ends.</text>
+  <text x="10" y="276" class="sm">Express 5 forwards rejected promises from async handlers to the error</text><text x="10" y="292" class="sm">handler; in Express 4 wrap them or use a helper.</text>
+  <text x="400" y="18" class="bd">Layered structure</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">Routes</tspan>  URL → controller, attach middleware</text>
+  <rect x="400" y="68" width="350" height="34" rx="4" class="h"/><text x="408" y="90" class="sm"><tspan class="bd">Controllers</tspan>  parse input, call services, shape response</text>
+  <rect x="400" y="106" width="350" height="34" rx="4" class="h"/><text x="408" y="128" class="sm"><tspan class="bd">Services</tspan>  business rules, transactions, no HTTP types</text>
+  <rect x="400" y="144" width="350" height="34" rx="4" class="g"/><text x="408" y="166" class="sm"><tspan class="bd">Repositories / models</tspan>  DB queries via ORM or SQL</text>
+  <rect x="400" y="188" width="350" height="64" rx="5" class="w"/><text x="408" y="208" class="bd">Cross-cutting</text><text x="408" y="226" class="sm">config (env, validated) · logger · error classes · auth ·</text><text x="408" y="242" class="sm">validation schemas · dependency wiring · health checks</text>
+  <rect x="400" y="262" width="350" height="48" rx="5" class="b"/><text x="408" y="282" class="bd">Alternatives</text><text x="408" y="298" class="sm">Fastify · NestJS (DI, modules) · Hono (edge) · Koa</text>
+</svg></div>
+<figcaption><b>Idea.</b> Everything is middleware: small composable functions in a deliberate order.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Middleware types:</b> application-level (<code>app.use</code>), router-level, error-handling (four parameters), built-in (<code>express.json()</code>, <code>express.static</code>), and third-party (<code>helmet</code>, <code>cors</code>, <code>morgan</code>/<code>pino-http</code>, <code>compression</code>, <code>express-rate-limit</code>, <code>cookie-parser</code>, <code>multer</code>). Order: security and parsing first, then auth, routes, 404 handler, error handler last.</li>
+<li><b>Routing:</b> methods and path patterns, route parameters (<code>/users/:id</code>), query strings, <code>express.Router()</code> for modular routes, route-level middleware, path-to-regexp rules (changed in Express 5), and a catch-all 404.</li>
+<li><b>Request and response:</b> <code>req.params</code>, <code>req.query</code>, <code>req.body</code>, <code>req.headers</code>, <code>res.status().json()</code>, <code>res.set</code>, streaming with <code>res.write</code> or <code>pipe</code>. Always send exactly one response; “headers already sent” errors mean double responses.</li>
+<li><b>Error handling:</b> create typed errors (<code>AppError</code> with status and code), throw or <code>next(err)</code>, a single error middleware that logs full details but returns safe messages (no stack traces in production), and handle 404 separately. For async code in Express 4 use an <code>asyncHandler</code> wrapper or <code>express-async-errors</code>; Express 5 handles promise rejection natively.</li>
+<li><b>Validation:</b> validate <code>body</code>, <code>query</code> and <code>params</code> with Zod, Joi or Ajv at the boundary; return 400/422 with field errors; never trust client data; sanitise where output encodes (T11, E6).</li>
+<li><b>Security middleware:</b> <code>helmet</code> (security headers), <code>cors</code> with an allowlist, rate limiting, request size limits (<code>express.json({ limit })</code>), disabling <code>X-Powered-By</code>, HTTPS and secure cookies behind proxies (<code>trust proxy</code>), CSRF protection for cookie sessions, input validation, parameterised queries (P5, P6, P7).</li>
+<li><b>Configuration:</b> twelve-factor: config from environment, validated at startup; no secrets in code; separate dev and production behaviour; <code>NODE_ENV=production</code> enables optimisations.</li>
+<li><b>Project structure:</b> by feature (<code>users/</code> with routes, controller, service, schema, tests) scales better than by technical type; keep controllers thin; services independent of Express for testability; dependency injection manually or with a container.</li>
+<li><b>Static files and SPA hosting:</b> <code>express.static</code> with cache headers; history fallback to <code>index.html</code>; in production prefer a CDN or reverse proxy for static content.</li>
+<li><b>Alternatives:</b> <b>Fastify</b> (high performance, JSON-schema validation and serialisation, plugin encapsulation, built-in logging with pino); <b>NestJS</b> (TypeScript, decorators, modules, DI, guards, pipes, interceptors, Angular-like structure, good for large teams); <b>Koa</b> (minimal, async middleware); <b>Hono</b> (tiny, runs on edge and Node, Bun, Deno); <b>tRPC</b> for typed RPC (E9). Choose by team size, structure needs and performance targets.</li>
+<li><b>Testing:</b> export the <code>app</code> separately from <code>listen</code>; use <code>supertest</code> for HTTP-level tests; mock dependencies at service boundaries; test error paths and auth (D11).</li>
+<li><b>Graceful shutdown:</b> on <code>SIGTERM</code> stop accepting connections (<code>server.close</code>), finish in-flight requests, close DB pools, then exit; set a timeout.</li>
+<li><b>Health and readiness endpoints:</b> <code>/healthz</code> (liveness) and <code>/readyz</code> (dependencies ready) for orchestrators.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Registering the error handler before routes, or body parsers after routes, so they never apply.</li>
+<li>Forgetting <code>return</code> after sending a response and then calling <code>next()</code> or sending again.</li>
+<li>Unhandled promise rejections in async handlers on Express 4.</li>
+<li>Returning stack traces and internal error messages to clients.</li>
+<li>Accepting unlimited body sizes or unvalidated input.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does <code>next()</code> do?</dt><dd>Passes control to the next matching middleware; <code>next(err)</code> skips to the error handlers.</dd>
+<dt>How do you handle errors consistently?</dt><dd>Typed application errors, one error-handling middleware that maps them to status codes and a standard JSON shape, plus structured logging.</dd>
+<dt>Why choose NestJS or Fastify?</dt><dd>NestJS for structure and DI in large teams; Fastify for performance and schema-driven validation.</dd>
+<dt>How do you structure a growing Express codebase?</dt><dd>By feature modules with layered controllers, services and repositories, shared infrastructure, and tests per layer.</dd>
+</dl></div>
+</section>
+
+<!-- ============ D3 ============ -->
+<section class="q" id="d3">
+<header class="qh">
+  <div class="qrow"><span class="qid">D3</span><span class="tag added">Added</span></div>
+  <h2>REST API design</h2>
+  <p class="qtext">“How do you design a good REST API? Resources, verbs, status codes, pagination, filtering, versioning, idempotency, errors, rate limiting, documentation. When do you pick GraphQL or gRPC instead?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A good REST API models resources with nouns in URLs, uses HTTP methods for actions and status codes for outcomes, and is predictable: consistent naming, pagination, filtering and error format. <code>GET</code> reads and is safe, <code>POST</code> creates, <code>PUT</code> and <code>PATCH</code> update, <code>DELETE</code> removes, with idempotency respected so clients can retry safely. I return consistent JSON with problem-details errors, support cursor pagination for large collections, version deliberately, protect with authentication, authorisation and rate limiting, and document with OpenAPI so clients and tests can be generated. I would choose GraphQL when many different clients need flexible aggregated data, and gRPC for internal service-to-service calls.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: resource URL design with methods and status codes for a users collection. Right: cursor pagination request and response, error format and rate limiting headers.">
+  <text x="10" y="18" class="bd">Resources, verbs, outcomes</text>
+  <rect x="10" y="30" width="360" height="170" rx="5" class="b"/>
+  <text x="18" y="50" class="mono" style="font-size:10px">GET    /users           200 list (paginated)</text>
+  <text x="18" y="68" class="mono" style="font-size:10px">POST   /users           201 + Location, 422 invalid</text>
+  <text x="18" y="86" class="mono" style="font-size:10px">GET    /users/42        200 · 404 not found</text>
+  <text x="18" y="104" class="mono" style="font-size:10px">PUT    /users/42        200/204 replace (idempotent)</text>
+  <text x="18" y="122" class="mono" style="font-size:10px">PATCH  /users/42        200 partial update</text>
+  <text x="18" y="140" class="mono" style="font-size:10px">DELETE /users/42        204 (idempotent)</text>
+  <text x="18" y="158" class="mono" style="font-size:10px">GET    /users/42/orders nested relation</text>
+  <text x="18" y="182" class="sm">Plural nouns, lowercase, no verbs in paths; actions as sub-resources</text><text x="18" y="196" class="sm">(POST /orders/42/cancel) only when no resource model fits.</text>
+  <rect x="10" y="212" width="360" height="98" rx="5" class="w"/><text x="18" y="232" class="bd">Status codes</text><text x="18" y="250" class="sm">400 bad · 401 unauthenticated · 403 forbidden · 404 missing</text><text x="18" y="266" class="sm">409 conflict · 422 validation · 429 too many requests (Retry-After)</text><text x="18" y="282" class="sm">500 server error · 503 unavailable. Never 200 with an error body.</text><text x="18" y="298" class="sm">Idempotency-Key header for POSTs (payments).</text>
+  <text x="400" y="18" class="bd">Pagination, errors, limits</text>
+  <rect x="400" y="30" width="350" height="76" rx="5" class="g"/><text x="408" y="48" class="mono" style="font-size:10px">GET /posts?limit=20&amp;cursor=eyJpZCI6MTAwfQ</text><text x="408" y="66" class="mono" style="font-size:10px">{ "data": […], "next_cursor": "eyJpZCI6ODB9" }</text><text x="408" y="86" class="sm">cursor = stable, fast on large tables; offset = simple but slow</text><text x="408" y="100" class="sm">and unstable when rows change</text>
+  <rect x="400" y="114" width="350" height="76" rx="5" class="x"/><text x="408" y="132" class="bd">Problem details (RFC 9457) error</text><text x="408" y="150" class="mono" style="font-size:10px">{ "type": "…/validation", "title": "Invalid input",</text><text x="408" y="166" class="mono" style="font-size:10px">  "status": 422, "errors": [{ "field": "email" }] }</text>
+  <rect x="400" y="198" width="350" height="50" rx="5" class="w"/><text x="408" y="216" class="bd">Rate limiting headers</text><text x="408" y="234" class="mono" style="font-size:10px">RateLimit-Limit/Remaining/Reset · Retry-After on 429</text>
+  <rect x="400" y="256" width="350" height="54" rx="5" class="b"/><text x="408" y="276" class="bd">Versioning</text><text x="408" y="294" class="sm">/v1/ path (simple), or header; add fields compatibly, deprecate</text><text x="408" y="308" class="sm">with Sunset headers, avoid breaking changes</text>
+</svg></div>
+<figcaption><b>Principle.</b> Predictable conventions let clients be generic and teams move independently.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>REST constraints:</b> client-server, stateless requests, cacheable responses, uniform interface (resources, representations, self-descriptive messages), layered system; HATEOAS (links in responses) is the least adopted. In practice “REST-ish JSON over HTTP” with sound conventions is the goal.</li>
+<li><b>Naming and modelling:</b> nouns, plural collections, hierarchical relationships only one or two levels deep, filter by query parameters (<code>?status=active&amp;sort=-createdAt</code>), field selection (<code>?fields=</code>), consistent casing (camelCase JSON), ISO 8601 UTC timestamps, string ids for large numbers.</li>
+<li><b>Methods semantics:</b> safe (GET, HEAD), idempotent (GET, PUT, DELETE), non-idempotent (POST, usually PATCH); design retries around that; support <code>HEAD</code> and <code>OPTIONS</code> where useful (P1).</li>
+<li><b>Pagination:</b> offset/limit (simple, can skip or duplicate on changing data, slow for deep pages), cursor/keyset (use an indexed column, stable and fast), page tokens; include next/prev links or cursors; return total counts only if cheap (counts are costly on big tables). Cap <code>limit</code>.</li>
+<li><b>Filtering and sorting:</b> allow-list sortable and filterable fields (avoid injection and unindexed scans); document operators; consider search endpoints for complex queries.</li>
+<li><b>Idempotency and concurrency:</b> <code>Idempotency-Key</code> for POST; optimistic concurrency with <code>ETag</code>/<code>If-Match</code> (412 on mismatch) or version fields to prevent lost updates; return 409 for conflicts.</li>
+<li><b>Errors:</b> a consistent shape with machine-readable code, human message and field details (RFC 9457 problem details); correct status codes; do not leak internals; include a request/trace id for support.</li>
+<li><b>Caching and conditional requests:</b> ETags and <code>Cache-Control</code> for GET; 304 responses; <code>Vary</code> (P3).</li>
+<li><b>Bulk and long-running operations:</b> batch endpoints with partial-success reporting; asynchronous jobs return 202 Accepted with a status URL; webhooks or polling for completion; file uploads via presigned URLs.</li>
+<li><b>Security:</b> authentication (bearer tokens), authorisation per resource, rate limiting by key and IP, input validation, CORS allowlists, no sensitive data in URLs, TLS, and audit logging (P8, D4).</li>
+<li><b>Documentation and contracts:</b> OpenAPI/Swagger spec as the contract; generate docs (Swagger UI, Redoc), client SDKs and mocks; contract tests; keep spec and code in sync (code-first with decorators or schema-first).</li>
+<li><b>Versioning and compatibility:</b> additive changes are compatible; removing or changing fields requires a new version; support old versions for a deprecation window; communicate with changelog and <code>Deprecation</code>/<code>Sunset</code> headers.</li>
+<li><b>GraphQL versus REST versus gRPC:</b> GraphQL for diverse clients and nested data (watch N+1, caching, query cost limits); gRPC for typed, streaming service-to-service calls; REST for public, cache-friendly APIs (E9, P4).</li>
+<li><b>Frontend-friendly APIs:</b> stable shapes, predictable errors, pagination consistent across endpoints, partial responses, enums as strings, no ambiguous nulls, ids as strings, and time zone clarity — all reduce frontend complexity.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Verbs in URLs everywhere (<code>/getUsers</code>) and inconsistent naming.</li>
+<li>Returning 200 for failures, or 500 for client mistakes.</li>
+<li>Offset pagination on huge, frequently changing tables.</li>
+<li>Breaking changes without versioning or a deprecation path.</li>
+<li>No idempotency story for payments or order creation.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>PUT versus PATCH?</dt><dd>PUT replaces the full representation and is idempotent; PATCH applies partial changes (JSON Patch or merge patch).</dd>
+<dt>Why cursor pagination?</dt><dd>It uses an indexed position instead of skipping rows, so it is fast and stable under inserts and deletes.</dd>
+<dt>How do you make POST safe to retry?</dt><dd>Accept an idempotency key, store the first result for that key, and return the same response for repeats.</dd>
+<dt>How do you version an API without breaking clients?</dt><dd>Prefer additive changes, introduce <code>/v2</code> only for breaking ones, run both with a deprecation timeline.</dd>
+</dl></div>
+</section>
+
+<!-- ============ D4 ============ -->
+<section class="q" id="d4">
+<header class="qh">
+  <div class="qrow"><span class="qid">D4</span><span class="tag added">Added</span></div>
+  <h2>Authentication and authorisation in Node</h2>
+  <p class="qtext">“How do you implement authentication and authorisation in a Node API? Password hashing, sessions versus JWT, refresh tokens, role-based access control, rate limiting and common vulnerabilities.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Authentication verifies who the caller is, authorisation decides what they can do. For credentials I hash passwords with Argon2id or bcrypt and never store them reversibly. For browser clients I prefer server sessions in an HttpOnly cookie, or short-lived access tokens with rotated refresh tokens; JWTs suit service-to-service and stateless verification but are hard to revoke. In Express, an auth middleware verifies the session or token and attaches the user to the request, and a second layer checks permissions: roles, or better, ownership and attribute-based rules, enforced in the service layer. I add rate limiting, account lockout protection, input validation, secure cookie flags and CSRF protection, and I use an identity provider where possible rather than building everything.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a login and request flow with password verification, session or token issuance, auth middleware, authorisation check. Right: comparison of sessions and JWT with refresh tokens, and RBAC versus ownership checks.">
+  <text x="10" y="18" class="bd">Login and request flow</text>
+  <rect x="10" y="30" width="170" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">POST /login</text><text x="18" y="62" class="sm">email + password</text>
+  <path class="a" d="M180 50H218"/>
+  <rect x="220" y="30" width="150" height="40" rx="5" class="h"/><text x="228" y="48" class="bd">Verify</text><text x="228" y="62" class="sm">Argon2id compare, MFA</text>
+  <path class="a" d="M295 70V88"/>
+  <rect x="10" y="90" width="360" height="40" rx="5" class="g"/><text x="18" y="108" class="bd">Issue credential</text><text x="18" y="124" class="sm">session id in an HttpOnly cookie, or access + refresh tokens</text>
+  <path class="a" d="M190 130V146"/>
+  <rect x="10" y="148" width="360" height="40" rx="5" class="w"/><text x="18" y="166" class="bd">Auth middleware (every request)</text><text x="18" y="182" class="sm">verify session/token → req.user (401 if missing or invalid)</text>
+  <path class="a" d="M190 188V204"/>
+  <rect x="10" y="206" width="360" height="40" rx="5" class="x"/><text x="18" y="224" class="bd">Authorisation (in services)</text><text x="18" y="240" class="sm">role + ownership + tenant check on the resource (403 or 404)</text>
+  <text x="10" y="270" class="sm">Rate limit login and sensitive routes; identical errors for unknown</text><text x="10" y="286" class="sm">user and bad password; log security events; rotate ids on login.</text>
+  <text x="400" y="18" class="bd">Sessions versus tokens</text>
+  <rect x="400" y="30" width="350" height="86" rx="5" class="g"/><text x="408" y="48" class="bd">Server session</text><text x="408" y="66" class="sm">opaque id in cookie; data in Redis or DB; easy revoke and</text><text x="408" y="82" class="sm">rotate; needs shared store when scaled; CSRF protection needed</text><text x="408" y="100" class="sm">best default for first-party web apps</text>
+  <rect x="400" y="124" width="350" height="86" rx="5" class="h"/><text x="408" y="142" class="bd">Access JWT + refresh token</text><text x="408" y="160" class="sm">short-lived signed access token (5 to 15 min), rotating refresh</text><text x="408" y="176" class="sm">token stored server-side with reuse detection; fits mobile and</text><text x="408" y="192" class="sm">service-to-service; revocation = refresh invalidation</text>
+  <rect x="400" y="218" width="350" height="92" rx="5" class="w"/><text x="408" y="236" class="bd">Permissions</text><text x="408" y="254" class="sm">RBAC: roles map to permissions (admin, editor, viewer)</text><text x="408" y="270" class="sm">ABAC/ownership: “user can edit only their own order”</text><text x="408" y="286" class="sm">Policy libraries: CASL, Casbin, Oso. Deny by default;</text><text x="408" y="302" class="sm">check the resource, not only the route (prevents IDOR).</text>
+</svg></div>
+<figcaption><b>Rule.</b> Authenticate once per request, authorise at the resource level, and keep secrets and sessions server-side where possible.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Password handling in Node:</b> <code>argon2</code> or <code>bcrypt</code> (cost tuned to about 100 to 500 ms), per-user salt (built in), optional pepper from a secrets manager, minimum length and breached-password checks, constant-time comparison, no logging of credentials (P9).</li>
+<li><b>Sessions in Express:</b> <code>express-session</code> with a store (Redis via <code>connect-redis</code>), <code>cookie: { httpOnly, secure, sameSite, maxAge }</code>, <code>trust proxy</code> behind a load balancer, regenerate the session id after login, destroy on logout, idle and absolute timeouts.</li>
+<li><b>JWT implementation:</b> <code>jose</code> or <code>jsonwebtoken</code>; asymmetric keys (RS256/ES256) for multi-service verification; validate <code>iss</code>, <code>aud</code>, <code>exp</code>; pin algorithms; short expiry; keep claims minimal; rotate signing keys via JWKS; do not put secrets in the payload (P8).</li>
+<li><b>Refresh tokens:</b> opaque random values stored hashed server-side, bound to device, rotated on each use with reuse detection (reuse means theft: revoke the family), sent in an HttpOnly cookie for browsers.</li>
+<li><b>OAuth and SSO:</b> use Passport.js strategies, Auth.js, or provider SDKs; authorisation code with PKCE; verify ID tokens; map external identities to local accounts safely (verify email ownership). Prefer managed identity (Auth0, Cognito, Entra, Clerk, Supabase Auth, Keycloak) for MFA, recovery, breach detection and compliance.</li>
+<li><b>Authorisation design:</b> centralised policy functions, tested thoroughly, applied in the service layer so every entry point (REST, GraphQL, jobs) is protected; multi-tenancy requires a tenant id on every query (or database row-level security, D7); log denied access attempts.</li>
+<li><b>API keys and service accounts:</b> hash stored keys, scope them, support rotation and revocation, rate-limit per key, prefix for identification; machine-to-machine through OAuth client credentials.</li>
+<li><b>Rate limiting and abuse:</b> <code>express-rate-limit</code> with a shared store (Redis) so limits hold across instances; stricter on login, registration, password reset, OTP; combine IP and account keys; add CAPTCHA or proof-of-work selectively; return 429 with <code>Retry-After</code>.</li>
+<li><b>CSRF and CORS:</b> cookie-based sessions need CSRF defences (SameSite, tokens such as <code>csrf-csrf</code>, Origin checks); bearer-token APIs do not; CORS with an allowlist (P5, P6).</li>
+<li><b>Common vulnerabilities:</b> IDOR, mass assignment (binding request bodies directly into models; use explicit allowlists), NoSQL/SQL injection, SSRF, path traversal in file serving, JWT <code>alg:none</code>/confusion, insecure password reset links, verbose errors, missing authorisation on secondary endpoints, privilege escalation through role fields in updates.</li>
+<li><b>Security hygiene:</b> <code>helmet</code>, HTTPS only, dependency audits, secrets in environment or vault, least-privilege DB users, audit logs for sensitive actions, and security tests in CI (P10).</li>
+<li><b>Testing auth:</b> test each role against each endpoint (matrix), test unauthenticated access, expired and tampered tokens, and ownership boundaries.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Checking only that a user is logged in, not that they own the resource.</li>
+<li>Binding <code>req.body</code> straight into a model update, letting clients set <code>role</code> or <code>isAdmin</code>.</li>
+<li>Rate limiting in memory on a multi-instance deployment, so limits are per instance.</li>
+<li>Storing refresh tokens in plain text or never rotating them.</li>
+<li>Building custom auth when a managed identity provider would be safer.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Session or JWT for a SPA with a Node API?</dt><dd>Server session in an HttpOnly cookie (often via a BFF) for simplicity and revocation; JWTs when stateless verification across services is needed.</dd>
+<dt>What is mass assignment?</dt><dd>Letting a client set fields it should not by passing the whole request body to a create or update; fix with explicit allowlists or DTOs.</dd>
+<dt>How do you revoke access immediately?</dt><dd>Delete the server session or refresh token family; for JWTs use short expiry plus a deny list.</dd>
+<dt>How do you support multiple tenants safely?</dt><dd>Tenant id on every row and query via a mandatory scope, ideally enforced by database row-level security as well.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Data stores</h1>
+
+<!-- ============ D5 ============ -->
+<section class="q" id="d5">
+<header class="qh">
+  <div class="qrow"><span class="qid">D5</span><span class="tag added">Added</span></div>
+  <h2>SQL versus NoSQL, ACID, CAP, ORMs</h2>
+  <p class="qtext">“How do you choose between a relational and a NoSQL database? What are ACID and BASE, the CAP theorem and consistency models? What do ORMs such as Prisma, Drizzle and Mongoose give you and cost you?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Relational databases store data in tables with a fixed schema, enforce relationships and constraints, and offer ACID transactions and powerful querying with SQL, which suits structured, related data like orders and accounts. NoSQL covers several models, document stores like MongoDB, key-value stores like Redis, wide-column and graph databases, which trade some relational features for flexible schemas, horizontal scaling or specialised access patterns. ACID means transactions are atomic, consistent, isolated and durable; many distributed NoSQL systems favour availability and eventual consistency, sometimes called BASE. The CAP theorem says during a network partition you must choose between consistency and availability. My default is a relational database such as PostgreSQL, and I add specialised stores when the access pattern clearly needs them.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: the main database families and the access pattern each fits. Right: the CAP triangle with consistency, availability and partition tolerance, and ACID properties.">
+  <text x="10" y="18" class="bd">Database families</text>
+  <rect x="10" y="30" width="170" height="64" rx="5" class="g"/><text x="18" y="50" class="bd">Relational</text><text x="18" y="68" class="sm">PostgreSQL, MySQL</text><text x="18" y="84" class="sm">tables, joins, constraints</text>
+  <rect x="200" y="30" width="170" height="64" rx="5" class="h"/><text x="208" y="50" class="bd">Document</text><text x="208" y="68" class="sm">MongoDB, Firestore</text><text x="208" y="84" class="sm">JSON docs, flexible schema</text>
+  <rect x="10" y="102" width="170" height="64" rx="5" class="w"/><text x="18" y="122" class="bd">Key-value / cache</text><text x="18" y="140" class="sm">Redis, DynamoDB</text><text x="18" y="156" class="sm">lookups by key, very fast</text>
+  <rect x="200" y="102" width="170" height="64" rx="5" class="w"/><text x="208" y="122" class="bd">Wide-column</text><text x="208" y="140" class="sm">Cassandra, Bigtable</text><text x="208" y="156" class="sm">huge write-heavy scale</text>
+  <rect x="10" y="174" width="170" height="64" rx="5" class="b"/><text x="18" y="194" class="bd">Graph</text><text x="18" y="212" class="sm">Neo4j</text><text x="18" y="228" class="sm">relationship traversal</text>
+  <rect x="200" y="174" width="170" height="64" rx="5" class="b"/><text x="208" y="194" class="bd">Search / analytics</text><text x="208" y="212" class="sm">Elasticsearch, ClickHouse</text><text x="208" y="228" class="sm">text search, aggregations</text>
+  <text x="10" y="262" class="sm">Choose by access patterns, consistency needs, scale, team skill and</text><text x="10" y="278" class="sm">operational cost. Polyglot persistence is common: the system of record</text><text x="10" y="294" class="sm">is relational, with cache and search as derived stores.</text>
+  <text x="400" y="18" class="bd">CAP: pick two under a partition</text>
+  <path class="l" d="M575 36L440 170H710Z"/>
+  <text x="550" y="32" class="bd">Consistency</text><text x="404" y="188" class="bd">Availability</text><text x="620" y="188" class="bd">Partition tolerance</text>
+  <text x="506" y="110" class="sm">CP: refuse requests</text><text x="506" y="124" class="sm">to stay consistent</text><text x="470" y="162" class="sm">AP: answer, may be stale</text>
+  <text x="400" y="214" class="sm">Partitions happen, so the real choice is CP or AP during a partition.</text>
+  <rect x="400" y="226" width="350" height="84" rx="5" class="w"/><text x="408" y="246" class="bd">ACID</text><text x="408" y="264" class="sm"><tspan class="bd">A</tspan>tomic: all or nothing · <tspan class="bd">C</tspan>onsistent: constraints hold</text><text x="408" y="280" class="sm"><tspan class="bd">I</tspan>solated: concurrent transactions do not interfere</text><text x="408" y="296" class="sm"><tspan class="bd">D</tspan>urable: committed data survives a crash</text>
+</svg></div>
+<figcaption><b>Mindset.</b> Pick the store whose guarantees and access patterns match the data, not the fashion.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>When relational fits:</b> structured data with relationships, need for transactions (payments, inventory), ad-hoc queries and reporting, strong integrity constraints, mature tooling. PostgreSQL covers JSON, full-text search, geospatial and queues in one system, which reduces moving parts.</li>
+<li><b>When document stores fit:</b> hierarchical data read as a whole (profiles, content, catalogs with varying attributes), rapid schema evolution, horizontal scaling by sharding. Risks: duplication, weaker joins, consistency across documents, and “schemaless” meaning the schema lives in your code.</li>
+<li><b>Key-value and caches:</b> Redis/Memcached for sessions, rate limits, queues, leaderboards (D9); DynamoDB for massive scale with predictable single-digit-millisecond lookups and careful access-pattern design.</li>
+<li><b>ACID and isolation levels:</b> read committed (default in PostgreSQL), repeatable read, serializable; anomalies: dirty read, non-repeatable read, phantom read, lost update, write skew. Higher isolation costs concurrency and may need retries (D6).</li>
+<li><b>BASE and eventual consistency:</b> basically available, soft state, eventually consistent. Acceptable for feeds, counters, search indexes; not for balances. Design UIs for it (optimistic updates, “saved” indicators) and use read-your-writes where needed.</li>
+<li><b>CAP in practice:</b> CAP is about behaviour during partitions; latency trade-offs are better described by PACELC (else latency versus consistency). Single-node relational databases sidestep partitions; replicated systems choose per operation (quorum reads and writes).</li>
+<li><b>Replication and scaling:</b> read replicas (eventually consistent reads), sharding/partitioning (by key), connection pooling, caching, and vertical scaling first. Relational databases scale far with good indexes and replicas before sharding.</li>
+<li><b>Schema design principles:</b> normalise to avoid anomalies (third normal form), denormalise deliberately for read performance, use proper types and constraints, surrogate keys (UUIDv7 or bigint), foreign keys with cascades chosen carefully, and migrations tracked in version control.</li>
+<li><b>ORMs and query builders:</b> Prisma (schema-first, type-safe client, migrations), Drizzle (SQL-like, lightweight, type-safe), TypeORM and Sequelize (classic ORMs), Knex/Kysely (query builders), Mongoose (MongoDB schemas and validation). Benefits: productivity, type safety, migrations, parameterised queries. Costs: hidden N+1 queries, leaky abstractions, performance surprises, harder complex SQL; drop to raw SQL for reports and hot paths.</li>
+<li><b>N+1 problem:</b> fetching a list and then one query per item; fix with joins/includes, batching (DataLoader), or prefetching related data; detect with query logging and APM.</li>
+<li><b>Migrations:</b> versioned, reviewed, applied automatically in CI/CD; backward-compatible changes (expand then contract) so old and new code run together during rollout; avoid long locks on large tables (A6).</li>
+<li><b>Data modelling for APIs:</b> map DB rows to DTOs; never expose internal ids or sensitive fields; paginate; use transactions for multi-step writes; keep money in integers or decimals, not floats (J13).</li>
+<li><b>Backups and recovery:</b> automated backups, point-in-time recovery, tested restores, RPO and RTO targets, replicas in other zones, and migration rehearsals.</li>
+<li><b>Decision guidance for the interview:</b> state the access patterns, consistency requirement, scale and team context, then recommend (usually PostgreSQL) and name the trade-offs and what would change your mind.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“NoSQL scales, SQL does not.” Relational databases scale a long way; NoSQL scale needs careful data modelling.</li>
+<li>Choosing MongoDB for highly relational data and then reimplementing joins in application code.</li>
+<li>Believing “schemaless” removes the need for a schema; it just moves it.</li>
+<li>Misusing CAP as a label for databases instead of a statement about partitions.</li>
+<li>Using floating-point numbers for money.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How would you pick a database for an e-commerce app?</dt><dd>PostgreSQL as the system of record for orders and inventory with transactions, Redis for sessions and caching, search engine for catalogue search if needed.</dd>
+<dt>What is eventual consistency?</dt><dd>Replicas converge to the same value if updates stop, but reads may be stale in between.</dd>
+<dt>What is write skew?</dt><dd>Two concurrent transactions each read overlapping data and write different rows, together violating an invariant; prevented by serializable isolation or explicit locks.</dd>
+<dt>Why avoid ORMs for reports?</dt><dd>Complex aggregations and joins are clearer and faster in SQL; ORMs generate inefficient queries for them.</dd>
+</dl></div>
+</section>
+
+<!-- ============ D6 ============ -->
+<section class="q" id="d6">
+<header class="qh">
+  <div class="qrow"><span class="qid">D6</span><span class="tag added">Added</span></div>
+  <h2>SQL essentials: joins, indexes, transactions</h2>
+  <p class="qtext">“Explain SQL joins, indexes, query plans, normalisation, transactions and isolation levels. How do you find and fix a slow query? What is the N+1 problem?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Joins combine rows from tables: an inner join returns matches only, left join keeps all rows from the left table with nulls where nothing matches, and so on. An index is a sorted data structure, usually a B-tree, that lets the database find rows without scanning the whole table, at the cost of extra storage and slower writes; composite indexes follow the leftmost-prefix rule. To fix a slow query I run <code>EXPLAIN ANALYZE</code>, look for sequential scans on large tables, bad row estimates and expensive sorts, then add or adjust indexes, rewrite the query or reduce the data. A transaction groups statements atomically; isolation levels trade anomalies for concurrency. Normalisation removes redundancy, and I denormalise only with a measured reason.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: four join types shown as Venn-like descriptions for tables A and B. Right: an index lookup versus sequential scan, composite index leftmost prefix, and isolation levels table.">
+  <text x="10" y="18" class="bd">Joins (A = users, B = orders)</text>
+  <rect x="10" y="30" width="170" height="60" rx="5" class="g"/><text x="18" y="48" class="bd">INNER JOIN</text><text x="18" y="66" class="sm">only users with orders</text><text x="18" y="82" class="sm">(rows in both)</text>
+  <rect x="200" y="30" width="170" height="60" rx="5" class="h"/><text x="208" y="48" class="bd">LEFT JOIN</text><text x="208" y="66" class="sm">all users; order columns</text><text x="208" y="82" class="sm">NULL when none</text>
+  <rect x="10" y="98" width="170" height="60" rx="5" class="w"/><text x="18" y="116" class="bd">RIGHT JOIN</text><text x="18" y="134" class="sm">all orders; user columns</text><text x="18" y="150" class="sm">NULL when none</text>
+  <rect x="200" y="98" width="170" height="60" rx="5" class="b"/><text x="208" y="116" class="bd">FULL OUTER JOIN</text><text x="208" y="134" class="sm">everything from both,</text><text x="208" y="150" class="sm">NULLs for gaps</text>
+  <rect x="10" y="168" width="360" height="62" rx="5" class="b"/><text x="18" y="186" class="mono" style="font-size:10px">SELECT u.name, COUNT(o.id) AS orders</text><text x="18" y="202" class="mono" style="font-size:10px">FROM users u LEFT JOIN orders o ON o.user_id = u.id</text><text x="18" y="218" class="mono" style="font-size:10px">GROUP BY u.id HAVING COUNT(o.id) &gt; 3;</text>
+  <text x="10" y="252" class="sm">WHERE filters rows before grouping; HAVING filters groups. Use aliases,</text><text x="10" y="268" class="sm">explicit JOIN ... ON, and select only the columns you need.</text><text x="10" y="288" class="sm">Normal forms: 1NF atomic values · 2NF no partial dependency ·</text><text x="10" y="304" class="sm">3NF no transitive dependency. Denormalise only to fix measured reads.</text>
+  <text x="400" y="18" class="bd">Indexes</text>
+  <rect x="400" y="30" width="350" height="62" rx="5" class="g"/><text x="408" y="48" class="bd">B-tree index: O(log n) lookups, ordered scans</text><text x="408" y="66" class="mono" style="font-size:10px">CREATE INDEX ON orders(user_id, created_at);</text><text x="408" y="84" class="sm">leftmost prefix: (user_id), (user_id, created_at)</text>
+  <rect x="400" y="100" width="350" height="60" rx="5" class="w"/><text x="408" y="118" class="bd">Costs and caveats</text><text x="408" y="136" class="sm">slower writes, more storage; low-selectivity columns rarely help;</text><text x="408" y="152" class="sm">functions on columns (LOWER(email)) need expression indexes</text>
+  <text x="400" y="182" class="bd">Isolation levels (anomalies prevented)</text>
+  <rect x="400" y="192" width="350" height="118" rx="5" class="b"/>
+  <text x="408" y="210" class="sm"><tspan class="bd">Read uncommitted</tspan> none (rarely used)</text>
+  <text x="408" y="228" class="sm"><tspan class="bd">Read committed</tspan> no dirty reads (PostgreSQL default)</text>
+  <text x="408" y="246" class="sm"><tspan class="bd">Repeatable read</tspan> + no non-repeatable reads (snapshot)</text>
+  <text x="408" y="264" class="sm"><tspan class="bd">Serializable</tspan> + no phantoms or write skew; retry on conflict</text>
+  <text x="408" y="288" class="sm">Use SELECT … FOR UPDATE for explicit row locks, and keep</text><text x="408" y="302" class="sm">transactions short to avoid lock contention and deadlocks.</text>
+</svg></div>
+<figcaption><b>Skills.</b> Read a query plan, design indexes for access patterns, and know what your transaction guarantees.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Core SQL:</b> <code>SELECT</code>, <code>WHERE</code>, <code>GROUP BY</code>, <code>HAVING</code>, <code>ORDER BY</code>, <code>LIMIT/OFFSET</code>, aggregates, <code>DISTINCT</code>, subqueries, CTEs (<code>WITH</code>), set operations (<code>UNION</code>), <code>CASE</code>; window functions (<code>ROW_NUMBER()</code>, <code>RANK()</code>, <code>SUM() OVER (PARTITION BY …)</code>) for rankings and running totals; <code>EXISTS</code> versus <code>IN</code>; NULL semantics (three-valued logic; <code>= NULL</code> never true, use <code>IS NULL</code>).</li>
+<li><b>Keys and constraints:</b> primary key, foreign key (referential integrity, <code>ON DELETE</code> behaviour), unique, not null, check constraints; let the database enforce invariants rather than only application code. Composite and surrogate keys; UUID versions and index locality.</li>
+<li><b>Index types:</b> B-tree (default), hash, GIN (arrays, JSONB, full-text), GiST/SP-GiST (geospatial), BRIN (huge ordered tables), partial indexes (<code>WHERE active</code>), covering indexes (<code>INCLUDE</code>) enabling index-only scans, unique indexes. Primary-key indexes are clustered in some engines (MySQL InnoDB) but not in PostgreSQL heap tables.</li>
+<li><b>Query plans:</b> <code>EXPLAIN (ANALYZE, BUFFERS)</code> shows scan types (Seq Scan, Index Scan, Index Only Scan, Bitmap), join algorithms (Nested Loop, Hash Join, Merge Join), estimated versus actual rows, sort and aggregate costs. Out-of-date statistics (<code>ANALYZE</code>) cause bad plans.</li>
+<li><b>Slow query workflow:</b> find via slow query log or <code>pg_stat_statements</code>; reproduce with real parameters; read the plan; fix with an index matching filter and sort, rewrite to avoid functions on indexed columns, reduce rows early, paginate with keyset, avoid <code>SELECT *</code>, check lock waits and connection pool saturation; verify improvement and monitor regression.</li>
+<li><b>Pagination performance:</b> <code>OFFSET 100000</code> scans and discards rows; use keyset pagination (<code>WHERE (created_at, id) &lt; ($1, $2) ORDER BY … LIMIT</code>) with a matching index (D3).</li>
+<li><b>Transactions:</b> <code>BEGIN … COMMIT/ROLLBACK</code>, savepoints; use for multi-statement invariants (transfer money); idempotent retries on serialization failures or deadlocks; avoid long transactions and holding them across network calls.</li>
+<li><b>Locking and concurrency:</b> MVCC lets readers not block writers in PostgreSQL; row locks (<code>FOR UPDATE</code>, <code>SKIP LOCKED</code> for work queues), advisory locks, optimistic concurrency with version columns; deadlocks arise from inconsistent lock ordering.</li>
+<li><b>N+1 and query counts:</b> one query for a list plus one per row; fix with joins, <code>IN</code> batching, ORM <code>include</code>, or DataLoader; log queries per request in development.</li>
+<li><b>Aggregations and reporting:</b> pre-aggregate with materialised views or summary tables, use read replicas for heavy reports, and consider OLAP stores for analytics.</li>
+<li><b>Data types:</b> <code>timestamptz</code> for time (store UTC), <code>numeric</code> for money, <code>text</code> with constraints, enums or lookup tables for fixed sets, JSONB for flexible attributes (indexed with GIN).</li>
+<li><b>Migrations and safety:</b> add nullable columns first, backfill in batches, add constraints after (<code>NOT VALID</code> then validate), create indexes <code>CONCURRENTLY</code>, avoid table rewrites during peak, and make changes backward compatible.</li>
+<li><b>Security:</b> parameterised queries (never string concatenation) to prevent SQL injection; least-privilege roles; encrypt sensitive columns where required; audit logging.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Building SQL with string concatenation from user input.</li>
+<li>Adding an index on every column “just in case”, slowing writes.</li>
+<li>Putting a function on an indexed column in <code>WHERE</code> so the index cannot be used.</li>
+<li>Confusing <code>WHERE</code> and <code>HAVING</code>, or using <code>COUNT(*)</code> with a left join and getting 1 for no matches.</li>
+<li>Holding a transaction open while calling an external API.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why is the order of columns in a composite index important?</dt><dd>The index is sorted by the first column, then the second, so it helps queries that filter on a leftmost prefix.</dd>
+<dt>What does <code>EXPLAIN ANALYZE</code> tell you?</dt><dd>The chosen plan with real timings and row counts, so you can spot scans, bad estimates and expensive operations.</dd>
+<dt>What is MVCC?</dt><dd>Multi-version concurrency control: each transaction sees a snapshot, so reads do not block writes.</dd>
+<dt>How do you handle a deadlock?</dt><dd>Keep transactions short, lock rows in a consistent order, and retry the failed transaction.</dd>
+</dl></div>
+</section>
+
+<!-- ============ D7 ============ -->
+<section class="q" id="d7">
+<header class="qh">
+  <div class="qrow"><span class="qid">D7</span><span class="tag added">Added</span></div>
+  <h2>PostgreSQL and Supabase</h2>
+  <p class="qtext">“What is Supabase and how is it built? Explain its Postgres foundation, Auth, Row Level Security, Realtime, Storage and Edge Functions. How do you use it from a frontend, and what are its limits?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Supabase is an open-source backend platform built around PostgreSQL. It gives you a managed Postgres database plus an auto-generated REST and GraphQL API through PostgREST, authentication, file storage, realtime subscriptions to database changes, and serverless Edge Functions. The security model is the key idea: because the client can talk to the database API directly with a public key, authorisation is enforced inside Postgres with Row Level Security policies that use the authenticated user’s JWT, for example ‘a row is visible only if its <code>user_id</code> equals <code>auth.uid()</code>’. That lets a frontend team move fast, but it means policies must be designed and tested carefully, and complex business logic still belongs in database functions, Edge Functions or a separate backend.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Supabase architecture: client SDK calls an API gateway that routes to PostgREST, GoTrue auth, Realtime, Storage and Edge Functions, all backed by PostgreSQL with Row Level Security. Right: an RLS policy example.">
+  <text x="10" y="18" class="bd">Architecture</text>
+  <rect x="10" y="30" width="170" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">Client (supabase-js)</text><text x="18" y="62" class="sm">anon key + user JWT</text>
+  <path class="a" d="M180 50H218"/>
+  <rect x="220" y="30" width="150" height="40" rx="5" class="h"/><text x="228" y="48" class="bd">API gateway</text><text x="228" y="62" class="sm">Kong, rate limits</text>
+  <path class="a" d="M295 70V86"/>
+  <rect x="10" y="88" width="110" height="46" rx="5" class="g"/><text x="18" y="108" class="bd">PostgREST</text><text x="18" y="124" class="sm">REST from schema</text>
+  <rect x="130" y="88" width="110" height="46" rx="5" class="g"/><text x="138" y="108" class="bd">Auth (GoTrue)</text><text x="138" y="124" class="sm">JWT, OAuth, MFA</text>
+  <rect x="250" y="88" width="120" height="46" rx="5" class="g"/><text x="258" y="108" class="bd">Realtime</text><text x="258" y="124" class="sm">DB changes</text>
+  <rect x="10" y="144" width="170" height="46" rx="5" class="g"/><text x="18" y="164" class="bd">Storage</text><text x="18" y="180" class="sm">S3-compatible, policies</text>
+  <rect x="200" y="144" width="170" height="46" rx="5" class="g"/><text x="208" y="164" class="bd">Edge Functions</text><text x="208" y="180" class="sm">Deno, server logic</text>
+  <rect x="10" y="204" width="360" height="52" rx="5" class="w"/><text x="18" y="224" class="bd">PostgreSQL</text><text x="18" y="242" class="sm">tables, SQL functions, triggers, extensions (pgvector, PostGIS), RLS</text>
+  <path class="a" d="M65 134V202"/><path class="a" d="M185 134V202"/><path class="a" d="M310 134V202"/>
+  <text x="10" y="280" class="sm">Everything is “just Postgres”: you can use any client or SQL directly,</text><text x="10" y="296" class="sm">migrate away, and keep logic in SQL. Local dev via the Supabase CLI.</text>
+  <text x="400" y="18" class="bd">Row Level Security policy</text>
+  <rect x="400" y="30" width="350" height="104" rx="5" class="b"/><text x="408" y="48" class="mono" style="font-size:10px">alter table notes enable row level security;</text><text x="408" y="66" class="mono" style="font-size:10px">create policy "own notes read"</text><text x="408" y="82" class="mono" style="font-size:10px">  on notes for select using ( auth.uid() = user_id );</text><text x="408" y="100" class="mono" style="font-size:10px">create policy "own notes write"</text><text x="408" y="116" class="mono" style="font-size:10px">  on notes for insert with check ( auth.uid() = user_id );</text>
+  <rect x="400" y="144" width="350" height="84" rx="5" class="g"/><text x="408" y="164" class="bd">Why it matters</text><text x="408" y="182" class="sm">the browser holds a public (anon) key; without RLS a table would</text><text x="408" y="198" class="sm">be readable by everyone. With RLS the database filters rows</text><text x="408" y="214" class="sm">per user via JWT claims: authorisation lives with the data.</text>
+  <rect x="400" y="238" width="350" height="72" rx="5" class="x"/><text x="408" y="258" class="bd">Never expose</text><text x="408" y="276" class="sm">the service_role key in the client: it bypasses RLS. Use it only on</text><text x="408" y="292" class="sm">trusted servers. Enable RLS on every table in exposed schemas.</text>
+</svg></div>
+<figcaption><b>Key idea.</b> Authorisation moves into the database, enforced by RLS, so a frontend can safely call the data API directly.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>PostgreSQL strengths:</b> mature, standards-compliant, extensible; JSONB with GIN indexes, full-text search, arrays, range types, CTEs and window functions, partitioning, logical replication, row-level security, extensions (PostGIS, pgvector for embeddings, pg_cron, pg_trgm), MVCC and robust transactions.</li>
+<li><b>Supabase components:</b> Postgres (managed), PostgREST (REST API derived from tables and views, using the caller’s role), GoTrue (Auth: email/password, magic links, OAuth providers, phone, MFA, SSO in higher plans), Realtime (Elixir service broadcasting database changes from the WAL, Broadcast and Presence channels), Storage (buckets with RLS-like policies, signed URLs, image transformations), Edge Functions (Deno/TypeScript at the edge), and Studio dashboard.</li>
+<li><b>Client usage:</b> <code>createClient(url, anonKey)</code>; <code>supabase.from('notes').select('*, tags(name)').eq('user_id', id)</code> with relationship expansion; <code>insert</code>, <code>update</code>, <code>delete</code>, <code>rpc('fn')</code> for database functions; <code>auth.signInWithPassword/OAuth</code>; <code>channel().on('postgres_changes', …)</code> for realtime; generated TypeScript types from the schema (<code>supabase gen types</code>) (T11).</li>
+<li><b>RLS design:</b> enable per table; write policies for each operation (<code>select</code>, <code>insert</code>, <code>update</code>, <code>delete</code>) with <code>using</code> (existing rows) and <code>with check</code> (new rows); use helper functions for roles and tenancy (<code>auth.jwt()</code> claims, membership tables); index the columns used in policies; test policies with different users (pgTAP or Supabase test helpers); remember that policies add query cost, so keep them simple and indexed.</li>
+<li><b>Roles and keys:</b> <code>anon</code> (unauthenticated), <code>authenticated</code> (logged in), and <code>service_role</code> (bypasses RLS, server only). The anon key is public by design; safety comes from RLS and grants. Misconfigured RLS (disabled, or overly permissive policies like <code>using (true)</code>) is the most common Supabase security flaw.</li>
+<li><b>Server-side use:</b> Next.js with <code>@supabase/ssr</code> for cookie-based sessions in server components and route handlers; use the service role only in server code; validate input; combine with Server Actions (N6).</li>
+<li><b>Business logic:</b> use Postgres functions (<code>plpgsql</code>/SQL) and triggers for data integrity and transactions (via <code>rpc</code>), Edge Functions for webhooks, third-party APIs and secrets, and scheduled jobs with <code>pg_cron</code> or Edge schedules. Avoid putting multi-step critical logic purely in client code.</li>
+<li><b>Realtime caveats:</b> database change streams respect RLS but have throughput and payload limits; use Broadcast for ephemeral messages; plan for reconnect and missed events (P4).</li>
+<li><b>Migrations and environments:</b> manage schema as SQL migrations with the Supabase CLI in Git, separate projects for dev, staging, production (or branching), seed data, and CI to apply migrations.</li>
+<li><b>Limits and trade-offs:</b> vendor-managed service with quotas and pricing tiers; connection limits (use the pooler, Supavisor/PgBouncer, in serverless); complex domain logic may outgrow the client-centric model; vendor lock-in is lower than most BaaS because it is Postgres, and self-hosting is possible but operationally heavy; compare with Firebase (NoSQL, proprietary), Appwrite, and custom Node + Postgres.</li>
+<li><b>Performance and operations:</b> indexes, query plans, connection pooling, read replicas on higher plans, caching at the edge, monitoring with the dashboard and <code>pg_stat_statements</code>, backups and point-in-time recovery on paid plans.</li>
+<li><b>Security checklist:</b> RLS on all tables, no service key in clients, least-privilege grants, validate uploads with Storage policies, restrict OAuth redirect URLs, enable email confirmation, rate limit auth, and review Security Advisor warnings in the dashboard.</li>
+<li><b>When to choose it:</b> MVPs, internal tools, apps with user-owned data and straightforward authorisation, teams strong in frontend and SQL; less ideal for heavy bespoke backend workflows or strict compliance needing custom infrastructure.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Shipping tables without RLS because “the anon key is hidden”. It is public by design.</li>
+<li>Using the <code>service_role</code> key in browser code or public repos.</li>
+<li>Writing RLS policies that perform slow subqueries without indexes.</li>
+<li>Putting complex multi-step business rules only in the client.</li>
+<li>Calling Supabase “a Firebase clone”; it is relational, SQL-first and open source.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How does a Supabase client query get authorised?</dt><dd>The request carries the user’s JWT; PostgREST sets the database role and claims, and RLS policies decide which rows are visible or writable.</dd>
+<dt>What is the difference between <code>using</code> and <code>with check</code>?</dt><dd><code>using</code> filters existing rows for select, update and delete; <code>with check</code> validates rows being inserted or updated.</dd>
+<dt>Where do you put logic that must not run in the browser?</dt><dd>In Postgres functions or Edge Functions on the server, using the service role where required.</dd>
+<dt>Supabase versus building a Node API?</dt><dd>Supabase accelerates CRUD, auth and realtime with RLS; a custom API gives full control over workflows, integrations and complex rules.</dd>
+</dl></div>
+</section>
+
+<!-- ============ D8 ============ -->
+<section class="q" id="d8">
+<header class="qh">
+  <div class="qrow"><span class="qid">D8</span><span class="tag added">Added</span></div>
+  <h2>MongoDB</h2>
+  <p class="qtext">“How does MongoDB work? When do you embed versus reference? Explain indexes, the aggregation pipeline, transactions, replica sets, sharding, write concern and Mongoose. What are its pitfalls?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“MongoDB is a document database storing BSON documents, JSON-like records with nested arrays and objects, in collections without a fixed schema. Modelling is driven by access patterns: I embed data that is read together and bounded in size, such as an order’s line items, and reference data that is shared, large or changes independently, such as users. Indexes, including compound and TTL indexes, are essential for performance. The aggregation pipeline transforms and analyses data in stages. Replica sets provide high availability with a primary and secondaries, and sharding scales horizontally by a shard key. Multi-document transactions exist but are costlier than single-document atomicity, so good modelling avoids needing them. Mongoose adds schemas, validation and middleware in Node.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: embedding versus referencing for orders and customers. Right: aggregation pipeline stages and replica set topology.">
+  <text x="10" y="18" class="bd">Embed or reference?</text>
+  <rect x="10" y="30" width="170" height="106" rx="5" class="g"/><text x="18" y="48" class="bd">Embed</text><text x="18" y="66" class="mono" style="font-size:10px">{ _id, total,</text><text x="18" y="80" class="mono" style="font-size:10px">  items: [ {sku,qty} ] }</text><text x="18" y="100" class="sm">read together, bounded,</text><text x="18" y="114" class="sm">one atomic write</text><text x="18" y="128" class="sm">fast reads, duplication</text>
+  <rect x="200" y="30" width="170" height="106" rx="5" class="h"/><text x="208" y="48" class="bd">Reference</text><text x="208" y="66" class="mono" style="font-size:10px">{ _id, customerId }</text><text x="208" y="86" class="sm">shared, large, unbounded,</text><text x="208" y="100" class="sm">or changed independently</text><text x="208" y="114" class="sm">needs $lookup or a second</text><text x="208" y="128" class="sm">query; avoids duplication</text>
+  <text x="10" y="158" class="bd">Modelling rules of thumb</text><text x="10" y="176" class="sm">Model for queries you run most. Avoid unbounded arrays (16 MB document</text><text x="10" y="192" class="sm">limit). One-to-few: embed. One-to-many: embed or reference by size.</text><text x="10" y="208" class="sm">Many-to-many: reference arrays. Duplicate small, stable fields on purpose</text><text x="10" y="224" class="sm">(extended reference pattern); use bucket/outlier patterns for time series.</text>
+  <rect x="10" y="240" width="360" height="70" rx="5" class="w"/><text x="18" y="260" class="bd">Indexes</text><text x="18" y="278" class="sm">single, compound (ESR rule: equality, sort, range), multikey (arrays),</text><text x="18" y="294" class="sm">text, geo, TTL (auto-expire), partial, unique; use explain().</text>
+  <text x="400" y="18" class="bd">Aggregation pipeline</text>
+  <rect x="400" y="30" width="350" height="86" rx="5" class="b"/><text x="408" y="48" class="mono" style="font-size:10px">db.orders.aggregate([</text><text x="408" y="64" class="mono" style="font-size:10px">  { $match: { status: "paid" } },</text><text x="408" y="80" class="mono" style="font-size:10px">  { $group: { _id: "$customerId", t: { $sum: "$a" } } },</text><text x="408" y="96" class="mono" style="font-size:10px">  { $sort: { total: -1 } }, { $limit: 10 } ])</text>
+  <text x="400" y="134" class="sm">Stages: $match (early, uses indexes), $project, $group, $sort,</text><text x="400" y="150" class="sm">$limit, $lookup (join), $unwind, $facet.</text>
+  <text x="400" y="176" class="bd">Replica set and sharding</text>
+  <rect x="400" y="186" width="110" height="44" rx="5" class="g"/><text x="408" y="206" class="bd">Primary</text><text x="408" y="222" class="sm">all writes</text>
+  <rect x="520" y="186" width="110" height="44" rx="5" class="h"/><text x="528" y="206" class="bd">Secondary</text><text x="528" y="222" class="sm">replicates</text>
+  <rect x="640" y="186" width="110" height="44" rx="5" class="h"/><text x="648" y="206" class="bd">Secondary</text><text x="648" y="222" class="sm">election on failure</text>
+  <rect x="400" y="242" width="350" height="68" rx="5" class="b"/><text x="408" y="262" class="bd">Write/read concern</text><text x="408" y="280" class="sm">w:"majority" for durable writes; readConcern "majority"; read</text><text x="408" y="296" class="sm">preference secondary = possibly stale. Shard key: high cardinality.</text>
+</svg></div>
+<figcaption><b>Principle.</b> In MongoDB the data model follows the query, and atomicity lives mostly inside one document.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Document model:</b> BSON types (ObjectId, Date, Decimal128, arrays, embedded documents), <code>_id</code> primary key, flexible schema within a collection, 16 MB document limit. Schema validation rules (<code>$jsonSchema</code>) and Mongoose schemas add structure.</li>
+<li><b>CRUD operations:</b> <code>insertOne/Many</code>, <code>find</code> with filters and projections, <code>updateOne</code> with operators (<code>$set</code>, <code>$inc</code>, <code>$push</code>, <code>$pull</code>, <code>$addToSet</code>), <code>findOneAndUpdate</code> (atomic), <code>deleteOne</code>, bulk writes, upserts. Updates to a single document are atomic.</li>
+<li><b>Query operators:</b> comparison (<code>$gt</code>, <code>$in</code>), logical (<code>$and</code>, <code>$or</code>), element, array (<code>$elemMatch</code>), regex, text search; arrays match any element by default, a common source of confusion.</li>
+<li><b>Indexing strategy:</b> every frequent query needs an index; compound index order follows equality then sort then range (ESR); too many indexes hurt writes and memory; covered queries return from the index alone; use <code>explain('executionStats')</code> to see <code>COLLSCAN</code> versus <code>IXSCAN</code> and docs examined versus returned; TTL indexes expire sessions and logs; unique indexes enforce constraints.</li>
+<li><b>Transactions:</b> multi-document ACID transactions across a replica set or sharded cluster (since 4.0/4.2) using sessions; they add overhead and limits, so prefer single-document designs; use them for multi-collection invariants such as transfers.</li>
+<li><b>Replication and consistency:</b> replica sets with automatic failover; write concern (<code>w: 1</code> versus <code>majority</code>) and read concern/preference determine durability and staleness; reading from secondaries can return stale data; use causal consistency sessions for read-your-writes.</li>
+<li><b>Sharding:</b> horizontal partitioning by shard key (ranged, hashed, zoned); a good key has high cardinality, even distribution and supports targeted queries; poor keys cause hot shards and scatter-gather queries; resharding is possible but heavy, so plan ahead.</li>
+<li><b>Aggregation:</b> pipeline of stages for transformations, grouping, joins (<code>$lookup</code>), faceting, and computed fields; put <code>$match</code> and <code>$limit</code> early to use indexes; Atlas Search and vector search extend it.</li>
+<li><b>Mongoose:</b> schemas with types and validators, models, middleware (hooks), virtuals, population (<code>populate</code> performs separate queries, like a join in application code), lean queries for speed, timestamps, indexes defined in schemas (build in production carefully). Gotchas: unbounded populate, N+1, schema drift, buffering when disconnected, and version conflicts (<code>__v</code> optimistic concurrency).</li>
+<li><b>Common pitfalls:</b> unbounded arrays, treating Mongo like a relational DB with many joins, missing indexes, large skip-based pagination, no schema discipline, weak durability settings, and unbounded growth of collections without TTL or archiving.</li>
+<li><b>Operations:</b> MongoDB Atlas (managed) for backups, monitoring and scaling; connection pooling in the driver (reuse a single client; in serverless cache the connection); monitoring slow queries with the profiler; security: authentication on, least-privilege roles, network restrictions, TLS, field-level encryption where needed, and never expose the database to the public internet.</li>
+<li><b>Injection risks:</b> NoSQL injection through operators in user input (<code>{ "$ne": null }</code> in a login body); validate and coerce types, use schema validation, and sanitise operator keys (<code>express-mongo-sanitize</code>).</li>
+<li><b>When to choose MongoDB:</b> varied or evolving document shapes, content and catalogue data, event or log storage with bucketing, rapid prototyping, horizontal scale needs; choose relational when data is highly interrelated with strong transactional needs.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Embedding unbounded arrays that grow forever until hitting the document limit.</li>
+<li>Modelling everything as references and then doing client-side joins.</li>
+<li>Reading from secondaries and assuming up-to-date data.</li>
+<li>Accepting raw query objects from clients, enabling operator injection.</li>
+<li>Choosing a shard key such as a monotonically increasing id, creating a hot shard.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you model a blog with comments?</dt><dd>Embed a bounded recent subset of comments for quick display and store all comments in a separate collection referenced by post id for scale.</dd>
+<dt>How do you do a join in MongoDB?</dt><dd><code>$lookup</code> in an aggregation, or Mongoose populate; better to design documents to avoid frequent joins.</dd>
+<dt>What does <code>w: "majority"</code> ensure?</dt><dd>The write is acknowledged after a majority of replica set members have it, so it survives a primary failover.</dd>
+<dt>How do you check why a query is slow?</dt><dd>Run <code>explain('executionStats')</code>, check for collection scans and high documents-examined ratio, and add or adjust a compound index.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Systems around the API</h1>
+
+<!-- ============ D9 ============ -->
+<section class="q" id="d9">
+<header class="qh">
+  <div class="qrow"><span class="qid">D9</span><span class="tag added">Added</span></div>
+  <h2>Caching and Redis</h2>
+  <p class="qtext">“What is Redis and what do you use it for? Explain cache-aside, write-through and write-behind, TTLs, eviction, cache invalidation, sessions, rate limiting, pub/sub and distributed locks.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Redis is an in-memory data structure store used as a cache, session store, rate limiter, message broker and queue backend. It offers strings, hashes, lists, sets, sorted sets, streams and more, with sub-millisecond reads. The most common pattern is cache-aside: the application checks the cache, on a miss reads the database, then stores the result with a TTL; on writes it updates the database and deletes or updates the cached entry. The hard parts are invalidation, stampedes on expiry, and consistency. I choose TTLs by how stale data may be, set a memory limit and an eviction policy such as LRU, and treat the cache as disposable: the system must still work, more slowly, if Redis is empty or down.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: cache-aside flow with hit and miss paths. Right: Redis use cases and the data structures that fit.">
+  <text x="10" y="18" class="bd">Cache-aside (lazy loading)</text>
+  <rect x="10" y="30" width="110" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">App</text><text x="18" y="62" class="sm">GET user:42</text>
+  <rect x="150" y="30" width="110" height="40" rx="5" class="h"/><text x="158" y="48" class="bd">Redis</text><text x="158" y="62" class="sm">lookup</text>
+  <path class="a" d="M120 50H148"/>
+  <rect x="290" y="30" width="80" height="40" rx="5" class="g"/><text x="298" y="48" class="bd">HIT</text><text x="298" y="62" class="sm">return</text>
+  <path class="a" d="M260 50H288"/>
+  <path class="ax" d="M205 70V94"/><text x="212" y="88" class="sm">MISS</text>
+  <rect x="150" y="96" width="110" height="40" rx="5" class="w"/><text x="158" y="114" class="bd">Database</text><text x="158" y="128" class="sm">query</text>
+  <rect x="290" y="96" width="80" height="40" rx="5" class="h"/><text x="298" y="114" class="bd">SET + TTL</text><text x="298" y="128" class="sm">store result</text>
+  <path class="a" d="M260 116H288"/>
+  <text x="10" y="164" class="bd">Strategies</text>
+  <rect x="10" y="174" width="360" height="136" rx="5" class="b"/><text x="18" y="194" class="sm"><tspan class="bd">Cache-aside</tspan> app manages cache; simple; first request is slow</text><text x="18" y="212" class="sm"><tspan class="bd">Read-through</tspan> cache layer loads from DB on miss</text><text x="18" y="230" class="sm"><tspan class="bd">Write-through</tspan> both together; consistent, slower</text><text x="18" y="248" class="sm"><tspan class="bd">Write-behind</tspan> write cache, flush later; fast, risk of data loss</text><text x="18" y="270" class="sm">Invalidate on write (delete the key), use short TTLs for safety,</text><text x="18" y="286" class="sm">version keys (user:42:v7), avoid caching errors, jitter TTLs to</text><text x="18" y="302" class="sm">prevent mass expiry and stampedes (locks or request coalescing).</text>
+  <text x="400" y="18" class="bd">What Redis is used for</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="b"/>
+  <text x="410" y="50" class="sm"><tspan class="bd">Cache</tspan> strings/hashes with TTL (API results, rendered fragments)</text>
+  <text x="410" y="74" class="sm"><tspan class="bd">Sessions</tspan> hash per session id with expiry</text>
+  <text x="410" y="98" class="sm"><tspan class="bd">Rate limiting</tspan> INCR + EXPIRE, sliding window with sorted sets</text>
+  <text x="410" y="122" class="sm"><tspan class="bd">Leaderboards</tspan> sorted sets (ZADD, ZRANGE)</text>
+  <text x="410" y="146" class="sm"><tspan class="bd">Queues</tspan> lists, streams, BullMQ (D10)</text>
+  <text x="410" y="170" class="sm"><tspan class="bd">Pub/Sub</tspan> channels for realtime fan-out (P4)</text>
+  <text x="410" y="194" class="sm"><tspan class="bd">Locks</tspan> SET key NX PX (single node), Redlock debates</text>
+  <text x="410" y="218" class="sm"><tspan class="bd">Counters and sets</tspan> unique visitors (HyperLogLog)</text>
+  <text x="410" y="246" class="bd">Operations</text><text x="410" y="264" class="sm">maxmemory + eviction (allkeys-lru, volatile-ttl) · persistence</text><text x="410" y="280" class="sm">(RDB snapshots, AOF) optional · replication, Sentinel, Cluster</text><text x="410" y="296" class="sm">single-threaded commands: atomic, avoid O(N) scans</text>
+</svg></div>
+<figcaption><b>Rule.</b> A cache is an optimisation, not a source of truth; design for misses and loss.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Data structures:</b> strings (with <code>INCR</code>, <code>SETEX</code>), hashes, lists, sets, sorted sets, bitmaps, HyperLogLog, geospatial, streams (consumer groups), JSON (modules). Commands are atomic because Redis executes them on a single thread; use pipelines and Lua scripts or transactions (<code>MULTI/EXEC</code>) for multi-step atomicity.</li>
+<li><b>TTL and eviction:</b> set expiry for cache keys; configure <code>maxmemory</code> and a policy (<code>allkeys-lru</code> for caches, <code>noeviction</code> for data you cannot lose); avoid unbounded key growth; use key naming conventions (<code>app:entity:id</code>).</li>
+<li><b>Cache invalidation approaches:</b> TTL expiry (simple, bounded staleness), explicit delete on write (consistent but race-prone), event-driven invalidation (publish on change), key versioning/namespace bump, tags via sets of keys. “There are only two hard things in computer science.”</li>
+<li><b>Races and consistency:</b> read-then-write races can leave stale values (a slow reader repopulates after a writer deleted); mitigate with short TTLs, delete-after-write plus delayed double delete, or version checks. Accept bounded staleness explicitly.</li>
+<li><b>Cache stampede (thundering herd):</b> many requests rebuild an expired hot key; use request coalescing, a short lock (<code>SET lock NX PX</code>), stale-while-revalidate in the application, TTL jitter, and pre-warming (F7).</li>
+<li><b>Cache penetration and negative caching:</b> repeated requests for non-existent keys hit the database; cache “not found” briefly, validate inputs, or use Bloom filters.</li>
+<li><b>Sessions in Redis:</b> shared across instances, TTL equals session timeout; secure the instance and consider persistence if logging everyone out on restart is unacceptable (D4).</li>
+<li><b>Rate limiting:</b> fixed window (<code>INCR</code> with expiry), sliding window (sorted set of timestamps), token bucket (Lua script); keyed by IP, user or API key; return 429 (D3, D4).</li>
+<li><b>Distributed locks:</b> <code>SET key value NX PX ttl</code> with a unique token and a safe release script; leases can expire mid-work (use fencing tokens); Redlock across nodes is debated; prefer database constraints or queues for correctness-critical mutual exclusion.</li>
+<li><b>Pub/Sub versus Streams:</b> Pub/Sub is fire-and-forget (messages lost if no subscriber); Streams persist with consumer groups and acknowledgements for reliable processing.</li>
+<li><b>High availability:</b> replication (async), Sentinel for failover, Cluster for sharding by hash slots; managed services (ElastiCache, Upstash, Redis Cloud); persistence settings trade durability for speed; lost writes are possible on failover.</li>
+<li><b>Client-side and HTTP caching:</b> Redis caches server-side; combine with CDN and HTTP caching (P3) and client caches (E4) in layers.</li>
+<li><b>Other caches:</b> in-process memory (LRU, per instance, fastest, inconsistent across instances), Memcached (simple key-value, multi-threaded), CDN edge caches, database query caches.</li>
+<li><b>Node usage:</b> <code>ioredis</code> or the official <code>redis</code> client with connection reuse, timeouts and error handlers; handle disconnects (fail open for caches, fail closed for rate limiters and locks as appropriate); serialise JSON carefully and compress large values.</li>
+<li><b>What not to do:</b> store large blobs or unbounded lists, use <code>KEYS *</code> in production (use <code>SCAN</code>), treat Redis as the only copy of important data, or cache user-specific data under shared keys.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Caching without a strategy for invalidation and then serving stale data indefinitely.</li>
+<li>Same TTL on many keys causing synchronised expiry and a stampede.</li>
+<li>Using <code>KEYS</code> or large O(N) commands on a busy instance.</li>
+<li>Relying on a distributed lock for money-critical correctness.</li>
+<li>Letting the application fail hard when Redis is unavailable for a pure cache.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Cache-aside versus write-through?</dt><dd>Cache-aside lets the app populate on demand and is simple; write-through updates cache on every write for fresher data at higher write cost.</dd>
+<dt>How do you prevent a stampede?</dt><dd>Coalesce concurrent rebuilds with a lock, serve stale while refreshing, and jitter TTLs.</dd>
+<dt>How would you implement rate limiting with Redis?</dt><dd>A per-key counter with expiry (fixed window) or a sorted set of timestamps (sliding window), checked atomically with a Lua script.</dd>
+<dt>Redis persistence options?</dt><dd>RDB snapshots (compact, can lose recent writes) and AOF logging (more durable, larger); both can be combined.</dd>
+</dl></div>
+</section>
+
+<!-- ============ D10 ============ -->
+<section class="q" id="d10">
+<header class="qh">
+  <div class="qrow"><span class="qid">D10</span><span class="tag added">Added</span></div>
+  <h2>Background jobs and messaging</h2>
+  <p class="qtext">“When do you use queues and background jobs? Explain producers and consumers, retries, idempotency, dead-letter queues, scheduling, event-driven architecture and the differences between RabbitMQ, SQS and Kafka.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A queue decouples work from the request: the API accepts a request, puts a message on a queue and responds immediately, while workers process it asynchronously. I use this for slow or unreliable tasks such as sending email, image processing, report generation, webhooks and integrations. Reliability depends on at-least-once delivery, so consumers must be idempotent; failed jobs are retried with backoff, and permanently failing ones go to a dead-letter queue for inspection. For simple Node jobs I use BullMQ on Redis; for cloud messaging, SQS or RabbitMQ; and for high-throughput event streaming and replay, Kafka. Event-driven designs publish facts that other services react to, which reduces coupling but adds complexity in ordering, duplicates and observability.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: producer puts jobs on a queue, workers consume with retries and a dead letter queue. Right: comparison of queue, pub/sub and log-based streaming brokers.">
+  <text x="10" y="18" class="bd">Queue with workers</text>
+  <rect x="10" y="30" width="110" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">API</text><text x="18" y="66" class="sm">enqueue + 202</text>
+  <rect x="140" y="30" width="110" height="46" rx="5" class="h"/><text x="148" y="50" class="bd">Queue</text><text x="148" y="66" class="sm">durable buffer</text>
+  <path class="a" d="M120 53H138"/>
+  <rect x="270" y="30" width="100" height="22" rx="4" class="g"/><text x="278" y="46" class="sm">worker 1</text>
+  <rect x="270" y="56" width="100" height="22" rx="4" class="g"/><text x="278" y="72" class="sm">worker 2</text>
+  <path class="a" d="M250 48H268"/><path class="a" d="M250 60H268"/>
+  <rect x="140" y="96" width="110" height="40" rx="5" class="x"/><text x="148" y="114" class="bd">Dead-letter</text><text x="148" y="128" class="sm">after N failures</text>
+  <path class="ax" d="M195 76V94"/>
+  <rect x="270" y="96" width="100" height="40" rx="5" class="w"/><text x="278" y="114" class="bd">Retry</text><text x="278" y="128" class="sm">backoff + jitter</text>
+  <path class="a" d="M320 78V94"/>
+  <rect x="10" y="154" width="360" height="156" rx="5" class="b"/><text x="18" y="174" class="bd">Reliability rules</text><text x="18" y="192" class="sm">At-least-once means duplicates: make handlers idempotent</text><text x="18" y="208" class="sm">(job id, unique constraint, “already processed” check).</text><text x="18" y="226" class="sm">Acknowledge after success; extend lock for long jobs.</text><text x="18" y="244" class="sm">Retry with backoff; cap attempts; DLQ with alerts, replay.</text><text x="18" y="262" class="sm">Outbox: write the event in the same DB transaction as data,</text><text x="18" y="278" class="sm">then publish, so DB and broker never disagree.</text><text x="18" y="298" class="sm">Return 202 Accepted + job status URL for long operations.</text>
+  <text x="400" y="18" class="bd">Brokers compared</text>
+  <rect x="400" y="30" width="350" height="82" rx="5" class="g"/><text x="408" y="48" class="bd">Task queues: BullMQ/Redis, SQS</text><text x="408" y="66" class="sm">each message processed by one worker; delays, retries, priorities;</text><text x="408" y="82" class="sm">simple operations; SQS is managed; FIFO queues keep order</text><text x="408" y="98" class="sm">(with throughput limits)</text>
+  <rect x="400" y="120" width="350" height="82" rx="5" class="h"/><text x="408" y="138" class="bd">Message brokers: RabbitMQ, SNS</text><text x="408" y="156" class="sm">exchanges and routing (topic, fanout), acknowledgements, flexible</text><text x="408" y="172" class="sm">patterns (RPC, pub/sub); messages removed when consumed</text><text x="408" y="188" class="sm">SNS + SQS fan-out in AWS</text>
+  <rect x="400" y="210" width="350" height="100" rx="5" class="w"/><text x="408" y="228" class="bd">Event logs: Kafka, Kinesis</text><text x="408" y="246" class="sm">partitioned log kept for days; consumers track offsets;</text><text x="408" y="262" class="sm">replay, many consumer groups; very high throughput;</text><text x="408" y="278" class="sm">order per partition; heavier to run; event sourcing,</text><text x="408" y="294" class="sm">analytics pipelines, microservice event backbones</text>
+</svg></div>
+<figcaption><b>Principle.</b> Asynchronous work needs idempotency, retries and visibility, or it fails silently.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>When to go asynchronous:</b> work slower than a request should wait (over a second), needs retries (third-party APIs), is bursty (spikes), is scheduled, or must not block the user (emails, exports, thumbnails, notifications, webhook delivery, AI processing). Keep synchronous what the user needs immediately.</li>
+<li><b>Delivery semantics:</b> at-most-once (may lose), at-least-once (may duplicate; the common default), exactly-once (achieved effectively through idempotent processing and transactional outbox, rarely true end to end). Design consumers to tolerate duplicates and out-of-order messages.</li>
+<li><b>Idempotency techniques:</b> deduplicate by message id in a table with a unique constraint, make operations naturally idempotent (set rather than increment), use idempotency keys to external APIs, and record processed ids with a TTL.</li>
+<li><b>Retries and failure handling:</b> exponential backoff with jitter, max attempts, distinguishing retryable (timeouts, 5xx) from permanent errors (validation), poison messages moved to a dead-letter queue, alerts on DLQ depth, and tooling to inspect and replay.</li>
+<li><b>BullMQ in Node:</b> queues, workers, delayed and repeatable jobs (cron), priorities, concurrency, rate limiting, job events, flows (dependencies), UI dashboards (Bull Board); requires Redis persistence considerations. Alternatives: Agenda (Mongo), pg-boss/Graphile Worker (Postgres-based queues), cloud schedulers.</li>
+<li><b>Scheduling:</b> cron in a single place (one scheduler, not one per instance), distributed locks or queue repeatable jobs to prevent duplicate runs; cloud schedulers (EventBridge, Cloud Scheduler); time zones and daylight-saving handling.</li>
+<li><b>Event-driven architecture:</b> services publish domain events (<code>OrderPlaced</code>) and others subscribe; benefits: loose coupling, scalability, extensibility; challenges: eventual consistency, debugging flows, schema evolution (versioned events, schema registry), ordering, and duplicate handling. Distinguish events (facts) from commands (requests).</li>
+<li><b>Patterns:</b> outbox (reliable publishing), saga (distributed transactions with compensation), CQRS (separate read and write models), event sourcing (state as a log of events), competing consumers, fan-out, and claim-check (store large payloads externally).</li>
+<li><b>Webhooks and real-time to the frontend:</b> a worker finishes and notifies the client through WebSocket, SSE or polling a job-status endpoint; update caches (E4, P4).</li>
+<li><b>Streams in Node:</b> large data processing through Node streams or Kafka consumers with backpressure; keep consumers light, batch where possible.</li>
+<li><b>Observability:</b> metrics (queue depth, age of oldest message, processing time, failure rate), tracing across async boundaries (propagate trace ids in message headers), structured logs with job ids, and alerting on lag.</li>
+<li><b>Capacity and ordering:</b> scale workers horizontally by queue depth; partitions or message groups preserve per-entity order; avoid global ordering requirements.</li>
+<li><b>Frontend relevance:</b> understand job status UX (pending, running, done, failed), idempotent client retries, and how eventual consistency affects what a user sees after submitting.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Assuming messages are delivered exactly once, then double-charging or double-emailing.</li>
+<li>Infinite retries on a poison message that blocks or floods the queue.</li>
+<li>Publishing an event after the DB commit without an outbox, losing events on crash.</li>
+<li>Running a cron job on every instance, executing it several times.</li>
+<li>No monitoring of queue depth or dead-letter queues.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you make a job idempotent?</dt><dd>Use a unique job or business key and check or record processing atomically, or design the operation so repeating it has the same effect.</dd>
+<dt>What is the outbox pattern?</dt><dd>Insert the event into an outbox table in the same transaction as the data change; a relay publishes it to the broker, giving reliable delivery.</dd>
+<dt>Kafka versus RabbitMQ?</dt><dd>Kafka is a replayable partitioned log for streaming at scale; RabbitMQ is a flexible message broker for routing and task distribution where messages are consumed and removed.</dd>
+<dt>How do you give the user progress for a long job?</dt><dd>Return 202 with a job id; the client polls a status endpoint or listens over SSE/WebSocket for updates.</dd>
+</dl></div>
+</section>
+
+<!-- ============ D11 ============ -->
+<section class="q" id="d11">
+<header class="qh">
+  <div class="qrow"><span class="qid">D11</span><span class="tag added">Added</span></div>
+  <h2>Testing, logging and observability</h2>
+  <p class="qtext">“How do you test a Node API? Unit, integration and contract tests. How do you do logging, metrics and tracing? What is a health check? What are the twelve-factor principles?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I test an API in layers: fast unit tests for business logic, integration tests that run the real app against a real database in a container with a library like supertest, contract tests to protect consumers, and a few end-to-end tests. For observability I use structured JSON logs with request ids, metrics for rate, errors and latency, and distributed traces with OpenTelemetry, so I can follow a request across services. Health endpoints let orchestrators route traffic and restart unhealthy instances. I follow twelve-factor ideas: config in the environment, stateless processes, logs to stdout, disposable processes with graceful shutdown, and parity between environments. The goal is to detect problems before users do and diagnose them quickly.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: test layers for an API with proportions. Right: three pillars of observability logs metrics traces and how a request id ties them together, plus health endpoints.">
+  <text x="10" y="18" class="bd">Test layers for an API</text>
+  <rect x="110" y="30" width="160" height="40" rx="5" class="x"/><text x="118" y="48" class="bd">End-to-end (few)</text><text x="118" y="62" class="sm">staging, key flows</text>
+  <rect x="60" y="76" width="260" height="56" rx="5" class="h"/><text x="68" y="94" class="bd">Integration (most value)</text><text x="68" y="112" class="sm">supertest + real DB in a container</text><text x="68" y="126" class="sm">routes, auth, validation, transactions</text>
+  <rect x="30" y="138" width="320" height="40" rx="5" class="g"/><text x="38" y="156" class="bd">Unit</text><text x="38" y="170" class="sm">services, validators, pure functions, policies</text>
+  <rect x="10" y="184" width="360" height="40" rx="5" class="b"/><text x="18" y="202" class="bd">Contract</text><text x="18" y="216" class="sm">OpenAPI schema checks, Pact consumer tests</text>
+  <text x="10" y="248" class="sm">Mock only what you do not own (third-party APIs, time, email).</text><text x="10" y="264" class="sm">Reset the database per test (transactions or truncation).</text><text x="10" y="280" class="sm">Test failure paths: 401, 403, 404, 409, 422, timeouts, retries.</text><text x="10" y="296" class="sm">Runners: Vitest/Jest, node:test; load tests with k6 or Artillery.</text>
+  <text x="400" y="18" class="bd">Observability pillars</text>
+  <rect x="400" y="30" width="110" height="64" rx="5" class="b"/><text x="408" y="50" class="bd">Logs</text><text x="408" y="68" class="sm">events, context,</text><text x="408" y="82" class="sm">JSON, pino</text>
+  <rect x="520" y="30" width="110" height="64" rx="5" class="h"/><text x="528" y="50" class="bd">Metrics</text><text x="528" y="68" class="sm">RED: rate, errors,</text><text x="528" y="82" class="sm">duration</text>
+  <rect x="640" y="30" width="110" height="64" rx="5" class="g"/><text x="648" y="50" class="bd">Traces</text><text x="648" y="68" class="sm">request path across</text><text x="648" y="82" class="sm">services</text>
+  <rect x="400" y="104" width="350" height="40" rx="5" class="w"/><text x="408" y="122" class="bd">Correlation</text><text x="408" y="138" class="sm">one trace/request id in logs, metrics labels and headers</text>
+  <rect x="400" y="154" width="350" height="70" rx="5" class="g"/><text x="408" y="174" class="bd">Health endpoints</text><text x="408" y="192" class="mono" style="font-size:10px">/healthz liveness: process is up</text><text x="408" y="208" class="mono" style="font-size:10px">/readyz readiness: DB, cache reachable</text>
+  <rect x="400" y="234" width="350" height="76" rx="5" class="b"/><text x="408" y="254" class="bd">Twelve-factor highlights</text><text x="408" y="272" class="sm">config in env · stateless processes · logs to stdout · backing</text><text x="408" y="288" class="sm">services as attached resources · disposable processes · dev/prod</text><text x="408" y="302" class="sm">parity · one codebase, many deploys</text>
+</svg></div>
+<figcaption><b>Principle.</b> Tests protect behaviour; observability explains behaviour in production.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Unit tests:</b> isolate business rules from HTTP and DB; inject dependencies (repositories, clock, mailer) so they can be faked; keep tests deterministic; use property-based tests for tricky logic. Avoid mocking everything: mocks that mirror implementation tests nothing.</li>
+<li><b>Integration tests:</b> start the real app (export <code>app</code>, not <code>listen</code>) and call it with <code>supertest</code>; use a real database via Docker/Testcontainers and migrations; seed minimal data; test auth, validation, transactions, pagination and error responses; run in CI in parallel with isolated schemas or databases.</li>
+<li><b>Contract and API tests:</b> validate responses against the OpenAPI spec; consumer-driven contracts (Pact) catch breaking changes between frontend and backend; schema registries for events; run provider verification in CI.</li>
+<li><b>Load and resilience testing:</b> k6/Artillery for throughput and latency under load, soak tests for leaks, chaos experiments for dependency failure; set performance budgets (p95 latency) and test them before big releases.</li>
+<li><b>Structured logging:</b> JSON logs with level, timestamp, message, request id, user id (not PII), route, duration, and error stack; <code>pino</code> (fast) or <code>winston</code>; log to stdout and let the platform ship them; levels used consistently; never log secrets or full personal data; sample noisy logs.</li>
+<li><b>Request context:</b> generate or accept a correlation id (<code>x-request-id</code>), store it in <code>AsyncLocalStorage</code>, include it in every log line and downstream call, and return it in responses and error bodies for support.</li>
+<li><b>Metrics:</b> expose Prometheus metrics (<code>prom-client</code>) or push to Datadog/CloudWatch; RED (rate, errors, duration) for services, USE (utilisation, saturation, errors) for resources; also Node-specific: event-loop lag, heap usage, GC pauses, active handles, DB pool usage. Use histograms for latency percentiles (p50, p95, p99).</li>
+<li><b>Tracing:</b> OpenTelemetry SDK with auto-instrumentation for http, express, pg, mongodb, redis; export to Jaeger, Tempo, Datadog; propagate <code>traceparent</code> headers across services and message queues; link frontend RUM traces to backend traces.</li>
+<li><b>Alerting and SLOs:</b> alert on symptoms (error rate, latency, saturation) rather than causes; define SLIs/SLOs and error budgets; page only for actionable alerts; dashboards per service; runbooks linked from alerts (DevOps guide).</li>
+<li><b>Error tracking:</b> Sentry or similar with release tags and source maps; group errors; track unhandled rejections; sample to control cost.</li>
+<li><b>Health checks:</b> liveness (restart if failing: do not check dependencies), readiness (remove from load balancer when dependencies are down or draining), startup probes for slow boots; keep them cheap.</li>
+<li><b>Configuration and twelve-factor:</b> validate environment variables at startup, separate config from code, backing services as URLs, stateless processes (no local session state or files), disposability (fast start, graceful shutdown), dev/prod parity, admin tasks as one-off processes.</li>
+<li><b>Graceful shutdown and robustness:</b> handle <code>SIGTERM</code>, stop accepting new connections, finish requests, close pools; timeouts on all outbound calls; circuit breakers (opossum) and retries with backoff for dependencies; bulkheads to isolate failures.</li>
+<li><b>Debugging in production:</b> trace and log correlation, feature flags for safe rollout, canary releases, heap snapshots and CPU profiles on demand, and feature toggles for kill switches.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Integration tests against a mocked database that hides real SQL or driver behaviour.</li>
+<li>Logging unstructured text or sensitive data.</li>
+<li>Liveness probes that check the database, causing restarts during a database outage.</li>
+<li>Alerting on every error instead of user-impacting symptoms.</li>
+<li>Tests that depend on shared state or ordering.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What do you put in a readiness check?</dt><dd>Quick checks of critical dependencies (database ping, cache) and startup completion, so traffic is only sent when the instance can serve it.</dd>
+<dt>How do you trace a request across services?</dt><dd>Propagate W3C <code>traceparent</code> headers and instrument each service with OpenTelemetry; view the combined trace in a backend.</dd>
+<dt>What is a good logging strategy?</dt><dd>Structured JSON with consistent fields and correlation ids, appropriate levels, no secrets, shipped centrally and searchable.</dd>
+<dt>How do you test an endpoint that calls a third-party API?</dt><dd>Stub it at the HTTP level (nock/MSW), test success, failure and timeout paths, and run occasional contract checks against a sandbox.</dd>
+</dl></div>
+</section>
+
+<!-- ============ D12 ============ -->
+<section class="q" id="d12">
+<header class="qh">
+  <div class="qrow"><span class="qid">D12</span><span class="tag added">Added</span></div>
+  <h2>Scaling and hardening a Node service</h2>
+  <p class="qtext">“How do you scale a Node API? Horizontal scaling, load balancing, statelessness, connection pooling, clustering, profiling and memory leaks, backpressure, graceful degradation. How do you harden it for production?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I scale Node horizontally: stateless instances behind a load balancer, one process per core via containers or a process manager, with sessions, files and jobs moved out to Redis, object storage and queues. Before scaling out I find the actual bottleneck with profiling and metrics: it is usually the database, so I add indexes, connection pooling, caching and read replicas, and I keep the event loop free of CPU work. I protect the service with timeouts, rate limits, circuit breakers, bulkheads and backpressure so a slow dependency does not take everything down. For production hardening: security headers and input validation, least-privilege credentials, dependency scanning, graceful shutdown, health checks, structured logs and alerts, and a rollback plan.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a scaled architecture with CDN, load balancer, several stateless Node instances, Redis, queue, workers and a database with replicas. Right: resilience patterns for slow dependencies.">
+  <text x="10" y="18" class="bd">Scaled, stateless architecture</text>
+  <rect x="10" y="30" width="170" height="30" rx="4" class="b"/><text x="18" y="50" class="sm">CDN / WAF (cache, DDoS)</text>
+  <path class="a" d="M95 60V70"/>
+  <rect x="10" y="72" width="170" height="30" rx="4" class="h"/><text x="18" y="92" class="sm">Load balancer + health checks</text>
+  <path class="a" d="M50 102V112"/><path class="a" d="M95 102V112"/><path class="a" d="M140 102V112"/>
+  <rect x="10" y="114" width="50" height="34" rx="4" class="g"/><text x="16" y="135" class="sm">node</text><rect x="70" y="114" width="50" height="34" rx="4" class="g"/><text x="76" y="135" class="sm">node</text><rect x="130" y="114" width="50" height="34" rx="4" class="g"/><text x="136" y="135" class="sm">node</text>
+  <path class="a" d="M180 131H208"/>
+  <rect x="210" y="30" width="160" height="40" rx="4" class="w"/><text x="218" y="48" class="bd">Redis</text><text x="218" y="62" class="sm">cache, sessions, limits</text>
+  <rect x="210" y="76" width="160" height="40" rx="4" class="w"/><text x="218" y="94" class="bd">Queue + workers</text><text x="218" y="108" class="sm">slow and scheduled work</text>
+  <rect x="210" y="122" width="160" height="50" rx="4" class="b"/><text x="218" y="140" class="bd">Database</text><text x="218" y="156" class="sm">primary + read replicas, pool</text>
+  <rect x="10" y="164" width="190" height="40" rx="4" class="b"/><text x="18" y="182" class="bd">Object storage</text><text x="18" y="196" class="sm">files, uploads (not local disk)</text>
+  <text x="10" y="226" class="bd">Bottleneck order (usually)</text><text x="10" y="244" class="sm">1 database queries and indexes · 2 N+1 and chatty calls · 3 missing cache</text><text x="10" y="260" class="sm">4 blocking the event loop · 5 outbound calls without timeouts · 6 memory</text><text x="10" y="276" class="sm">leaks and GC · 7 raw CPU. Measure before scaling out.</text><text x="10" y="298" class="sm">DB pool size × instances must stay below the database connection limit.</text>
+  <text x="400" y="18" class="bd">Resilience patterns</text>
+  <rect x="400" y="30" width="350" height="42" rx="4" class="g"/><text x="408" y="48" class="bd">Timeouts everywhere</text><text x="408" y="64" class="sm">HTTP, DB, cache; AbortSignal.timeout; no unbounded waits</text>
+  <rect x="400" y="76" width="350" height="42" rx="4" class="g"/><text x="408" y="94" class="bd">Retries with backoff + jitter</text><text x="408" y="110" class="sm">only idempotent calls; retry budgets avoid retry storms</text>
+  <rect x="400" y="122" width="350" height="42" rx="4" class="h"/><text x="408" y="140" class="bd">Circuit breaker</text><text x="408" y="156" class="sm">stop calling a failing dependency; half-open probes (opossum)</text>
+  <rect x="400" y="168" width="350" height="42" rx="4" class="h"/><text x="408" y="186" class="bd">Bulkheads and rate limits</text><text x="408" y="202" class="sm">separate pools per dependency; shed load early (429/503)</text>
+  <rect x="400" y="214" width="350" height="42" rx="4" class="w"/><text x="408" y="232" class="bd">Backpressure</text><text x="408" y="248" class="sm">streams, bounded queues, limit concurrency (p-limit)</text>
+  <rect x="400" y="260" width="350" height="50" rx="4" class="b"/><text x="408" y="278" class="bd">Graceful degradation</text><text x="408" y="294" class="sm">serve cached or partial data, disable optional features, fallbacks</text>
+</svg></div>
+<figcaption><b>Principle.</b> Scale the architecture, protect each dependency boundary, and fix the real bottleneck first.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Statelessness:</b> no in-memory sessions, uploaded files on local disk, or per-instance caches that must be consistent; use Redis, object storage, and a database. This allows adding or removing instances freely.</li>
+<li><b>Using all cores:</b> <code>cluster</code> module, PM2, or (preferably) one container per core under an orchestrator (Kubernetes, ECS) with autoscaling on CPU, memory, or request rate; set CPU and memory limits and tune <code>--max-old-space-size</code> to container memory.</li>
+<li><b>Load balancing:</b> round robin, least connections; health checks remove unhealthy instances; connection draining on deploy; sticky sessions only when unavoidable (WebSockets with in-memory state); keep-alive tuning between balancer and Node (<code>keepAliveTimeout</code> longer than the balancer’s idle timeout to avoid resets).</li>
+<li><b>Database scaling:</b> connection pooling (pool size sensible; PgBouncer for many instances), indexes and query tuning, read replicas for read-heavy workloads (replication lag), caching, partitioning, archiving, then sharding as a last resort.</li>
+<li><b>Profiling and finding bottlenecks:</b> CPU profiles and flame graphs (<code>--cpu-prof</code>, clinic.js, 0x), event-loop delay metrics, heap snapshots for leaks, APM traces for slow spans, database slow query logs; load test with realistic data.</li>
+<li><b>Memory leaks in Node:</b> growing heap from unbounded caches, listeners never removed, global maps, closures holding request objects, unclosed streams or timers; symptoms: climbing RSS, GC pressure, OOM kills; diagnose with heap snapshots and comparison; mitigate with bounded LRU caches and restart policies as a safety net, not a fix (J24, J25).</li>
+<li><b>Concurrency limits and backpressure:</b> limit concurrent outbound calls and DB queries; use bounded queues; reject quickly with 429/503 when overloaded rather than building unbounded backlogs; stream large responses.</li>
+<li><b>Request handling limits:</b> body size limits, timeouts (<code>server.requestTimeout</code>, headers timeout), maximum connections, slowloris protection at the proxy, upload limits and streaming to storage.</li>
+<li><b>Security hardening checklist:</b> <code>helmet</code>, CORS allowlist, validation and sanitisation, parameterised queries, rate limiting, secrets in a manager, non-root container user, minimal base image, read-only filesystem where possible, dependency and image scanning, HTTPS termination, WAF, audit logging, regular patching of Node (LTS) and packages (P10, P11).</li>
+<li><b>Deployment safety:</b> rolling or canary deployments with health checks, database migrations compatible with old and new versions, feature flags, quick rollback, and connection draining so in-flight requests finish (A6).</li>
+<li><b>Cost and efficiency:</b> right-size instances, cache aggressively, offload static files to CDN, use serverless for spiky workloads (cold starts, connection limits, 15-minute caps), and measure cost per request.</li>
+<li><b>Serverless Node considerations:</b> stateless by design; reuse connections across invocations; use a database proxy/pooler; mind cold starts and bundle size; limits on execution time and concurrency; local state is ephemeral.</li>
+<li><b>Capacity planning:</b> derive from load tests and traffic patterns: peak requests per second, per-request CPU and DB cost, headroom (target around 60 to 70% utilisation), and autoscaling policies with sensible cooldowns.</li>
+<li><b>Failure modes to rehearse:</b> database failover, Redis outage, dependency slowdown, traffic spike, bad deploy, certificate expiry; document runbooks and test them (game days).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Scaling out Node instances when the database is the bottleneck.</li>
+<li>Pool size times instance count exceeding the database’s connection limit.</li>
+<li>No timeouts on outbound calls, so one slow dependency exhausts all workers.</li>
+<li>Relying on restarts to hide a memory leak.</li>
+<li>Sticky sessions and local state that prevent autoscaling or rolling deploys.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How would you scale an API from 100 to 10,000 requests per second?</dt><dd>Profile first; add caching and indexes, pool connections, make it stateless and scale horizontally behind a load balancer, move slow work to queues, add read replicas, and test with load profiles.</dd>
+<dt>What is a circuit breaker?</dt><dd>A guard that stops calls to a failing dependency after a threshold, failing fast and probing periodically for recovery.</dd>
+<dt>How do you handle a traffic spike you cannot absorb?</dt><dd>Shed load gracefully with rate limits and 503/429 responses, serve cached or degraded content, and scale or queue the rest.</dd>
+<dt>Why must <code>keepAliveTimeout</code> exceed the load balancer’s idle timeout?</dt><dd>Otherwise Node may close a connection just as the balancer reuses it, causing intermittent 502 errors.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>36 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>Is Node.js single-threaded?</td><td>The JavaScript runs on one thread; libuv, the thread pool and workers add parallel I/O and CPU capacity.</td><td>D1</td></tr>
+<tr><td>2</td><td>Event loop phases?</td><td>Timers, pending, poll, check (<code>setImmediate</code>), close; microtasks and <code>nextTick</code> between.</td><td>D1</td></tr>
+<tr><td>3</td><td>What blocks the event loop?</td><td>Synchronous CPU or I/O work in a handler; use workers or queues.</td><td>D1</td></tr>
+<tr><td>4</td><td>What is backpressure?</td><td>A slow consumer signalling the producer to pause; use <code>pipeline</code>.</td><td>D1</td></tr>
+<tr><td>5</td><td>What is Express middleware?</td><td>A function <code>(req, res, next)</code> run in registration order; <code>next(err)</code> goes to error handlers.</td><td>D2</td></tr>
+<tr><td>6</td><td>Where is the error handler registered?</td><td>Last, with four parameters.</td><td>D2</td></tr>
+<tr><td>7</td><td>Async errors in Express 4?</td><td>Need a wrapper; Express 5 forwards rejected promises automatically.</td><td>D2</td></tr>
+<tr><td>8</td><td>Why Fastify or NestJS?</td><td>Fastify for speed and schema validation; NestJS for structure and dependency injection.</td><td>D2</td></tr>
+<tr><td>9</td><td>PUT versus PATCH?</td><td>PUT replaces and is idempotent; PATCH applies a partial change.</td><td>D3</td></tr>
+<tr><td>10</td><td>Why cursor pagination?</td><td>Stable and fast on large changing tables, unlike offset.</td><td>D3</td></tr>
+<tr><td>11</td><td>How do you make POST retry-safe?</td><td>An idempotency key stored with the first result.</td><td>D3</td></tr>
+<tr><td>12</td><td>REST error format?</td><td>Consistent problem-details JSON with status, code and field errors.</td><td>D3</td></tr>
+<tr><td>13</td><td>How do you store passwords?</td><td>Argon2id or bcrypt with salt; never reversible or fast hashes.</td><td>D4</td></tr>
+<tr><td>14</td><td>Session or JWT?</td><td>Server session for first-party web apps; short JWT + rotating refresh for stateless needs.</td><td>D4</td></tr>
+<tr><td>15</td><td>What is mass assignment?</td><td>Binding request bodies into models, letting clients set protected fields.</td><td>D4</td></tr>
+<tr><td>16</td><td>Authorisation done where?</td><td>At the resource level in the service layer, checking role and ownership.</td><td>D4</td></tr>
+<tr><td>17</td><td>When SQL, when NoSQL?</td><td>SQL for related, transactional data; NoSQL for specific patterns like documents, caches, huge write scale.</td><td>D5</td></tr>
+<tr><td>18</td><td>What does ACID stand for?</td><td>Atomicity, consistency, isolation, durability.</td><td>D5</td></tr>
+<tr><td>19</td><td>What does CAP say?</td><td>During a partition you must choose consistency or availability.</td><td>D5</td></tr>
+<tr><td>20</td><td>What is the N+1 problem?</td><td>One query for a list plus one per row; fix with joins or batching.</td><td>D5</td></tr>
+<tr><td>21</td><td>Inner versus left join?</td><td>Inner: matches only. Left: all left rows, NULLs where no match.</td><td>D6</td></tr>
+<tr><td>22</td><td>Composite index rule?</td><td>Leftmost prefix: it helps queries filtering on the first columns in order.</td><td>D6</td></tr>
+<tr><td>23</td><td>How to debug a slow query?</td><td><code>EXPLAIN ANALYZE</code>, spot scans and bad estimates, index or rewrite.</td><td>D6</td></tr>
+<tr><td>24</td><td>Default Postgres isolation?</td><td>Read committed.</td><td>D6</td></tr>
+<tr><td>25</td><td>What is Supabase?</td><td>Open-source backend on Postgres: auto API, auth, realtime, storage, edge functions.</td><td>D7</td></tr>
+<tr><td>26</td><td>What does RLS do?</td><td>Row Level Security policies filter rows per user inside Postgres.</td><td>D7</td></tr>
+<tr><td>27</td><td>Danger of the <code>service_role</code> key?</td><td>It bypasses RLS; server-side only, never in the browser.</td><td>D7</td></tr>
+<tr><td>28</td><td>Embed or reference in MongoDB?</td><td>Embed read-together bounded data; reference shared, large or independent data.</td><td>D8</td></tr>
+<tr><td>29</td><td>Compound index order rule?</td><td>Equality, then sort, then range (ESR).</td><td>D8</td></tr>
+<tr><td>30</td><td>What does <code>w: "majority"</code> mean?</td><td>The write is acknowledged after most replicas have it, surviving failover.</td><td>D8</td></tr>
+<tr><td>31</td><td>What is cache-aside?</td><td>Check cache, on miss load from DB and store with TTL; invalidate on write.</td><td>D9</td></tr>
+<tr><td>32</td><td>What is a cache stampede?</td><td>Many requests rebuild an expired hot key; coalesce, jitter TTLs, serve stale.</td><td>D9</td></tr>
+<tr><td>33</td><td>Why must queue consumers be idempotent?</td><td>Delivery is at-least-once, so duplicates will happen.</td><td>D10</td></tr>
+<tr><td>34</td><td>What is the outbox pattern?</td><td>Write the event in the same DB transaction, then publish it reliably.</td><td>D10</td></tr>
+<tr><td>35</td><td>Liveness versus readiness?</td><td>Liveness: restart if dead. Readiness: route traffic only when dependencies are ready.</td><td>D11</td></tr>
+<tr><td>36</td><td>First step before scaling a slow API?</td><td>Profile and measure: the bottleneck is usually the database, not Node.</td><td>D12</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer backend questions as a frontend lead</h4>
+<ul>
+<li>Show working depth and good judgement rather than trying to be a DBA: state the access pattern, the consistency requirement and the trade-off, then recommend.</li>
+<li>Connect backend choices to frontend consequences: pagination style, error shapes, eventual consistency in the UI, auth cookies versus tokens, long-job status UX.</li>
+<li>Lead with defaults and reasons: PostgreSQL as the system of record, Redis for caching, queues for slow work, stateless services behind a load balancer.</li>
+<li>Name failure modes (duplicates, stampedes, retries, slow dependencies) and the pattern that handles each.</li>
+<li>Be explicit about security: authorisation at the data layer, parameterised queries, least privilege, never trusting client input.</li>
+<li>The interview is theoretical: expect “explain”, “compare”, “how would you design” and “what are the trade-offs”, not live coding.</li>
+</ul></div>
+</section>
+
+</div>

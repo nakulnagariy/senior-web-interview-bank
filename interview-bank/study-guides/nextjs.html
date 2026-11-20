@@ -1,0 +1,967 @@
+<title>Next.js and Rendering Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"Next.js and Rendering Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"Next.js and Rendering Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · Next.js · Expert level</div>
+  <h1>Next.js and Rendering Study Guide</h1>
+  <p>Rendering strategies (CSR, SSR, SSG, ISR, streaming, partial prerendering), the App Router, Server and Client Components in Next.js, data fetching and static versus dynamic rendering, the caching layers, mutations with Server Actions and route handlers, routing and middleware, streaming and hydration, performance features, SEO and metadata, authentication and security, and deployment. Version-specific behaviour changed between Next.js 13, 14, 15 and 16, so those points are tagged for checking. The interview is theoretical, so every topic is written as something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> check the Next.js docs for your version before stating as fact</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Rendering and architecture</h3>
+    <ol>
+      <li><b>N1</b><a href="#n1">Rendering strategies: CSR, SSR, SSG, ISR, PPR</a></li>
+      <li><b>N2</b><a href="#n2">The App Router and file conventions</a></li>
+      <li><b>N3</b><a href="#n3">Server and Client Components in Next.js</a></li>
+      <li><b>N4</b><a href="#n4">Data fetching, static versus dynamic</a></li>
+    </ol>
+    <h3 style="margin-top:16px">2 · Data, mutations and navigation</h3>
+    <ol>
+      <li><b>N5</b><a href="#n5">The caching layers</a></li>
+      <li><b>N6</b><a href="#n6">Mutations: Server Actions and route handlers</a></li>
+      <li><b>N7</b><a href="#n7">Routing, navigation and middleware</a></li>
+      <li><b>N8</b><a href="#n8">Streaming, Suspense and hydration</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>3 · Shipping a Next.js app</h3>
+    <ol>
+      <li><b>N9</b><a href="#n9">Performance: images, fonts, scripts, bundles</a></li>
+      <li><b>N10</b><a href="#n10">SEO and metadata</a></li>
+      <li><b>N11</b><a href="#n11">Authentication and security</a></li>
+      <li><b>N12</b><a href="#n12">Deployment, runtimes and operations</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">N1 to N5 are asked most often: “which rendering mode would you choose?” and “explain Next.js caching”. N11 and N12 show lead-level judgement.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Assumes React Server Components from the React guide (R11). Next.js changes quickly; defaults for caching changed in version 15, and further changes arrived in 16. Tags mark what to confirm.</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Rendering and architecture</h1>
+
+<!-- ============ N1 ============ -->
+<section class="q" id="n1">
+<header class="qh">
+  <div class="qrow"><span class="qid">N1</span><span class="tag added">Added</span></div>
+  <h2>Rendering strategies: CSR, SSR, SSG, ISR, PPR</h2>
+  <p class="qtext">“Explain client-side rendering, server-side rendering, static generation and incremental static regeneration. How do you choose a rendering strategy per page? What is partial prerendering?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The strategies differ in when and where HTML is produced. Client-side rendering ships a nearly empty shell and builds the page in the browser: simple and cheap to host, but slow first content and weak for SEO. Server-side rendering generates HTML on every request, so it is always fresh and personalised, at the cost of server work and a slower time to first byte. Static site generation builds HTML once at build time and serves it from a CDN, which is fastest, but content is only as fresh as the last build. Incremental static regeneration keeps static speed and refreshes pages in the background after a time interval or on demand. Partial prerendering serves a static shell instantly and streams in the dynamic parts. I choose per page from how often the content changes, whether it is personalised, and SEO needs.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Four strategies compared along a timeline from browser request to useful content: CSR gets an empty shell then fetches data in the browser; SSR renders HTML on the server per request; SSG serves prebuilt HTML from a CDN; ISR serves prebuilt HTML and regenerates in the background. A fifth row shows partial prerendering with a static shell and streamed dynamic holes.">
+  <text x="10" y="18" class="bd">When and where is the HTML made?</text>
+  <text x="10" y="50" class="bd">CSR</text>
+  <rect x="80" y="34" width="70" height="26" class="b"/><text x="86" y="52" class="sm">empty shell</text><rect x="150" y="34" width="120" height="26" class="w"/><text x="156" y="52" class="sm">download + run JS</text><rect x="270" y="34" width="110" height="26" class="w"/><text x="276" y="52" class="sm">fetch data</text><rect x="380" y="34" width="90" height="26" class="g"/><text x="386" y="52" class="sm">content</text>
+  <text x="490" y="52" class="sm">cheap hosting; slow first content; weak SEO</text>
+  <text x="10" y="92" class="bd">SSR</text>
+  <rect x="80" y="76" width="160" height="26" class="w"/><text x="86" y="94" class="sm">server renders per request</text><rect x="240" y="76" width="90" height="26" class="g"/><text x="246" y="94" class="sm">HTML shown</text><rect x="330" y="76" width="100" height="26" class="b"/><text x="336" y="94" class="sm">hydrate</text>
+  <text x="490" y="94" class="sm">fresh, personal, good SEO; higher TTFB, server cost</text>
+  <text x="10" y="134" class="bd">SSG</text>
+  <rect x="80" y="118" width="70" height="26" class="g"/><text x="86" y="136" class="sm">CDN HTML</text><rect x="150" y="118" width="90" height="26" class="b"/><text x="156" y="136" class="sm">hydrate</text>
+  <text x="490" y="136" class="sm">fastest, cheapest; stale until the next build</text>
+  <text x="10" y="176" class="bd">ISR</text>
+  <rect x="80" y="160" width="70" height="26" class="g"/><text x="86" y="178" class="sm">CDN HTML</text><rect x="150" y="160" width="90" height="26" class="b"/><text x="156" y="178" class="sm">hydrate</text><rect x="260" y="160" width="190" height="26" class="h" style="stroke-dasharray:4 3"/><text x="266" y="178" class="sm">background regenerate</text>
+  <text x="490" y="178" class="sm">static speed, refreshed on a timer or on demand</text>
+  <text x="10" y="218" class="bd">PPR</text>
+  <rect x="80" y="202" width="90" height="26" class="g"/><text x="86" y="220" class="sm">static shell</text><rect x="170" y="202" width="60" height="26" class="w"/><text x="176" y="220" class="sm">stream</text><rect x="230" y="202" width="70" height="26" class="w"/><text x="236" y="220" class="sm">stream</text>
+  <text x="490" y="220" class="sm">static shell instantly, dynamic holes stream in</text>
+  <rect x="10" y="246" width="740" height="74" rx="5" class="b"/><text x="20" y="266" class="bd">Choose per route by three questions</text><text x="20" y="284" class="sm">1 How often does the content change? (never → SSG; hourly → ISR; per request → SSR)</text><text x="20" y="300" class="sm">2 Is it personalised or request-specific? (cookies, auth, geo → dynamic, or a static shell with dynamic holes)</text><text x="20" y="316" class="sm">3 Does it need SEO and fast first paint? (public pages: server or static; behind login: CSR is often fine)</text>
+</svg></div>
+<figcaption><b>Not either-or.</b> In Next.js each route (and with PPR, each part of a route) picks its own strategy.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>CSR:</b> the browser downloads JavaScript, runs it, fetches data, then renders. Pros: simple deployment (static files), rich interactivity, cheap. Cons: blank screen until JS runs, poor LCP, SEO and social previews depend on crawler JavaScript support, performance varies with device. Good for authenticated dashboards and tools where SEO is irrelevant.</li>
+<li><b>SSR:</b> the server runs the React tree per request and returns HTML; the browser shows it quickly, then <em>hydrates</em> (attaches event handlers). Pros: good first paint and SEO, access to request data (cookies, headers). Cons: TTFB depends on server and data latency, scaling cost, hydration cost, an “uncanny valley” where the page looks ready but is not interactive.</li>
+<li><b>SSG:</b> pages are built at build time (<code>generateStaticParams</code> for dynamic routes) and served from a CDN. Pros: best TTFB, resilience, low cost. Cons: build time grows with page count; content updates need a rebuild; cannot personalise per request (use client fetching for user parts).</li>
+<li><b>ISR:</b> serves the cached static page and, after the <code>revalidate</code> window, regenerates it in the background (stale-while-revalidate); on-demand revalidation (<code>revalidatePath</code>, <code>revalidateTag</code>) updates exactly when content changes (CMS webhook). Pages not pre-built are generated on first request and cached.</li>
+<li><b>Streaming SSR:</b> the server sends HTML in chunks as Suspense boundaries resolve, so slow data does not block the whole page (N8).</li>
+<li><b>Partial prerendering (PPR) and cache components:</b> a route has a static shell prerendered at build and dynamic parts (inside Suspense) rendered per request and streamed; one HTTP response, one CDN-friendly shell. It evolved from an experimental flag into the Cache Components model in newer versions <span class="verify">verify the status in your Next.js version</span>.</li>
+<li><b>Metrics lens:</b> TTFB (server and network), FCP and LCP (what is shown early), INP (interactivity after hydration), CLS (stability). SSG and PPR favour TTFB and LCP; CSR hurts LCP; SSR depends on data latency.</li>
+<li><b>Hydration costs:</b> all client components hydrate; large trees delay interactivity. Server Components reduce what hydrates. Islands architectures (Astro) and resumability (Qwik) are alternatives that avoid hydrating everything.</li>
+<li><b>Example choices:</b> marketing and docs: SSG/ISR. Blog or catalogue with frequent edits: ISR with on-demand revalidation. Product page: static shell, cached product data, dynamic price and stock via PPR or client fetching. Search results: SSR or client fetching. Account dashboard: dynamic server rendering or CSR. News ticker: client polling or streaming.</li>
+<li><b>In Next.js a route is static by default</b> if it uses no dynamic APIs or uncached data; using <code>cookies()</code>, <code>headers()</code>, <code>searchParams</code> or <code>connection()</code> makes it dynamic (N4). Pages Router used explicit functions (<code>getStaticProps</code>, <code>getServerSideProps</code>).</li>
+<li><b>Edge rendering:</b> rendering close to users on edge runtimes lowers latency but limits Node APIs and database proximity; data location often dominates (N12).</li>
+<li><b>Hybrid personalisation:</b> render shared content statically and personalise with client fetching, edge middleware rewrites (A/B tests), or dynamic holes.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“SSR is always better for SEO and performance.” It adds server latency; static is faster whenever content allows it.</li>
+<li>Confusing hydration with rendering: the server produces the HTML, the client hydrates to make it interactive.</li>
+<li>Saying ISR re-renders on every request. It serves the cache and regenerates at most once per window in the background.</li>
+<li>Choosing one mode for the entire site instead of per route.</li>
+<li>Forgetting that personalised data in a static page leaks to everyone or forces dynamic rendering.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does stale-while-revalidate mean in ISR?</dt><dd>The first request after expiry still gets the old page instantly, and a background render produces the fresh page for later requests.</dd>
+<dt>How do you show a logged-in user’s name on a static page?</dt><dd>Keep the page static and fetch user data on the client, or use PPR with a dynamic hole inside Suspense.</dd>
+<dt>How does SEO differ between CSR and SSR?</dt><dd>Crawlers can run JavaScript, but later and less reliably; server-rendered HTML is indexed immediately and gives correct social previews.</dd>
+<dt>What is the downside of SSG for a site with a million pages?</dt><dd>Very long builds; use on-demand ISR (generate on first request) and pre-build only the most important pages.</dd>
+</dl></div>
+</section>
+
+<!-- ============ N2 ============ -->
+<section class="q" id="n2">
+<header class="qh">
+  <div class="qrow"><span class="qid">N2</span><span class="tag added">Added</span></div>
+  <h2>The App Router and file conventions</h2>
+  <p class="qtext">“How does the App Router work? Explain layouts, pages, loading and error files, route groups, dynamic routes, parallel and intercepting routes. How does it differ from the Pages Router?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The App Router, in the <code>app</code> directory, maps folders to URL segments and uses special files in each folder: <code>page.tsx</code> makes the route public, <code>layout.tsx</code> wraps the segment and its children and persists across navigation, <code>loading.tsx</code> is an automatic Suspense fallback, <code>error.tsx</code> is an error boundary, <code>not-found.tsx</code> handles 404s, and <code>route.ts</code> defines an API endpoint. Components are Server Components by default, and layouts nest, so shared UI and data are not re-rendered when moving between child routes. Compared with the Pages Router, which uses <code>pages/</code> with <code>getServerSideProps</code> and <code>getStaticProps</code>, the App Router gives nested layouts, streaming, Server Components, and colocated data fetching.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="A folder tree of the app directory with layout, page, loading, error and dynamic segment files, mapped to the nested component structure that Next.js builds: root layout wraps a dashboard layout which wraps a Suspense boundary, error boundary and the page.">
+  <text x="10" y="18" class="bd">Folders become URLs; special files become UI layers</text>
+  <rect x="10" y="30" width="330" height="290" rx="5" class="b"/>
+  <text x="20" y="50" class="mono" style="font-size:10.5px">app/</text>
+  <text x="32" y="67" class="mono" style="font-size:10.5px">layout.tsx          root layout (html, body)</text>
+  <text x="32" y="83" class="mono" style="font-size:10.5px">page.tsx            /</text>
+  <text x="32" y="99" class="mono" style="font-size:10.5px">(marketing)/about/page.tsx   /about</text>
+  <text x="32" y="115" class="mono" style="font-size:10.5px">dashboard/</text>
+  <text x="44" y="131" class="mono" style="font-size:10.5px">layout.tsx        shared nav</text>
+  <text x="44" y="147" class="mono" style="font-size:10.5px">loading.tsx       Suspense fallback</text>
+  <text x="44" y="163" class="mono" style="font-size:10.5px">error.tsx         error boundary</text>
+  <text x="44" y="179" class="mono" style="font-size:10.5px">page.tsx          /dashboard</text>
+  <text x="44" y="195" class="mono" style="font-size:10.5px">[teamId]/page.tsx /dashboard/42</text>
+  <text x="32" y="211" class="mono" style="font-size:10.5px">blog/[...slug]/page.tsx   catch-all</text>
+  <text x="32" y="227" class="mono" style="font-size:10.5px">api/hook/route.ts   route handler</text>
+  <text x="32" y="243" class="mono" style="font-size:10.5px">@modal/(.)photo/[id]/page.tsx</text>
+  <text x="32" y="259" class="mono" style="font-size:10.5px">_components/        private, not routed</text>
+  <text x="20" y="284" class="sm">(group) = organise without changing the URL</text><text x="20" y="300" class="sm">[param] dynamic · [...a] catch-all · @slot parallel</text><text x="20" y="314" class="sm">(.) intercepting: show a route as a modal</text>
+  <text x="370" y="18" class="bd">What Next.js builds for /dashboard/42</text>
+  <rect x="370" y="30" width="380" height="290" rx="5" class="b"/><text x="380" y="48" class="sm">RootLayout (persists)</text>
+  <rect x="384" y="56" width="352" height="256" rx="5" class="h"/><text x="394" y="74" class="sm">DashboardLayout (persists across /dashboard/*)</text>
+  <rect x="398" y="82" width="324" height="222" rx="5" class="w"/><text x="408" y="100" class="sm">ErrorBoundary (error.tsx)</text>
+  <rect x="412" y="108" width="296" height="188" rx="5" class="g"/><text x="422" y="126" class="sm">Suspense fallback (loading.tsx)</text>
+  <rect x="426" y="134" width="268" height="152" rx="5" class="b"/><text x="436" y="152" class="bd">page.tsx</text><text x="436" y="172" class="sm">receives params, searchParams</text><text x="436" y="190" class="sm">Server Component by default</text><text x="436" y="214" class="sm">Navigating between siblings only</text><text x="436" y="230" class="sm">re-renders this innermost part;</text><text x="436" y="246" class="sm">layouts keep their state.</text>
+</svg></div>
+<figcaption><b>Mental model.</b> Each folder level wraps the next with layout, Suspense and error boundaries. Navigation updates only the segments that changed.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Colocation:</b> only <code>page</code> and <code>route</code> files are public; other files in the folder (components, tests, styles) are safe. Prefix a folder with <code>_</code> to make intent explicit.</li>
+<li><b>Layouts:</b> defined by <code>layout.tsx</code>, receive <code>children</code>, preserve state and do not re-render when navigating between children (good for navigation shells). The root layout is required and renders <code>&lt;html&gt;</code> and <code>&lt;body&gt;</code>. Layouts cannot read <code>searchParams</code> or the pathname (they do not re-render on navigation); use a client component with hooks for the active link. <code>template.tsx</code> is like a layout that remounts on every navigation (animations, per-page effects).</li>
+<li><b><code>loading.tsx</code> and <code>error.tsx</code>:</b> shorthand for wrapping the segment in Suspense and an error boundary. <code>error.tsx</code> must be a client component, receives <code>error</code> and <code>reset</code>; <code>global-error.tsx</code> catches root layout errors. <code>not-found.tsx</code> renders with <code>notFound()</code>.</li>
+<li><b>Dynamic routes:</b> <code>[id]</code>, catch-all <code>[...slug]</code>, optional catch-all <code>[[...slug]]</code>. In recent versions <code>params</code> and <code>searchParams</code> are promises that you <code>await</code> <span class="verify">verify (Next 15+)</span>. Use <code>generateStaticParams</code> to pre-render known values.</li>
+<li><b>Route groups <code>(name)</code>:</b> organise routes or apply different layouts to sibling sections without affecting the URL (marketing versus app shell).</li>
+<li><b>Parallel routes (<code>@slot</code>):</b> render several pages in the same layout simultaneously (dashboards with independent loading and error states); <code>default.tsx</code> is the fallback for unmatched slots. <b>Intercepting routes</b> <code>(.)</code>, <code>(..)</code>, <code>(...)</code>: show another route in the current context (a photo as a modal) while the URL is shareable and a hard refresh shows the full page.</li>
+<li><b>Route handlers (<code>route.ts</code>):</b> export HTTP method functions using the Web <code>Request</code>/<code>Response</code> APIs (N6).</li>
+<li><b>Special metadata files:</b> <code>favicon</code>, <code>opengraph-image</code>, <code>sitemap.ts</code>, <code>robots.ts</code>, <code>manifest</code> (N10).</li>
+<li><b>Pages Router comparison:</b> <code>pages/</code> directory, one layout via <code>_app</code>, data via <code>getStaticProps</code>, <code>getServerSideProps</code>, <code>getStaticPaths</code>, <code>getInitialProps</code>; all components are client components that hydrate. It remains supported; both routers can coexist and migration is incremental (route by route). The App Router adds nested layouts, streaming, Server Components, Server Actions and simpler colocated data fetching, with a steeper learning curve and more caching to understand.</li>
+<li><b>Navigation:</b> <code>&lt;Link&gt;</code> for client-side transitions with prefetching, <code>useRouter</code> (client) and <code>redirect()</code> (server) (N7).</li>
+<li><b>Project organisation:</b> <code>src/</code> optional, feature folders colocated inside route segments or in a shared <code>features/</code> folder; keep route files thin and push logic into modules.</li>
+<li><b>Static assets:</b> <code>public/</code> served from root; imported images get automatic dimensions and optimisation.</li>
+<li><b>Turbopack and build:</b> the bundler is Turbopack (default in recent versions) or webpack <span class="verify">verify</span>; it only affects tooling, not the file conventions.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Expecting a layout to re-render (or read <code>searchParams</code>) when navigating between child routes. It does not.</li>
+<li>Adding <code>'use client'</code> to a layout to use one hook, turning the subtree into client code. Extract a small client component instead.</li>
+<li>Forgetting that <code>error.tsx</code> does not catch errors in the layout of the same segment (use the parent’s or <code>global-error</code>).</li>
+<li>Putting a <code>route.ts</code> and a <code>page.tsx</code> in the same segment; they conflict.</li>
+<li>Assuming files like <code>utils.ts</code> next to a page are routed. Only special files are.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Layout versus template?</dt><dd>A layout persists and keeps state across navigations; a template creates a new instance each time, resetting state and re-running effects.</dd>
+<dt>How would you build a modal that has its own URL?</dt><dd>An intercepting route plus a parallel <code>@modal</code> slot: soft navigation shows the modal over the page, direct loads show the full page.</dd>
+<dt>How do you migrate from Pages to App Router?</dt><dd>Incrementally: move routes one by one into <code>app/</code>, replace data functions with server components, keep shared code in components, and run both routers meanwhile.</dd>
+<dt>Where do you fetch data for a layout?</dt><dd>In the layout itself if it is shared (it is deduped), or in nested pages; remember layouts do not re-run when children change.</dd>
+</dl></div>
+</section>
+
+<!-- ============ N3 ============ -->
+<section class="q" id="n3">
+<header class="qh">
+  <div class="qrow"><span class="qid">N3</span><span class="tag added">Added</span></div>
+  <h2>Server and Client Components in Next.js</h2>
+  <p class="qtext">“When do you use a Server Component and when a Client Component in Next.js? How do you compose them? How do you use context providers and third-party libraries that need the browser?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“In the App Router everything is a Server Component unless a file starts with <code>'use client'</code>. I keep as much as possible on the server: data fetching, secrets, heavy libraries and static markup, because none of that ships to the browser. I use client components for interactivity: state, effects, event handlers, browser APIs and context consumers, and I push the <code>'use client'</code> boundary down to small leaves, such as a button or a form, instead of marking a whole page. A client component cannot import a server component, but it can receive one as <code>children</code>, so a provider component can wrap server-rendered content. Props crossing the boundary must be serialisable, and secrets must stay in server-only modules.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a decision table for server versus client components. Right: a composition example where a server page renders a client ThemeProvider which receives server components as children, and a small client LikeButton leaf receives serialisable props.">
+  <text x="10" y="18" class="bd">Which side?</text>
+  <rect x="10" y="30" width="170" height="150" rx="5" class="g"/><text x="18" y="50" class="bd">Server (default)</text><text x="18" y="70" class="sm">fetch data, DB, files</text><text x="18" y="86" class="sm">use secrets and tokens</text><text x="18" y="102" class="sm">heavy libs (markdown)</text><text x="18" y="118" class="sm">static and SEO content</text><text x="18" y="134" class="sm">keep JS out of the bundle</text><text x="18" y="150" class="sm">async / await in render</text>
+  <rect x="200" y="30" width="170" height="150" rx="5" class="h"/><text x="208" y="50" class="bd">Client ('use client')</text><text x="208" y="70" class="sm">useState, useEffect</text><text x="208" y="86" class="sm">onClick, onChange</text><text x="208" y="102" class="sm">browser APIs (window)</text><text x="208" y="118" class="sm">context consumers</text><text x="208" y="134" class="sm">hooks from libraries</text><text x="208" y="150" class="sm">interactive widgets</text>
+  <text x="10" y="204" class="sm">Rule: start on the server, add 'use client' at the smallest</text><text x="10" y="220" class="sm">leaf that needs interactivity.</text>
+  <rect x="10" y="240" width="360" height="70" rx="5" class="w"/><text x="18" y="260" class="bd">Props crossing the boundary</text><text x="18" y="278" class="sm">allowed: strings, numbers, plain objects, arrays, Dates,</text><text x="18" y="294" class="sm">promises, Server Actions · not allowed: functions, class instances</text>
+  <text x="400" y="18" class="bd">Composition pattern</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="b"/>
+  <rect x="412" y="42" width="326" height="40" rx="4" class="g"/><text x="420" y="60" class="sm">app/layout.tsx  (server)</text><text x="420" y="74" class="mono" style="font-size:10px">&lt;ThemeProvider&gt;{children}&lt;/ThemeProvider&gt;</text>
+  <rect x="426" y="92" width="298" height="52" rx="4" class="h"/><text x="434" y="110" class="sm">ThemeProvider  'use client'  (context lives here)</text><text x="434" y="128" class="sm">children passed in stay server-rendered</text>
+  <rect x="440" y="154" width="270" height="40" rx="4" class="g"/><text x="448" y="172" class="sm">page.tsx  (server): fetches product</text><text x="448" y="186" class="sm">renders markup, no client JS</text>
+  <rect x="454" y="204" width="242" height="40" rx="4" class="h"/><text x="462" y="222" class="sm">LikeButton 'use client' (leaf)</text><text x="462" y="236" class="mono" style="font-size:10px">&lt;LikeButton id={p.id} count={n}/&gt;</text>
+  <text x="412" y="268" class="sm">The provider is a client island; everything inside it passed</text><text x="412" y="284" class="sm">as children is still rendered on the server.</text><text x="412" y="300" class="sm">Third-party widgets: wrap in your own 'use client' file.</text>
+</svg></div>
+<figcaption><b>Pattern.</b> Client islands inside server trees. Context providers sit high in the tree but receive server-rendered children.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Directive scope:</b> <code>'use client'</code> marks a module boundary: that file and everything it imports are client code. You do not need it in files imported by an already client file. <code>'use server'</code> marks Server Actions, not server components.</li>
+<li><b>Server component capabilities and limits:</b> can be <code>async</code>, read environment secrets, query databases, call internal services, and use <code>fs</code>. Cannot use state, effects, browser APIs or event handlers, nor consume context (<code>useContext</code> only in client components).</li>
+<li><b>Importing rules:</b> a server component can import client components. A client component cannot import a server component, but may render one passed as <code>children</code> or a prop. This allows “donut” layouts.</li>
+<li><b>Context and global state:</b> providers must be client components; create a <code>Providers</code> client file and use it in the root layout. Avoid per-request data in module-level variables on the server (shared across requests). Theme, i18n, query client and auth state typically live here.</li>
+<li><b>Third-party components:</b> libraries that use hooks or browser APIs may lack a <code>'use client'</code> directive; re-export them from your own client file. Prefer libraries that ship server-compatible builds.</li>
+<li><b>Server-only code:</b> import <code>'server-only'</code> in modules that must never reach the client (database access, secrets). Build fails if a client component imports it. <code>'client-only'</code> is the opposite. Environment variables without the <code>NEXT_PUBLIC_</code> prefix are not exposed to the browser.</li>
+<li><b>Data passing:</b> pass the minimum data. Do not send entire database rows with sensitive fields; map to a DTO. Tainting APIs exist to mark objects that must not cross <span class="verify">verify (experimental)</span>.</li>
+<li><b>Sharing code:</b> pure utilities can be shared by both sides; code touching <code>window</code>, DOM or Node-only APIs must be isolated.</li>
+<li><b>Dynamic imports:</b> <code>next/dynamic</code> or <code>React.lazy</code> for heavy client components; <code>ssr: false</code> is only allowed in client components to render something browser-only <span class="verify">verify (restricted in server components since 15)</span>.</li>
+<li><b>Performance effect:</b> fewer client components mean less JavaScript to download and hydrate, improving INP and LCP on low-end devices. Track the “First Load JS” in the build output.</li>
+<li><b>Common refactors:</b> split a page into a server shell that fetches data and small client children for interaction; move data fetching from <code>useEffect</code> in client components to the server component and pass as props; replace global client state for server data with server components plus revalidation.</li>
+<li><b>Testing:</b> test client components with Testing Library; test server logic as plain functions; use end-to-end tests for pages (R12).</li>
+<li><b>Streaming boundaries:</b> wrap slow server components in Suspense to stream them (N8).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Putting <code>'use client'</code> at the top of every file “to make errors go away”, losing the benefits of server rendering.</li>
+<li>Importing a server-only module into a client component and leaking secrets or breaking the build.</li>
+<li>Passing a function or class instance as a prop from server to client.</li>
+<li>Reading <code>window</code> or <code>localStorage</code> during render in a component that also renders on the server.</li>
+<li>Creating shared mutable state in a module on the server and leaking data between users.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Does a client component render on the server?</dt><dd>Yes: client components are still pre-rendered to HTML on the server and then hydrated. The directive only means their code is also shipped to the browser.</dd>
+<dt>How do you use a context provider in the root layout?</dt><dd>Create a client <code>Providers</code> component and render it around <code>children</code>; children remain server-rendered.</dd>
+<dt>Where should data fetching live?</dt><dd>In server components close to where the data is used, with requests started in parallel; client fetching only for interactive or user-driven data.</dd>
+<dt>How do you prevent leaking secrets?</dt><dd><code>server-only</code> imports, no <code>NEXT_PUBLIC_</code> prefix for secrets, DTOs for props, and review what crosses the boundary.</dd>
+</dl></div>
+</section>
+
+<!-- ============ N4 ============ -->
+<section class="q" id="n4">
+<header class="qh">
+  <div class="qrow"><span class="qid">N4</span><span class="tag added">Added</span></div>
+  <h2>Data fetching, static versus dynamic rendering</h2>
+  <p class="qtext">“How do you fetch data in the App Router? How does Next.js decide whether a route is static or dynamic? What are <code>generateStaticParams</code> and the segment config options? How do you avoid waterfalls?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“In the App Router I fetch data directly in async Server Components with <code>fetch</code>, an ORM or any server library, so no <code>getServerSideProps</code> is needed. Next.js decides at build time whether a route can be static: it is dynamic if it uses request-time APIs such as <code>cookies()</code>, <code>headers()</code> or <code>searchParams</code>, uses uncached data under the version’s default rules, or sets a dynamic segment option. Static routes are prerendered and cached; <code>generateStaticParams</code> lists the dynamic parameter values to prerender. To avoid request waterfalls, I start independent requests in parallel with <code>Promise.all</code> or separate components under Suspense, preload data, and dedupe repeated calls with React <code>cache</code> or Next’s request memoisation.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: decision of whether a route is static or dynamic at build time. Right: waterfall of sequential awaits versus parallel fetches.">
+  <text x="10" y="18" class="bd">Static or dynamic?</text>
+  <rect x="10" y="30" width="360" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">Build analyses the route</text><text x="18" y="66" class="sm">what does rendering it need at request time?</text>
+  <path class="a" d="M190 76V96"/>
+  <rect x="10" y="98" width="170" height="86" rx="5" class="w"/><text x="18" y="116" class="bd">Dynamic (per request)</text><text x="18" y="134" class="sm">cookies(), headers()</text><text x="18" y="150" class="sm">searchParams, connection()</text><text x="18" y="166" class="sm">uncached fetch (version rules)</text><text x="18" y="180" class="sm">dynamic = 'force-dynamic'</text>
+  <rect x="200" y="98" width="170" height="86" rx="5" class="g"/><text x="208" y="116" class="bd">Static (build time)</text><text x="208" y="134" class="sm">no request APIs</text><text x="208" y="150" class="sm">cached data only</text><text x="208" y="166" class="sm">generateStaticParams</text><text x="208" y="180" class="sm">revalidate = 3600 → ISR</text>
+  <text x="10" y="208" class="bd">Segment config (exports in page/layout)</text>
+  <text x="10" y="226" class="mono" style="font-size:10.5px">export const revalidate = 60;</text><text x="10" y="242" class="mono" style="font-size:10.5px">export const dynamic = 'force-static';</text><text x="10" y="258" class="mono" style="font-size:10.5px">export const dynamicParams = false;</text><text x="10" y="274" class="mono" style="font-size:10.5px">export const runtime = 'nodejs';</text>
+  <text x="10" y="298" class="sm">dynamicParams=false: unknown params return 404 instead of</text><text x="10" y="312" class="sm">generating on demand.</text>
+  <text x="400" y="18" class="bd">Waterfall versus parallel</text>
+  <rect x="400" y="30" width="350" height="110" rx="5" class="x"/><text x="408" y="48" class="bd">Sequential awaits (slow)</text>
+  <rect x="408" y="58" width="100" height="22" class="b"/><text x="414" y="73" class="sm">user 200 ms</text><rect x="508" y="84" width="120" height="22" class="b"/><text x="514" y="99" class="sm">posts 300 ms</text><rect x="628" y="110" width="110" height="22" class="b"/><text x="634" y="125" class="sm">ads 150 ms</text>
+  <text x="408" y="40" class="sm" text-anchor="start"></text>
+  <rect x="400" y="150" width="350" height="86" rx="5" class="g"/><text x="408" y="168" class="bd">Parallel (fast)</text>
+  <rect x="408" y="178" width="100" height="16" class="b"/><rect x="408" y="198" width="120" height="16" class="b"/><rect x="408" y="218" width="110" height="12" class="b"/>
+  <text x="540" y="204" class="sm">total ≈ slowest, 300 ms</text>
+  <text x="400" y="260" class="mono" style="font-size:10.5px">await Promise.all([user(), posts()])</text>
+  <text x="400" y="278" class="sm">or independent async components, each in Suspense,</text><text x="400" y="294" class="sm">so they fetch and stream in parallel.</text><text x="400" y="310" class="sm">Dependent data (B needs A) stays sequential.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Prefer static where possible, dynamic only where needed, and never serialise requests that could run together.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Fetching in server components:</b> <code>async function Page() { const data = await fetch(...).then(r =&gt; r.json()); … }</code>. You can also query databases directly, call internal services and read files. Colocate the fetch with the component that needs the data; Next.js dedupes identical <code>fetch</code> GETs within a render pass (request memoisation), and React <code>cache()</code> memoises non-fetch calls (ORM queries).</li>
+<li><b>Fetch options:</b> <code>fetch(url, { next: { revalidate: 60, tags: ['posts'] } })</code>, <code>cache: 'force-cache' | 'no-store'</code>. In Next.js 15 fetch requests and GET route handlers are <em>not</em> cached by default; in 14 they were <span class="verify">verify the default for your version</span>. Newer versions introduce a <code>use cache</code> directive for explicit caching (N5).</li>
+<li><b>Dynamic APIs:</b> reading <code>cookies()</code>, <code>headers()</code>, <code>draftMode()</code>, <code>searchParams</code>, or calling <code>connection()</code> opts the route (or the Suspense hole, with PPR) into request-time rendering. These APIs are async in recent versions <span class="verify">verify (15+)</span>.</li>
+<li><b>Static params:</b> <code>generateStaticParams</code> returns the parameter sets to prerender (for example all product slugs or the top 1,000), and <code>dynamicParams</code> controls whether others are rendered on demand and cached. This is how SSG and ISR combine for large catalogues.</li>
+<li><b>Revalidation:</b> time-based (<code>revalidate</code> seconds), on-demand by path or tag (<code>revalidatePath</code>, <code>revalidateTag</code>) from Server Actions or route handlers (webhooks from a CMS).</li>
+<li><b>Waterfalls:</b> sequential awaits in the same component, or nested components that each fetch only after the parent finishes. Fix with <code>Promise.all</code>, hoisting fetches, <em>preloading</em> patterns (call the fetch early without awaiting), or splitting into sibling components under Suspense.</li>
+<li><b>Client-side fetching still has a place:</b> interactive search, polling, infinite scroll, optimistic updates, user-specific data after load; use TanStack Query or SWR in client components, optionally seeded with server data (hydration/initialData).</li>
+<li><b>Error and loading states:</b> <code>loading.tsx</code>, Suspense boundaries, <code>error.tsx</code>, and <code>notFound()</code> for missing data. Return meaningful status codes: a page that renders “not found” UI but responds 200 is a soft 404 (hurts SEO), so call <code>notFound()</code>.</li>
+<li><b>Data access layer:</b> keep database and API calls in a server-only module with authorisation checks and DTO mapping, used by server components and actions (N11).</li>
+<li><b>Search params and dynamic UI:</b> reading <code>searchParams</code> in a page makes it dynamic; for client-side filtering use <code>useSearchParams</code> inside a Suspense boundary so the rest of the page can stay static.</li>
+<li><b>Pages Router equivalents:</b> <code>getStaticProps</code> (SSG, with <code>revalidate</code> for ISR), <code>getServerSideProps</code> (SSR), <code>getStaticPaths</code> (+<code>fallback</code>), client fetching. Mapping is conceptual, not one-to-one.</li>
+<li><b>Build output:</b> <code>next build</code> prints routes with symbols for static, SSG with params, dynamic and partially prerendered, and “First Load JS”. Read it to catch accidental dynamic routes.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Reading <code>cookies()</code> or <code>searchParams</code> in a shared layout and accidentally making the whole subtree dynamic.</li>
+<li>Assuming <code>fetch</code> is cached by default without checking the Next.js version.</li>
+<li>Awaiting several independent requests one after another.</li>
+<li>Rendering a “not found” message with a 200 status.</li>
+<li>Prerendering with <code>generateStaticParams</code> but forgetting what happens to unknown params.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you statically render a page that also shows the user’s name?</dt><dd>Keep the page static and render the name in a client component or a dynamic Suspense hole; do not read cookies in the static shell.</dd>
+<dt>What is request memoisation?</dt><dd>Identical <code>fetch</code> GET calls (same URL and options) during one server render pass are executed once, so components can fetch independently without prop drilling.</dd>
+<dt>How do you pre-render a million product pages?</dt><dd>Pre-build the top ones with <code>generateStaticParams</code>, leave <code>dynamicParams</code> on so the rest generate on first request and are cached, and revalidate via tags.</dd>
+<dt>How do you force a page to be dynamic?</dt><dd>Use a dynamic API, <code>export const dynamic = 'force-dynamic'</code>, or uncached data per the version’s rules.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Data, mutations and navigation</h1>
+
+<!-- ============ N5 ============ -->
+<section class="q" id="n5">
+<header class="qh">
+  <div class="qrow"><span class="qid">N5</span><span class="tag added">Added</span></div>
+  <h2>The caching layers</h2>
+  <p class="qtext">“Explain Next.js caching. What are request memoisation, the Data Cache, the Full Route Cache and the Router Cache? How do you revalidate? What changed in newer versions?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Next.js caches at several layers, and the key skill is knowing which one is serving a stale result. On the server, request memoisation dedupes identical fetches within one render pass. The Data Cache stores fetch results persistently across requests and deployments. The Full Route Cache stores the rendered HTML and RSC payload of static routes. On the client, the Router Cache keeps visited and prefetched route segments in memory for instant navigation. I control freshness with time-based revalidation, on-demand <code>revalidatePath</code> and <code>revalidateTag</code>, and opting out with dynamic rendering or <code>no-store</code>. Defaults changed in version 15, where fetch and route handlers are no longer cached by default, and newer versions add an explicit <code>use cache</code> directive, so I always verify the behaviour for the version in use.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Four caches in the path of a request: the browser Router Cache, the server Full Route Cache, the Data Cache for fetch results, and request memoisation within a single render, with the origin data source at the bottom. Arrows show how a request falls through the layers and how revalidation invalidates them.">
+  <text x="10" y="18" class="bd">Four layers, from browser to data source</text>
+  <rect x="10" y="30" width="480" height="48" rx="5" class="h"/><text x="20" y="50" class="bd">1 · Router Cache (browser, in memory)</text><text x="20" y="68" class="sm">RSC payload of visited and prefetched segments; instant back/forward</text>
+  <path class="a" d="M250 78V96"/><text x="258" y="92" class="sm">miss: request the server</text>
+  <rect x="10" y="98" width="480" height="48" rx="5" class="g"/><text x="20" y="118" class="bd">2 · Full Route Cache (server, static routes)</text><text x="20" y="136" class="sm">HTML + RSC payload produced at build or on revalidation; served from the CDN</text>
+  <path class="a" d="M250 146V164"/><text x="258" y="160" class="sm">dynamic route or invalidated: render</text>
+  <rect x="10" y="166" width="480" height="48" rx="5" class="w"/><text x="20" y="186" class="bd">3 · Data Cache (server, persistent)</text><text x="20" y="204" class="sm">fetch results keyed by URL and options; survives requests and deploys</text>
+  <path class="a" d="M250 214V232"/><text x="258" y="228" class="sm">miss or stale</text>
+  <rect x="10" y="234" width="480" height="48" rx="5" class="b"/><text x="20" y="254" class="bd">4 · Request memoisation (one render pass)</text><text x="20" y="272" class="sm">same fetch GET in many components runs once per request; React cache() for other calls</text>
+  <path class="a" d="M250 282V296"/><rect x="10" y="298" width="480" height="26" rx="5" class="x"/><text x="20" y="316" class="sm">Origin: database, CMS, API</text>
+  <text x="520" y="18" class="bd">Invalidation</text>
+  <rect x="520" y="30" width="230" height="86" rx="5" class="b"/><text x="528" y="48" class="mono" style="font-size:10px">revalidate = 60</text><text x="528" y="64" class="sm">time-based: stale-while-</text><text x="528" y="80" class="sm">revalidate in the background</text><text x="528" y="100" class="mono" style="font-size:10px">next: { revalidate: 60 }</text>
+  <rect x="520" y="124" width="230" height="102" rx="5" class="g"/><text x="528" y="142" class="mono" style="font-size:10px">revalidateTag('posts')</text><text x="528" y="158" class="mono" style="font-size:10px">revalidatePath('/blog')</text><text x="528" y="178" class="sm">on-demand, from a Server</text><text x="528" y="194" class="sm">Action or webhook route;</text><text x="528" y="210" class="sm">clears Data + Full Route cache</text>
+  <rect x="520" y="234" width="230" height="90" rx="5" class="w"/><text x="528" y="252" class="bd">Client side</text><text x="528" y="270" class="mono" style="font-size:10px">router.refresh()</text><text x="528" y="286" class="sm">drops the Router Cache for the</text><text x="528" y="302" class="sm">current route and refetches</text>
+</svg></div>
+<figcaption><b>Debugging rule.</b> When data looks stale, ask which layer is serving it: browser, route, data, or the CDN in front.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Request memoisation:</b> automatic for <code>fetch</code> GET with identical URL and options during a single server render. Scope is one request; it lets components fetch independently without lifting data. For ORM or other calls use <code>React.cache()</code>.</li>
+<li><b>Data Cache:</b> server-side persistent cache for <code>fetch</code> responses (and <code>unstable_cache</code>/<code>use cache</code> results). Controlled by <code>cache</code> and <code>next.revalidate</code> options and tags. It persists across deployments unless purged; on self-hosting it needs a shared cache handler for multiple instances (N12).</li>
+<li><b>Full Route Cache:</b> rendered output (HTML and RSC payload) for static routes, generated at build or on revalidation. Dynamic routes bypass it. Invalidating the Data Cache invalidates the routes that depend on it.</li>
+<li><b>Router Cache:</b> client-side, per user session, in memory. Stores prefetched (<code>&lt;Link&gt;</code> in viewport) and visited segments. Defaults changed: in Next.js 15 page segments are no longer cached by default (<code>staleTimes</code> are 0), while layouts and shared segments can still be reused <span class="verify">verify defaults per version</span>. <code>router.refresh()</code> and Server Actions that revalidate clear it.</li>
+<li><b>Time-based versus on-demand revalidation:</b> time-based accepts bounded staleness with no integration; on-demand gives immediate freshness when content changes (CMS webhook calls a route handler that runs <code>revalidateTag</code>). Tags group data across routes (a product tag across list and detail pages).</li>
+<li><b>Opting out:</b> <code>fetch(url, { cache: 'no-store' })</code>, <code>export const dynamic = 'force-dynamic'</code>, <code>revalidate = 0</code>, or using dynamic APIs. Route handlers and <code>unstable_noStore()</code> variants exist.</li>
+<li><b>Version differences:</b> 13 and 14 cached <code>fetch</code> and GET route handlers by default (confusing results); 15 changed the default to uncached and made caching opt-in; 16 emphasises explicit caching with <code>use cache</code> and cache components, <code>cacheLife</code>/<code>cacheTag</code> and updated revalidation helpers <span class="verify">verify names and semantics</span>. Interviewers like candidates who know that defaults moved.</li>
+<li><b><code>use cache</code> model:</b> a directive on a function, component or file that caches its result keyed by arguments and closed-over values, with a lifetime profile; the cache boundary decides what becomes part of the static shell and what stays dynamic <span class="verify">verify</span>.</li>
+<li><b>CDN and HTTP caching:</b> beyond Next’s caches, <code>Cache-Control</code> headers control CDN and browser caching of HTML, API responses and assets; static assets under <code>_next/static</code> are immutable with hashed names. Understand that a CDN can hold a stale page after you revalidate unless the platform purges it.</li>
+<li><b>Personalisation risk:</b> never cache user-specific responses in shared caches; do not read cookies in a cached function, or the result may be shared incorrectly (the framework guards against this by requiring dynamic APIs outside cache scopes).</li>
+<li><b>Practical approach:</b> choose a freshness requirement per data type (static content: long or on-demand; prices: short; account data: no cache), tag it, and revalidate on write operations from your own Server Actions.</li>
+<li><b>Observability:</b> response headers (<code>x-nextjs-cache</code>: HIT, MISS, STALE on supported setups), logging of fetch cache status in development, and tests that mutate then read.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Describing caching without noting it differs by Next.js version.</li>
+<li>Calling <code>revalidateTag</code> and expecting an already-open browser tab to update; the Router Cache and open pages need refresh or navigation.</li>
+<li>Mixing user-specific data into a cached fetch.</li>
+<li>Believing the Data Cache is cleared on every deploy. It persists unless configured otherwise.</li>
+<li>Testing in development and assuming production caching behaves the same (development disables most caching).</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you update a product page right after an admin edits it?</dt><dd>The admin Server Action writes to the database then calls <code>revalidateTag('product-123')</code> (or <code>revalidatePath</code>); the next request regenerates the page.</dd>
+<dt>Why might a user see old data after navigating back?</dt><dd>The client Router Cache served a stored segment; call <code>router.refresh()</code> or revalidate in the action that mutated.</dd>
+<dt>What is the difference between the Data Cache and the Full Route Cache?</dt><dd>The Data Cache stores individual fetch results; the Full Route Cache stores the final rendered route output built from them.</dd>
+<dt>How do multiple instances share the cache when self-hosting?</dt><dd>A custom cache handler backed by Redis or object storage, otherwise each instance has its own cache and ISR becomes inconsistent.</dd>
+</dl></div>
+</section>
+
+<!-- ============ N6 ============ -->
+<section class="q" id="n6">
+<header class="qh">
+  <div class="qrow"><span class="qid">N6</span><span class="tag added">Added</span></div>
+  <h2>Mutations: Server Actions and route handlers</h2>
+  <p class="qtext">“How do you handle mutations in the App Router? What are Server Actions and how do they differ from API routes? How do you secure them and update the UI afterwards?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A Server Action is an async function marked <code>'use server'</code> that I can call from a form or a client component as if it were local; Next.js turns it into a POST endpoint, runs the code on the server, and can revalidate caches and redirect afterwards. It removes the boilerplate of writing an API route and fetch call for UI-driven mutations, and works with forms before JavaScript loads. Route handlers (<code>route.ts</code>) remain the right tool for public APIs, webhooks, third-party consumers and non-UI clients. Server Actions are public endpoints, so I validate input with a schema, authenticate and authorise inside every action, and rate-limit. After the mutation I call <code>revalidatePath</code> or <code>revalidateTag</code> so the UI shows fresh data, and use <code>useActionState</code> and <code>useOptimistic</code> for pending and optimistic states.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Flow of a Server Action: a form submit on the client sends a POST to the server, which validates and authorises, mutates the database, revalidates cache tags, and returns new UI or a result. Right: choosing between a Server Action and a route handler.">
+  <text x="10" y="18" class="bd">Server Action lifecycle</text>
+  <rect x="10" y="30" width="150" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">Client</text><text x="18" y="66" class="sm">&lt;form action={save}&gt;</text>
+  <rect x="190" y="30" width="180" height="46" rx="5" class="h"/><text x="198" y="50" class="bd">POST (framework)</text><text x="198" y="66" class="sm">action id + serialised args</text>
+  <path class="a" d="M160 53H188"/>
+  <path class="a" d="M280 76V96"/>
+  <rect x="10" y="98" width="360" height="46" rx="5" class="g"/><text x="18" y="118" class="bd">'use server' function</text><text x="18" y="134" class="sm">1 authenticate · 2 authorise · 3 validate input (Zod)</text>
+  <path class="a" d="M190 144V162"/>
+  <rect x="10" y="164" width="170" height="46" rx="5" class="g"/><text x="18" y="184" class="bd">Write</text><text x="18" y="200" class="sm">database / API call</text>
+  <rect x="200" y="164" width="170" height="46" rx="5" class="w"/><text x="208" y="184" class="bd">Revalidate</text><text x="208" y="200" class="sm">revalidateTag / Path</text>
+  <path class="a" d="M180 187H198"/>
+  <path class="a" d="M285 210V228"/>
+  <rect x="10" y="230" width="360" height="46" rx="5" class="h"/><text x="18" y="250" class="bd">Response</text><text x="18" y="266" class="sm">fresh RSC payload in the same round trip, or redirect()</text>
+  <text x="10" y="300" class="sm">Client shows pending (useFormStatus), optimistic (useOptimistic), errors.</text>
+  <text x="400" y="18" class="bd">Action or route handler?</text>
+  <rect x="400" y="30" width="350" height="130" rx="5" class="g"/><text x="408" y="50" class="bd">Server Action</text><text x="408" y="70" class="sm">mutations triggered by your own UI</text><text x="408" y="86" class="sm">forms, buttons, optimistic updates</text><text x="408" y="102" class="sm">works without JS (progressive enhancement)</text><text x="408" y="118" class="sm">typed arguments; revalidation built in</text><text x="408" y="134" class="sm">POST only; not a stable public API</text><text x="408" y="150" class="sm">calls are queued one at a time per client</text>
+  <rect x="400" y="170" width="350" height="130" rx="5" class="h"/><text x="408" y="190" class="bd">Route handler (route.ts)</text><text x="408" y="210" class="sm">public or third-party APIs, webhooks, OAuth callbacks</text><text x="408" y="226" class="sm">any HTTP method, custom headers and status codes</text><text x="408" y="242" class="sm">streaming, file downloads, RSS, mobile app clients</text><text x="408" y="258" class="sm">standard Request / Response, easy to test with curl</text><text x="408" y="274" class="sm">GET not cached by default in recent versions</text><text x="408" y="290" class="sm">needs your own auth and validation</text>
+</svg></div>
+<figcaption><b>Guideline.</b> Server Actions for UI-driven writes; route handlers for anything other systems call.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Defining actions:</b> a function with <code>'use server'</code> at the top of the function or a file of exports. Import them into client components, pass them as props, or use them as <code>&lt;form action&gt;</code>. Arguments and return values must be serialisable. Bound arguments created by closures are encrypted by Next.js, but still treat everything client-sent as untrusted.</li>
+<li><b>Security model:</b> an action is an HTTP endpoint with a generated id, reachable by anyone who can craft a POST. Always authenticate and authorise inside the action (do not rely on hiding the button or middleware alone), validate and sanitise all inputs (Zod), check resource ownership, rate-limit sensitive actions, and avoid returning sensitive data. Next.js adds built-in protections: POST-only, origin and host comparison against CSRF, unguessable ids for unused actions removed from the bundle <span class="verify">verify details</span>. Add idempotency keys for payments.</li>
+<li><b>Forms and progressive enhancement:</b> with <code>&lt;form action={serverAction}&gt;</code> the form works before hydration, then enhances with client-side pending state (R8). <code>useActionState</code> returns result state and a pending flag, <code>useFormStatus</code> exposes pending to nested buttons, <code>useOptimistic</code> shows instant feedback.</li>
+<li><b>After mutation:</b> call <code>revalidatePath</code> / <code>revalidateTag</code> to refresh data; <code>redirect()</code> to navigate (it throws, so call it outside <code>try/catch</code>); <code>cookies().set()</code> to store sessions. The response includes the updated RSC payload so the UI refreshes in one round trip.</li>
+<li><b>Error handling:</b> return structured results for expected failures (validation errors per field) instead of throwing; let unexpected errors reach <code>error.tsx</code>; map errors to user-friendly messages; log with context.</li>
+<li><b>Concurrency:</b> actions invoked from the client run sequentially per client, so they are not suited to high-parallelism data fetching; use them for mutations, not reads.</li>
+<li><b>Route handlers:</b> export <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code>, <code>HEAD</code>, <code>OPTIONS</code> functions receiving a <code>NextRequest</code> (extends <code>Request</code>) and returning a <code>Response</code>/<code>NextResponse</code>. Use for webhooks (verify signatures with the raw body), OAuth callbacks, file upload endpoints, public JSON APIs, image or PDF generation. CORS headers must be added manually.</li>
+<li><b>Upload handling:</b> large files should go directly to object storage with presigned URLs rather than through the Next.js server, which has body size limits and cost.</li>
+<li><b>Client-side mutations with libraries:</b> TanStack Query mutations calling a route handler suit complex client flows, offline queues, and cache management when you want fine-grained control.</li>
+<li><b>Testing:</b> unit-test the action logic as functions with mocked dependencies; end-to-end tests for form flows; contract tests for route handlers.</li>
+<li><b>Anti-patterns:</b> fetching data through Server Actions (use server components), mutating without revalidating, putting business logic directly in the action instead of a service layer, trusting client-provided user ids.</li>
+<li><b>Middleware versus action auth:</b> middleware can pre-filter, but the action itself must check permissions because middleware may be bypassed or misconfigured (N11).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Treating Server Actions as private internal functions. They are public endpoints.</li>
+<li>Forgetting to revalidate, then seeing stale UI after a successful write.</li>
+<li>Wrapping <code>redirect()</code> in <code>try/catch</code>, which swallows its control-flow exception.</li>
+<li>Using Server Actions as a general-purpose API for mobile apps or third parties.</li>
+<li>Skipping server-side validation because the form has client validation.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you prevent double submission?</dt><dd>Disable the button while pending, make the action idempotent with a key, and handle unique constraints on the server.</dd>
+<dt>Server Action versus API route performance?</dt><dd>Similar, both are server round trips; actions save boilerplate and return fresh UI in one trip, but queue calls and are less suited to parallel work.</dd>
+<dt>How do you handle file uploads?</dt><dd>Presigned URL to object storage from the client, then a small action or handler records the metadata; avoid streaming large files through the app server.</dd>
+<dt>How do you protect an admin-only action?</dt><dd>Check the session and role inside the action, verify the target resource belongs to the user, and log the operation.</dd>
+</dl></div>
+</section>
+
+<!-- ============ N7 ============ -->
+<section class="q" id="n7">
+<header class="qh">
+  <div class="qrow"><span class="qid">N7</span><span class="tag added">Added</span></div>
+  <h2>Routing, navigation and middleware</h2>
+  <p class="qtext">“How does client-side navigation work in Next.js? What does <code>&lt;Link&gt;</code> prefetch? What is middleware and what is it good and bad for? How do you handle redirects, rewrites and internationalised routing?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“<code>&lt;Link&gt;</code> performs client-side navigation: it prefetches the route when the link enters the viewport (static parts in production), and navigation fetches only the RSC payload of the segments that changed, keeping shared layouts mounted. Programmatic navigation uses <code>useRouter</code> in client components and <code>redirect()</code> on the server. Middleware is code that runs before a request is completed, close to the user, and can rewrite, redirect, set headers or cookies. It is good for lightweight, cross-cutting concerns: locale detection, optimistic auth redirects, A/B bucketing, bot filtering and security headers. It is the wrong place for heavy computation, database calls or as the only authorisation check. In recent versions the file convention was renamed to a proxy file, so I check the current naming.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="Request flow with middleware: a request first passes redirects and headers config, then middleware which may rewrite, redirect or modify headers, then the route is matched and rendered. On the right, client navigation where a link in the viewport prefetches, a click fetches only changed segments, and layouts persist.">
+  <text x="10" y="18" class="bd">Where middleware sits</text>
+  <rect x="10" y="30" width="110" height="50" rx="5" class="b"/><text x="18" y="50" class="bd">Request</text><text x="18" y="66" class="sm">GET /shop</text>
+  <rect x="140" y="30" width="110" height="50" rx="5" class="h"/><text x="148" y="50" class="bd">Middleware</text><text x="148" y="66" class="sm">before the route</text>
+  <rect x="270" y="30" width="100" height="50" rx="5" class="g"/><text x="278" y="50" class="bd">Route render</text><text x="278" y="66" class="sm">page / handler</text>
+  <path class="a" d="M120 55H138"/><path class="a" d="M250 55H268"/>
+  <rect x="10" y="100" width="360" height="106" rx="5" class="b"/><text x="18" y="120" class="bd">What middleware can do</text><text x="18" y="138" class="sm">NextResponse.redirect(url)     send the user elsewhere</text><text x="18" y="154" class="sm">NextResponse.rewrite(url)      serve another route, same URL</text><text x="18" y="170" class="sm">NextResponse.next({ headers }) add headers or cookies</text><text x="18" y="186" class="sm">matcher config limits which paths run it</text>
+  <rect x="10" y="216" width="360" height="84" rx="5" class="w"/><text x="18" y="236" class="bd">Good for</text><text x="18" y="254" class="sm">locale routing · optimistic auth redirect · A/B tests · geo</text><text x="18" y="270" class="sm">rules · security headers · bot checks · maintenance mode</text><text x="18" y="288" class="bd" style="fill:var(--bad)">Not for: DB queries, heavy work, sole authorisation</text>
+  <text x="400" y="18" class="bd">Client navigation</text>
+  <rect x="400" y="30" width="350" height="44" rx="5" class="b"/><text x="408" y="50" class="bd">1 · &lt;Link&gt; enters viewport</text><text x="408" y="66" class="sm">prefetch (production): static shell or loading boundary</text>
+  <path class="a" d="M575 74V88"/>
+  <rect x="400" y="90" width="350" height="44" rx="5" class="h"/><text x="408" y="110" class="bd">2 · Click: soft navigation</text><text x="408" y="126" class="sm">fetch RSC payload only for the changed segments</text>
+  <path class="a" d="M575 134V148"/>
+  <rect x="400" y="150" width="350" height="44" rx="5" class="g"/><text x="408" y="170" class="bd">3 · Layouts persist</text><text x="408" y="186" class="sm">state and scroll in shared layouts are kept; no full reload</text>
+  <rect x="400" y="206" width="350" height="94" rx="5" class="b"/><text x="408" y="226" class="bd">Other tools</text><text x="408" y="244" class="sm">next.config redirects() / rewrites() / headers(): static rules</text><text x="408" y="260" class="sm">redirect() / notFound() / permanentRedirect(): in server code</text><text x="408" y="276" class="sm">useRouter, usePathname, useSearchParams: client hooks</text><text x="408" y="292" class="sm">hard navigation: plain &lt;a&gt; or external URL</text>
+</svg></div>
+<figcaption><b>Principle.</b> Keep the edge layer thin and fast; keep real decisions near the data.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b><code>&lt;Link&gt;</code>:</b> renders an anchor (good for SEO and accessibility), prefetches in production when visible, supports <code>replace</code>, <code>scroll</code>, <code>prefetch={false}</code>. Prefetching dynamic routes loads only up to the nearest <code>loading.tsx</code>. Heavy prefetch on long lists can cost bandwidth; disable per link where needed.</li>
+<li><b>Programmatic navigation:</b> <code>useRouter().push/replace/back/refresh/prefetch</code> in client components; <code>redirect()</code>/<code>permanentRedirect()</code> in server components and actions; <code>notFound()</code>. <code>router.refresh()</code> refetches server data for the current route without losing client state.</li>
+<li><b>Reading the URL:</b> <code>usePathname</code>, <code>useSearchParams</code> (needs a Suspense boundary for static routes), <code>useParams</code>; server components receive <code>params</code> and <code>searchParams</code> props.</li>
+<li><b>Config-based rules:</b> <code>redirects()</code> (permanent or temporary), <code>rewrites()</code> (proxying to another origin or clean URLs), and <code>headers()</code> in <code>next.config</code> are evaluated before middleware and are cheaper for static rules.</li>
+<li><b>Middleware:</b> a <code>middleware.ts</code> at the project root exporting a function and a <code>config.matcher</code>. It runs for every matching request before the route; historically on the Edge runtime with limited Node APIs, with Node runtime support added later; recent versions rename it to <code>proxy.ts</code> <span class="verify">verify naming and runtime for your version</span>. Keep it fast: it sits on the critical path of every request.</li>
+<li><b>Authentication with middleware:</b> checking for the presence or validity of a session cookie to redirect anonymous users is a common optimisation. It is not a security boundary alone: a vulnerability in early 2025 allowed bypassing middleware with a crafted header, and middleware matchers can miss routes. Always re-check authorisation in the data layer and actions <span class="verify">verify advisory and patched versions</span>.</li>
+<li><b>Internationalised routing:</b> the App Router has no built-in i18n routing config (the Pages Router did). Common pattern: a <code>[locale]</code> dynamic segment, middleware that negotiates the locale from <code>Accept-Language</code> and cookies and redirects, a library such as next-intl, <code>generateStaticParams</code> for locales, <code>hreflang</code> alternates in metadata.</li>
+<li><b>Feature flags and A/B tests:</b> middleware assigns a bucket cookie and rewrites to a variant route; keep variants static where possible so the CDN can cache per variant.</li>
+<li><b>Redirect semantics:</b> 307/308 preserve the method, 301/302 may change it; use permanent redirects for SEO moves; avoid chains and loops; do not redirect on every request for something that could be a static config.</li>
+<li><b>Route protection design:</b> layered: middleware for fast redirect, server layout or page check for rendering, data access layer for the real authorisation, and UI hiding for UX only (N11).</li>
+<li><b>Scroll and focus:</b> Next.js manages scroll to top on navigation and focuses the new page; custom behaviour needs care for accessibility (R13).</li>
+<li><b>Parallel and intercepting routes</b> enable modal navigation with shareable URLs (N2).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Doing database queries or heavy logic in middleware, adding latency to every request.</li>
+<li>Using middleware as the only authorisation layer.</li>
+<li>Matching every path including static assets, which wastes execution.</li>
+<li>Prefetching hundreds of links on a long page and flooding the network.</li>
+<li>Assuming <code>useSearchParams</code> is free; without Suspense it forces client rendering of the whole page at build.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Redirects in config versus middleware?</dt><dd>Config is declarative, cheap and evaluated first; middleware is for dynamic decisions based on cookies, headers or geography.</dd>
+<dt>How do you protect a route?</dt><dd>Middleware redirect for UX, plus a server-side session check in the layout/page, plus authorisation in the data layer and actions.</dd>
+<dt>Rewrite versus redirect?</dt><dd>A rewrite serves other content while the URL stays the same; a redirect changes the URL in the browser.</dd>
+<dt>How would you implement locale-based routing?</dt><dd><code>[locale]</code> segment, middleware negotiation with a persisted preference, static params per locale, localised metadata and alternates.</dd>
+</dl></div>
+</section>
+
+<!-- ============ N8 ============ -->
+<section class="q" id="n8">
+<header class="qh">
+  <div class="qrow"><span class="qid">N8</span><span class="tag added">Added</span></div>
+  <h2>Streaming, Suspense and hydration</h2>
+  <p class="qtext">“How does streaming work in Next.js? What is hydration and what causes hydration errors? How do <code>loading.tsx</code> and Suspense improve perceived performance?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“With streaming, the server does not wait for the slowest data before sending anything. It sends the HTML shell first, with Suspense fallbacks, and streams each boundary’s content as its data resolves, so the user sees useful content early and TTFB is not tied to the slowest query. <code>loading.tsx</code> is a convenient Suspense boundary for a segment. Hydration is the step where React attaches event handlers and state to the server-rendered HTML in the browser; React 18 hydrates selectively, starting with the parts the user interacts with. A hydration error means the first client render did not match the server HTML, typically because of dates, random values, browser-only checks, invalid HTML nesting, or browser extensions. I fix those by making the render deterministic or deferring client-only values to an effect.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Streaming timeline: the server sends the shell with fallbacks first, then streams the product section and later the slow reviews section, each replacing its fallback. Bottom: hydration compared to a mismatch, where server and client render different output.">
+  <text x="10" y="18" class="bd">Without streaming versus with streaming</text>
+  <text x="10" y="44" class="sm">blocking</text>
+  <rect x="80" y="30" width="330" height="22" rx="3" class="x"/><text x="88" y="46" class="sm">wait for ALL data (slowest = reviews)</text><rect x="410" y="30" width="90" height="22" rx="3" class="g"/><text x="416" y="46" class="sm">full HTML</text>
+  <text x="10" y="84" class="sm">streaming</text>
+  <rect x="80" y="70" width="70" height="22" rx="3" class="g"/><text x="86" y="86" class="sm">shell</text><rect x="150" y="70" width="110" height="22" rx="3" class="g"/><text x="156" y="86" class="sm">+ product</text><rect x="260" y="70" width="240" height="22" rx="3" class="g" style="stroke-dasharray:4 3"/><text x="266" y="86" class="sm">+ reviews (when ready)</text>
+  <text x="520" y="86" class="sm">useful content from the first chunk</text>
+  <text x="10" y="120" class="sm">time → 0</text>
+  <rect x="10" y="132" width="360" height="80" rx="5" class="b"/><text x="18" y="152" class="bd">What the browser receives</text><text x="18" y="170" class="mono" style="font-size:10px">&lt;div&gt;Header…&lt;/div&gt;&lt;!--$?--&gt;fallback&lt;!--/$--&gt;</text><text x="18" y="188" class="sm">later chunk: a script swaps the fallback for the real</text><text x="18" y="204" class="sm">HTML. Works without waiting for JavaScript to load.</text>
+  <rect x="390" y="132" width="360" height="80" rx="5" class="g"/><text x="398" y="152" class="bd">Selective hydration</text><text x="398" y="170" class="sm">React hydrates Suspense boundaries independently and</text><text x="398" y="186" class="sm">prioritises the one the user clicked, so a slow</text><text x="398" y="202" class="sm">component does not block interaction elsewhere.</text>
+  <text x="10" y="240" class="bd">Hydration mismatch</text>
+  <rect x="10" y="250" width="170" height="60" rx="5" class="b"/><text x="18" y="270" class="bd">Server HTML</text><text x="18" y="288" class="sm">“Updated 10:04”</text><text x="18" y="302" class="sm">(server time zone)</text>
+  <rect x="200" y="250" width="170" height="60" rx="5" class="b"/><text x="208" y="270" class="bd">Client first render</text><text x="208" y="288" class="sm">“Updated 15:34”</text><text x="208" y="302" class="sm">(browser time zone)</text>
+  <path class="ax" d="M180 280H198"/>
+  <text x="390" y="262" class="sm">Mismatch → warning, client re-render of that tree.</text><text x="390" y="278" class="sm">Fix: stable output (format on server with a fixed locale/zone),</text><text x="390" y="294" class="sm">or render client-only values after mount in an effect.</text>
+</svg></div>
+<figcaption><b>Streaming trades a single complete response for early, progressive content.</b> Hydration must start from the same markup the server produced.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>How streaming works:</b> HTTP chunked transfer. The response begins with the shell and Suspense fallbacks; as each boundary resolves, the server sends extra HTML and a tiny inline script that moves it into place. The status code and headers are sent with the first chunk, so errors found later cannot change the status (redirects and <code>notFound()</code> after streaming begins use client-side handling and metadata caveats).</li>
+<li><b><code>loading.tsx</code>:</b> automatic Suspense around the segment’s <code>page</code>, giving an instant loading state on navigation and enabling prefetching of a dynamic route up to this boundary. For finer control, place explicit <code>&lt;Suspense&gt;</code> around slow components with matching skeletons.</li>
+<li><b>Designing boundaries:</b> fast, important content outside Suspense (title, price); slow, secondary content inside (reviews, recommendations); skeletons sized to avoid layout shift; avoid nesting so deep that content pops in chaotically. Independent boundaries fetch in parallel.</li>
+<li><b>SEO and streaming:</b> crawlers receive the full streamed document; metadata is handled so that it lands in <code>&lt;head&gt;</code> (streamed metadata behaviour has details for bots) <span class="verify">verify</span>.</li>
+<li><b>Hydration:</b> the browser downloads the JavaScript for client components, React walks the server HTML and attaches handlers, reusing existing DOM. Until hydration completes, interactions may be ignored or queued (React replays some events). Hydration cost scales with client component tree size, so Server Components reduce it.</li>
+<li><b>Causes of hydration errors:</b> non-deterministic output (<code>Date.now()</code>, <code>Math.random()</code>, locale and time-zone formatting), reading <code>window</code>, <code>localStorage</code> or <code>matchMedia</code> during render, invalid HTML nesting (<code>&lt;div&gt;</code> inside <code>&lt;p&gt;</code>, <code>&lt;a&gt;</code> inside <code>&lt;a&gt;</code>), mismatched conditional rendering based on user agent, browser extensions modifying the DOM, and CDN or middleware transforming HTML.</li>
+<li><b>Fixes:</b> deterministic rendering (pass the timestamp from the server and format with a fixed locale/zone), <code>useEffect</code> or <code>useSyncExternalStore</code> for client-only values with a server snapshot, <code>suppressHydrationWarning</code> for a single known text mismatch, <code>next/dynamic</code> with <code>ssr: false</code> inside a client component for purely browser widgets, and fix invalid markup.</li>
+<li><b>Progressive enhancement:</b> server-rendered HTML with forms and links works before hydration; Server Actions forms submit natively.</li>
+<li><b>Partial prerendering:</b> the static shell and streamed dynamic holes are delivered together (N1).</li>
+<li><b>Metrics:</b> streaming improves TTFB-to-first-content and LCP when the LCP element is in the shell, but late-streamed layout can hurt CLS; reserve space.</li>
+<li><b>Operational notes:</b> proxies and CDNs must not buffer streamed responses (disable buffering on nginx, check platform support); compression settings can delay chunks; edge runtimes stream well.</li>
+<li><b>Alternatives to hydration cost:</b> islands architecture (Astro), resumability (Qwik); in React, Server Components and lazy-loaded client islands.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using one huge Suspense boundary or none, so streaming brings no benefit.</li>
+<li>Skeletons that differ in size from content, causing layout shift.</li>
+<li>Fixing a hydration warning by suppressing it everywhere instead of making the output deterministic.</li>
+<li>Believing a streamed page cannot return a 404 or redirect status; the decision must be made before the first chunk is sent.</li>
+<li>Behind a buffering proxy, streaming silently degrades to a blocking response.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why do we see a flash of different content on load?</dt><dd>A hydration mismatch or a client-only value (theme, user) applied after hydration. Set it on the server via cookies, or use a blocking script for theme before paint.</dd>
+<dt>What is selective hydration?</dt><dd>React hydrates Suspense boundaries independently and in priority order, so an interacted-with part becomes interactive first.</dd>
+<dt>How do you show a loading state for navigation?</dt><dd><code>loading.tsx</code> for the segment, plus <code>useLinkStatus</code> or <code>useTransition</code> for inline pending indicators <span class="verify">verify API names</span>.</dd>
+<dt>How does streaming interact with caching?</dt><dd>The static shell can be cached on a CDN; streamed dynamic parts are generated per request and not cached unless you cache them explicitly (N5).</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Shipping a Next.js app</h1>
+
+<!-- ============ N9 ============ -->
+<section class="q" id="n9">
+<header class="qh">
+  <div class="qrow"><span class="qid">N9</span><span class="tag added">Added</span></div>
+  <h2>Performance: images, fonts, scripts, bundles</h2>
+  <p class="qtext">“How does Next.js help with performance? Explain <code>next/image</code>, <code>next/font</code>, <code>next/script</code>, code splitting and bundle analysis. How would you improve a slow Next.js page?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Next.js bakes in many optimisations. <code>next/image</code> serves responsive, lazily loaded images in modern formats like AVIF and WebP, reserves space to avoid layout shift, and has a <code>priority</code> option for the LCP image. <code>next/font</code> self-hosts fonts at build time with no external request and adjusts fallbacks to reduce layout shift. <code>next/script</code> controls when third-party scripts load. The framework code-splits per route and supports dynamic imports, and Server Components keep libraries out of the client bundle. To fix a slow page I measure first with Lighthouse and field data for Core Web Vitals, then work on the biggest cost: usually the LCP image, too much JavaScript, third-party scripts, slow server data, or layout shift.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="A diagnostic flow from Core Web Vitals symptom to Next.js remedy: slow LCP leads to priority image, server speed and streaming; high INP leads to less client JavaScript, transitions and splitting; CLS leads to image dimensions, font fallback and skeletons; slow TTFB leads to caching, static rendering and data location.">
+  <text x="10" y="18" class="bd">Symptom → likely cause → Next.js remedy</text>
+  <rect x="10" y="30" width="90" height="62" rx="5" class="x"/><text x="18" y="50" class="bd">LCP slow</text><text x="18" y="68" class="sm">hero appears</text><text x="18" y="82" class="sm">late</text>
+  <rect x="120" y="30" width="250" height="62" rx="5" class="b"/><text x="128" y="50" class="sm">large unoptimised hero image, late discovery,</text><text x="128" y="66" class="sm">slow TTFB, render-blocking fonts or scripts</text><text x="128" y="82" class="mono" style="font-size:10px">Image priority · next/font · static</text>
+  <rect x="390" y="30" width="90" height="62" rx="5" class="x"/><text x="398" y="50" class="bd">INP high</text><text x="398" y="68" class="sm">clicks feel</text><text x="398" y="82" class="sm">laggy</text>
+  <rect x="500" y="30" width="250" height="62" rx="5" class="b"/><text x="508" y="50" class="sm">too much client JS, long tasks, big hydration,</text><text x="508" y="66" class="sm">heavy third parties</text><text x="508" y="82" class="sm">Server Components · dynamic import</text>
+  <rect x="10" y="108" width="90" height="62" rx="5" class="x"/><text x="18" y="128" class="bd">CLS</text><text x="18" y="146" class="sm">content</text><text x="18" y="160" class="sm">jumps</text>
+  <rect x="120" y="108" width="250" height="62" rx="5" class="b"/><text x="128" y="128" class="sm">images without size, font swap, late banners,</text><text x="128" y="144" class="sm">ads, content streamed without a placeholder</text><text x="128" y="160" class="sm">Image size · next/font · skeletons</text>
+  <rect x="390" y="108" width="90" height="62" rx="5" class="x"/><text x="398" y="128" class="bd">TTFB</text><text x="398" y="146" class="sm">server is</text><text x="398" y="160" class="sm">slow</text>
+  <rect x="500" y="108" width="250" height="62" rx="5" class="b"/><text x="508" y="128" class="sm">dynamic rendering of cacheable pages, slow</text><text x="508" y="144" class="sm">queries, far-away region, no CDN</text><text x="508" y="160" class="sm">static/ISR · cache data · DB nearby</text>
+  <text x="10" y="196" class="bd">Image and font features at a glance</text>
+  <rect x="10" y="206" width="360" height="104" rx="5" class="g"/><text x="18" y="226" class="bd">next/image</text><text x="18" y="244" class="sm">srcset by device size · AVIF/WebP · lazy by default</text><text x="18" y="260" class="sm">width/height or fill reserves space · priority for LCP</text><text x="18" y="276" class="sm">remotePatterns allowlist · blur placeholder · sizes prop</text><text x="18" y="294" class="sm">optimised on demand, cached on the server or CDN</text>
+  <rect x="390" y="206" width="360" height="104" rx="5" class="g"/><text x="398" y="226" class="bd">next/font and next/script</text><text x="398" y="244" class="sm">fonts downloaded at build, served from your domain,</text><text x="398" y="260" class="sm">size-adjust fallback, subsets, variable fonts</text><text x="398" y="276" class="sm">script strategy: beforeInteractive, afterInteractive,</text><text x="398" y="294" class="sm">lazyOnload, worker (Partytown, experimental)</text>
+</svg></div>
+<figcaption><b>Method.</b> Start from the metric that fails, find the cause with data, apply the specific remedy, and re-measure on real devices.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b><code>next/image</code>:</b> required <code>width</code>/<code>height</code> (or <code>fill</code> with a sized parent) prevent CLS. <code>sizes</code> tells the browser which width it will render so it picks the right <code>srcset</code> candidate; omitting <code>sizes</code> on responsive layouts downloads oversized images. Mark the LCP image <code>priority</code> (or <code>preload</code>/<code>fetchPriority="high"</code> in recent versions) and leave the rest lazy. Remote images need <code>remotePatterns</code>. Optimisation runs on the Next.js server or a custom loader (Cloudinary, Imgix); self-hosting needs <code>sharp</code> and a cache. Quality, formats and cache TTL are configurable <span class="verify">verify option names</span>.</li>
+<li><b><code>next/font</code>:</b> <code>next/font/google</code> and <code>/local</code> download at build time and serve with the app; automatic <code>font-display</code> and fallback metrics reduce layout shift; load only needed subsets and weights; use variable fonts.</li>
+<li><b><code>next/script</code>:</b> third-party scripts (analytics, chat, ads) are a top cause of slow INP. Prefer <code>afterInteractive</code> or <code>lazyOnload</code>; load on interaction or via a tag manager with governance; consider moving off the main thread (Partytown) or server-side tagging.</li>
+<li><b>Bundle size:</b> build output shows “First Load JS” per route. Reduce with Server Components, avoiding heavy client libraries, <code>next/dynamic</code> for below-the-fold or modal components, <code>optimizePackageImports</code> for icon libraries, replacing moment with date-fns or <code>Intl</code>, and checking duplicates. Analyse with <code>@next/bundle-analyzer</code> or the built-in analyser <span class="verify">verify tool</span>.</li>
+<li><b>Prefetching and navigation speed:</b> <code>&lt;Link&gt;</code> prefetch, static shells with PPR, <code>loading.tsx</code> for instant feedback; avoid fetching waterfalls (N4).</li>
+<li><b>Rendering mode for speed:</b> static or ISR over SSR wherever allowed; cache expensive data; stream slow parts; put compute near the database; use CDN caching headers.</li>
+<li><b>CSS:</b> prefer CSS Modules, Tailwind or zero-runtime CSS; runtime CSS-in-JS (styled-components, Emotion) has server-component limitations and runtime cost. Inline critical CSS is handled by the framework; avoid huge global stylesheets.</li>
+<li><b>Hydration and long tasks:</b> keep client trees small; split interactive widgets; defer non-critical work with <code>requestIdleCallback</code> or transitions (J18, R9).</li>
+<li><b>Compiler and build speed:</b> SWC/Turbopack for compile speed; React Compiler option for fewer re-renders <span class="verify">verify</span>; <code>output: 'standalone'</code> reduces deploy size.</li>
+<li><b>Measuring:</b> Lighthouse for lab data, Chrome UX Report and Vercel/Next analytics (<code>useReportWebVitals</code>) for field data, WebPageTest, the Performance panel. Set budgets and fail CI when exceeded (PWA/performance guide covers methods).</li>
+<li><b>Edge versus region:</b> serving HTML from the edge helps only if its data is also nearby; otherwise a single region close to the database is faster for dynamic pages.</li>
+<li><b>Data over-fetching:</b> select only needed fields, paginate, stream the long tail, and avoid sending big JSON as props to client components (it is serialised into the HTML).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using <code>&lt;img&gt;</code> for the hero, or a Next <code>Image</code> without <code>sizes</code> and <code>priority</code>, then wondering why LCP is slow.</li>
+<li>Marking every image <code>priority</code>, which defeats lazy loading and competes for bandwidth.</li>
+<li>Optimising micro-details while a third-party script blocks the main thread.</li>
+<li>Passing huge objects as props to client components, bloating HTML and hydration.</li>
+<li>Assuming “edge” automatically means faster even when the database is in one distant region.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How does <code>next/image</code> avoid layout shift?</dt><dd>You supply dimensions (or an aspect ratio via <code>fill</code>), so the browser reserves space before the image loads.</dd>
+<dt>How would you reduce JavaScript on a page?</dt><dd>Move components to the server, split heavy client widgets with dynamic imports, remove or defer third parties, tree-shake libraries and check the analyser.</dd>
+<dt>How do you track Core Web Vitals in production?</dt><dd><code>useReportWebVitals</code> or a RUM tool sending field data, segmented by route, device and country.</dd>
+<dt>Why is Server Component data safer for performance?</dt><dd>It runs near the data, avoids client waterfalls, and ships HTML not code; only interactive parts cost JavaScript.</dd>
+</dl></div>
+</section>
+
+<!-- ============ N10 ============ -->
+<section class="q" id="n10">
+<header class="qh">
+  <div class="qrow"><span class="qid">N10</span><span class="tag added">Added</span></div>
+  <h2>SEO and metadata</h2>
+  <p class="qtext">“How do you handle SEO in Next.js? What is the Metadata API? How do you do canonical URLs, Open Graph, sitemaps and structured data? How does rendering mode affect SEO?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“SEO in Next.js starts with rendering the content on the server or at build time so crawlers get full HTML, then adding correct metadata. The Metadata API lets me export a <code>metadata</code> object or an async <code>generateMetadata</code> function per layout or page for title, description, canonical URL, Open Graph, Twitter cards and robots directives. Files like <code>sitemap.ts</code>, <code>robots.ts</code> and <code>opengraph-image</code> are generated by convention. I add structured data as JSON-LD, use semantic HTML, return real status codes (404 for missing, 301/308 for moves), localise with <code>hreflang</code>, and keep Core Web Vitals healthy because they affect ranking. Client-only rendering is risky for important content.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Left: how metadata merges from root layout through nested layouts to a page, with generateMetadata overriding. Right: SEO checklist covering crawlable HTML, status codes, canonical, sitemap, structured data and Core Web Vitals.">
+  <text x="10" y="18" class="bd">Metadata merges down the tree</text>
+  <rect x="10" y="30" width="360" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">app/layout.tsx</text><text x="18" y="66" class="sm">defaults: titleTemplate "%s | Shop", metadataBase, openGraph</text>
+  <path class="a" d="M190 76V90"/>
+  <rect x="10" y="92" width="360" height="46" rx="5" class="h"/><text x="18" y="112" class="bd">app/products/[slug]/page.tsx</text><text x="18" y="128" class="mono" style="font-size:10px">export async function generateMetadata({ params })</text>
+  <path class="a" d="M190 138V152"/>
+  <rect x="10" y="154" width="360" height="62" rx="5" class="g"/><text x="18" y="174" class="bd">Result in &lt;head&gt;</text><text x="18" y="192" class="sm">title, description from the product · canonical URL</text><text x="18" y="208" class="sm">og:image, twitter card · robots index/noindex · alternates</text>
+  <text x="10" y="242" class="sm">Fetches inside generateMetadata are memoised with the page,</text><text x="10" y="258" class="sm">so the same product is not requested twice.</text>
+  <text x="10" y="282" class="sm">Convention files: sitemap.ts, robots.ts, opengraph-image.tsx, icon, manifest</text>
+  <text x="400" y="18" class="bd">SEO checklist</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="g"/><text x="408" y="52" class="sm"><tspan class="bd">Crawlable HTML</tspan>  SSR/SSG for indexable content</text>
+  <rect x="400" y="68" width="350" height="34" rx="4" class="g"/><text x="408" y="90" class="sm"><tspan class="bd">Status codes</tspan>  404 via notFound(), 301/308 redirects</text>
+  <rect x="400" y="106" width="350" height="34" rx="4" class="h"/><text x="408" y="128" class="sm"><tspan class="bd">Canonical + hreflang</tspan>  one URL per content, locales</text>
+  <rect x="400" y="144" width="350" height="34" rx="4" class="h"/><text x="408" y="166" class="sm"><tspan class="bd">Sitemap + robots</tspan>  discoverability, crawl budget</text>
+  <rect x="400" y="182" width="350" height="34" rx="4" class="w"/><text x="408" y="204" class="sm"><tspan class="bd">Structured data</tspan>  JSON-LD: Product, Article, FAQ</text>
+  <rect x="400" y="220" width="350" height="34" rx="4" class="w"/><text x="408" y="242" class="sm"><tspan class="bd">Performance</tspan>  Core Web Vitals, mobile-first</text>
+  <text x="400" y="278" class="sm">Content quality, links and semantics matter as much as tooling.</text>
+</svg></div>
+<figcaption><b>Idea.</b> Make the content available as HTML, describe it with metadata, and keep URLs and status codes clean.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Static <code>metadata</code> and <code>generateMetadata</code>:</b> export an object for fixed pages; an async function for dynamic ones (fetch the product by <code>params</code>). Metadata merges from parent to child; child fields override. <code>title.template</code> and <code>metadataBase</code> (to resolve relative URLs) go in the root layout. Metadata is server-only (cannot be exported from client components).</li>
+<li><b>Open Graph and social cards:</b> <code>openGraph</code> and <code>twitter</code> fields, or generate dynamic images with <code>opengraph-image.tsx</code> using <code>ImageResponse</code>. Social crawlers do not run JavaScript, which is a key reason CSR-only fails for shareable pages.</li>
+<li><b>Canonical and duplicates:</b> <code>alternates: { canonical }</code> for filtered, paginated or parameterised URLs that duplicate content; avoid indexing faceted-search combinations; use <code>robots: { index: false }</code> for thin pages.</li>
+<li><b>Sitemap and robots:</b> <code>app/sitemap.ts</code> returns URL entries (for large sites generate multiple sitemaps from a database), <code>app/robots.ts</code> sets allow/disallow and the sitemap location. Do not block resources crawlers need.</li>
+<li><b>Structured data:</b> embed JSON-LD in a <code>&lt;script type="application/ld+json"&gt;</code> in the page; escape the JSON to avoid script injection (replace <code>&lt;</code>). Validate with Google’s Rich Results test.</li>
+<li><b>Status codes and soft 404s:</b> a missing resource must return 404 (<code>notFound()</code>); redirects for moved content must be permanent (308). With streaming, decide before the first chunk. A “not found” UI served with 200 is a soft 404.</li>
+<li><b>Internationalisation:</b> locale in the path, <code>alternates.languages</code> for hreflang, translated metadata per locale, and <code>&lt;html lang&gt;</code>.</li>
+<li><b>Rendering mode and crawling:</b> Google can render JavaScript but queues it; other search engines and social bots may not. SSR/SSG/ISR give immediate content. Content hidden behind interaction or fetched only after login is not indexed.</li>
+<li><b>Links and navigation:</b> use real anchors (<code>&lt;Link&gt;</code> renders <code>&lt;a href&gt;</code>); meaningful link text; clean, stable URLs; breadcrumbs; internal linking structure.</li>
+<li><b>Images and accessibility:</b> descriptive <code>alt</code>, correct headings, semantic HTML, and fast loading images; accessibility and SEO overlap strongly.</li>
+<li><b>Performance as ranking factor:</b> Core Web Vitals are part of page experience; monitor field data (N9).</li>
+<li><b>Preview and draft modes:</b> <code>draftMode()</code> lets editors preview unpublished CMS content without affecting the cached public pages, and should be protected by a secret.</li>
+<li><b>Monitoring:</b> Search Console for indexing and coverage errors, log crawler visits, and track rendered HTML with a “fetch as Google” style test after deploys.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Client-only rendering for content that should be indexed and shared.</li>
+<li>Duplicate content from query parameters or trailing slashes without canonicals.</li>
+<li>Forgetting <code>metadataBase</code>, producing wrong absolute Open Graph URLs.</li>
+<li>Returning 200 for missing pages (soft 404) or using temporary redirects for permanent moves.</li>
+<li>Injecting unescaped user content into JSON-LD.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you set a per-product title and image?</dt><dd><code>generateMetadata</code> reading the product by slug, with an <code>opengraph-image</code> route generating a card.</dd>
+<dt>Is SSR required for SEO?</dt><dd>Not strictly, but server or static HTML is the reliable path; Google can render JS, but delays and other crawlers make it risky.</dd>
+<dt>How do you manage SEO for a huge catalogue?</dt><dd>Paginated sitemaps, canonical rules for facets, ISR for pages, internal linking and monitoring indexed counts.</dd>
+<dt>What is a soft 404?</dt><dd>A page that says “not found” but returns HTTP 200, which search engines may index or distrust.</dd>
+</dl></div>
+</section>
+
+<!-- ============ N11 ============ -->
+<section class="q" id="n11">
+<header class="qh">
+  <div class="qrow"><span class="qid">N11</span><span class="tag added">Added</span></div>
+  <h2>Authentication and security</h2>
+  <p class="qtext">“How do you implement authentication in Next.js? Sessions versus JWT? Where do you check authorisation? How do you protect secrets, set security headers and defend against common attacks?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I implement auth with a library such as Auth.js (NextAuth), Clerk or Supabase Auth, or my own session layer, storing the session in an HttpOnly, Secure, SameSite cookie. Authentication proves who the user is; authorisation decides what they can do, and it must be enforced on the server at the data access layer and in every Server Action and route handler, not only in middleware or the UI. Middleware is useful for an optimistic redirect but must not be the sole check. I keep secrets in server-only modules and environment variables without the public prefix, return DTOs rather than raw rows, validate all inputs, set security headers including a nonce-based Content Security Policy, and keep the framework patched.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Defence in depth for a protected resource: middleware optimistic redirect, server layout session check, data access layer authorisation, and database row-level rules, with the UI hiding only for user experience. Right: session cookie attributes.">
+  <text x="10" y="18" class="bd">Layers of protection (outside → inside)</text>
+  <rect x="10" y="30" width="400" height="38" rx="5" class="w"/><text x="18" y="48" class="bd">1 · Middleware / proxy</text><text x="18" y="62" class="sm">cheap redirect if no session cookie: UX and cost, not security</text>
+  <rect x="26" y="76" width="368" height="38" rx="5" class="h"/><text x="34" y="94" class="bd">2 · Server layout / page</text><text x="34" y="108" class="sm">verify session; render only what the user may see</text>
+  <rect x="42" y="122" width="336" height="38" rx="5" class="g"/><text x="50" y="140" class="bd">3 · Data access layer (DAL)</text><text x="50" y="154" class="sm">authorise every read/write, return DTOs, server-only</text>
+  <rect x="58" y="168" width="304" height="38" rx="5" class="g"/><text x="66" y="186" class="bd">4 · Server Actions and handlers</text><text x="66" y="200" class="sm">same checks again; validate input; rate-limit</text>
+  <rect x="74" y="214" width="272" height="38" rx="5" class="b"/><text x="82" y="232" class="bd">5 · Database rules</text><text x="82" y="246" class="sm">row-level security, least-privilege role</text>
+  <text x="10" y="278" class="sm">UI hiding (buttons, menus) is only a usability layer. Assume</text><text x="10" y="294" class="sm">anyone can call any endpoint or action directly.</text>
+  <text x="440" y="18" class="bd">Session cookie</text>
+  <rect x="440" y="30" width="310" height="110" rx="5" class="b"/><text x="448" y="50" class="mono" style="font-size:10.5px">Set-Cookie: session=…;</text><text x="448" y="66" class="mono" style="font-size:10.5px">  HttpOnly; Secure;</text><text x="448" y="82" class="mono" style="font-size:10.5px">  SameSite=Lax; Path=/;</text><text x="448" y="98" class="mono" style="font-size:10.5px">  Max-Age=…</text><text x="448" y="122" class="sm">HttpOnly: JS cannot read it (XSS). SameSite: CSRF.</text>
+  <rect x="440" y="150" width="310" height="102" rx="5" class="g"/><text x="448" y="170" class="bd">Sessions versus JWT</text><text x="448" y="188" class="sm">server session: revocable, small cookie, store lookup</text><text x="448" y="204" class="sm">JWT: stateless, hard to revoke, larger; keep short-</text><text x="448" y="220" class="sm">lived + refresh rotation; never in localStorage if</text><text x="448" y="236" class="sm">XSS is a concern</text>
+  <rect x="440" y="262" width="310" height="48" rx="5" class="x"/><text x="448" y="282" class="bd">Never</text><text x="448" y="298" class="sm">secrets in NEXT_PUBLIC_ vars or client bundles</text>
+</svg></div>
+<figcaption><b>Rule.</b> Authorise at the data layer; everything above it is optimisation or user experience.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Options:</b> Auth.js (formerly NextAuth) for OAuth/credentials with adapters; hosted providers (Clerk, Auth0, Okta, Supabase Auth, Firebase Auth); custom sessions with a library such as <code>jose</code> for signed or encrypted cookies. Choose by compliance, cost, MFA, SSO and team capacity. Do not write your own crypto.</li>
+<li><b>Flows:</b> OAuth/OIDC authorisation code flow with PKCE for social and SSO login (protocols guide), credentials with strong password hashing (argon2/bcrypt) and rate limiting, magic links, passkeys (WebAuthn). Callback handled by a route handler.</li>
+<li><b>Session storage and reading:</b> read the cookie with <code>cookies()</code> in server code; wrap session retrieval in a cached function (<code>React.cache</code>) so it is verified once per request; refresh tokens rotate; sign out clears the cookie and server record.</li>
+<li><b>Data Access Layer pattern:</b> all data access goes through server-only functions that check the session and permissions and return minimal DTOs. Pages and actions call the DAL; never pass full user records to client components.</li>
+<li><b>Authorisation models:</b> RBAC (roles), ABAC (attributes), ownership checks, tenant isolation for multi-tenant apps. Enforce in code and, where possible, in the database (Postgres row-level security with Supabase).</li>
+<li><b>Middleware caveats:</b> useful to redirect unauthenticated users quickly. It must not be the only protection: matchers can miss routes (including data endpoints and Server Actions), and a 2025 vulnerability allowed bypass through a spoofed internal header on affected versions <span class="verify">verify the advisory and fixed versions</span>. Re-check in server code.</li>
+<li><b>Server Actions security:</b> public endpoints; authenticate, authorise, validate (Zod), rate-limit, check ownership; do not trust IDs from the client (N6).</li>
+<li><b>CSRF:</b> SameSite cookies plus Next.js origin checks for actions; custom route handlers using cookie auth need their own CSRF defence (token or origin check). APIs using bearer tokens in headers are not CSRF-prone.</li>
+<li><b>Security headers and CSP:</b> set via <code>headers()</code> in <code>next.config</code> or middleware: <code>Content-Security-Policy</code> (nonce-based with <code>strict-dynamic</code>; Next supports nonces in dynamic rendering), <code>Strict-Transport-Security</code>, <code>X-Content-Type-Options</code>, <code>Referrer-Policy</code>, <code>Permissions-Policy</code>, <code>frame-ancestors</code>. Nonces force dynamic rendering of affected pages, a trade-off versus static caching.</li>
+<li><b>Environment variables:</b> only <code>NEXT_PUBLIC_*</code> are exposed to the browser and inlined at build time; others stay on the server. Never commit <code>.env</code> files with secrets; use platform secret stores. Rotating a public value requires a rebuild.</li>
+<li><b>Other risks:</b> XSS via <code>dangerouslySetInnerHTML</code> and unsanitised markdown (J29), SSRF in server-side fetches of user-provided URLs (allowlist), open redirects in <code>?next=</code> parameters, path traversal in file serving, dependency and supply-chain vulnerabilities, leaking data through props or logs, image optimiser abuse (restrict <code>remotePatterns</code>).</li>
+<li><b>Operational security:</b> keep Next.js and React patched (several critical advisories in 2025 affected middleware and Server Components) <span class="verify">verify</span>, subscribe to advisories, enable dependency scanning, use least-privilege cloud credentials, audit logs.</li>
+<li><b>Rate limiting and abuse:</b> at the edge or gateway (Upstash, platform WAF), per IP and per account, with stricter limits on login, password reset and expensive actions.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Protecting only with middleware or with hidden UI.</li>
+<li>Putting access tokens in <code>localStorage</code> and calling it done.</li>
+<li>Trusting a user id or role sent from the client.</li>
+<li>Exposing secrets through <code>NEXT_PUBLIC_</code> variables or returning raw database rows to client components.</li>
+<li>Implementing a homemade JWT or password scheme instead of a vetted library.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Where do you verify the session in the App Router?</dt><dd>In a server-only helper called by layouts, pages, actions and the DAL, memoised per request; middleware only does a light pre-check.</dd>
+<dt>How do you implement role-based UI?</dt><dd>Send the role (or permissions) from the server as part of the session DTO to render the UI, but enforce permissions again in every server operation.</dd>
+<dt>How do you set a nonce-based CSP?</dt><dd>Generate a nonce per request in middleware, set the CSP header and pass the nonce to scripts; pages become dynamic, so apply it where the security benefit justifies it.</dd>
+<dt>JWT or database session?</dt><dd>Database/server sessions for easy revocation and smaller exposure; short-lived JWTs with rotation when you need stateless verification across services.</dd>
+</dl></div>
+</section>
+
+<!-- ============ N12 ============ -->
+<section class="q" id="n12">
+<header class="qh">
+  <div class="qrow"><span class="qid">N12</span><span class="tag added">Added</span></div>
+  <h2>Deployment, runtimes and operations</h2>
+  <p class="qtext">“How do you deploy a Next.js app? Vercel versus self-hosting? What are the Node and Edge runtimes? How do ISR and caching work when self-hosted? When would you not use Next.js?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Next.js can be deployed on Vercel, which understands every feature natively, or self-hosted as a Node server (<code>next start</code>), in a Docker container with <code>output: 'standalone'</code>, on a serverless or container platform through an adapter such as OpenNext, or as a fully static export when there are no server features. Pages can run on the Node.js runtime, with full API access, or the Edge runtime, with lower latency but a limited API surface. Self-hosting means I own the operational concerns: a shared cache handler so ISR and the Data Cache work across instances, an image optimiser, CDN and cache headers, health checks, scaling, observability and secrets. I choose Next.js when I need hybrid rendering, SEO and a rich React app; I avoid it for purely static sites, where a lighter tool is simpler, or for heavy back-office SPAs with no SEO needs.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Deployment options: static export to a CDN, Node server or container behind a load balancer with a shared cache, serverless platform like Vercel with edge network, and adapters for AWS or Cloudflare. Below, runtimes comparison.">
+  <text x="10" y="18" class="bd">Deployment targets</text>
+  <rect x="10" y="30" width="170" height="112" rx="5" class="g"/><text x="18" y="50" class="bd">Static export</text><text x="18" y="68" class="mono" style="font-size:10px">output: 'export'</text><text x="18" y="86" class="sm">plain files on S3 + CDN</text><text x="18" y="102" class="sm">no SSR, actions, ISR, or</text><text x="18" y="118" class="sm">image optimiser (use a loader)</text><text x="18" y="134" class="sm">cheapest, simplest</text>
+  <rect x="195" y="30" width="170" height="112" rx="5" class="h"/><text x="203" y="50" class="bd">Node / container</text><text x="203" y="68" class="mono" style="font-size:10px">next start · standalone</text><text x="203" y="86" class="sm">Docker on ECS, K8s, VMs</text><text x="203" y="102" class="sm">all features; you operate</text><text x="203" y="118" class="sm">scaling, cache, CDN, TLS</text><text x="203" y="134" class="sm">full control, no lock-in</text>
+  <rect x="380" y="30" width="170" height="112" rx="5" class="b"/><text x="388" y="50" class="bd">Vercel (managed)</text><text x="388" y="68" class="sm">zero-config, previews per PR</text><text x="388" y="86" class="sm">ISR, image optimisation,</text><text x="388" y="102" class="sm">edge network, analytics</text><text x="388" y="118" class="sm">usage-based cost</text><text x="388" y="134" class="sm">best feature fidelity</text>
+  <rect x="565" y="30" width="185" height="112" rx="5" class="b"/><text x="573" y="50" class="bd">Other platforms</text><text x="573" y="68" class="sm">OpenNext (AWS Lambda,</text><text x="573" y="84" class="sm">CloudFront), Cloudflare,</text><text x="573" y="100" class="sm">Netlify, Amplify, Render,</text><text x="573" y="116" class="sm">Railway, Fly.io</text><text x="573" y="134" class="sm">feature parity varies</text>
+  <text x="10" y="166" class="bd">Runtimes</text>
+  <rect x="10" y="176" width="360" height="80" rx="5" class="g"/><text x="18" y="196" class="bd">Node.js runtime (default)</text><text x="18" y="214" class="sm">all Node APIs, native modules, DB drivers, larger bundles</text><text x="18" y="230" class="sm">cold starts on serverless; deploy near the database</text><text x="18" y="246" class="sm">choose for most server rendering and data access</text>
+  <rect x="390" y="176" width="360" height="80" rx="5" class="w"/><text x="398" y="196" class="bd">Edge runtime</text><text x="398" y="214" class="sm">Web APIs only, small bundles, tiny cold start, global</text><text x="398" y="230" class="sm">limits: no fs, few Node APIs, size and CPU caps</text><text x="398" y="246" class="sm">choose for middleware, redirects, light personalisation</text>
+  <rect x="10" y="266" width="740" height="46" rx="5" class="b"/><text x="18" y="286" class="bd">Self-hosting checklist</text><text x="18" y="302" class="sm">shared cache handler (Redis) · sharp · CDN + cache headers · health check · graceful shutdown · secrets · logs, metrics, traces</text>
+</svg></div>
+<figcaption><b>Trade-off.</b> Managed platforms trade cost and some lock-in for convenience; self-hosting trades effort for control and predictable cost.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Build and run:</b> <code>next build</code> produces <code>.next</code> output; <code>next start</code> runs the production server. <code>output: 'standalone'</code> traces dependencies into a minimal folder for small Docker images (copy <code>public</code> and <code>.next/static</code> too); serve static assets from a CDN with long-lived immutable caching (hashed names).</li>
+<li><b>Docker and orchestration:</b> multi-stage Dockerfile, non-root user, health endpoint, graceful shutdown on SIGTERM, resource limits, horizontal scaling behind a load balancer. Stateless instances only if the cache is shared.</li>
+<li><b>ISR and Data Cache in multiple instances:</b> the default cache lives on the instance’s disk and memory; with several instances each has its own copy, causing inconsistent revalidation. Configure a custom <code>cacheHandler</code> backed by Redis or object storage, and propagate <code>revalidateTag</code> across instances <span class="verify">verify the supported mechanism for your version</span>. Managed platforms solve this for you.</li>
+<li><b>Image optimisation self-hosted:</b> needs <code>sharp</code> and CPU; consider an external image service or CDN-based optimiser to offload.</li>
+<li><b>Static export:</b> good for marketing sites and docs; remember that features needing a server (middleware, Server Actions, dynamic routes without params, ISR, redirects config) are unavailable.</li>
+<li><b>Environment configuration:</b> <code>NEXT_PUBLIC_*</code> values are baked at build time, so one image cannot serve several environments unless you inject runtime config via an endpoint or server-side props. Server variables are read at run time. Keep secrets in a secrets manager, not in the image.</li>
+<li><b>CI/CD:</b> install with a lockfile, lint, type-check, test, build with caching (<code>.next/cache</code>), run end-to-end tests against a preview deployment, deploy with progressive rollout (canary or blue-green; DevOps guide), keep rollbacks one command away. Preview environments per pull request are a major productivity gain.</li>
+<li><b>Observability:</b> OpenTelemetry instrumentation (<code>instrumentation.ts</code>), structured logs, error tracking (Sentry), real-user monitoring of web vitals, alerts on error rate, latency and cache hit ratio; track slow server components and data calls.</li>
+<li><b>Scaling and cost:</b> most traffic should hit CDN-cached static output; dynamic rendering costs CPU per request. Reduce cost by caching, ISR, avoiding unnecessary dynamic APIs, and sizing instances by measured load.</li>
+<li><b>Runtime selection per route:</b> <code>export const runtime = 'edge' | 'nodejs'</code>. Edge helps middleware and lightweight personalisation, but a global edge function that queries a single-region database can be slower than a regional Node function.</li>
+<li><b>Upgrading and migration:</b> follow upgrade guides and codemods (<code>npx @next/codemod</code>), update React and Next together, test caching behaviour after upgrades, and migrate Pages to App routes incrementally.</li>
+<li><b>When not to use Next.js:</b> purely static content sites (Astro, Eleventy), authenticated SPAs with no SEO need where Vite and React Router are simpler, apps needing a non-Node backend ecosystem, or when the team cannot operate the server and caching complexity. Alternatives with different trade-offs: Remix/React Router framework mode, Astro, SvelteKit, Nuxt, TanStack Start.</li>
+<li><b>Vendor lock-in view:</b> Next.js is open source, but some features are shaped around Vercel’s infrastructure; reduce lock-in by following standard APIs, abstracting storage and cache, and testing a self-hosted build.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Scaling a self-hosted app to several instances without a shared cache, then seeing inconsistent ISR.</li>
+<li>Expecting <code>NEXT_PUBLIC_</code> variables to change at run time without a rebuild.</li>
+<li>Choosing the Edge runtime by default and hitting unsupported Node APIs or distant database latency.</li>
+<li>Using static export and then adding features that need a server.</li>
+<li>Choosing Next.js for every project without weighing simpler options.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you containerise a Next.js app?</dt><dd>Multi-stage Docker build with <code>output: 'standalone'</code>, copy static assets and public files, run as non-root, add a health check, and serve <code>_next/static</code> via CDN.</dd>
+<dt>How do you do zero-downtime deployments?</dt><dd>Rolling or blue-green deploys with health checks, versioned static asset paths (or a deployment id) so old clients can still fetch their chunks during rollout.</dd>
+<dt>What is skew protection?</dt><dd>Keeping old assets and server actions available to clients still running the previous build, preventing errors during deploys <span class="verify">verify feature names</span>.</dd>
+<dt>How do you monitor a Next.js app in production?</dt><dd>OpenTelemetry traces, logs, RUM for web vitals, error tracking with source maps, and alerts on SLOs.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>36 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>CSR versus SSR in one line?</td><td>CSR builds the page in the browser; SSR sends ready HTML from the server per request.</td><td>N1</td></tr>
+<tr><td>2</td><td>What is SSG?</td><td>HTML generated at build time and served from a CDN.</td><td>N1</td></tr>
+<tr><td>3</td><td>What is ISR?</td><td>Static pages regenerated in the background after a time window or on demand.</td><td>N1</td></tr>
+<tr><td>4</td><td>What is partial prerendering?</td><td>A static shell served instantly, with dynamic parts streamed in.</td><td>N1</td></tr>
+<tr><td>5</td><td>What is hydration?</td><td>React attaching event handlers and state to server-rendered HTML in the browser.</td><td>N1</td></tr>
+<tr><td>6</td><td>What does <code>layout.tsx</code> do?</td><td>Wraps child segments, persists across navigation and does not re-render between children.</td><td>N2</td></tr>
+<tr><td>7</td><td><code>layout</code> versus <code>template</code>?</td><td>A layout persists; a template remounts on every navigation.</td><td>N2</td></tr>
+<tr><td>8</td><td>What does <code>loading.tsx</code> give you?</td><td>An automatic Suspense fallback for the segment.</td><td>N2</td></tr>
+<tr><td>9</td><td>What is a route group?</td><td>A <code>(folder)</code> that organises routes or layouts without changing the URL.</td><td>N2</td></tr>
+<tr><td>10</td><td>What are intercepting routes for?</td><td>Showing another route in context, such as a modal, with a shareable URL.</td><td>N2</td></tr>
+<tr><td>11</td><td>Default component type in the App Router?</td><td>Server Component; add <code>'use client'</code> for interactivity.</td><td>N3</td></tr>
+<tr><td>12</td><td>Can a client component import a server component?</td><td>No, but it can receive one as <code>children</code>.</td><td>N3</td></tr>
+<tr><td>13</td><td>How do you use context in the App Router?</td><td>A client <code>Providers</code> component wrapping server-rendered children.</td><td>N3</td></tr>
+<tr><td>14</td><td>How do you keep code server-only?</td><td>Import <code>server-only</code>; no <code>NEXT_PUBLIC_</code> prefix for secrets.</td><td>N3</td></tr>
+<tr><td>15</td><td>What makes a route dynamic?</td><td><code>cookies()</code>, <code>headers()</code>, <code>searchParams</code>, uncached data, or <code>force-dynamic</code>.</td><td>N4</td></tr>
+<tr><td>16</td><td>What is <code>generateStaticParams</code>?</td><td>Lists dynamic route parameter values to prerender at build.</td><td>N4</td></tr>
+<tr><td>17</td><td>How do you avoid fetch waterfalls?</td><td><code>Promise.all</code>, preloading, or sibling components in Suspense.</td><td>N4</td></tr>
+<tr><td>18</td><td>Four Next.js caches?</td><td>Request memoisation, Data Cache, Full Route Cache, Router Cache.</td><td>N5</td></tr>
+<tr><td>19</td><td>How do you revalidate on demand?</td><td><code>revalidateTag</code> or <code>revalidatePath</code> from an action or route handler.</td><td>N5</td></tr>
+<tr><td>20</td><td>What changed in Next 15 caching?</td><td><code>fetch</code> and GET handlers are not cached by default; caching is opt-in.</td><td>N5</td></tr>
+<tr><td>21</td><td>What is a Server Action?</td><td>An async <code>'use server'</code> function callable from forms or clients, run on the server.</td><td>N6</td></tr>
+<tr><td>22</td><td>Are Server Actions secure by default?</td><td>No: they are public endpoints; authenticate, authorise and validate inside.</td><td>N6</td></tr>
+<tr><td>23</td><td>Action versus route handler?</td><td>Actions for your own UI mutations; handlers for APIs, webhooks and third parties.</td><td>N6</td></tr>
+<tr><td>24</td><td>What does <code>&lt;Link&gt;</code> prefetch?</td><td>The route payload (static part) when visible, in production.</td><td>N7</td></tr>
+<tr><td>25</td><td>Is middleware a security boundary?</td><td>No: use it for optimistic redirects; enforce authorisation in the data layer.</td><td>N7</td></tr>
+<tr><td>26</td><td>Rewrite versus redirect?</td><td>Rewrite serves other content on the same URL; redirect changes the URL.</td><td>N7</td></tr>
+<tr><td>27</td><td>How does streaming improve UX?</td><td>Sends the shell first and fills Suspense boundaries as data resolves.</td><td>N8</td></tr>
+<tr><td>28</td><td>Common hydration error causes?</td><td>Dates, random values, <code>window</code> checks, invalid HTML nesting, extensions.</td><td>N8</td></tr>
+<tr><td>29</td><td>How does <code>next/image</code> help LCP and CLS?</td><td>Responsive formats, lazy loading, reserved dimensions, and <code>priority</code> for the hero.</td><td>N9</td></tr>
+<tr><td>30</td><td>Biggest cause of poor INP?</td><td>Too much client JavaScript and third-party scripts.</td><td>N9</td></tr>
+<tr><td>31</td><td>How do you set page titles per product?</td><td><code>generateMetadata</code> fetching the product.</td><td>N10</td></tr>
+<tr><td>32</td><td>What is a soft 404?</td><td>A not-found page served with status 200; use <code>notFound()</code>.</td><td>N10</td></tr>
+<tr><td>33</td><td>Where to store session tokens?</td><td>HttpOnly, Secure, SameSite cookies.</td><td>N11</td></tr>
+<tr><td>34</td><td>Where is authorisation enforced?</td><td>In the server data access layer, actions and handlers, and the database.</td><td>N11</td></tr>
+<tr><td>35</td><td>Node versus Edge runtime?</td><td>Node: full APIs, regional. Edge: Web APIs only, tiny and global.</td><td>N12</td></tr>
+<tr><td>36</td><td>Problem with ISR on several self-hosted instances?</td><td>Each instance has its own cache; use a shared cache handler.</td><td>N12</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer Next.js questions at L4</h4>
+<ul>
+<li>Frame rendering questions around data: how often it changes, whether it is personalised, and who needs it first (users and crawlers). Then pick static, ISR, dynamic or a streamed mix.</li>
+<li>For caching questions name the layer and the version. Say plainly that defaults changed in Next.js 15 and that you check the docs for the version in use.</li>
+<li>Separate security layers: middleware for UX, server for rendering, data access layer for authorisation, database rules as the last line.</li>
+<li>Give a performance story with numbers: the metric, the cause you found, the change, the measured result.</li>
+<li>Be balanced about trade-offs and lock-in: when you would pick Next.js and when something simpler is better.</li>
+<li>The interview is theoretical: expect “explain”, “compare”, “how would you design” and “what are the trade-offs”, not live coding.</li>
+</ul></div>
+</section>
+
+</div>
