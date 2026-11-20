@@ -24,6 +24,21 @@
 		mobileOpen?: boolean;
 		onMobileClose?: () => void;
 	}>();
+	let query = $state('');
+
+	const filteredCategories: TopicCategory[] = $derived.by(() => {
+		const search = query.trim().toLowerCase();
+		if (!search) return categories;
+		return categories
+			.map((category: TopicCategory) => {
+				if (category.label.toLowerCase().includes(search)) return category;
+				return {
+					...category,
+					topics: category.topics.filter((topic: Topic) => topic.title.toLowerCase().includes(search))
+				};
+			})
+			.filter((category: TopicCategory) => category.topics.length > 0);
+	});
 
 	const priorityClass: Record<Topic['priority'], string> = {
 		must: 'prio-must',
@@ -43,19 +58,24 @@
 {:else}
 	<aside class="sidebar" class:mobile-open={mobileOpen}>
 		<div class="sidebar-header">
-			<span class="sidebar-title">Topics</span>
+			<span class="sidebar-title">Subjects &amp; topics</span>
 			<div class="header-actions">
 				<button class="mobile-close-btn" onclick={onMobileClose} aria-label="Close topics panel">✕</button>
 				<button class="collapse-btn" onclick={onToggleCollapse} title="Collapse sidebar  [" aria-label="Collapse sidebar">◄</button>
 			</div>
 		</div>
-		{#each categories as category}
+		<label class="topic-search">
+			<span class="sr-only">Search topics</span>
+			<input type="search" bind:value={query} placeholder="Find a topic..." />
+		</label>
+		{#each filteredCategories as category (category.id)}
 			<article class="category-card">
-				<button class="category-title" onclick={() => onToggleCategory(category.id)}>
+				<button class="category-title" onclick={() => onToggleCategory(category.id)} aria-expanded={!collapsedByCategory[category.id]}>
 					<span>{category.label}</span>
+					<span class="category-count">{category.topics.length}</span>
 					<span class:closed={collapsedByCategory[category.id]}>▾</span>
 				</button>
-				{#if !collapsedByCategory[category.id]}
+				{#if query || !collapsedByCategory[category.id]}
 					<ul>
 						{#each category.topics as topic}
 							<li>
@@ -70,6 +90,9 @@
 				{/if}
 			</article>
 		{/each}
+		{#if filteredCategories.length === 0}
+			<p class="no-results">No matching topics.</p>
+		{/if}
 	</aside>
 {/if}
 
@@ -82,6 +105,43 @@
 		overflow-x: hidden;
 		padding-right: 0.2rem;
 		min-width: 0;
+	}
+
+	.topic-search input {
+		width: 100%;
+		min-height: 2.5rem;
+		padding: 0.55rem 0.7rem;
+		border: 1px solid #cbd3dd;
+		border-radius: 6px;
+		background: #fff;
+		color: #20202a;
+		font: inherit;
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.no-results {
+		margin: 0;
+		padding: 0.75rem;
+		color: #657389;
+		font-size: 0.86rem;
+	}
+
+	.category-count {
+		margin-left: auto;
+		color: #778397;
+		font-size: 0.72rem;
+		font-weight: 500;
 	}
 
 	/* ── Collapse header ─────────────────────────────── */

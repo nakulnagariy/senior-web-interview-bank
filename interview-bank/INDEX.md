@@ -31,6 +31,7 @@
 - [Java for Frontend Developers Study Guide](study-guides/java-for-frontend.html)
 - [JavaScript Study Guide 1](study-guides/javascript-1.html)
 - [JavaScript Study Guide 2](study-guides/javascript-2.html)
+- [L4 Leadership and Team Development Guide](study-guides/leadership-and-team-development.html)
 - [Next.js and Rendering Study Guide](study-guides/nextjs.html)
 - [Node, Databases and Supabase Study Guide](study-guides/node-and-databases.html)
 - [Performance and PWA Study Guide](study-guides/performance-and-pwa.html)

@@ -1,157 +1,246 @@
 <script lang="ts">
-	let { totalTopics, doneCount, mustKnowTopics, progressPct } = $props<{
+	let { totalTopics, authoredTopicCount, mustKnowTopics, guideCount, doneCount, progressPct } = $props<{
 		totalTopics: number;
-		doneCount: number;
+		authoredTopicCount: number;
 		mustKnowTopics: number;
+		guideCount: number;
+		doneCount: number;
 		progressPct: number;
 	}>();
 </script>
 
 <header class="hero">
-	<h1>Frontend &amp; Web Developer Interview Prep</h1>
-	<p>Practice JavaScript, React, TypeScript, CSS, and system design with topic guides, quizzes, and progress tracking.</p>
-	<div class="stats">
-		<div class="stat"><span>{totalTopics}</span><small>Total topics</small></div>
-		<div class="stat"><span>{doneCount}</span><small>Covered</small></div>
-		<div class="stat"><span>{mustKnowTopics}</span><small>Must-know</small></div>
-		<div class="stat"><span>{progressPct}%</span><small>Progress</small></div>
+	<div class="hero-main">
+		<div class="hero-copy">
+			<p class="eyebrow">Senior to lead · Frontend</p>
+			<h1>Frontend Interview Prep</h1>
+			<p class="description">
+				Search reviewed topic notes and subject guides, practice MCQs, use the interview question bank,
+				and keep a device-local interview log.
+			</p>
+			<p class="content-note">Reviewed material is surfaced first; generated starter drafts stay clearly labeled.</p>
+		</div>
+
+		<div class="progress-panel">
+			<div class="progress-heading">
+				<div>
+					<span class="progress-title">Your roadmap progress</span>
+					<strong class="progress-value">{progressPct}%</strong>
+				</div>
+				<span class="progress-count">{doneCount} of {totalTopics} covered</span>
+			</div>
+			<div
+				class="progress"
+				role="progressbar"
+				aria-label="Your roadmap progress"
+				aria-valuemin="0"
+				aria-valuemax="100"
+				aria-valuenow={progressPct}
+			>
+				<div style={`width:${progressPct}%`}></div>
+			</div>
+		</div>
 	</div>
-	<div class="progress"><div style={`width:${progressPct}%`}></div></div>
+
+	<div class="stats" aria-label="Preparation library">
+		<div class="stat"><span>{totalTopics}</span><small>Roadmap topics</small></div>
+		<div class="stat"><span>{authoredTopicCount}</span><small>With reviewed content</small></div>
+		<div class="stat"><span>{mustKnowTopics}</span><small>Must-know topics</small></div>
+		<div class="stat"><span>{guideCount}</span><small>Subject guides</small></div>
+	</div>
 </header>
 
 <style>
 	.hero {
-		background: linear-gradient(140deg, #1a2437, #202f46 68%, #18465a);
-		color: #fff;
-		border-radius: 16px;
-		padding: 1rem 1.2rem;
+		background: #183541;
+		color: #f7f6f0;
+		border-radius: 12px;
+		padding: 1.5rem 1.65rem 1.15rem;
 		min-width: 0;
 		width: 100%;
 		box-sizing: border-box;
 	}
 
-	.hero h1 {
-		margin: 0;
-		font-size: 1.3rem;
+	.hero-main {
+		display: grid;
+		grid-template-columns: minmax(0, 1.4fr) minmax(235px, 0.6fr);
+		align-items: center;
+		gap: 2rem;
 	}
 
-	.hero p {
-		margin: 0.4rem 0 0.8rem;
+	.hero-copy {
+		min-width: 0;
+	}
+
+	.eyebrow {
+		margin: 0 0 0.35rem;
+		color: #8de0c9;
+		font-size: 0.76rem;
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	.hero h1 {
+		margin: 0;
+		font-size: 2rem;
+		line-height: 1.16;
+	}
+
+	.description {
+		max-width: 68ch;
+		margin: 0.55rem 0 0;
+		color: #d9e3e3;
 		font-size: 0.92rem;
-		color: #d4deef;
+		line-height: 1.5;
+	}
+
+	.content-note {
+		margin: 0.7rem 0 0;
+		padding-left: 0.6rem;
+		border-left: 2px solid #f3a66d;
+		color: #f4d2b5;
+		font-size: 0.78rem;
+		line-height: 1.4;
+	}
+
+	.progress-panel {
+		min-width: 0;
+		padding-left: 1.4rem;
+		border-left: 1px solid rgba(255, 255, 255, 0.2);
+	}
+
+	.progress-heading {
+		display: flex;
+		align-items: end;
+		justify-content: space-between;
+		gap: 0.7rem;
+	}
+
+	.progress-heading > div {
+		display: grid;
+		gap: 0.1rem;
+	}
+
+	.progress-title,
+	.progress-count {
+		color: #d9e3e3;
+		font-size: 0.76rem;
+	}
+
+	.progress-value {
+		font-size: 2.15rem;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.stats {
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 0.7rem;
+		margin-top: 1.35rem;
+		padding-top: 1rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.2);
 	}
 
 	.stat {
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 10px;
-		padding: 0.55rem;
-		background: rgba(255, 255, 255, 0.08);
+		display: grid;
+		align-content: start;
+		gap: 0.1rem;
+		min-width: 0;
+		padding: 0 1rem;
+		border-left: 1px solid rgba(255, 255, 255, 0.18);
+	}
+
+	.stat:first-child {
+		padding-left: 0;
+		border-left: 0;
 	}
 
 	.stat span {
-		display: block;
-		font-size: 1.2rem;
+		font-size: 1.45rem;
 		font-weight: 700;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.stat small {
-		font-size: 0.72rem;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: #d9e6f8;
+		color: #d9e3e3;
+		font-size: 0.76rem;
+		line-height: 1.3;
 	}
 
 	.progress {
-		margin-top: 0.8rem;
-		height: 8px;
-		background: rgba(255, 255, 255, 0.2);
+		margin-top: 0.75rem;
+		height: 7px;
+		background: rgba(255, 255, 255, 0.18);
 		border-radius: 999px;
+		overflow: hidden;
 	}
 
 	.progress div {
 		height: 100%;
-		border-radius: 999px;
-		background: linear-gradient(90deg, #ef791b, #ffd561);
+		border-radius: inherit;
+		background: #f3a66d;
+		transition: width 0.35s ease;
 	}
 
-	/* ── Tablet + smaller (≤ 1024px): 2-column stats ── */
-	@media (max-width: 1024px) {
+	@media (max-width: 860px) {
+		.hero-main {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 1.25rem;
+		}
+
+		.progress-panel {
+			padding: 1rem 0 0;
+			border-top: 1px solid rgba(255, 255, 255, 0.2);
+			border-left: 0;
+		}
+	}
+
+	@media (max-width: 620px) {
+		.hero {
+			padding: 1.1rem 1rem 0.9rem;
+		}
+
+		.hero h1 {
+			font-size: 1.65rem;
+		}
+
 		.stats {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+			row-gap: 0.8rem;
+		}
+
+		.stat:nth-child(odd) {
+			padding-left: 0;
+			border-left: 0;
+		}
+
+		.stat:nth-child(even) {
+			padding-right: 0;
 		}
 	}
 
-	/* ── Phablets & phones (≤ 768px): compact hero ── */
-	@media (max-width: 768px) {
-		.hero {
-			padding: 0.85rem 0.9rem;
-			border-radius: 12px;
-		}
-
-		.hero h1 {
-			font-size: 1.1rem;
-		}
-
-		.hero p {
-			font-size: 0.85rem;
-			margin-bottom: 0.6rem;
-		}
-
-		.stat span {
-			font-size: 1.05rem;
-		}
-	}
-
-	/* ── Small phones (≤ 480px) ── */
-	@media (max-width: 480px) {
-		.hero {
-			padding: 0.75rem;
-		}
-
-		.hero h1 {
-			font-size: 1rem;
-		}
-
-		.hero p {
-			font-size: 0.8rem;
-		}
-
-		.stat span {
-			font-size: 0.95rem;
-		}
-
-		.stat small {
-			font-size: 0.68rem;
-		}
-	}
-
-	/* ── Extra small phones (≤ 360px) ── */
 	@media (max-width: 360px) {
 		.hero {
-			padding: 0.65rem;
-			border-radius: 10px;
+			padding: 0.9rem 0.8rem 0.75rem;
 		}
 
 		.hero h1 {
-			font-size: 0.92rem;
+			font-size: 1.45rem;
 		}
 
-		.hero p {
-			display: none;
+		.description {
+			font-size: 0.86rem;
+		}
+
+		.progress-heading {
+			align-items: start;
+			flex-direction: column;
+			gap: 0.25rem;
 		}
 
 		.stats {
-			gap: 0.45rem;
-		}
-
-		.stat {
-			padding: 0.4rem;
+			margin-top: 1rem;
+			padding-top: 0.8rem;
 		}
 
 		.stat span {
@@ -159,11 +248,7 @@
 		}
 
 		.stat small {
-			font-size: 0.63rem;
-		}
-
-		.progress {
-			margin-top: 0.5rem;
+			font-size: 0.7rem;
 		}
 	}
 </style>

@@ -7,12 +7,18 @@ import { build, files, prerendered, version } from '$service-worker';
 
 const sw = self as unknown as ServiceWorkerGlobalScope;
 
-// Everything the app needs to run is precached on install: the JS/CSS build,
-// every file in /static (topic notes, flashcards, assessments, icons, manifest)
-// and the prerendered pages. MCQ papers are bundled into the JS itself.
+// Precache the app and guide HTML; keep large PDFs on the network until requested.
 const APP_CACHE = `app-${version}`;
 const FONT_CACHE = 'fonts-v1';
-const PRECACHE = [...new Set([...build, ...files, ...prerendered, '/', '/index.html'])];
+const PRECACHE = [
+	...new Set([
+		...build,
+		...files.filter((file) => !file.endsWith('.pdf')),
+		...prerendered,
+		'/',
+		'/index.html'
+	])
+];
 const PRECACHE_SET = new Set(PRECACHE);
 
 sw.addEventListener('install', (event) => {
@@ -83,7 +89,11 @@ sw.addEventListener('fetch', (event) => {
 	const url = new URL(request.url);
 
 	if (url.origin === sw.location.origin) {
-		if (request.mode === 'navigate') {
+		if (url.pathname.startsWith('/study-guides/') && url.pathname.endsWith('.html')) {
+			event.respondWith(cacheFirst(request));
+		} else if (url.pathname.startsWith('/study-guides/') && url.pathname.endsWith('.pdf')) {
+			event.respondWith(fetch(request));
+		} else if (request.mode === 'navigate') {
 			event.respondWith(navigate(request));
 		} else if (PRECACHE_SET.has(url.pathname) || url.pathname.startsWith('/content/')) {
 			event.respondWith(cacheFirst(request));

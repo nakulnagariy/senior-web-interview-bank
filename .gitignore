@@ -1,1 +1,3 @@
 .vscode/
+/app/static/study-guides/
+/app/src/lib/data/contentAssets.generated.ts

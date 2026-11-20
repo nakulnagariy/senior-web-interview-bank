@@ -1,3 +1,5 @@
+import { DISCOVERED_CONTENT_ASSETS } from './contentAssets.generated';
+
 export type Priority = 'must' | 'high' | 'med' | 'low';
 export type TopicType = 'output' | 'concept' | 'code' | 'design' | 'gotcha';
 
@@ -7,6 +9,7 @@ export type TopicAsset = {
 	label: string;
 	type: TopicAssetType;
 	path: string;
+	generated?: boolean;
 };
 
 export type Topic = {
@@ -278,7 +281,8 @@ const EXISTING_ASSET_MAP: Record<string, TopicAsset[]> = {
 	],
 	'async-js/microtask-queue-output-prediction': [
 		{ label: 'Runtime order', type: 'code', path: '/content/async-js/async-microtask-prediction/runtime-01-microtask-order.js' },
-		{ label: 'queueMicrotask', type: 'code', path: '/content/async-js/async-microtask-prediction/queueMicrotask.js' }
+		{ label: 'queueMicrotask', type: 'code', path: '/content/async-js/async-microtask-prediction/queueMicrotask.js' },
+		{ label: 'MutationObserver', type: 'code', path: '/content/async-js/async-microtask-prediction/mutationObserver.js' }
 	],
 	'async-js/promise-all-vs-allsettled-vs-race-vs-any': [
 		{ label: 'all vs allSettled', type: 'code', path: '/content/async-js/promise-all-vs-allsettled-vs-race-vs-any/combinators-01-all-vs-allSettled.js' },
@@ -288,7 +292,7 @@ const EXISTING_ASSET_MAP: Record<string, TopicAsset[]> = {
 	'async-js/implement-retrywithbackoff': [
 		{ label: 'retryWithBackoff', type: 'code', path: '/content/async-js/implement-retrywithbackoff/patterns-02-retry-backoff.js' }
 	],
-	'async-js/concurrency-limiter-n-at-a-time': [
+	'async-js/concurrency-limiter': [
 		{ label: 'Concurrency limiter', type: 'code', path: '/content/async-js/concurrency-limiter-n-at-a-time/patterns-01-concurrency-limit.js' }
 	],
 	'react-hooks/usestate-batching-functional-updates-stale-closure': [
@@ -436,7 +440,8 @@ function buildGeneratedAssets(slug: string, existingAssets: TopicAsset[]): Topic
 			generatedAssets.push({
 				label: 'Generated notes',
 				type: 'markdown',
-				path: `/content/${slug}/notes-generated.md`
+				path: `/content/${slug}/notes-generated.md`,
+				generated: true
 			});
 			continue;
 		}
@@ -445,7 +450,8 @@ function buildGeneratedAssets(slug: string, existingAssets: TopicAsset[]): Topic
 			generatedAssets.push({
 				label: 'Generated assessment',
 				type: 'html',
-				path: `/content/${slug}/assessment-generated.html`
+				path: `/content/${slug}/assessment-generated.html`,
+				generated: true
 			});
 			continue;
 		}
@@ -454,7 +460,8 @@ function buildGeneratedAssets(slug: string, existingAssets: TopicAsset[]): Topic
 			generatedAssets.push({
 				label: 'Generated code drill',
 				type: 'code',
-				path: `/content/${slug}/example-generated.js`
+				path: `/content/${slug}/example-generated.js`,
+				generated: true
 			});
 			continue;
 		}
@@ -462,7 +469,8 @@ function buildGeneratedAssets(slug: string, existingAssets: TopicAsset[]): Topic
 		generatedAssets.push({
 			label: 'Generated flashcards',
 			type: 'csv',
-			path: `/content/${slug}/flashcards-generated.csv`
+			path: `/content/${slug}/flashcards-generated.csv`,
+			generated: true
 		});
 	}
 
@@ -485,7 +493,12 @@ export const TOPIC_CATEGORIES: TopicCategory[] = RAW_DATA.map((category) => ({
 	topics: category.topics.map((topic) => {
 		const slug = `${category.id}/${slugify(topic.n)}`;
 		const explicitAssets = EXISTING_ASSET_MAP[slug] ?? [];
-		const assets = [...explicitAssets, ...buildGeneratedAssets(slug, explicitAssets)];
+		const explicitPaths = new Set(explicitAssets.map((asset) => asset.path));
+		const discoveredAssets = (DISCOVERED_CONTENT_ASSETS[slug] ?? []).filter(
+			(asset) => !explicitPaths.has(asset.path)
+		);
+		const authoredAssets = [...explicitAssets, ...discoveredAssets];
+		const assets = [...authoredAssets, ...buildGeneratedAssets(slug, authoredAssets)];
 		return {
 			slug,
 			title: topic.n,
@@ -498,6 +511,9 @@ export const TOPIC_CATEGORIES: TopicCategory[] = RAW_DATA.map((category) => ({
 }));
 
 export const ALL_TOPICS: Topic[] = TOPIC_CATEGORIES.flatMap((category) => category.topics);
+export const AUTHORED_TOPIC_COUNT = ALL_TOPICS.filter((topic) =>
+	topic.assets.some((asset) => !asset.generated)
+).length;
 export const TOPIC_BY_SLUG: Record<string, Topic> = Object.fromEntries(
 	ALL_TOPICS.map((topic) => [topic.slug, topic])
 );
