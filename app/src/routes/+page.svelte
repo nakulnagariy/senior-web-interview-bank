@@ -177,35 +177,60 @@
 </script>
 
 <svelte:head>
-	<title>Frontend Interview Prep — JavaScript, React, TypeScript & System Design</title>
+	<title>Frontend Interview Prep | JavaScript, React &amp; System Design</title>
 	<meta
 		name="description"
-		content="A structured frontend interview preparation tool covering JavaScript, React, TypeScript, CSS, System Design, and more. Track your progress across 100+ must-know topics."
+		content="Prepare for frontend and web developer interviews with practical questions and 100+ topics in JavaScript, React, TypeScript, CSS, and system design."
 	/>
-	<meta name="keywords" content="frontend interview, JavaScript interview, React interview, TypeScript interview, system design, web developer interview prep, coding interview" />
 	<meta name="robots" content="index, follow" />
 	<link rel="canonical" href="https://senior-web-interview-bank.vercel.app/" />
+
+	<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@graph": [
+				{
+					"@type": "WebSite",
+					"@id": "https://senior-web-interview-bank.vercel.app/#website",
+					"name": "Frontend Interview Prep",
+					"alternateName": "Bench Interview Preparation Navigator",
+					"url": "https://senior-web-interview-bank.vercel.app/"
+				},
+				{
+					"@type": "WebApplication",
+					"@id": "https://senior-web-interview-bank.vercel.app/#application",
+					"name": "Frontend Interview Prep",
+					"url": "https://senior-web-interview-bank.vercel.app/",
+					"description": "Prepare for frontend and web developer interviews with practical questions and 100+ topics in JavaScript, React, TypeScript, CSS, and system design.",
+					"applicationCategory": "EducationalApplication",
+					"operatingSystem": "Web"
+				}
+			]
+		}
+	</script>
 
 	<!-- Open Graph -->
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://senior-web-interview-bank.vercel.app/" />
-	<meta property="og:title" content="Frontend Interview Prep — JS, React, TypeScript & System Design" />
+	<meta property="og:title" content="Frontend Interview Prep | JavaScript, React &amp; System Design" />
 	<meta
 		property="og:description"
-		content="Structured interview preparation covering JavaScript, React, TypeScript, CSS, System Design, and more. Track progress across 100+ must-know topics."
+		content="Prepare for frontend and web developer interviews with practical questions and 100+ topics in JavaScript, React, TypeScript, CSS, and system design."
 	/>
 	<meta property="og:site_name" content="Frontend Interview Prep" />
 	<meta property="og:image" content="https://senior-web-interview-bank.vercel.app/icons/icon-512.png" />
 	<meta property="og:image:width" content="512" />
 	<meta property="og:image:height" content="512" />
+	<meta property="og:image:alt" content="Frontend Interview Prep app icon" />
 
 	<!-- Twitter Card -->
 	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:image" content="https://senior-web-interview-bank.vercel.app/icons/icon-512.png" />
-	<meta name="twitter:title" content="Frontend Interview Prep — JS, React, TypeScript & System Design" />
+	<meta name="twitter:image:alt" content="Frontend Interview Prep app icon" />
+	<meta name="twitter:title" content="Frontend Interview Prep | JavaScript, React &amp; System Design" />
 	<meta
 		name="twitter:description"
-		content="Structured interview preparation covering JavaScript, React, TypeScript, CSS, System Design, and more."
+		content="Prepare for frontend and web developer interviews with practical questions and 100+ topics in JavaScript, React, TypeScript, CSS, and system design."
 	/>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />

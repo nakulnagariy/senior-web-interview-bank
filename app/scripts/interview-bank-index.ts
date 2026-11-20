@@ -69,6 +69,17 @@ for (const [category, files] of byCategory) {
 	}
 }
 out.push('');
+const guidesDir = join(ROOT, 'study-guides');
+const guides = existsSync(guidesDir) ? readdirSync(guidesDir).filter((f) => f.endsWith('.html')).sort() : [];
+if (guides.length) {
+	out.push('## Study guides (printable, with diagrams)');
+	out.push('');
+	for (const g of guides) {
+		const title = readFileSync(join(guidesDir, g), 'utf8').match(/<title>(.+?)<\/title>/)?.[1] ?? g;
+		out.push(`- [${title}](study-guides/${g})`);
+	}
+	out.push('');
+}
 out.push('## Revise first (open gaps)');
 out.push('');
 let any = false;

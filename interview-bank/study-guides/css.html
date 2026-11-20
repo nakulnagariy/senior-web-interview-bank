@@ -1,0 +1,1306 @@
+<title>CSS Interview Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"CSS Interview Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"CSS Interview Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · JavaScript Frontend</div>
+  <h1>CSS Interview Study Guide</h1>
+  <p>Every CSS question practised so far, plus the adjacent questions a panel is likely to follow with: layout, stacking, responsive design, theming, architecture, performance and cross-browser. Each topic opens with a 30-second spoken answer, then the full background, a diagram, the traps, and follow-ups with one-line answers. Printed double-sided, each question starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely follow-up topic</span><span><span class="verify">verify</span> check the linked spec or MDN before stating as fact</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes). In Firefox or Safari the built-in page numbers may not appear: switch on "Headers and footers" there instead.</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Foundations</h3>
+    <ol>
+      <li><b>C1</b><a href="#c1">Box model and margin collapsing</a></li>
+      <li><b>C2</b><a href="#c2">Cascade, specificity and layers</a></li>
+      <li><b>C3</b><a href="#c3">Hiding elements</a></li>
+      <li><b>C4</b><a href="#c4">Normal flow, display and formatting contexts</a></li>
+      <li><b>C5</b><a href="#c5">Units and sizing</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>2 · Layout</h3>
+    <ol>
+      <li><b>C6</b><a href="#c6">Flexbox</a></li>
+      <li><b>C7</b><a href="#c7">Grid versus flexbox</a></li>
+      <li><b>C8</b><a href="#c8">Positioning, z-index and stacking contexts</a></li>
+      <li><b>C9</b><a href="#c9">Centering and layout recipes</a></li>
+    </ol>
+    <h3 style="margin-top:16px">5 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>3 · Responsive and modern CSS</h3>
+    <ol>
+      <li><b>C10</b><a href="#c10">Responsive design, media and container queries</a></li>
+      <li><b>C11</b><a href="#c11">Custom properties, theming and dark mode</a></li>
+      <li><b>C12</b><a href="#c12">Modern selectors and features</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Architecture and quality</h3>
+    <ol>
+      <li><b>C13</b><a href="#c13">CSS architecture and methodologies</a></li>
+      <li><b>C14</b><a href="#c14">CSS performance and animation</a></li>
+      <li><b>C15</b><a href="#c15">Cross-browser CSS</a></li>
+    </ol>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Foundations</h1>
+
+<!-- ============ C1 ============ -->
+<section class="q" id="c1">
+<header class="qh">
+  <div class="qrow"><span class="qid">C1</span><span class="tag asked">Asked · 22 Oct</span></div>
+  <h2>Box model and margin collapsing</h2>
+  <p class="qtext">“Explain the CSS box model. What does <code>box-sizing: border-box</code> change, and why do most teams set it globally? What is margin collapsing, and when does it happen?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Every element is a box with four layers: content, padding, border, margin. By default, <code>width</code> sets the content box only, so padding and border are added on top and a <code>width: 100%</code> element with padding overflows. <code>box-sizing: border-box</code> makes <code>width</code> include padding and border, so the size I write is the size I get. That is why teams set it globally. Margin collapsing is a separate rule: vertical margins of adjacent blocks in normal flow merge into one, the larger of the two, instead of adding up. It also happens between a parent and its first or last child, and for an empty block. It does not happen in flex or grid containers, with floats, absolute positioning, or inside a new block formatting context.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Left: the four layers of the box model with width 200 and padding 20 and border 5, showing content-box total 250 versus border-box total 200. Right: two stacked blocks with 30 and 20 pixel margins collapse into a 30 pixel gap instead of 50.">
+  <rect x="10" y="10" width="300" height="200" class="w"/><text x="20" y="28" class="sm">margin</text>
+  <rect x="34" y="36" width="252" height="152" class="b" style="stroke-width:3"/><text x="44" y="54" class="sm">border (5)</text>
+  <rect x="52" y="60" width="216" height="110" class="g"/><text x="62" y="78" class="sm">padding (20)</text>
+  <rect x="82" y="88" width="156" height="56" class="h"/><text x="160" y="120" text-anchor="middle" class="bd">content</text>
+  <text x="10" y="236" class="bd">width: 200px</text>
+  <text x="10" y="256" class="sm">content-box (default): 200 + 2×20 + 2×5 = 250px visible</text>
+  <text x="10" y="274" class="sm">border-box: content shrinks to 150px, total stays 200px</text>
+  <text x="400" y="22" class="bd">Margin collapsing (siblings)</text>
+  <rect x="400" y="34" width="340" height="50" class="h"/><text x="412" y="64" class="bd">A  margin-bottom: 30px</text>
+  <path class="d" d="M570 84V134"/><text x="580" y="116" class="sm">gap = 30px (max), not 50px</text>
+  <rect x="400" y="134" width="340" height="50" class="h"/><text x="412" y="164" class="bd">B  margin-top: 20px</text>
+  <text x="400" y="214" class="bd">Also collapses</text>
+  <text x="400" y="234" class="sm">• parent + first/last child (no border, padding, BFC)</text>
+  <text x="400" y="252" class="sm">• an empty block: its top and bottom margins merge</text>
+  <text x="400" y="272" class="bd">Never collapses</text>
+  <text x="400" y="290" class="sm">flex / grid items · floats · absolute · inline-block · horizontal</text>
+</svg></div>
+<figcaption><b>Two ideas in one picture.</b> Left: what <code>width</code> measures. Right: the vertical margin rule.</figcaption></figure>
+
+<h3>box-sizing</h3>
+<pre><code>*, *::before, *::after { box-sizing: border-box; }
+/* inheritable alternative: html { box-sizing: border-box } *, *::before, *::after { box-sizing: inherit } */</code></pre>
+<ul>
+<li><b>Why global:</b> <code>width: 50%</code> plus <code>padding</code> and <code>border</code> in two columns no longer overflows; sizes are predictable; matches how designers think; matches how most CSS frameworks work.</li>
+<li><b>Gotchas:</b> <code>min-width</code>, <code>max-width</code>, <code>height</code> follow the same rule. Percentage <b>padding and margin</b> are relative to the containing block’s <b>width</b> (inline size), even for top and bottom. <code>border-box</code> cannot make the content box negative: if padding is bigger than width, the box grows.</li>
+<li>Form controls: buttons and selects are typically <code>border-box</code> in the UA stylesheet, text inputs are <code>content-box</code> in some browsers <span class="verify">check MDN</span>; the global reset removes the difference.</li>
+<li><code>outline</code> and <code>box-shadow</code> are not part of the box and do not affect layout.</li>
+</ul>
+
+<h3>Margin collapsing in detail</h3>
+<div class="tw"><table>
+<tr><th>Case</th><th>Result</th></tr>
+<tr><td>Adjacent siblings, both positive</td><td>larger margin wins</td></tr>
+<tr><td>One negative</td><td>largest positive + most negative (they add)</td></tr>
+<tr><td>Both negative</td><td>most negative wins</td></tr>
+<tr><td>Parent and first child, no border, padding, inline content or BFC between</td><td>child’s top margin “escapes” and becomes the parent’s margin: the parent moves down, not the child inside it</td></tr>
+<tr><td>Empty block (no height, border, padding)</td><td>its own top and bottom margins collapse into one, and can collapse with neighbours</td></tr>
+<tr><td>Flex or grid items, floats, absolutely positioned, <code>inline-block</code></td><td>never collapse</td></tr>
+<tr><td>Horizontal margins</td><td>never collapse (in horizontal writing modes)</td></tr>
+</table></div>
+<p><b>Ways to stop or avoid it:</b> add padding or border to the parent; make the parent a new block formatting context with <code>display: flow-root</code> (cleanest) or <code>overflow: auto</code>; use a flex or grid container; or avoid the problem by spacing with <code>gap</code> or one-directional margins (<code>margin-block-start</code> only, the “owl” selector <code>* + * { margin-block-start: 1rem }</code>).</p>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>This was the unanswered half of the earlier session. Practise saying margin collapsing in two sentences: siblings, parent and child, empty block; not in flex or grid.</li>
+<li>Saying margins “add up” vertically. In normal block flow they do not.</li>
+<li>Over-claiming how form inputs default. Say “varies by control, which is why I reset globally”.</li>
+<li>Forgetting that inline (non-replaced) elements ignore vertical margin and <code>width</code>/<code>height</code>.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Margin or padding for spacing?</dt><dd>Padding is inside the box (background, click area); margin is outside and can collapse. Spacing between siblings is best done by the parent with <code>gap</code> in flex or grid, so components do not carry outer margins.</dd>
+<dt>Why does my parent move down when the child has <code>margin-top</code>?</dt><dd>Parent-child margin collapse. Add padding, border or <code>display: flow-root</code> to the parent.</dd>
+<dt>What is a margin on <code>auto</code>?</dt><dd>Horizontal: centres a block with a set width. In flex, auto margins absorb free space on that axis.</dd>
+<dt>How do you apply border-box to a third-party widget?</dt><dd>The inherit pattern lets a component opt out locally without fighting the universal selector.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C2 ============ -->
+<section class="q" id="c2">
+<header class="qh">
+  <div class="qrow"><span class="qid">C2</span><span class="tag asked">Asked · 21 Oct</span></div>
+  <h2>Cascade, specificity and layers</h2>
+  <p class="qtext">“What is the CSS cascade? When two rules target the same element and set the same property, how does the browser decide which one wins?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The cascade is the algorithm that picks one value for each property from all the competing declarations. It goes in order and stops at the first step that decides. One: origin and importance, so browser, user and author styles, with <code>!important</code> reversing the order. Two: cascade layers. Three: specificity, which is a comparison of ids, then classes, attributes and pseudo-classes, then element types, not a single number. Four: order of appearance, so the last rule wins. Inline styles sit above normal author selectors. Inheritance is a separate mechanism that only applies if the cascade finds no value.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="The cascade as a ladder, checked from top to bottom, stopping at the first difference: origin and importance, context, inline style, cascade layers, specificity, order of appearance. Beside it the specificity tuple of ids, classes and elements with examples.">
+  <rect x="10" y="10" width="400" height="44" class="h"/><text x="22" y="30" class="bd">1  Origin and importance</text><text x="22" y="46" class="sm">transitions › !important (UA › user › author) › animations › normal (author › user › UA)</text>
+  <rect x="10" y="60" width="400" height="38" class="b"/><text x="22" y="84" class="bd">2  Context (shadow DOM scope)</text>
+  <rect x="10" y="104" width="400" height="38" class="b"/><text x="22" y="128" class="bd">3  Element-attached style="" (inline)</text>
+  <rect x="10" y="148" width="400" height="52" class="h"/><text x="22" y="168" class="bd">4  Cascade layers (@layer)</text><text x="22" y="186" class="sm">later layer wins; unlayered beats layered; reversed for !important</text>
+  <rect x="10" y="206" width="400" height="52" class="h"/><text x="22" y="226" class="bd">5  Specificity</text><text x="22" y="244" class="sm">compare (ids, classes/attrs/pseudo-classes, types) left to right</text>
+  <rect x="10" y="264" width="400" height="38" class="g"/><text x="22" y="288" class="bd">6  Order of appearance: last rule wins</text>
+  <path class="a" d="M420 20V290"/><text x="430" y="150" class="sm">first step</text><text x="430" y="166" class="sm">that differs</text><text x="430" y="182" class="sm">decides</text>
+  <text x="520" y="24" class="bd">Specificity (a, b, c)</text>
+  <text x="520" y="50" class="mono">#nav .item a        (1,1,1)</text>
+  <text x="520" y="72" class="mono">.card.active        (0,2,0)</text>
+  <text x="520" y="94" class="mono">a[href]:hover       (0,2,1)</text>
+  <text x="520" y="116" class="mono">ul li a             (0,0,3)</text>
+  <text x="520" y="138" class="mono">:where(.a .b)       (0,0,0)</text>
+  <text x="520" y="160" class="mono">:is(#x, .y)         (1,0,0)</text>
+  <text x="520" y="196" class="sm">Compared as a tuple, not a decimal:</text><text x="520" y="214" class="sm">11 classes (0,11,0) never beat one id (1,0,0).</text>
+  <text x="520" y="242" class="sm">:is() / :not() / :has() take their most</text><text x="520" y="258" class="sm">specific argument; :where() is zero.</text>
+</svg></div>
+<figcaption><b>Stops at the first decision.</b> Specificity only matters when origin, layer and inline are equal; order only matters when specificity ties.</figcaption></figure>
+
+<h3>Things that are easy to get wrong</h3>
+<ul>
+<li><b><code>!important</code> reverses the origin order.</b> Important UA beats important user beats important author. Normal rules are the other way round: author beats user beats UA. That is how a user’s forced-colours or large-text setting can win.</li>
+<li><b>Animations and transitions</b> are in the ladder: a running animation overrides normal author declarations; a transition overrides even <code>!important</code> author declarations while it runs.</li>
+<li><b>Layers</b> sit before specificity: a low-specificity rule in a later layer beats a high-specificity rule in an earlier layer. Unlayered CSS beats all layers (for normal declarations). <code>@layer reset, base, components, utilities;</code> declares the order once.</li>
+<li><b>Specificity is a tuple.</b> Inline style is above it (1,0,0,0 in older notation); <code>!important</code> is a different step, not extra specificity.</li>
+<li><b>Inheritance:</b> some properties inherit (<code>color</code>, <code>font-*</code>, <code>line-height</code>, <code>cursor</code>, <code>visibility</code>), most do not (<code>margin</code>, <code>padding</code>, <code>border</code>, <code>background</code>, <code>width</code>). The cascade picks the winner for the element; if none, inheritance, then the initial value.</li>
+<li><b>Keywords:</b> <code>inherit</code>, <code>initial</code>, <code>unset</code> (inherit if inheritable, else initial), <code>revert</code> (back to the previous origin, usually the browser default), <code>revert-layer</code>, and <code>all: unset</code>.</li>
+</ul>
+
+<pre><code>@layer reset, base, components, utilities;
+
+@layer components { .btn { padding: .5rem 1rem; } }
+@layer utilities  { .p-0 { padding: 0; } }   /* wins over .btn without raising specificity or !important */
+
+/* debugging: DevTools &gt; Elements &gt; Styles shows crossed-out losers; Computed shows the final value and its source */</code></pre>
+
+<h3>Specificity strategy in real projects</h3>
+<ul>
+<li>Keep selectors flat (one class), avoid ids and deep nesting, avoid <code>!important</code> except for utilities or overriding third-party CSS.</li>
+<li>Use <code>:where()</code> to write low-specificity defaults in a design system, so consumers can override easily.</li>
+<li>Use <code>@layer</code> to order third-party, base and component CSS instead of fighting specificity.</li>
+<li>A naming convention (BEM, see C13) or CSS Modules keeps selectors single-class.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Describing specificity as a number or “ranking”. It is a comparison of three buckets, left to right.</li>
+<li>Saying “last rule wins” first. Order is the last tie-break, not the first step.</li>
+<li>Forgetting origin and importance, or getting the <code>!important</code> reversal wrong.</li>
+<li>Omitting <code>@layer</code>; it is the modern answer to specificity wars.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Does <code>:not(.a)</code> add specificity?</dt><dd>Yes: the specificity of its most specific argument. <code>:not()</code> itself adds nothing.</dd>
+<dt>Why does my inline style beat my class?</dt><dd>Element-attached styles sit above selector-based ones; only <code>!important</code> in a stylesheet beats it.</dd>
+<dt>How do you override a third-party library’s CSS?</dt><dd>Load it into a lower layer (<code>@import url(lib.css) layer(vendor)</code>), then your unlayered or later-layer rules win without specificity hacks.</dd>
+<dt>What does <code>all: unset</code> do?</dt><dd>Resets every property of the element (except direction and unicode-bidi) as <code>unset</code>; useful to isolate a component.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C3 ============ -->
+<section class="q" id="c3">
+<header class="qh">
+  <div class="qrow"><span class="qid">C3</span><span class="tag asked">Asked · 22 Oct</span></div>
+  <h2>Hiding elements</h2>
+  <p class="qtext">“What’s the difference between <code>display: none</code>, <code>visibility: hidden</code>, <code>opacity: 0</code> and the <code>hidden</code> attribute? For each one, say what happens to layout, to events, and to screen readers. When would you pick each?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I compare them on four things: layout, pointer events, keyboard focus and screen readers. <code>display: none</code> removes the box: no space, no events, no focus, and not in the accessibility tree. <code>visibility: hidden</code> keeps the space, but also blocks events and focus and hides it from screen readers. <code>opacity: 0</code> is the dangerous one: it keeps the space and the element is still clickable, focusable and read aloud, so it is only for animation. The <code>hidden</code> attribute is semantic <code>display: none</code> from the browser’s stylesheet, which author CSS can override.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="A matrix comparing four ways of hiding an element across takes space, receives clicks, can be focused, and is read by screen readers. display none and hidden: no on all four. visibility hidden: space yes, others no. opacity zero: yes on all four.">
+  <text x="170" y="22" class="bd">Takes space</text><text x="290" y="22" class="bd">Clickable</text><text x="400" y="22" class="bd">Focusable</text><text x="520" y="22" class="bd">Read by SR</text><text x="640" y="22" class="bd">Animatable</text>
+  <rect x="10" y="34" width="740" height="40" class="b"/><text x="20" y="59" class="mono">display: none</text>
+  <text x="195" y="59" text-anchor="middle" class="no" style="fill:var(--bad)">no</text><text x="315" y="59" text-anchor="middle" style="fill:var(--bad)">no</text><text x="425" y="59" text-anchor="middle" style="fill:var(--bad)">no</text><text x="545" y="59" text-anchor="middle" style="fill:var(--bad)">no</text><text x="665" y="59" text-anchor="middle" class="sm">no (discrete*)</text>
+  <rect x="10" y="80" width="740" height="40" class="b"/><text x="20" y="105" class="mono">[hidden]</text>
+  <text x="195" y="105" text-anchor="middle" style="fill:var(--bad)">no</text><text x="315" y="105" text-anchor="middle" style="fill:var(--bad)">no</text><text x="425" y="105" text-anchor="middle" style="fill:var(--bad)">no</text><text x="545" y="105" text-anchor="middle" style="fill:var(--bad)">no</text><text x="665" y="105" text-anchor="middle" class="sm">as display</text>
+  <rect x="10" y="126" width="740" height="40" class="b"/><text x="20" y="151" class="mono">visibility: hidden</text>
+  <text x="195" y="151" text-anchor="middle" style="fill:var(--good)">yes</text><text x="315" y="151" text-anchor="middle" style="fill:var(--bad)">no</text><text x="425" y="151" text-anchor="middle" style="fill:var(--bad)">no</text><text x="545" y="151" text-anchor="middle" style="fill:var(--bad)">no</text><text x="665" y="151" text-anchor="middle" class="sm">flips at a point</text>
+  <rect x="10" y="172" width="740" height="40" class="x"/><text x="20" y="197" class="mono">opacity: 0</text>
+  <text x="195" y="197" text-anchor="middle" style="fill:var(--good)">yes</text><text x="315" y="197" text-anchor="middle" style="fill:var(--good)">yes</text><text x="425" y="197" text-anchor="middle" style="fill:var(--good)">yes</text><text x="545" y="197" text-anchor="middle" style="fill:var(--good)">yes</text><text x="665" y="197" text-anchor="middle" class="sm">smooth, compositor</text>
+  <text x="10" y="238" class="sm">The trap row is opacity: 0, a ghost control that keyboard and screen reader users can still reach.</text>
+  <text x="10" y="256" class="sm">* display can animate via transition-behavior: allow-discrete + @starting-style (verify browser support).</text>
+</svg></div>
+<figcaption><b>One table to carry in your head.</b> Red “no” means removed from that behaviour.</figcaption></figure>
+
+<h3>When to pick each</h3>
+<div class="tw"><table>
+<tr><th>Use</th><th>For</th><th>Note</th></tr>
+<tr><td><code>display: none</code></td><td>closed modals, inactive tab panels, closed mobile nav</td><td>toggling triggers layout; cannot be animated directly</td></tr>
+<tr><td><code>[hidden]</code></td><td>semantic show/hide from HTML or simple JS; server-rendered state</td><td>add <code>[hidden]{display:none!important}</code> to your reset so <code>display:flex</code> cannot override it; <code>hidden="until-found"</code> keeps find-in-page working <span class="verify">verify</span></td></tr>
+<tr><td><code>visibility: hidden</code></td><td>keep layout stable; fade-out end state; children may opt in with <code>visibility: visible</code></td><td>removed from accessibility tree and tab order</td></tr>
+<tr><td><code>opacity: 0</code></td><td>fade animations</td><td>pair with <code>visibility</code>, <code>pointer-events: none</code> and <code>inert</code> at the end state; creates a stacking context</td></tr>
+<tr><td>visually hidden (<code>.sr-only</code>)</td><td>text for screen readers only: skip links, icon button labels</td><td>clip pattern, not <code>display: none</code></td></tr>
+<tr><td><code>aria-hidden="true"</code></td><td>decorative icons and duplicate content</td><td>does not remove focusability; never on focusable content</td></tr>
+<tr><td><code>inert</code></td><td>disable a subtree: background of a modal, off-screen panels</td><td>non-interactive, not focusable, hidden from assistive tech</td></tr>
+</table></div>
+
+<pre><code>.fade { opacity: 1; visibility: visible; transition: opacity .2s, visibility 0s; }
+.fade.is-hidden { opacity: 0; visibility: hidden; transition: opacity .2s, visibility 0s .2s; } /* hide AFTER the fade */
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+           overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* display fade (verify support) */
+.panel { transition: opacity .2s, display .2s allow-discrete; }
+.panel[hidden] { opacity: 0; }
+@starting-style { .panel:not([hidden]) { opacity: 0; } }</code></pre>
+
+<div class="box trap"><h4>Traps (from the practice session)</h4><ul>
+<li><b>Wrong fact:</b> “<code>visibility: hidden</code> is available to screen readers.” It is not. It leaves the accessibility tree and the tab order, like <code>display: none</code>.</li>
+<li>Describing only layout and events. Always add focus and screen reader behaviour for every option.</li>
+<li>Using <code>visibility: hidden</code> for an error message and assuming it will be announced when it appears. Use a live region (<code>role="alert"</code> or <code>aria-live</code>) that exists before the text changes.</li>
+<li>Believing <code>pointer-events: none</code> stops keyboard users. It does not.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Which keep the element in the accessibility tree?</dt><dd>Only <code>opacity: 0</code> (and the visually-hidden clip pattern).</dd>
+<dt>Which causes layout recalculation when toggled?</dt><dd><code>display</code>. <code>visibility</code> and <code>opacity</code> do not change layout.</dd>
+<dt>How do you animate a dropdown out and then remove it?</dt><dd>Fade with opacity, flip <code>visibility</code> after the duration, or use <code>allow-discrete</code> for <code>display</code> <span class="verify">verify</span>.</dd>
+<dt>Why is <code>aria-hidden</code> on a button a bug?</dt><dd>Hidden from screen readers but still focusable, so keyboard users land on a silent control.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C4 ============ -->
+<section class="q" id="c4">
+<header class="qh">
+  <div class="qrow"><span class="qid">C4</span><span class="tag added">Added</span></div>
+  <h2>Normal flow, display and formatting contexts</h2>
+  <p class="qtext">“What is normal flow? What is the difference between <code>block</code>, <code>inline</code> and <code>inline-block</code>? What is a block formatting context (BFC)?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Normal flow is how the browser lays things out before you change anything: block boxes stack vertically and fill the width; inline boxes flow in lines like text. <code>block</code> takes the full width and respects width, height and vertical margins; <code>inline</code> sits in the line, ignores width, height and vertical margin; <code>inline-block</code> sits in the line but behaves like a block inside, so width and height work. A block formatting context is an isolated layout region: floats and margins inside it do not leak out, and it contains its floats. I create one with <code>display: flow-root</code>.”</p></div>
+
+<figure><svg class="dg" viewBox="0 0 760 250" role="img" aria-label="Left: a parent with a floated child collapses to zero height because floats leave the flow. Right: the same parent with display flow-root becomes a block formatting context and contains the float.">
+  <text x="10" y="20" class="bd">Without a BFC</text>
+  <rect x="10" y="30" width="330" height="40" class="x"/><text x="20" y="54" class="sm">parent: height collapses to the text only</text>
+  <rect x="30" y="38" width="90" height="110" class="w"/><text x="75" y="96" text-anchor="middle" class="bd">float</text><text x="75" y="112" text-anchor="middle" class="sm">hangs out</text>
+  <text x="10" y="172" class="sm">Parent background and border ignore the float.</text>
+  <text x="10" y="190" class="sm">Following text wraps around it.</text>
+  <text x="400" y="20" class="bd">With display: flow-root (a BFC)</text>
+  <rect x="400" y="30" width="340" height="124" class="h"/><text x="410" y="48" class="sm">parent grows to contain the float</text>
+  <rect x="420" y="58" width="90" height="84" class="w"/><text x="465" y="104" text-anchor="middle" class="bd">float</text>
+  <text x="400" y="176" class="sm">Margins of children no longer collapse through the parent.</text>
+  <text x="400" y="194" class="sm">The BFC itself does not overlap neighbouring floats.</text>
+  <text x="10" y="232" class="mono" style="font-size:11.5px">BFC triggers: flow-root · overflow ≠ visible · float · absolute/fixed · inline-block · flex/grid items · contain: layout</text>
+</svg>
+<figcaption><b>Why BFC exists:</b> it gives you containment of floats and margins in one declaration.</figcaption></figure>
+
+<h3>The three display values you must be able to compare</h3>
+<div class="tw"><table>
+<tr><th></th><th><code>block</code></th><th><code>inline</code></th><th><code>inline-block</code></th></tr>
+<tr><td>Starts a new line</td><td>yes</td><td>no</td><td>no</td></tr>
+<tr><td>Width</td><td>fills the container (auto)</td><td>shrinks to content; <code>width</code> ignored</td><td>shrink-to-fit; <code>width</code> works</td></tr>
+<tr><td>Height, vertical margin</td><td>work</td><td>ignored (padding paints but does not push)</td><td>work</td></tr>
+<tr><td>Examples</td><td><code>div</code>, <code>p</code>, <code>section</code></td><td><code>span</code>, <code>a</code>, <code>strong</code></td><td><code>button</code>, <code>input</code> (often)</td></tr>
+<tr><td>Gotcha</td><td>margin collapse (C1)</td><td>line-height and whitespace</td><td>whitespace gap between siblings (~4px)</td></tr>
+</table></div>
+
+<h3>Modern two-part display</h3>
+<p><code>display</code> is really two things: <b>outer</b> (how the box sits among siblings: block or inline) and <b>inner</b> (how its children are laid out: flow, flex, grid). <code>display: flex</code> is shorthand for <code>block flex</code>; <code>inline-flex</code> is <code>inline flex</code>. <code>display: contents</code> removes the box but keeps its children in the layout (an accessibility history: it used to remove semantics from buttons and lists in some browsers <span class="verify">check current state</span>).</p>
+
+<h3>Other flow facts that come up</h3>
+<ul>
+<li><b>Replaced elements</b> (<code>img</code>, <code>video</code>, <code>iframe</code>) have intrinsic size and are inline by default. A gap below an image comes from baseline alignment; fix with <code>img { display: block }</code> or <code>vertical-align: middle</code>.</li>
+<li><b>Floats</b> take an element out of flow so text wraps around it (images, drop caps). Do not use them for page layout anymore. Clear with <code>clear</code> or contain with <code>flow-root</code>.</li>
+<li><b>Out of flow:</b> floats, <code>position: absolute</code> and <code>fixed</code>. The parent does not size to them.</li>
+<li><b>Line boxes:</b> each line in an inline formatting context has its own height from the tallest inline box; <code>line-height</code> without a unit scales with font size and is the safest.</li>
+<li><b>Writing modes:</b> “block direction” and “inline direction” flip in vertical writing; this is why logical properties exist (C5).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Setting <code>width</code> on a <code>span</code> and wondering why nothing happens.</li>
+<li>Using <code>overflow: hidden</code> to clear floats and then clipping a dropdown or shadow. Prefer <code>flow-root</code>.</li>
+<li>Saying “flexbox replaced floats for everything”. Floats are still the right tool for wrapping text around an image.</li>
+<li>Whitespace between inline-block items creating gaps; use flex or grid instead.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does <code>display: contents</code> do?</dt><dd>The element generates no box; its children participate in the parent’s layout as if the element were not there.</dd>
+<dt>Why does an <code>&lt;img&gt;</code> have a gap under it?</dt><dd>It is inline, aligned to the text baseline, leaving room for descenders. Make it <code>block</code>.</dd>
+<dt>What is <code>contain</code>?</dt><dd>A hint to isolate part of the tree for layout, paint or size; <code>contain: layout</code> creates a BFC and limits recalculation scope.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C5 ============ -->
+<section class="q" id="c5">
+<header class="qh">
+  <div class="qrow"><span class="qid">C5</span><span class="tag added">Added</span></div>
+  <h2>Units and sizing</h2>
+  <p class="qtext">“<code>px</code>, <code>em</code>, <code>rem</code>, <code>%</code>, <code>vh</code>, <code>dvh</code>, <code>ch</code>, <code>fr</code>: when do you use which? How does intrinsic sizing work?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I use <code>rem</code> for typography and spacing so everything scales with the user’s font-size preference, <code>em</code> when something should scale with its own font size, like button padding, and <code>px</code> for hairlines and borders. Percent is relative to the parent for that property; <code>vw</code> and <code>vh</code> are relative to the viewport, and on mobile I use <code>dvh</code> or <code>svh</code> because the browser toolbar changes the viewport height. <code>ch</code> is the width of a zero, good for line length around 60 to 75 characters. <code>fr</code> is a share of free space in grid. For fluid values I use <code>clamp()</code> with a rem part, so zoom still works.”</p></div>
+
+<h3>Unit cheat sheet</h3>
+<div class="tw"><table>
+<tr><th>Unit</th><th>Relative to</th><th>Use for</th><th>Careful</th></tr>
+<tr><td><code>px</code></td><td>CSS pixel (not device pixel)</td><td>borders, shadows, media queries in some teams</td><td>does not follow user font-size</td></tr>
+<tr><td><code>rem</code></td><td>root font-size (16px default)</td><td>font-size, spacing, breakpoints</td><td>do not set <code>html { font-size: 14px }</code>; use <code>%</code> or leave it so user settings work</td></tr>
+<tr><td><code>em</code></td><td>the element’s own font-size (for <code>font-size</code> itself: the parent’s)</td><td>padding of buttons, icon sizes next to text</td><td>nested <code>em</code> font sizes compound</td></tr>
+<tr><td><code>%</code></td><td>depends on property: width/margin/padding → containing block width; height → containing block height (if set); font-size → parent font-size</td><td>fluid layouts</td><td>percentage height needs a definite parent height</td></tr>
+<tr><td><code>vw</code>, <code>vh</code></td><td>1% of viewport width, height</td><td>hero sections, fluid type</td><td><code>100vw</code> includes the scrollbar, causing horizontal scroll; <code>100vh</code> is wrong on mobile</td></tr>
+<tr><td><code>svh</code>, <code>lvh</code>, <code>dvh</code></td><td>small (toolbars shown), large (hidden), dynamic viewport height</td><td>full-screen layouts on mobile</td><td>provide a <code>vh</code> fallback; <code>dvh</code> can cause resizing during scroll</td></tr>
+<tr><td><code>ch</code></td><td>width of “0” in the element’s font</td><td><code>max-width: 65ch</code> for readable lines</td><td></td></tr>
+<tr><td><code>lh</code>, <code>cap</code>, <code>ex</code></td><td>line-height, cap height, x-height</td><td>vertical rhythm, icon alignment</td><td>newer; check support</td></tr>
+<tr><td><code>fr</code></td><td>share of the remaining grid space</td><td>grid tracks</td><td><code>1fr</code> is <code>minmax(auto, 1fr)</code>, can overflow; use <code>minmax(0, 1fr)</code></td></tr>
+<tr><td><code>cqw</code>, <code>cqi</code></td><td>container query width, inline size</td><td>size relative to a container</td><td>needs <code>container-type</code></td></tr>
+</table></div>
+
+<h3>Intrinsic sizing: the browser sizes from content</h3>
+<figure><svg class="dg" viewBox="0 0 760 210" role="img" aria-label="Three width keywords applied to the same text in a 520 pixel container: min-content is as narrow as the longest word, max-content is as wide as the text on one line, fit-content takes max-content but never more than the container.">
+  <rect x="10" y="10" width="520" height="190" rx="4" class="b" style="stroke-dasharray:6 3"/><text x="540" y="24" class="sm">container 520px</text>
+  <rect x="20" y="30" width="130" height="40" class="w"/><text x="28" y="48" class="mono" style="font-size:11px">min-content</text><text x="28" y="63" class="sm" style="font-size:10.5px">longest word wide</text>
+  <rect x="20" y="84" width="500" height="40" class="h"/><text x="28" y="102" class="mono" style="font-size:11px">max-content</text><text x="28" y="117" class="sm" style="font-size:10.5px">all text on one line (can overflow the container)</text>
+  <rect x="20" y="138" width="500" height="40" class="g"/><text x="28" y="156" class="mono" style="font-size:11px">fit-content</text><text x="28" y="171" class="sm" style="font-size:10.5px">= min(max-content, max(min-content, available))</text>
+  <text x="560" y="60" class="sm">width: auto  → fills (block)</text><text x="560" y="80" class="sm">float / abs / inline-block</text><text x="560" y="96" class="sm">→ shrink-to-fit</text>
+  <text x="560" y="130" class="sm">Use: width: fit-content</text><text x="560" y="146" class="sm">for badges, tooltips,</text><text x="560" y="162" class="sm">centred blocks.</text>
+</svg>
+<figcaption><b>Content-based sizes.</b> Flex and grid use min-content and max-content to resolve <code>auto</code> sizes, which is also why <code>min-width: auto</code> blows out containers (C6).</figcaption></figure>
+
+<h3>Sizing functions</h3>
+<pre><code>width: min(100% - 2rem, 70rem);                 /* container with gutters, no media query */
+font-size: clamp(1rem, 0.9rem + 0.5vw, 1.5rem); /* fluid type: min, preferred, max; rem in the middle keeps zoom working */
+aspect-ratio: 16 / 9;                           /* replaces padding-top hacks */
+max-width: 65ch;                                /* readable line length */
+margin-inline: auto; padding-block: 1rem;       /* logical properties: follow writing mode and RTL */
+height: 100vh; height: 100dvh;                  /* fallback first, enhancement second */</code></pre>
+
+<h3>Logical properties</h3>
+<p><code>margin-inline-start</code>, <code>padding-block</code>, <code>inset-inline</code>, <code>border-block-end</code>, <code>inline-size</code>, <code>block-size</code> replace left/right/top/bottom/width/height so layouts work in RTL (Arabic, Hebrew) and vertical writing modes without a second stylesheet. In an i18n product this is the correct default.</p>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Setting font sizes in <code>px</code> and saying the site is accessible. Users who raise the browser default font size get nothing. (Browser zoom works either way; the font-size preference only works with rem.)</li>
+<li><code>width: 100vw</code> with a vertical scrollbar: a horizontal scrollbar appears.</li>
+<li>Using <code>vh</code> for a full-screen mobile section and having the bottom button hidden under the browser UI.</li>
+<li>Percentage height with an <code>auto</code> parent: resolves to <code>auto</code>.</li>
+<li><code>em</code> for nested lists or components: sizes compound unexpectedly.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is a CSS pixel?</dt><dd>A reference unit (1/96 inch) that the browser maps to device pixels using the device pixel ratio; zoom changes that ratio.</dd>
+<dt>How do you make fluid typography accessible?</dt><dd><code>clamp()</code> with a rem component and sane min and max, then test at 200% zoom (WCAG 1.4.4 and 1.4.10).</dd>
+<dt>Unitless <code>line-height</code> versus <code>px</code>?</dt><dd>Unitless is a multiplier of each element’s own font size and inherits as the number, avoiding overlap when child fonts differ.</dd>
+<dt><code>min-height: 100dvh</code> or <code>height</code>?</dt><dd><code>min-height</code>, so content taller than the viewport can still grow.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Layout</h1>
+
+<!-- ============ C6 ============ -->
+<section class="q" id="c6">
+<header class="qh">
+  <div class="qrow"><span class="qid">C6</span><span class="tag asked">Asked · 27 Oct</span></div>
+  <h2>Flexbox</h2>
+  <p class="qtext">“A flex container has three children. One has <code>flex: 1</code>, one has <code>flex: 0 0 200px</code>, one has no flex properties. What do the three values in the <code>flex</code> shorthand mean, and what does <code>flex: 1</code> expand to? How is the free space shared out? Why does a flex child with long text or a wide image sometimes overflow its container, and how do you fix it?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“<code>flex</code> is shorthand for grow, shrink and basis on the main axis. Basis is the starting size, grow is the share of leftover space, shrink is how an item gives up space when it does not fit. <code>flex: 1</code> is <code>1 1 0%</code>: it starts from zero and takes an equal share. With <code>flex: 1</code>, <code>0 0 200px</code> and a default item, the 200px item is fixed, the default item keeps its content width, and the <code>flex: 1</code> item takes all the rest. Overflow with long text happens because flex items have <code>min-width: auto</code>, which is the content’s minimum size, so they refuse to shrink below it. The fix is <code>min-width: 0</code> on the item.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="A 700 pixel flex container with three items. Item A flex 1 starts at 0 and grows to fill 380 pixels. Item B is fixed at 200. Item C has default 0 1 auto and stays at its content width of 120. Below, the min-width auto problem: a long word forces an item wider than the container until min-width 0 is set.">
+  <text x="10" y="18" class="bd">Free space = container − (basis A + basis B + basis C)</text>
+  <rect x="10" y="30" width="700" height="14" class="b" style="stroke-dasharray:4 3"/><text x="715" y="42" class="sm">700</text>
+  <text x="10" y="64" class="sm">Step 1: start from bases</text>
+  <rect x="10" y="70" width="2" height="30" class="h"/><text x="18" y="90" class="sm">A: 0%</text>
+  <rect x="80" y="70" width="200" height="30" class="b"/><text x="90" y="90" class="sm">B: 200px</text>
+  <rect x="290" y="70" width="120" height="30" class="b"/><text x="300" y="90" class="sm">C: auto = 120px</text>
+  <rect x="410" y="70" width="300" height="30" class="b" style="stroke-dasharray:4 3"/><text x="420" y="90" class="sm">free space: 700 − 320 = 380</text>
+  <text x="10" y="126" class="sm">Step 2: distribute by flex-grow (A:1, B:0, C:0 → sum 1)</text>
+  <rect x="10" y="132" width="380" height="36" class="h"/><text x="20" y="155" class="bd">A  flex: 1  → 380px</text>
+  <rect x="390" y="132" width="200" height="36" class="w"/><text x="400" y="155" class="bd">B  200px</text>
+  <rect x="590" y="132" width="120" height="36" class="b"/><text x="600" y="155" class="bd">C  120px</text>
+  <path class="d" d="M10 190H750"/>
+  <text x="10" y="214" class="bd">The overflow trap: min-width: auto</text>
+  <rect x="10" y="226" width="330" height="42" class="b" style="stroke-dasharray:6 3"/><text x="346" y="250" class="sm">container 330px</text>
+  <rect x="20" y="234" width="470" height="26" class="x"/><text x="28" y="252" class="mono" style="font-size:11px">averyveryveryverylongunbreakablestring…</text>
+  <text x="500" y="250" class="sm" style="fill:var(--bad)">sticks out: item refuses to go below min-content</text>
+  <rect x="10" y="282" width="330" height="30" class="g"/><text x="18" y="302" class="mono" style="font-size:11px">min-width: 0 → shrinks, text wraps or clips</text>
+</svg></div>
+<figcaption><b>Distribution and the classic bug.</b> Same maths whatever the content; the minimum content size is the only thing that stops an item shrinking.</figcaption></figure>
+
+<h3>The shorthand</h3>
+<div class="tw"><table>
+<tr><th>Value</th><th>Expands to</th><th>Meaning</th></tr>
+<tr><td><code>flex: 1</code></td><td><code>1 1 0%</code></td><td>grow equally from zero; items end up the same width regardless of content</td></tr>
+<tr><td><code>flex: auto</code></td><td><code>1 1 auto</code></td><td>start from content size, then share the leftover; widths follow content</td></tr>
+<tr><td><code>flex: none</code></td><td><code>0 0 auto</code></td><td>rigid, content size</td></tr>
+<tr><td><code>flex: 0 0 200px</code></td><td></td><td>fixed 200px, never grows or shrinks</td></tr>
+<tr><td>default (initial)</td><td><code>0 1 auto</code></td><td>content size, may shrink, never grows</td></tr>
+</table></div>
+<ul>
+<li><b><code>flex-basis</code> vs <code>width</code>:</b> <code>flex-basis</code> wins on the main axis, unless it is <code>auto</code>, then <code>width</code> is used, then content size.</li>
+<li><b>Shrinking is weighted:</b> each item gives up space in proportion to <code>flex-shrink × flex-basis</code>, so larger items shrink more. Result is clamped by <code>min-width</code>/<code>max-width</code>; clamped items are frozen and the algorithm repeats.</li>
+<li><b><code>gap</code></b> is subtracted from free space; <b>auto margins</b> absorb free space before <code>justify-content</code>.</li>
+</ul>
+
+<h3>The overflow bug and every fix</h3>
+<p>For flex and grid items, <code>min-width</code> and <code>min-height</code> default to <code>auto</code>, which resolves to the content’s minimum size (longest unbreakable word, image width, or an item’s own <code>width</code>). For ordinary blocks <code>auto</code> computes to 0. So a long URL or a wide <code>&lt;img&gt;</code> stops the item from shrinking and the container bursts.</p>
+<pre><code>.row  { display: flex; gap: 1rem; }
+.main { flex: 1; min-width: 0; }                   /* the fix: allow shrinking below content */
+.side { flex: 0 0 200px; }
+.title{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }  /* ellipsis needs min-width:0 on its flex parent */
+.long { overflow-wrap: anywhere; }                 /* lets long strings break and lowers the min-content size */
+
+.pane { display: flex; flex-direction: column; min-height: 0; }  /* column version: scroll areas need min-height:0 */
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) 300px; } /* grid version: 1fr = minmax(auto, 1fr) */</code></pre>
+<ul>
+<li><code>overflow: hidden</code> (or <code>auto</code>) on the item also makes the automatic minimum 0.</li>
+<li>In nested flex containers, every ancestor in the chain needs it.</li>
+<li>Images: <code>img { max-width: 100%; height: auto }</code>, and <code>min-width: 0</code> on the flex item that holds it.</li>
+</ul>
+
+<h3>Axes and alignment (quick reference)</h3>
+<div class="tw"><table>
+<tr><th>Property</th><th>Axis</th><th>Does</th></tr>
+<tr><td><code>flex-direction</code></td><td>sets main axis</td><td>row (default), column, reverses</td></tr>
+<tr><td><code>justify-content</code></td><td>main</td><td>distributes leftover space: start, center, space-between, space-around, space-evenly</td></tr>
+<tr><td><code>align-items</code></td><td>cross</td><td>one line: stretch (default), center, start, end, baseline</td></tr>
+<tr><td><code>align-content</code></td><td>cross</td><td>spacing of multiple lines (needs <code>flex-wrap</code>)</td></tr>
+<tr><td><code>align-self</code>, <code>order</code></td><td>per item</td><td>override cross alignment; reorder visually (accessibility: DOM order stays)</td></tr>
+<tr><td><code>flex-wrap</code></td><td></td><td>lets items go on new lines instead of shrinking</td></tr>
+</table></div>
+
+<div class="box trap"><h4>Traps (from the practice session)</h4><ul>
+<li><b>Delivery:</b> the answer was correct but written as a formatted document with LaTeX. Say it in about 60 seconds of short sentences.</li>
+<li>Hedging: “some browsers evaluate <code>flex: 1</code> to 0 or 0px”. State <code>1 1 0%</code> flatly.</li>
+<li>Saying “block elements have <code>min-width: 0</code>”. The initial value is <code>auto</code> for everyone; it only computes to 0 for non-flex, non-grid boxes.</li>
+<li>Naming one fix only. Mention <code>overflow</code>, <code>min-height: 0</code> for columns, and <code>minmax(0, 1fr)</code> for grid.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Difference between <code>flex: 1</code> and <code>flex: auto</code>?</dt><dd><code>1 1 0%</code> gives equal widths; <code>1 1 auto</code> starts from content so wider content stays wider.</dd>
+<dt>Why does <code>text-overflow: ellipsis</code> not work in my flex child?</dt><dd>The item will not shrink (min-width auto), so it never overflows itself. Add <code>min-width: 0</code> and <code>overflow: hidden</code>.</dd>
+<dt>Why will my scroll area not scroll inside a column flex layout?</dt><dd><code>min-height: auto</code> prevents shrinking. Add <code>min-height: 0</code> and <code>overflow: auto</code>.</dd>
+<dt>Does <code>order</code> change tab order?</dt><dd>No. Only the visual order changes; keyboard and screen readers follow the DOM, which is an accessibility risk.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C7 ============ -->
+<section class="q" id="c7">
+<header class="qh">
+  <div class="qrow"><span class="qid">C7</span><span class="tag added">Posed · not answered yet</span></div>
+  <h2>Grid versus flexbox</h2>
+  <p class="qtext">“When do you choose grid and when flexbox? Write the grid CSS for a responsive card list with no media queries. What does <code>repeat(auto-fit, minmax(240px, 1fr))</code> do, and how does it differ from <code>auto-fill</code>? What problem does <code>subgrid</code> solve?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Flexbox is one-dimensional: a row or a column, where the content decides the sizes. Grid is two-dimensional: I define rows and columns, and items are placed into them. I use grid for page and section layout and for card galleries, and flexbox for components: toolbars, nav bars, button groups, centring. They combine well: grid for the layout, flex inside the cells. For a responsive card list I use <code>repeat(auto-fit, minmax(240px, 1fr))</code>: as many columns as fit, each at least 240px, sharing the leftover. <code>auto-fit</code> collapses empty tracks so the cards stretch, <code>auto-fill</code> keeps the empty tracks. Subgrid lets a nested grid use its parent’s tracks, so content in different cards lines up.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Left: flexbox is one dimensional, items flow along one axis. Right: grid is two dimensional with rows and columns. Below: with two cards in a wide container, auto-fill keeps empty column tracks so cards stay at minimum size, while auto-fit collapses the empty tracks so the two cards stretch to fill the row.">
+  <text x="10" y="18" class="bd">Flexbox: one axis, content decides</text>
+  <rect x="10" y="28" width="90" height="40" class="h"/><rect x="108" y="28" width="150" height="40" class="h"/><rect x="266" y="28" width="60" height="40" class="h"/>
+  <path class="a" d="M10 82H330"/><text x="10" y="98" class="sm">row, items size by content or flex</text>
+  <text x="400" y="18" class="bd">Grid: two axes, layout decides</text>
+  <rect x="400" y="28" width="110" height="26" class="h"/><rect x="516" y="28" width="110" height="26" class="h"/><rect x="632" y="28" width="110" height="26" class="h"/>
+  <rect x="400" y="60" width="226" height="26" class="h"/><rect x="632" y="60" width="110" height="26" class="h"/>
+  <text x="400" y="104" class="sm">columns + rows, spans, areas, alignment on both axes</text>
+  <text x="10" y="140" class="bd">Only 2 cards in a wide container: repeat(auto-X, minmax(150px, 1fr))</text>
+  <text x="10" y="164" class="mono">auto-fill</text>
+  <rect x="100" y="150" width="150" height="34" class="h"/><rect x="258" y="150" width="150" height="34" class="h"/>
+  <rect x="416" y="150" width="150" height="34" class="b" style="stroke-dasharray:4 3"/><rect x="574" y="150" width="150" height="34" class="b" style="stroke-dasharray:4 3"/>
+  <text x="100" y="204" class="sm">empty tracks stay (dashed) → cards keep min size, space is left over</text>
+  <text x="10" y="244" class="mono">auto-fit</text>
+  <rect x="100" y="230" width="310" height="34" class="g"/><rect x="418" y="230" width="306" height="34" class="g"/>
+  <text x="100" y="284" class="sm">empty tracks collapse to 0 → the 2 cards stretch to fill the row</text>
+</svg></div>
+<figcaption><b>Both give the same result when the row is full</b>; they differ only when there are fewer items than tracks.</figcaption></figure>
+
+<h3>How to choose</h3>
+<div class="tw"><table>
+<tr><th></th><th>Flexbox</th><th>Grid</th></tr>
+<tr><td>Dimension</td><td>1D (row or column)</td><td>2D (rows and columns together)</td></tr>
+<tr><td>Approach</td><td>content-out: items’ sizes shape the layout</td><td>layout-in: you define tracks, items fill them</td></tr>
+<tr><td>Best for</td><td>nav bars, toolbars, button rows, centring, “space-between”, media object</td><td>page layout, dashboards, card galleries, forms with label/input columns, overlapping items</td></tr>
+<tr><td>Wrapping</td><td><code>flex-wrap</code> lines are independent: last row items do not align to columns above</td><td>items stay on the shared column lines</td></tr>
+<tr><td>Gaps</td><td><code>gap</code></td><td><code>gap</code> (row-gap, column-gap)</td></tr>
+<tr><td>Rule of thumb</td><td>“I do not know how many items, let them flow”</td><td>“I know the shape of the layout”</td></tr>
+</table></div>
+
+<h3>Grid vocabulary and recipes</h3>
+<pre><code>/* responsive cards, no media query. min(100%, 240px) avoids overflow on very narrow screens */
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+
+/* page layout with named areas */
+.page { display: grid; min-height: 100dvh;
+  grid-template: "head head" auto "nav main" 1fr "foot foot" auto / 14rem minmax(0, 1fr); }
+.page &gt; header { grid-area: head } .page &gt; nav { grid-area: nav } .page &gt; main { grid-area: main } .page &gt; footer { grid-area: foot }
+
+/* subgrid: card rows (title, body, footer) align across cards */
+.card { display: grid; grid-row: span 3; grid-template-rows: subgrid; }</code></pre>
+<ul>
+<li><b>Tracks and lines:</b> <code>grid-template-columns</code> defines explicit tracks; items go on lines (<code>grid-column: 1 / 3</code> or <code>span 2</code>). <code>grid-auto-rows</code> sizes implicit rows; <code>grid-auto-flow: dense</code> back-fills holes (careful: it reorders visually).</li>
+<li><b>Sizing:</b> <code>fr</code> shares free space; <code>minmax(0, 1fr)</code> prevents content blow-out; <code>auto</code> fits content; <code>fit-content()</code> caps.</li>
+<li><b>Alignment:</b> <code>justify-items</code> / <code>align-items</code> for items inside cells, <code>justify-content</code> / <code>align-content</code> for tracks in the container, <code>place-items: center</code> for both.</li>
+<li><b>Subgrid:</b> a grid item that is also a grid can adopt the parent’s rows or columns. Solves aligned card sections and form rows. Supported in current evergreen browsers <span class="verify">check Baseline</span>.</li>
+<li><b>Masonry:</b> not standard yet; use columns, JS, or the emerging <code>grid-lanes</code> proposal <span class="verify">verify status</span>.</li>
+<li><b>Overlap:</b> place several items in the same cell (<code>grid-area: 1 / 1</code>) to stack a caption on an image without absolute positioning.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying “grid replaces flexbox”. They solve different problems and are used together.</li>
+<li>Using <code>auto-fit</code> and <code>auto-fill</code> as synonyms. Explain the empty-track difference with a concrete case (fewer items than columns).</li>
+<li>Writing <code>minmax(240px, 1fr)</code> without <code>min(100%, 240px)</code>: horizontal overflow below 240px.</li>
+<li>Putting long content in <code>1fr</code> tracks and getting blow-out (needs <code>minmax(0, 1fr)</code>).</li>
+<li>Re-ordering items visually with grid placement and breaking tab order.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you centre one thing?</dt><dd><code>display: grid; place-items: center</code>, or flex with <code>justify-content</code> and <code>align-items</code> centre. See C9.</dd>
+<dt>Grid with a sticky header and independent scroll?</dt><dd>Rows <code>auto 1fr</code>, <code>min-height: 0</code> on the scroll cell, <code>overflow: auto</code>.</dd>
+<dt>Is grid slower than flexbox?</dt><dd>Not meaningfully for normal UIs; deep nested grids or huge item counts can cost layout time; measure.</dd>
+<dt>What are grid line names and areas for?</dt><dd>Readable layouts and easy re-arrangement per breakpoint by redefining <code>grid-template-areas</code>.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C8 ============ -->
+<section class="q" id="c8">
+<header class="qh">
+  <div class="qrow"><span class="qid">C8</span><span class="tag added">Added</span></div>
+  <h2>Positioning, z-index and stacking contexts</h2>
+  <p class="qtext">“Explain <code>position</code> values. Why does my <code>z-index: 9999</code> not work? What creates a stacking context?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“<code>static</code> is normal flow. <code>relative</code> offsets from its own place and creates a reference for children. <code>absolute</code> is removed from flow and positioned against the nearest positioned ancestor. <code>fixed</code> is positioned against the viewport. <code>sticky</code> behaves as relative until it reaches a threshold, then sticks. <code>z-index</code> only orders elements inside the same stacking context. If my <code>z-index: 9999</code> does nothing, an ancestor created a stacking context, such as <code>opacity</code> below 1, <code>transform</code>, or a positioned parent with a <code>z-index</code>, so the element can never get above elements outside that parent’s context.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Two stacking contexts. Parent A has z-index 1 and contains a child with z-index 9999. Parent B has z-index 2 and contains a child with z-index 1. Child of B paints above child of A because contexts are compared first.">
+  <text x="10" y="18" class="bd">Root stacking context</text>
+  <rect x="10" y="28" width="360" height="200" rx="5" class="w"/><text x="22" y="48" class="bd">Parent A  (z-index: 1, position: relative)</text><text x="22" y="64" class="sm">stacking context A</text>
+  <rect x="40" y="76" width="260" height="60" rx="4" class="b"/><text x="52" y="100" class="mono">.tooltip  z-index: 9999</text><text x="52" y="118" class="sm">highest INSIDE A, but A itself is z=1</text>
+  <rect x="390" y="28" width="360" height="200" rx="5" class="h"/><text x="402" y="48" class="bd">Parent B  (z-index: 2, position: relative)</text><text x="402" y="64" class="sm">stacking context B (painted above A)</text>
+  <rect x="300" y="110" width="250" height="60" rx="4" class="g" style="fill-opacity:.95"/><text x="312" y="134" class="mono">.banner  z-index: 1</text><text x="312" y="152" class="sm">inside B, so it covers A’s 9999</text>
+  <text x="10" y="256" class="sm">Compare contexts first (A=1 vs B=2), then children within a context.</text>
+  <text x="10" y="274" class="sm">Fix: move the tooltip out (portal to body), remove the property that created A, or raise A above B.</text>
+</svg></div>
+<figcaption><b>z-index is local.</b> A child can never escape its parent’s stacking context.</figcaption></figure>
+
+<h3>Position values</h3>
+<div class="tw"><table>
+<tr><th>Value</th><th>In flow?</th><th>Positioned relative to</th><th>Notes</th></tr>
+<tr><td><code>static</code></td><td>yes</td><td>n/a</td><td>default; <code>top/left/z-index</code> ignored</td></tr>
+<tr><td><code>relative</code></td><td>yes (space kept)</td><td>its normal position</td><td>common “anchor” for absolute children</td></tr>
+<tr><td><code>absolute</code></td><td>no</td><td>nearest positioned ancestor (or the initial containing block)</td><td>also: transformed ancestors become the containing block</td></tr>
+<tr><td><code>fixed</code></td><td>no</td><td>viewport</td><td>an ancestor with <code>transform</code>, <code>filter</code> or <code>contain</code> becomes its containing block (a common bug)</td></tr>
+<tr><td><code>sticky</code></td><td>yes</td><td>nearest scrolling ancestor, within its parent</td><td>needs <code>top</code> etc.; fails if an ancestor has <code>overflow: hidden/auto</code> on the wrong element, or the parent is too short</td></tr>
+</table></div>
+<p><code>inset: 0</code> is shorthand for top, right, bottom and left. <code>z-index</code> works on positioned elements and on flex and grid items.</p>
+
+<h3>What creates a stacking context</h3>
+<ul>
+<li>The root element.</li>
+<li><code>position: absolute | relative</code> with <code>z-index</code> other than <code>auto</code>; <code>fixed</code> and <code>sticky</code> always.</li>
+<li>A flex or grid item with <code>z-index</code> other than <code>auto</code>.</li>
+<li><code>opacity</code> below 1; <code>transform</code>, <code>filter</code>, <code>perspective</code>, <code>clip-path</code>, <code>mask</code>, <code>backdrop-filter</code> not <code>none</code>.</li>
+<li><code>mix-blend-mode</code> not normal; <code>isolation: isolate</code>; <code>will-change</code> of those properties; <code>contain: layout | paint</code>; <code>container-type</code> <span class="verify">verify</span>.</li>
+</ul>
+<p><b>Paint order inside one context</b> (back to front): context’s own background, negative <code>z-index</code>, normal-flow blocks, floats, inline content, <code>z-index: auto/0</code> positioned, positive <code>z-index</code>.</p>
+
+<pre><code>/* give a component its own context so its z-indexes cannot leak or lose */
+.card { isolation: isolate; }
+
+/* a z-index scale as tokens instead of 9999 */
+:root { --z-dropdown: 10; --z-sticky: 20; --z-modal: 30; --z-toast: 40; }
+
+/* modals and popovers: use the top layer, no z-index needed */
+dialog::backdrop { background: rgb(0 0 0 / .5); }   /* &lt;dialog&gt; with showModal(), [popover] */</code></pre>
+
+<h3>Debugging checklist for “my element is behind something”</h3>
+<ol>
+<li>Is it positioned (or a flex/grid item) so that <code>z-index</code> applies?</li>
+<li>Walk up the ancestors in DevTools looking for opacity, transform, filter, position + z-index.</li>
+<li>Compare the z-index of the two <b>contexts</b>, not of the two elements.</li>
+<li>Use DevTools Layers or the “3D view” (Edge) to see stacking.</li>
+<li>Prefer the top layer (<code>dialog</code>, <code>popover</code>) or a portal to <code>body</code> for overlays.</li>
+</ol>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Escalating z-index (999, 9999, 99999). Use a token scale and fix the context.</li>
+<li>Thinking <code>z-index</code> is global.</li>
+<li>Adding <code>transform: translateZ(0)</code> as a performance hack and breaking <code>position: fixed</code> children and stacking.</li>
+<li><code>position: sticky</code> inside an <code>overflow: hidden</code> ancestor: it will not stick.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why does <code>position: fixed</code> not stick to the viewport?</dt><dd>An ancestor with <code>transform</code>, <code>filter</code>, <code>perspective</code> or <code>contain</code> becomes its containing block.</dd>
+<dt>How do you build a tooltip that is never clipped?</dt><dd>Render it in a portal or the top layer (popover), and position with the anchor API or Floating UI <span class="verify">verify anchor support</span>.</dd>
+<dt>What is the top layer?</dt><dd>Browser-managed layer above all stacking contexts for <code>dialog</code> modals, popovers and fullscreen.</dd>
+<dt>Sticky header over content: how?</dt><dd><code>position: sticky; top: 0; z-index</code> from your scale, and <code>scroll-padding-top</code> so anchored targets are not hidden.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C9 ============ -->
+<section class="q" id="c9">
+<header class="qh">
+  <div class="qrow"><span class="qid">C9</span><span class="tag added">Added</span></div>
+  <h2>Centering and common layout recipes</h2>
+  <p class="qtext">“How do you centre an element horizontally and vertically? Build a sticky footer. How do you truncate text?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Today I centre with grid: <code>display: grid; place-items: center</code> on the container. With flexbox it is <code>justify-content: center; align-items: center</code>. For a block with a known width, <code>margin-inline: auto</code> centres horizontally. For a sticky footer I make the page a grid with rows <code>auto 1fr auto</code> and <code>min-height: 100dvh</code>. For truncation, one line uses <code>overflow: hidden; text-overflow: ellipsis; white-space: nowrap</code>, several lines use <code>line-clamp</code>.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 230" role="img" aria-label="Three recipes: centring with place-items center, a sticky footer with grid rows auto 1fr auto, and a holy grail layout with header, sidebar, main and footer.">
+  <text x="10" y="18" class="bd">place-items: center</text>
+  <rect x="10" y="28" width="220" height="150" class="b"/><rect x="85" y="80" width="70" height="46" class="h"/><text x="120" y="108" text-anchor="middle" class="sm">item</text>
+  <text x="10" y="200" class="mono" style="font-size:11px">display:grid; place-items:center</text>
+  <text x="270" y="18" class="bd">Sticky footer</text>
+  <rect x="270" y="28" width="220" height="150" class="b"/><rect x="270" y="28" width="220" height="24" class="h"/><text x="280" y="45" class="sm">header · auto</text>
+  <rect x="270" y="52" width="220" height="90" class="g"/><text x="280" y="70" class="sm">main · 1fr (grows)</text>
+  <rect x="270" y="142" width="220" height="36" class="h"/><text x="280" y="164" class="sm">footer · auto</text>
+  <text x="270" y="200" class="mono" style="font-size:11px">grid-template-rows:auto 1fr auto</text><text x="270" y="216" class="mono" style="font-size:11px">min-height:100dvh</text>
+  <text x="530" y="18" class="bd">Truncation</text>
+  <rect x="530" y="28" width="220" height="40" class="b"/><text x="540" y="52" class="sm">One line of long te…</text>
+  <text x="530" y="90" class="mono" style="font-size:11px">overflow:hidden;</text><text x="530" y="106" class="mono" style="font-size:11px">text-overflow:ellipsis;</text><text x="530" y="122" class="mono" style="font-size:11px">white-space:nowrap</text>
+  <text x="530" y="152" class="mono" style="font-size:11px">display:-webkit-box;</text><text x="530" y="168" class="mono" style="font-size:11px">-webkit-line-clamp:3;</text><text x="530" y="184" class="mono" style="font-size:11px">-webkit-box-orient:vertical</text>
+</svg></div>
+<figcaption><b>Three recipes interviewers ask for.</b> Know them without looking.</figcaption></figure>
+
+<h3>Centring options</h3>
+<div class="tw"><table>
+<tr><th>Case</th><th>CSS</th></tr>
+<tr><td>Text inline</td><td><code>text-align: center</code></td></tr>
+<tr><td>Block with width, horizontal</td><td><code>width: min(100%, 40rem); margin-inline: auto</code></td></tr>
+<tr><td>Both axes (modern default)</td><td><code>display: grid; place-items: center</code></td></tr>
+<tr><td>Both axes, flex</td><td><code>display: flex; justify-content: center; align-items: center</code></td></tr>
+<tr><td>Single item inside flex</td><td><code>margin: auto</code> on the item</td></tr>
+<tr><td>Absolutely positioned</td><td><code>position: absolute; inset: 0; margin: auto; width: 20rem; height: 10rem</code> (needs size), or <code>inset: 50% auto auto 50%; translate: -50% -50%</code></td></tr>
+<tr><td>Vertical text next to icon</td><td><code>display: inline-flex; align-items: center; gap: .5ch</code></td></tr>
+</table></div>
+
+<h3>More recipes</h3>
+<pre><code>/* sticky footer (grid) */
+body { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; }
+
+/* equal-height cards with the button at the bottom */
+.card { display: flex; flex-direction: column; } .card .actions { margin-top: auto; }
+
+/* visually-centred, responsive container with side gutters */
+.container { width: min(100% - 2rem, 70rem); margin-inline: auto; }
+
+/* truncate to 3 lines (prefixed form is widely supported; unprefixed line-clamp is arriving, verify) */
+.clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+
+/* aspect-ratio box */
+.thumb { aspect-ratio: 16 / 9; object-fit: cover; width: 100%; }
+
+/* scroll snap carousel without JS */
+.row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; } .row &gt; * { scroll-snap-align: start; flex: 0 0 80%; }</code></pre>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Giving the “old” solution first (absolute + <code>transform: translate(-50%, -50%)</code>, table-cell). It is fine as a fallback, not as the first answer.</li>
+<li><code>height: 100vh</code> for a sticky footer on mobile (use <code>dvh</code>, <code>min-height</code>).</li>
+<li>Vertical centring with <code>margin: auto</code> on a normal block: it does not work (only in flex, grid, or absolute).</li>
+<li>Truncating text without making sure the content is still available (tooltip, expand control, <code>title</code> is not enough for touch).</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why does <code>margin: auto</code> not centre vertically in normal flow?</dt><dd>In block flow vertical auto margins compute to 0; in flex and grid they absorb free space.</dd>
+<dt>Centre an element in the viewport regardless of scroll?</dt><dd><code>position: fixed; inset: 0; margin: auto</code> with a size, or a grid overlay with <code>place-items: center</code>.</dd>
+<dt>Equal-height columns?</dt><dd>Flex with the default <code>align-items: stretch</code>, or grid rows.</dd>
+<dt>How do you make a full-bleed section inside a narrow container?</dt><dd>Grid with named columns (<code>full</code> and <code>content</code> lines), or a <code>margin-inline: calc(50% - 50vw)</code> hack that breaks when a vertical scrollbar takes width.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Responsive and modern CSS</h1>
+
+<!-- ============ C10 ============ -->
+<section class="q" id="c10">
+<header class="qh">
+  <div class="qrow"><span class="qid">C10</span><span class="tag added">Added</span></div>
+  <h2>Responsive design, media and container queries</h2>
+  <p class="qtext">“How do you build a responsive layout? Media queries versus container queries? What do you do beyond breakpoints?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I start mobile-first with a fluid, intrinsic layout: grid with <code>auto-fit</code> and <code>minmax</code>, flex-wrap, <code>clamp()</code> for type and spacing, relative units. Media queries come in only where the design really needs to change, with breakpoints chosen by content and not by device names. For components that live in different places, like a card in a sidebar and in a main column, I use container queries, because the component’s own width is what matters, not the viewport. I also respond to user preferences: reduced motion, colour scheme, contrast, hover and pointer type. And I test at 320px and at 200% zoom.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 260" role="img" aria-label="Left: a media query reacts to the viewport width, so the same card component gets the same layout in main and sidebar. Right: a container query reacts to the width of the card's own container, so the card in the narrow sidebar uses the compact layout and the card in the wide main area uses the wide layout.">
+  <text x="10" y="18" class="bd">Media query: asks the viewport</text>
+  <rect x="10" y="28" width="340" height="190" rx="4" class="b"/><text x="20" y="46" class="sm">viewport ≥ 900px</text>
+  <rect x="20" y="56" width="90" height="150" class="w"/><text x="28" y="76" class="sm">sidebar</text><rect x="28" y="86" width="74" height="40" class="x"/><text x="34" y="110" class="sm" style="font-size:10px">wide layout?</text>
+  <rect x="120" y="56" width="220" height="150" class="w"/><text x="128" y="76" class="sm">main</text><rect x="128" y="86" width="204" height="40" class="h"/><text x="134" y="110" class="sm" style="font-size:10px">wide layout</text>
+  <text x="10" y="238" class="sm">Sidebar card gets the wide style too and breaks.</text>
+  <text x="400" y="18" class="bd">Container query: asks the parent</text>
+  <rect x="400" y="28" width="350" height="190" rx="4" class="b"/>
+  <rect x="410" y="56" width="90" height="150" class="w"/><text x="418" y="76" class="sm">container</text><rect x="418" y="86" width="74" height="40" class="g"/><text x="422" y="110" class="sm" style="font-size:10px">compact</text>
+  <rect x="510" y="56" width="230" height="150" class="w"/><text x="518" y="76" class="sm">container</text><rect x="518" y="86" width="214" height="40" class="g"/><text x="524" y="110" class="sm" style="font-size:10px">wide: image left, text right</text>
+  <text x="400" y="238" class="sm">Each card picks the layout that fits where it sits.</text>
+</svg></div>
+<figcaption><b>Why container queries matter for component libraries and design systems.</b></figcaption></figure>
+
+<h3>Building blocks</h3>
+<pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+
+/* mobile-first: base styles are the small layout, enhance upward */
+.layout { display: grid; gap: 1rem; }
+@media (min-width: 48em) { .layout { grid-template-columns: 16rem minmax(0, 1fr); } }   /* em in queries scales with user font size */
+
+/* container query */
+.card-wrap { container: card / inline-size; }
+@container card (min-width: 32rem) { .card { display: grid; grid-template-columns: 12rem 1fr; } }
+
+/* user preferences */
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark; } }
+@media (hover: hover) and (pointer: fine) { .btn:hover { background: var(--hover); } }   /* no sticky hover on touch */
+@media (prefers-contrast: more), (forced-colors: active) { .btn { border: 1px solid; } }</code></pre>
+
+<h3>What a responsive answer should cover</h3>
+<div class="tw"><table>
+<tr><th>Topic</th><th>Points</th></tr>
+<tr><td>Strategy</td><td>Mobile-first (<code>min-width</code>) gives smaller CSS for small devices and progressive enhancement. Breakpoints from content (“when the line gets ugly”), 2 to 4 of them. Fewer breakpoints when the layout is intrinsically fluid.</td></tr>
+<tr><td>Fluid</td><td><code>clamp()</code> for type and spacing; <code>min()</code>, <code>max()</code>; <code>%</code> and <code>fr</code>; <code>aspect-ratio</code>; <code>max-width: 100%</code> on media.</td></tr>
+<tr><td>Container queries</td><td><code>container-type: inline-size</code> on the parent (it applies containment, the container cannot depend on its children’s inline size); query with <code>@container</code>; units <code>cqi</code>, <code>cqw</code>. Widely supported now <span class="verify">check Baseline</span>. Style queries are newer.</td></tr>
+<tr><td>Images</td><td><code>srcset</code>, <code>sizes</code>, <code>picture</code> (HTML guide Q14).</td></tr>
+<tr><td>Mobile browser UI</td><td><code>dvh</code>/<code>svh</code>, safe-area insets (<code>env(safe-area-inset-bottom)</code>) with <code>viewport-fit=cover</code>.</td></tr>
+<tr><td>Input modality</td><td><code>hover</code>, <code>pointer</code> media features; touch targets 24 to 44px; no hover-only functionality.</td></tr>
+<tr><td>Accessibility</td><td>WCAG 1.4.10 Reflow: content works at 320 CSS px wide without two-direction scroll; 1.4.4 resize text to 200%; 1.4.12 text spacing; orientation not locked.</td></tr>
+<tr><td>Testing</td><td>DevTools device mode is a start; check real iOS Safari and Android; resize slowly to catch in-between widths; zoom; Playwright viewports.</td></tr>
+</table></div>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Naming breakpoints after devices (iPhone, iPad). Devices change; content does not.</li>
+<li>Desktop-first <code>max-width</code> queries that you have to undo on mobile.</li>
+<li>Hiding content on mobile with <code>display: none</code> instead of designing it (still downloaded).</li>
+<li>Using viewport width for components inside a layout with a sidebar. That is the case for container queries.</li>
+<li>Hover-only menus and tooltips that never open on touch.</li>
+<li>Fixed <code>px</code> font sizes and <code>user-scalable=no</code>.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why <code>em</code> in media queries?</dt><dd>Browsers resolve <code>em</code> in queries from the user’s default font size, so layout adapts to larger text settings.</dd>
+<dt>Does a container query make media queries obsolete?</dt><dd>No. Media queries still handle page-level layout and user preferences; container queries handle components.</dd>
+<dt>How do you handle print?</dt><dd><code>@media print</code>: hide navigation, expand links, avoid page breaks inside figures (<code>break-inside: avoid</code>).</dd>
+<dt>How do you test reflow?</dt><dd>Set the viewport to 320px wide, zoom to 400%, and check no horizontal scroll apart from tables or code.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C11 ============ -->
+<section class="q" id="c11">
+<header class="qh">
+  <div class="qrow"><span class="qid">C11</span><span class="tag added">Added</span></div>
+  <h2>Custom properties, theming and dark mode</h2>
+  <p class="qtext">“What are CSS custom properties and how do they differ from Sass variables? How would you implement theming and dark mode?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Custom properties are real CSS values that live in the DOM: they cascade, inherit, and can change at runtime, for example per theme, per component or from JavaScript. Sass variables are replaced at build time and do not exist in the browser. For theming I define design tokens as custom properties on <code>:root</code>, override them under <code>[data-theme="dark"]</code> and under <code>prefers-color-scheme</code>, set <code>color-scheme</code> so form controls follow, and style components only through the tokens. I avoid a flash of the wrong theme by setting the attribute with a tiny inline script before first paint.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="Three token layers: primitive tokens like blue-500, semantic tokens like color-accent that point to primitives and change by theme, and component tokens like button-bg that point to semantic tokens. Components only read the semantic and component layers.">
+  <rect x="10" y="20" width="220" height="200" rx="5" class="b"/><text x="20" y="40" class="bd">1  Primitives</text><text x="20" y="56" class="sm">raw palette, never used directly</text>
+  <text x="20" y="84" class="mono">--blue-500: #2563eb</text><text x="20" y="106" class="mono">--gray-900: #111827</text><text x="20" y="128" class="mono">--gray-50:  #f9fafb</text><text x="20" y="150" class="mono">--space-4:  1rem</text>
+  <rect x="270" y="20" width="220" height="200" rx="5" class="h"/><text x="280" y="40" class="bd">2  Semantic</text><text x="280" y="56" class="sm">meaning; THIS is what themes swap</text>
+  <text x="280" y="84" class="mono">--bg: var(--gray-50)</text><text x="280" y="104" class="mono">--fg: var(--gray-900)</text><text x="280" y="124" class="mono">--accent: var(--blue-500)</text>
+  <text x="280" y="152" class="sm">[data-theme=dark] {</text><text x="290" y="170" class="mono">--bg: var(--gray-900)</text><text x="290" y="188" class="mono">--fg: var(--gray-50)</text><text x="280" y="206" class="sm">}</text>
+  <rect x="530" y="20" width="220" height="200" rx="5" class="g"/><text x="540" y="40" class="bd">3  Component</text><text x="540" y="56" class="sm">local overrides and API</text>
+  <text x="540" y="84" class="mono">.btn {</text><text x="550" y="104" class="mono">--btn-bg: var(--accent);</text><text x="550" y="124" class="mono">background: var(--btn-bg);</text><text x="540" y="144" class="mono">}</text>
+  <text x="540" y="172" class="sm">.btn.danger { --btn-bg: var(--danger) }</text>
+  <path class="a" d="M230 120H268"/><path class="a" d="M490 120H528"/>
+  <text x="10" y="252" class="sm">Components read layers 2 and 3 only. Changing the theme changes layer 2; nothing else is touched.</text>
+</svg></div>
+<figcaption><b>Token layers.</b> This is how design systems keep dark mode and brand changes cheap.</figcaption></figure>
+
+<h3>Custom properties vs preprocessor variables</h3>
+<div class="tw"><table>
+<tr><th></th><th>CSS custom properties</th><th>Sass/Less variables</th></tr>
+<tr><td>Resolved</td><td>at runtime, in the browser</td><td>at build time</td></tr>
+<tr><td>Cascade, inheritance</td><td>yes (scoped to any element)</td><td>no</td></tr>
+<tr><td>Change from JS / media query / state</td><td>yes: <code>el.style.setProperty('--x', v)</code></td><td>no</td></tr>
+<tr><td>Fallback</td><td><code>var(--x, fallback)</code></td><td>n/a</td></tr>
+<tr><td>Works in math</td><td>inside <code>calc()</code>; no unit magic without <code>@property</code></td><td>yes</td></tr>
+</table></div>
+<ul>
+<li><b><code>@property</code></b> registers a typed custom property (syntax, initial value, inherits), which makes it animatable and gives validation <span class="verify">check Baseline</span>.</li>
+<li><b>Invalid at computed-value time:</b> a custom property with a wrong value makes the property that uses it fall back to inherited or initial, not to a previous declaration.</li>
+<li><b>Performance:</b> changing a custom property on <code>:root</code> forces style recalculation for the whole tree; update at the smallest scope you can.</li>
+</ul>
+
+<h3>Theming and dark mode implementation</h3>
+<pre><code>:root { color-scheme: light dark; --bg: #f7f8fa; --fg: #17202b; --accent: #0a6a5e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0f1620; --fg: #e4eaf1; --accent: #58c8b3; } }
+:root[data-theme="dark"] { --bg: #0f1620; --fg: #e4eaf1; --accent: #58c8b3; }   /* user override */
+body { background: var(--bg); color: var(--fg); }
+
+/* modern: one declaration per token (verify support) */
+:root { --bg: light-dark(#f7f8fa, #0f1620); }
+
+/* in the head, before CSS paints, to avoid a flash */
+&lt;script&gt;try { const t = localStorage.theme; if (t) document.documentElement.dataset.theme = t } catch {}&lt;/script&gt;</code></pre>
+<ul>
+<li>Three states: “system” (nothing set, follow <code>prefers-color-scheme</code>), explicit light, explicit dark. Persist the choice; wrap storage in try/catch.</li>
+<li><code>color-scheme</code> makes native controls, scrollbars and default canvas follow. Also add <code>&lt;meta name="color-scheme"&gt;</code> and <code>theme-color</code> for browser UI.</li>
+<li>Dark mode is not inversion: reduce saturation, keep contrast at 4.5:1, elevate surfaces with lighter tints, check images and shadows.</li>
+<li>SSR: store the theme in a cookie so the server can render the right attribute, avoiding a flash on first byte.</li>
+<li>Also useful: <code>color-mix()</code> for tints and hover states, relative colour syntax, <code>accent-color</code> for native controls.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Defining a colour only inside the dark media block: with no definition on bare <code>:root</code> the light theme breaks.</li>
+<li>Components referencing primitives (<code>--blue-500</code>) directly, so each theme change touches every component.</li>
+<li>Saying custom properties are “just like Sass variables”.</li>
+<li>Toggling the theme in an effect after hydration: users see a flash.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Can custom properties be used in media queries?</dt><dd>No. <code>var()</code> does not work inside media or container query conditions.</dd>
+<dt>How do you animate a custom property?</dt><dd>Register it with <code>@property</code> so the browser knows its type, then transition or animate it (for gradients).</dd>
+<dt>How do you let consumers customise a component?</dt><dd>Expose a few documented custom properties as its public API (<code>--card-radius</code>); they also cross shadow DOM.</dd>
+<dt>How would you build multi-brand theming?</dt><dd>Same semantic tokens, one token file per brand, loaded by attribute or build; components never change.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C12 ============ -->
+<section class="q" id="c12">
+<header class="qh">
+  <div class="qrow"><span class="qid">C12</span><span class="tag added">Added</span></div>
+  <h2>Modern selectors and features</h2>
+  <p class="qtext">“What modern CSS features do you use that older projects do not? What does <code>:has()</code> do? What is Baseline?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The big shifts are: <code>:is()</code> and <code>:where()</code> to group selectors with controlled specificity, <code>:has()</code> as a parent and relational selector, native nesting, cascade layers, container queries, subgrid, logical properties, <code>clamp()</code>, <code>aspect-ratio</code>, custom properties with <code>@property</code>, <code>color-mix()</code>, and <code>:focus-visible</code>. I check Baseline before relying on a feature, add a fallback with <code>@supports</code> when needed, and keep it as progressive enhancement.”</p></div>
+
+<h3>Selectors and rules</h3>
+<div class="tw"><table>
+<tr><th>Feature</th><th>What it does</th><th>Example</th></tr>
+<tr><td><code>:is()</code></td><td>group; takes the highest specificity of its list; forgiving parsing</td><td><code>:is(h1, h2, h3):hover</code></td></tr>
+<tr><td><code>:where()</code></td><td>same, but specificity 0: ideal for resets and library defaults</td><td><code>:where(ul, ol) { padding: 0 }</code></td></tr>
+<tr><td><code>:not()</code></td><td>exclusion; accepts lists</td><td><code>a:not([class])</code></td></tr>
+<tr><td><code>:has()</code></td><td>relational (“parent”) selector: style an element based on its descendants or following siblings</td><td><code>.card:has(img)</code>, <code>label:has(:focus-visible)</code>, <code>form:has(:invalid)</code></td></tr>
+<tr><td><code>:focus-visible</code> / <code>:focus-within</code></td><td>keyboard focus ring only / any focus inside</td><td><code>.field:focus-within</code></td></tr>
+<tr><td><code>:user-invalid</code>, <code>:user-valid</code></td><td>validation state after user interaction <span class="verify">verify</span></td><td>pairs with form UX</td></tr>
+<tr><td>Nesting</td><td>write child rules inside parent; <code>&amp;</code> refers to the parent selector</td><td><code>.card { &amp;:hover {…} .title {…} }</code></td></tr>
+<tr><td><code>@layer</code></td><td>explicit cascade order (C2)</td><td><code>@layer base, components;</code></td></tr>
+<tr><td><code>@scope</code></td><td>limit selectors to a subtree <span class="verify">check support</span></td><td><code>@scope (.card) to (.slot) {…}</code></td></tr>
+<tr><td><code>@supports</code></td><td>feature query</td><td><code>@supports (selector(:has(a))) {…}</code></td></tr>
+</table></div>
+
+<h3>Properties and functions</h3>
+<ul>
+<li><b>Sizing and layout:</b> <code>aspect-ratio</code>, <code>gap</code>, <code>inset</code>, logical properties, <code>subgrid</code>, <code>container-type</code>, <code>dvh</code>.</li>
+<li><b>Colour:</b> <code>color-mix(in oklch, …)</code>, relative colour syntax, <code>oklch()</code>, <code>light-dark()</code>, <code>accent-color</code>.</li>
+<li><b>Typography:</b> <code>text-wrap: balance</code> (headings) and <code>pretty</code>, <code>font-display</code>, variable fonts, <code>text-box-trim</code> <span class="verify">newer</span>.</li>
+<li><b>Interaction:</b> <code>scroll-snap</code>, <code>overscroll-behavior</code>, <code>scroll-behavior</code>, <code>touch-action</code>, <code>inert</code>, <code>popover</code>.</li>
+<li><b>Motion:</b> View Transitions API (<code>view-transition-name</code>), scroll-driven animations, <code>@starting-style</code>, <code>transition-behavior</code> <span class="verify">support varies, check Baseline</span>.</li>
+<li><b>Positioning:</b> anchor positioning (<code>anchor-name</code>, <code>position-anchor</code>) <span class="verify">new, check support</span>.</li>
+</ul>
+
+<pre><code>.card:has(img) { display: grid; grid-template-columns: 8rem 1fr; }      /* layout depends on content */
+.field:has(input:user-invalid) .error { display: block; }                /* show error only after interaction (verify) */
+h1, h2, h3 { text-wrap: balance; }
+.btn { transition: background .2s; &amp;:hover { background: var(--hover); } &amp;[disabled] { opacity: .5; } }
+@supports not (selector(:has(*))) { .card { /* fallback layout */ } }</code></pre>
+
+<h3>How you decide to use new features</h3>
+<ol>
+<li>Check <b>Baseline</b> (“newly available” = in the latest versions of all core browsers; “widely available” = about 30 months) on MDN or web.dev.</li>
+<li>Compare with your browserslist and analytics.</li>
+<li>Prefer progressive enhancement: fallback first, enhancement inside <code>@supports</code>.</li>
+<li>Test in all three engines in CI (C15).</li>
+</ol>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Assuming <code>:has()</code> is expensive and avoiding it. It is well optimised in browsers, but avoid unbounded forms like <code>:has(*)</code> in hot paths and measure if style recalculation is slow.</li>
+<li>Believing nesting changes specificity rules. It desugars to <code>:is()</code>, so the parent’s highest specificity applies.</li>
+<li>Using <code>:focus</code> for rings instead of <code>:focus-visible</code>.</li>
+<li>Claiming “widely supported” without checking Baseline.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Difference between <code>:is()</code> and <code>:where()</code>?</dt><dd>Same matching; <code>:is()</code> contributes its most specific argument’s specificity, <code>:where()</code> contributes zero.</dd>
+<dt>What does <code>&amp;</code> do in nesting?</dt><dd>Stands for the parent selector, needed for compound selectors like <code>&amp;:hover</code> or <code>&amp;.active</code>.</dd>
+<dt>Why <code>text-wrap: balance</code>?</dt><dd>Balances line lengths in short blocks like headings, avoiding a single orphan word.</dd>
+<dt>Container queries vs <code>:has()</code>?</dt><dd>Container queries respond to available space; <code>:has()</code> responds to content structure.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 4 · Architecture and quality</h1>
+
+<!-- ============ C13 ============ -->
+<section class="q" id="c13">
+<header class="qh">
+  <div class="qrow"><span class="qid">C13</span><span class="tag added">Added</span></div>
+  <h2>CSS architecture and methodologies</h2>
+  <p class="qtext">“How do you structure CSS in a large React project? BEM versus utility-first versus CSS Modules versus CSS-in-JS: trade-offs?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The problems at scale are global scope, specificity wars, dead code and unpredictable order. Every approach is a different answer to those. BEM solves it with a naming convention and flat selectors. CSS Modules solve it at build time by scoping class names per file. Utility-first, like Tailwind, avoids writing new CSS and keeps the bundle small, at the cost of verbose markup. Runtime CSS-in-JS gives co-location and dynamic styles but costs JavaScript at runtime and fits poorly with Server Components. For a React and Next.js app I would pick CSS Modules or Tailwind, with design tokens as custom properties and <code>@layer</code> to control order, and I would avoid runtime CSS-in-JS.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="A spectrum of approaches from global stylesheets with naming conventions, to build-time scoping, to utilities, to runtime CSS in JS, showing where each puts the scope enforcement and the cost.">
+  <path class="a" d="M20 40H740"/>
+  <text x="10" y="22" class="bd">Where the scope is enforced →</text>
+  <rect x="10" y="56" width="170" height="190" rx="5" class="b"/><text x="20" y="76" class="bd">Convention</text><text x="20" y="94" class="sm">BEM · OOCSS · SMACSS</text><text x="20" y="122" class="sm">+ no tooling, plain CSS</text><text x="20" y="140" class="sm">+ works anywhere</text><text x="20" y="162" class="sm" style="fill:var(--bad)">− discipline only</text><text x="20" y="180" class="sm" style="fill:var(--bad)">− global namespace</text><text x="20" y="198" class="sm" style="fill:var(--bad)">− dead code stays</text>
+  <rect x="195" y="56" width="170" height="190" rx="5" class="h"/><text x="205" y="76" class="bd">Build-time scope</text><text x="205" y="94" class="sm">CSS Modules · Sass + hash</text><text x="205" y="122" class="sm">+ real isolation</text><text x="205" y="140" class="sm">+ zero runtime</text><text x="205" y="158" class="sm">+ server-friendly</text><text x="205" y="180" class="sm" style="fill:var(--bad)">− dynamic styles need</text><text x="205" y="196" class="sm" style="fill:var(--bad)">  vars or class toggles</text>
+  <rect x="380" y="56" width="170" height="190" rx="5" class="g"/><text x="390" y="76" class="bd">Utility-first</text><text x="390" y="94" class="sm">Tailwind · UnoCSS</text><text x="390" y="122" class="sm">+ no naming, tiny CSS</text><text x="390" y="140" class="sm">+ design-token driven</text><text x="390" y="158" class="sm">+ no dead CSS</text><text x="390" y="180" class="sm" style="fill:var(--bad)">− long class lists</text><text x="390" y="196" class="sm" style="fill:var(--bad)">− learning curve</text><text x="390" y="212" class="sm" style="fill:var(--bad)">− needs components</text>
+  <rect x="565" y="56" width="185" height="190" rx="5" class="w"/><text x="575" y="76" class="bd">CSS-in-JS</text><text x="575" y="94" class="sm">runtime: styled-components,</text><text x="575" y="108" class="sm">Emotion</text><text x="575" y="126" class="sm">zero-runtime: vanilla-extract,</text><text x="575" y="140" class="sm">Linaria, Panda</text><text x="575" y="162" class="sm">+ co-location, dynamic props</text><text x="575" y="182" class="sm" style="fill:var(--bad)">− runtime: JS cost, SSR</text><text x="575" y="198" class="sm" style="fill:var(--bad)">  complexity, RSC friction</text><text x="575" y="214" class="sm" style="fill:var(--bad)">− zero-runtime = build step</text>
+</svg></div>
+<figcaption><b>One spectrum, four trade-offs.</b> Pick for team size, rendering model (SSR, RSC) and how dynamic the styling is.</figcaption></figure>
+
+<h3>Methodologies in one line each</h3>
+<div class="tw"><table>
+<tr><th>Approach</th><th>Idea</th><th>Watch out for</th></tr>
+<tr><td><b>BEM</b></td><td><code>block__element--modifier</code> (<code>.card__title--large</code>); flat, single-class selectors; no nesting in selectors</td><td>long names; still global; needs team discipline</td></tr>
+<tr><td><b>OOCSS</b></td><td>separate structure from skin, container from content: reusable objects</td><td>class soup if over-abstracted</td></tr>
+<tr><td><b>SMACSS</b></td><td>categories: base, layout, module, state, theme</td><td>mostly a guideline</td></tr>
+<tr><td><b>ITCSS</b></td><td>layers ordered by increasing specificity: settings, tools, generic, elements, objects, components, utilities; now expressed with <code>@layer</code></td><td>structure takes effort to introduce</td></tr>
+<tr><td><b>Atomic / utility</b></td><td>one class per declaration; compose in markup</td><td>design discipline via config, extract components, not <code>@apply</code> everywhere</td></tr>
+<tr><td><b>CSS Modules</b></td><td>each <code>.module.css</code> exports hashed class names; <code>composes</code>; <code>:global()</code> escape hatch</td><td>dynamic variants via <code>data-*</code> attributes or custom properties</td></tr>
+<tr><td><b>Runtime CSS-in-JS</b></td><td>styles generated and injected at runtime from JS</td><td>runtime cost, needs client components in Next.js App Router; style order issues</td></tr>
+<tr><td><b>Design tokens</b></td><td>variables for colour, spacing, type, radius, shadow (C11)</td><td>govern naming and layers (primitive, semantic, component)</td></tr>
+</table></div>
+
+<h3>A recommended setup for React and Next.js</h3>
+<ol>
+<li><b>Tokens</b> as custom properties (and a Tailwind or token config that reads them).</li>
+<li><b>CSS Modules per component</b> for bespoke styling (or Tailwind utilities) with <code>@layer reset, base, components, utilities</code>.</li>
+<li><b>Variants</b> through <code>data-variant</code> or <code>class</code> toggles (<code>clsx</code>, <code>cva</code>) and dynamic values through inline custom properties: <code>style={{ '--progress': p }}</code>.</li>
+<li><b>Linting</b>: Stylelint (no-descending-specificity, property order, no unsupported features), formatting with Prettier, a CI check for unused CSS (PurgeCSS or Tailwind’s content scan).</li>
+<li><b>Design system</b> or component library (headless primitives such as Radix, React Aria) for accessible behaviour; style them with your tokens.</li>
+<li><b>Documentation and visual tests</b> in Storybook with Chromatic or Playwright screenshot tests.</li>
+</ol>
+
+<pre><code>/* Button.module.css */
+.root { padding: var(--space-2) var(--space-4); background: var(--btn-bg, var(--accent)); border-radius: var(--radius-2); }
+.root[data-variant="danger"] { --btn-bg: var(--danger); }
+.root:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+&lt;button className={styles.root} data-variant={variant}&gt;…&lt;/button&gt;</code></pre>
+
+<div class="box note"><h4>Tech-debt angle (L4)</h4>
+<p>Expect “how would you clean up a legacy 10,000-line stylesheet?”. Answer: measure first (coverage tab, bundle size, specificity graph), stop the bleeding with lint rules and a new convention for new code, wrap legacy in a low <code>@layer</code>, migrate by component while touching it, add visual regression tests before each migration, delete dead code with coverage data, and record the decision.</p></div>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Declaring a winner without context. Name the constraints (team, SSR, dynamic styling, existing system).</li>
+<li>Saying “CSS-in-JS is dead” or “Tailwind is bad”. Give trade-offs.</li>
+<li>Deep selector nesting and <code>#id</code> selectors in a BEM codebase.</li>
+<li>Ignoring ordering: the bundle order of CSS Modules or utilities can change specificity outcomes; use <code>@layer</code>.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you avoid CSS regressions?</dt><dd>Component-level visual tests, a small set of tokens, lint rules, and ownership of the design system.</dd>
+<dt>Is Tailwind bad for accessibility or maintainability?</dt><dd>Neither by itself. Accessibility comes from markup and behaviour; maintainability from extracting components and using the config as the token source.</dd>
+<dt>Why is runtime CSS-in-JS awkward with React Server Components?</dt><dd>It relies on React context and runtime injection, which need client components; zero-runtime or CSS Modules work with server rendering directly.</dd>
+<dt>Global CSS: when is it fine?</dt><dd>Reset, tokens, typography defaults, utilities. Not component styles.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C14 ============ -->
+<section class="q" id="c14">
+<header class="qh">
+  <div class="qrow"><span class="qid">C14</span><span class="tag added">Added</span></div>
+  <h2>CSS performance and animation</h2>
+  <p class="qtext">“How can CSS affect performance? How do you make animations smooth? What is <code>content-visibility</code>?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“CSS affects performance in three places: loading, because CSS is render-blocking; style and layout cost on the main thread; and animation smoothness. For loading I keep the critical CSS small and inline it, split the rest, and avoid <code>@import</code> chains. For runtime I keep the DOM small, avoid forced layout, and use <code>contain</code> and <code>content-visibility: auto</code> to skip offscreen work. For animation I only animate <code>transform</code> and <code>opacity</code>, which run on the compositor, I use <code>will-change</code> sparingly, and I respect <code>prefers-reduced-motion</code>. I check it in the DevTools Performance panel before optimising.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="Left: the frame budget of 16.6 milliseconds split into script, style, layout, paint and composite, where animating transform only costs composite. Right: content-visibility auto renders the sections in the viewport and skips offscreen sections until they approach it.">
+  <text x="10" y="18" class="bd">Frame budget at 60 fps = 16.6 ms</text>
+  <rect x="10" y="28" width="340" height="24" class="b"/>
+  <rect x="10" y="28" width="60" height="24" class="w"/><text x="14" y="45" class="sm" style="font-size:10.5px">script</text>
+  <rect x="70" y="28" width="50" height="24" class="w"/><text x="74" y="45" class="sm" style="font-size:10.5px">style</text>
+  <rect x="120" y="28" width="90" height="24" class="x"/><text x="124" y="45" class="sm" style="font-size:10.5px">layout</text>
+  <rect x="210" y="28" width="70" height="24" class="x"/><text x="214" y="45" class="sm" style="font-size:10.5px">paint</text>
+  <rect x="280" y="28" width="70" height="24" class="g"/><text x="284" y="45" class="sm" style="font-size:10.5px">composite</text>
+  <text x="10" y="76" class="sm">animate left / width / margin: pays layout + paint + composite</text>
+  <rect x="10" y="90" width="340" height="24" class="b"/><rect x="280" y="90" width="70" height="24" class="g"/><text x="284" y="107" class="sm" style="font-size:10.5px">composite</text>
+  <text x="10" y="138" class="sm">animate transform / opacity: composite only, can run off the main thread</text>
+  <text x="10" y="172" class="bd">Rules</text>
+  <text x="10" y="192" class="sm">• batch DOM reads then writes (no layout thrash)</text><text x="10" y="210" class="sm">• will-change: transform only while animating</text><text x="10" y="228" class="sm">• avoid animating box-shadow, filter blur on big areas</text><text x="10" y="246" class="sm">• prefers-reduced-motion: reduce</text>
+  <text x="400" y="18" class="bd">content-visibility: auto</text>
+  <rect x="400" y="28" width="350" height="230" rx="4" class="b" style="stroke-dasharray:5 3"/><text x="410" y="44" class="sm">page (tall)</text>
+  <rect x="640" y="30" width="104" height="94" rx="3" class="d"/><text x="646" y="46" class="sm" style="font-size:10.5px">viewport</text>
+  <rect x="412" y="56" width="220" height="46" class="g"/><text x="420" y="82" class="sm">section 1 · rendered</text>
+  <rect x="412" y="108" width="220" height="46" class="g"/><text x="420" y="134" class="sm">section 2 · rendered</text>
+  <rect x="412" y="160" width="220" height="40" class="x"/><text x="420" y="184" class="sm">section 3 · skipped</text>
+  <rect x="412" y="206" width="220" height="40" class="x"/><text x="420" y="230" class="sm">section 4 · skipped</text>
+  <text x="640" y="160" class="sm" style="font-size:11px">skipped = no layout,</text><text x="640" y="176" class="sm" style="font-size:11px">paint; placeholder</text><text x="640" y="192" class="sm" style="font-size:11px">size from</text><text x="640" y="208" class="sm" style="font-size:11px">contain-intrinsic-size</text>
+</svg></div>
+<figcaption><b>Two big levers.</b> Pay the smallest stage of the pipeline per frame, and do not render what nobody can see.</figcaption></figure>
+
+<h3>Loading CSS</h3>
+<ul>
+<li><b>Render-blocking:</b> a stylesheet in the head blocks first paint (and later synchronous scripts). Keep it small, compressed (Brotli), cached with hashed names.</li>
+<li><b>Critical CSS:</b> inline the above-the-fold rules, load the rest without blocking (<code>&lt;link rel="stylesheet" media="print" onload="this.media='all'"&gt;</code> or <code>rel="preload" as="style"</code>). Tools: Critters, Next.js, Astro.</li>
+<li><b>Avoid <code>@import</code></b> in CSS: it serialises downloads. Use bundling or multiple <code>&lt;link&gt;</code>.</li>
+<li><b>Remove unused CSS</b> (DevTools Coverage, PurgeCSS, Tailwind’s content scan); split per route.</li>
+<li><b>Fonts:</b> <code>font-display: swap</code> or <code>optional</code>, preload the key WOFF2, subset, use <code>size-adjust</code> and related descriptors for the fallback to limit CLS.</li>
+<li><b>Media queries</b> on <code>&lt;link media&gt;</code> make non-matching stylesheets non-blocking (still downloaded at low priority).</li>
+</ul>
+
+<h3>Runtime cost</h3>
+<ul>
+<li><b>Selector cost</b> is rarely the bottleneck in modern engines; very deep or universal selectors matter only with huge DOMs. DOM size, layout thrash and big repaints matter more.</li>
+<li><b>Layout thrash:</b> reading <code>offsetHeight</code> after writing styles in a loop forces synchronous layout each time. Batch reads, then writes; use <code>requestAnimationFrame</code> or <code>ResizeObserver</code>.</li>
+<li><b><code>contain: layout paint style</code></b> and <b><code>content-visibility: auto</code></b> with <code>contain-intrinsic-size</code> skip offscreen rendering (big wins on long feeds) <span class="verify">check support</span>.</li>
+<li><b>Hit expensive properties</b> less: large <code>box-shadow</code>, <code>filter: blur()</code>, <code>backdrop-filter</code> on big areas, gradients on huge surfaces.</li>
+<li><b>Hardware layers:</b> <code>will-change</code> or 3D transforms promote layers; too many cost GPU memory.</li>
+</ul>
+
+<h3>Animation checklist</h3>
+<pre><code>.menu { transform: translateY(-8px); opacity: 0; transition: transform .2s ease, opacity .2s ease; }
+.menu.open { transform: none; opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) { .menu { transition: none; } }
+
+.feed-item { content-visibility: auto; contain-intrinsic-size: auto 240px; }</code></pre>
+<ul>
+<li>Use CSS transitions or Web Animations API for simple motion; avoid JS per-frame style writes.</li>
+<li><b>INP</b> is affected by style recalculation and layout caused by interactions; keep handlers short.</li>
+<li>Scroll-linked effects: prefer CSS scroll-driven animations or passive listeners and <code>IntersectionObserver</code> <span class="verify">support varies</span>.</li>
+<li>Accessibility: no flashing above 3 per second (WCAG 2.3.1); provide a pause for long motion (2.2.2); honour reduced motion.</li>
+</ul>
+
+<h3>How to measure</h3>
+<ul>
+<li>DevTools Performance: look at “Recalculate Style”, “Layout”, “Paint”, long tasks; Rendering panel: paint flashing, layout shift regions, layer borders.</li>
+<li>Coverage tab for unused CSS; Lighthouse for render-blocking resources; WebPageTest filmstrip.</li>
+<li>Field: CLS and INP from RUM (<code>web-vitals</code>).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Putting <code>will-change: transform</code> on everything “for performance”.</li>
+<li>Animating <code>height</code> from 0 to auto with layout cost on long lists; use grid <code>grid-template-rows: 0fr → 1fr</code> or <code>interpolate-size</code> <span class="verify">verify support</span>.</li>
+<li>Believing CSS selector optimisation is the first fix. Measure first.</li>
+<li>Forgetting reduced motion and focus after animating content in.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why is <code>transform</code> cheaper than <code>left</code>?</dt><dd>It changes only the compositing of an existing layer, no layout or paint.</dd>
+<dt>What is a layout shift and how does CSS cause it?</dt><dd>Visible elements moving unexpectedly: images without size, late fonts, injected banners, animations of layout properties. Fix with reserved space, <code>aspect-ratio</code>, font metrics, and <code>transform</code>.</dd>
+<dt>What does <code>contain-intrinsic-size</code> do?</dt><dd>Gives skipped (<code>content-visibility</code>) elements a placeholder size so scrollbars and layout do not jump.</dd>
+<dt>Critical CSS: risks?</dt><dd>Duplicated rules, stale inline CSS, flash of unstyled content below the fold if the async stylesheet is slow.</dd>
+</dl></div>
+</section>
+
+<!-- ============ C15 ============ -->
+<section class="q" id="c15">
+<header class="qh">
+  <div class="qrow"><span class="qid">C15</span><span class="tag added">Added</span></div>
+  <h2>Cross-browser CSS</h2>
+  <p class="qtext">“How do you handle cross-browser compatibility in CSS? What are the usual differences between Chrome, Firefox and Safari?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I decide the support matrix from analytics and write it down, enforce it with a browserslist, and then build in layers: a baseline that works everywhere, enhancements inside <code>@supports</code>. I check Baseline status before using a new feature, let Autoprefixer or Lightning CSS add prefixes and transform syntax, and use a reset so default styles match. Then I test in Chromium, Firefox and WebKit with Playwright in CI and on real iOS devices, because all iOS browsers use WebKit. I never sniff user agents.”</p></div>
+
+<figure><svg class="dg" viewBox="0 0 760 210" role="img" aria-label="A fallback-first pattern: declare a safe value first, then the enhanced value; browsers that do not understand the second ignore it. For larger differences wrap in at-supports.">
+  <rect x="10" y="12" width="360" height="186" rx="5" class="b"/>
+  <text x="22" y="34" class="bd">Fallback first, enhancement second</text>
+  <text x="22" y="60" class="mono">height: 100vh;</text><text x="200" y="60" class="sm">old browsers stop here</text>
+  <text x="22" y="82" class="mono">height: 100dvh;</text><text x="200" y="82" class="sm">new ones override</text>
+  <text x="22" y="112" class="mono">display: flex;</text>
+  <text x="22" y="134" class="mono">@supports (display: grid) {</text><text x="34" y="154" class="mono">display: grid; … }</text>
+  <text x="22" y="182" class="sm">Invalid declarations are dropped, not fatal.</text>
+  <text x="410" y="32" class="bd">Toolchain</text>
+  <text x="410" y="56" class="sm">browserslist: “&gt; 0.5%, last 2 versions, not dead”</text>
+  <text x="410" y="76" class="sm">PostCSS (autoprefixer, preset-env) or Lightning CSS</text>
+  <text x="410" y="96" class="sm">Stylelint: no-unsupported-browser-features</text>
+  <text x="410" y="116" class="sm">Playwright: chromium + firefox + webkit</text>
+  <text x="410" y="136" class="sm">BrowserStack / real iPhone + Android</text>
+  <text x="410" y="156" class="sm">Baseline + caniuse + web-platform-tests</text>
+  <text x="410" y="186" class="sm">Prod: error + RUM split by browser</text>
+</svg>
+<figcaption><b>How CSS error handling helps you.</b> Unknown properties and values are skipped; later declarations override earlier ones.</figcaption></figure>
+
+<h3>Known differences to mention</h3>
+<div class="tw"><table>
+<tr><th>Area</th><th>Typical issue</th><th>Approach</th></tr>
+<tr><td>Viewport units on mobile</td><td><code>100vh</code> is taller than the visible area on iOS and Android when toolbars show</td><td><code>dvh</code> / <code>svh</code> with <code>vh</code> fallback</td></tr>
+<tr><td>Safari (WebKit)</td><td>features land later or differently; <code>backdrop-filter</code> prefix history; date and time input styling; position sticky inside overflow; <code>gap</code> support in old flex versions; 100vh; some <code>:has</code>/container features arrived later</td><td>Baseline check, real device testing, <code>@supports</code></td></tr>
+<tr><td>Firefox</td><td>scrollbar styling (<code>scrollbar-width</code>, <code>scrollbar-color</code>), sub-pixel rendering, form control details</td><td>use the standard scrollbar properties, avoid <code>::-webkit-scrollbar</code> only</td></tr>
+<tr><td>Form controls</td><td>different default appearance and sizing</td><td><code>appearance: none</code> with care for accessibility; <code>accent-color</code>; reset <code>font: inherit</code> on inputs</td></tr>
+<tr><td>Default styles</td><td>margins, line-height, heading sizes, button fonts differ</td><td>modern reset or normalize; border-box globally</td></tr>
+<tr><td>Fonts</td><td>rendering weight and metrics differ; FOIT/FOUT timing</td><td><code>font-display</code>, WOFF2, metric overrides</td></tr>
+<tr><td>Vendor prefixes</td><td><code>-webkit-line-clamp</code>, <code>-webkit-text-size-adjust</code>, <code>-webkit-appearance</code></td><td>Autoprefixer from browserslist; hand-write only the few that remain</td></tr>
+<tr><td>Print</td><td>page breaks and backgrounds differ</td><td><code>print-color-adjust</code>, <code>break-*</code>; test PDF output</td></tr>
+<tr><td>Forced colours / high contrast</td><td><code>box-shadow</code> and background images vanish</td><td>use borders and outlines; test <code>forced-colors: active</code></td></tr>
+</table></div>
+
+<h3>Process</h3>
+<ol>
+<li>Support matrix agreed with product, from analytics (for example last 2 versions of evergreen browsers, iOS 16+).</li>
+<li>Lint and build rules from that matrix (browserslist feeds Autoprefixer, Stylelint and Babel).</li>
+<li>Use features by Baseline status; polyfill only JS APIs, not CSS (CSS polyfills are usually not worth it, use fallbacks).</li>
+<li>Automated visual and functional tests in three engines, plus a manual pass on iOS Safari for touch, keyboard and scroll behaviour.</li>
+<li>Monitor in production; keep a record of known gaps and decisions.</li>
+</ol>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“I test in Chrome and it works.” Chromium is not the web; iOS means WebKit for every browser.</li>
+<li>User-agent sniffing for CSS fixes.</li>
+<li>Adding prefixes by hand for everything.</li>
+<li>Using a brand-new feature without a fallback and without checking analytics.</li>
+<li>Forgetting accessibility differences across browser and screen reader pairs.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is the Interop project?</dt><dd>A yearly effort by browser vendors to align on a set of web-platform-tests, which is why behaviour differences shrink each year.</dd>
+<dt>How do you test Safari without a Mac?</dt><dd>Playwright WebKit in CI approximates it; BrowserStack or a real iPhone for final checks.</dd>
+<dt>When do you drop a browser?</dt><dd>When traffic and revenue are low, support cost is high, or it no longer gets security updates; decide with product and document it.</dd>
+<dt>Reset or normalize?</dt><dd>A modern reset (box-sizing, margins, form font inherit, media display block) plus design-system defaults is enough; normalize.css is mostly historic.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>30 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the question number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>What does <code>border-box</code> change?</td><td><code>width</code> and <code>height</code> include padding and border; content shrinks to fit.</td><td>C1</td></tr>
+<tr><td>2</td><td>When do vertical margins collapse?</td><td>Adjacent block siblings, parent and first or last child, empty blocks. Not in flex, grid, floats, absolute, or inside a BFC.</td><td>C1</td></tr>
+<tr><td>3</td><td>Cleanest way to stop parent-child margin collapse?</td><td><code>display: flow-root</code> on the parent (or padding or border).</td><td>C1</td></tr>
+<tr><td>4</td><td>Cascade order, in short?</td><td>Origin and importance, layers, specificity, then order of appearance.</td><td>C2</td></tr>
+<tr><td>5</td><td>What does <code>!important</code> do to origin order?</td><td>Reverses it: important UA beats important user beats important author.</td><td>C2</td></tr>
+<tr><td>6</td><td>Specificity of <code>:where()</code> and <code>:is()</code>?</td><td><code>:where()</code> is zero; <code>:is()</code> takes its most specific argument.</td><td>C2</td></tr>
+<tr><td>7</td><td>Does a later layer with a low selector beat an earlier layer with an id?</td><td>Yes. Layers come before specificity.</td><td>C2</td></tr>
+<tr><td>8</td><td>Is <code>visibility: hidden</code> read by screen readers?</td><td>No. It is removed from the accessibility tree and tab order.</td><td>C3</td></tr>
+<tr><td>9</td><td>Which hiding method leaves the element focusable and read?</td><td><code>opacity: 0</code>.</td><td>C3</td></tr>
+<tr><td>10</td><td>How do you make <code>[hidden]</code> reliable?</td><td><code>[hidden] { display: none !important }</code> in the reset.</td><td>C3</td></tr>
+<tr><td>11</td><td>Block vs inline vs inline-block width?</td><td>Block fills; inline ignores width and height; inline-block is in-line but takes width and height.</td><td>C4</td></tr>
+<tr><td>12</td><td>What contains a float?</td><td>A BFC on the parent: <code>display: flow-root</code>.</td><td>C4</td></tr>
+<tr><td>13</td><td>rem or px for font size?</td><td>rem, so the user’s font-size preference scales it.</td><td>C5</td></tr>
+<tr><td>14</td><td>Why <code>dvh</code> over <code>vh</code>?</td><td>Accounts for mobile browser toolbars appearing and hiding.</td><td>C5</td></tr>
+<tr><td>15</td><td>What does <code>clamp(1rem, 2vw, 2rem)</code> do?</td><td>Preferred 2vw, never below 1rem or above 2rem.</td><td>C5</td></tr>
+<tr><td>16</td><td><code>flex: 1</code> expands to?</td><td><code>1 1 0%</code>.</td><td>C6</td></tr>
+<tr><td>17</td><td>Why does a flex child overflow with long text?</td><td><code>min-width: auto</code> means minimum content size; set <code>min-width: 0</code> (or overflow).</td><td>C6</td></tr>
+<tr><td>18</td><td>Column flex scroll area will not scroll: why?</td><td><code>min-height: auto</code>; set <code>min-height: 0</code> and <code>overflow: auto</code>.</td><td>C6</td></tr>
+<tr><td>19</td><td>Flex vs grid in one line?</td><td>Flex is 1D and content-driven; grid is 2D and layout-driven.</td><td>C7</td></tr>
+<tr><td>20</td><td><code>auto-fit</code> vs <code>auto-fill</code>?</td><td>With fewer items than tracks, <code>auto-fit</code> collapses empty tracks (items stretch); <code>auto-fill</code> keeps them.</td><td>C7</td></tr>
+<tr><td>21</td><td>Grid blow-out fix?</td><td><code>minmax(0, 1fr)</code> instead of <code>1fr</code>.</td><td>C7</td></tr>
+<tr><td>22</td><td>What does subgrid do?</td><td>A nested grid adopts the parent’s tracks so contents align across items.</td><td>C7</td></tr>
+<tr><td>23</td><td>Why does <code>z-index: 9999</code> fail?</td><td>An ancestor made a stacking context; z-index is local to it.</td><td>C8</td></tr>
+<tr><td>24</td><td>Name five things that create a stacking context.</td><td>root, positioned + z-index, fixed/sticky, opacity &lt; 1, transform, filter, isolation: isolate.</td><td>C8</td></tr>
+<tr><td>25</td><td>Why does <code>position: fixed</code> sometimes not fix?</td><td>An ancestor with transform, filter or contain becomes its containing block.</td><td>C8</td></tr>
+<tr><td>26</td><td>Modern centring?</td><td><code>display: grid; place-items: center</code>.</td><td>C9</td></tr>
+<tr><td>27</td><td>Media query or container query for a card component?</td><td>Container query: the card cares about its container, not the viewport.</td><td>C10</td></tr>
+<tr><td>28</td><td>Custom property vs Sass variable?</td><td>Runtime, cascading, scoped and changeable from JS; Sass is build-time only.</td><td>C11</td></tr>
+<tr><td>29</td><td>Which style properties animate on the compositor?</td><td><code>transform</code> and <code>opacity</code>.</td><td>C14</td></tr>
+<tr><td>30</td><td>Never do for browser support?</td><td>User-agent sniffing; instead feature detection, <code>@supports</code> and Baseline.</td><td>C15</td></tr>
+</table></div>
+
+<div class="box note"><h4>Delivery reminders from your CSS sessions</h4>
+<ul>
+<li>Start with the one-paragraph spoken answer. The flexbox answer was correct but read like a pasted document with formulas.</li>
+<li>Do not hedge on facts you know (<code>flex: 1</code> is <code>1 1 0%</code>).</li>
+<li>Cover every part of the question: margin collapsing was missed, and the screen reader behaviour of <code>visibility: hidden</code> was stated wrongly.</li>
+<li>Stay precise: “<code>min-width: auto</code> applies to flex and grid items”, not “blocks have 0”.</li>
+<li>Use “(I would verify that in MDN)” for version-specific claims instead of guessing.</li>
+</ul></div>
+</section>
+
+</div>

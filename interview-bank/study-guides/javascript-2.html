@@ -1,0 +1,1144 @@
+<title>JavaScript Study Guide 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"JavaScript Study Guide 2";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"JavaScript Study Guide 2";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · JavaScript Frontend · Expert level</div>
+  <h1>JavaScript Study Guide 2</h1>
+  <p>The runtime and the engine: the event loop, promises and async/await, error handling, timers and cancellation, workers, memory and garbage collection, leaks, V8 internals, events and observers, design patterns, JavaScript security, and the modern browser platform APIs (fetch, streams, storage, real-time transports, page lifecycle). Part 1 covered the language core. The interview is theoretical, so every topic is written as something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> check MDN or the spec before stating as fact</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Runtime and asynchronous JavaScript</h3>
+    <ol>
+      <li><b>J18</b><a href="#j18">The event loop, tasks and microtasks</a></li>
+      <li><b>J19</b><a href="#j19">Promises</a></li>
+      <li><b>J20</b><a href="#j20">async / await</a></li>
+      <li><b>J21</b><a href="#j21">Error handling</a></li>
+      <li><b>J22</b><a href="#j22">Timers, scheduling, debounce, throttle, cancellation</a></li>
+      <li><b>J23</b><a href="#j23">Workers and concurrency</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>2 · Memory and the engine</h3>
+    <ol>
+      <li><b>J24</b><a href="#j24">Memory management and garbage collection</a></li>
+      <li><b>J25</b><a href="#j25">Memory leaks in the browser</a></li>
+      <li><b>J26</b><a href="#j26">V8 internals and JIT-friendly code</a></li>
+    </ol>
+    <h3 style="margin-top:16px">3 · Events, patterns and security</h3>
+    <ol>
+      <li><b>J27</b><a href="#j27">Events, delegation and observers</a></li>
+      <li><b>J28</b><a href="#j28">Design patterns in JavaScript</a></li>
+      <li><b>J29</b><a href="#j29">JavaScript security</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3 style="margin-top:0">4 · Browser platform APIs</h3>
+    <ol>
+      <li><b>J30</b><a href="#j30">Network, streams and storage APIs</a></li>
+      <li><b>J31</b><a href="#j31">Modern browser APIs and the page lifecycle</a></li>
+    </ol>
+    <h3 style="margin-top:16px">5 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Topic numbers continue from Part 1 (J1 to J17). Cross-references such as “see J4” point to Part 1.</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Runtime and asynchronous JavaScript</h1>
+
+<!-- ============ J18 ============ -->
+<section class="q" id="j18">
+<header class="qh">
+  <div class="qrow"><span class="qid">J18</span><span class="tag added">Added</span></div>
+  <h2>The event loop, tasks and microtasks</h2>
+  <p class="qtext">“JavaScript is single-threaded. How does it handle asynchronous work? Explain the call stack, the task queue, the microtask queue and the event loop. Where do rendering and <code>requestAnimationFrame</code> fit?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“JavaScript runs your code on one thread, with one call stack. Asynchronous work such as timers, network and user events is handled by the host environment, the browser or Node, outside that thread. When it finishes, the host queues a callback. The event loop repeats one cycle: take one task from a task queue and run it to completion, then drain the entire microtask queue, which holds promise reactions and <code>await</code> continuations, then, if a frame is due, render: run <code>requestAnimationFrame</code> callbacks, style, layout and paint. Because a task runs to completion, a long task blocks rendering and input. And because microtasks run before the next task or render, an endless chain of microtasks can starve the page.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="The event loop cycle: run one task, drain all microtasks, render if a frame is due, then idle or the next task. Below, the sources of tasks and of microtasks, and the call stack that runs to completion.">
+  <text x="10" y="18" class="bd">One turn of the event loop (browser)</text>
+  <rect x="10" y="30" width="165" height="64" rx="5" class="b"/><text x="20" y="52" class="bd">1 · Run ONE task</text><text x="20" y="70" class="sm">script, timer, event, message</text><text x="20" y="85" class="sm">runs to completion</text>
+  <rect x="205" y="30" width="165" height="64" rx="5" class="h"/><text x="215" y="52" class="bd">2 · Drain microtasks</text><text x="215" y="70" class="sm">ALL of them, including new</text><text x="215" y="85" class="sm">ones added while draining</text>
+  <rect x="400" y="30" width="190" height="64" rx="5" class="w"/><text x="410" y="52" class="bd">3 · Render (if a frame is due)</text><text x="410" y="70" class="sm">rAF callbacks → style → layout</text><text x="410" y="85" class="sm">→ paint (about every 16.7 ms)</text>
+  <rect x="620" y="30" width="130" height="64" rx="5" class="b"/><text x="630" y="52" class="bd">4 · Idle or next</text><text x="630" y="70" class="sm">requestIdleCallback</text><text x="630" y="85" class="sm">then back to 1</text>
+  <path class="a" d="M175 62H203"/><path class="a" d="M370 62H398"/><path class="a" d="M590 62H618"/>
+  <path class="d" d="M685 94V112H92V96" marker-end="url(#ar)"/>
+  <rect x="10" y="132" width="230" height="86" rx="5" class="g"/><text x="20" y="152" class="bd">Task sources (macrotasks)</text><text x="20" y="171" class="sm">setTimeout / setInterval callbacks</text><text x="20" y="187" class="sm">DOM events: click, input, scroll</text><text x="20" y="203" class="sm">fetch/XHR completion, postMessage</text>
+  <rect x="260" y="132" width="230" height="86" rx="5" class="h"/><text x="270" y="152" class="bd">Microtask sources</text><text x="270" y="171" class="sm">promise.then / catch / finally</text><text x="270" y="187" class="sm">the code after an await</text><text x="270" y="203" class="sm">queueMicrotask, MutationObserver</text>
+  <rect x="510" y="132" width="240" height="86" rx="5" class="b"/><text x="520" y="152" class="bd">Call stack (one per thread)</text><text x="520" y="171" class="sm">function calls push frames; the loop</text><text x="520" y="187" class="sm">only picks a new task when the stack</text><text x="520" y="203" class="sm">is empty. No preemption.</text>
+  <rect x="10" y="236" width="360" height="76" rx="5" class="x"/><text x="20" y="256" class="bd">Blocking</text><text x="20" y="274" class="sm">A task over 50 ms is a “long task”: input and paint wait.</text><text x="20" y="290" class="sm">A microtask loop that keeps re-queuing itself never lets</text><text x="20" y="305" class="sm">the render step happen. The tab looks frozen.</text>
+  <rect x="390" y="236" width="360" height="76" rx="5" class="b"/><text x="400" y="256" class="bd">Node.js differences</text><text x="400" y="274" class="sm">Phases: timers → pending → poll (I/O) → check (setImmediate)</text><text x="400" y="290" class="sm">→ close. process.nextTick runs before promise microtasks.</text><text x="400" y="305" class="sm">No rendering step. libuv does I/O on a thread pool.</text>
+</svg></div>
+<figcaption><b>Mental model.</b> One task, then all microtasks, then maybe a frame. The browser keeps several task queues (user input has priority over timers) and picks between them; the order <em>within</em> one queue is first in, first out.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Who does the waiting?</b> The JavaScript engine (V8) has only the stack and heap. Timers, network, storage and DOM events are provided by the host (Web APIs in a browser, libuv in Node), which run in other threads or the OS and post a callback back to the event loop.</li>
+<li><b>Task versus microtask:</b> a task is a unit of work scheduled by the host (timer, event, message, I/O). A microtask is a short follow-up scheduled by the language itself, run as soon as the stack is empty, before the next task. Promise reactions, <code>await</code> continuations, <code>queueMicrotask</code> and <code>MutationObserver</code> callbacks are microtasks.</li>
+<li><b>Why promises beat <code>setTimeout(fn, 0)</code> for “run this soon”:</b> the microtask runs before rendering and before any other task, so state is consistent. <code>setTimeout</code> yields to the browser, so rendering and input can happen first, and it has a minimum delay (J22).</li>
+<li><b>Rendering is not a task, it is a step:</b> the browser decides at the end of a loop turn whether a frame is due (display refresh, visibility). It may skip rendering for several turns. <code>requestAnimationFrame</code> callbacks run just before style and layout in that step, which is the right place for visual updates, so they happen once per frame.</li>
+<li><b>Layout thrashing:</b> reading layout (<code>offsetHeight</code>) after writing styles forces a synchronous layout inside your task. Batch reads, then writes; or write in <code>requestAnimationFrame</code>.</li>
+<li><b>Yielding to keep the page responsive:</b> split long work into chunks and give the loop a turn between chunks with <code>setTimeout</code>, <code>MessageChannel</code>, or <code>scheduler.yield()</code> <span class="verify">verify support</span>. React’s scheduler uses the same idea for time slicing.</li>
+<li><b><code>await</code> in terms of the loop:</b> the code after <code>await</code> becomes a microtask continuation once the awaited promise settles. The function returns to its caller at the first <code>await</code>.</li>
+<li><b>Order guarantees:</b> synchronous code first; then microtasks in the order queued; then the next task. Between two <code>setTimeout</code> calls with equal delay, the first queued runs first.</li>
+<li><b>Node specifics:</b> <code>process.nextTick</code> has its own queue that runs before promise microtasks, and recursive <code>nextTick</code> can starve I/O. <code>setImmediate</code> runs in the check phase, after the poll phase.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying “JavaScript is asynchronous”. The language is single-threaded and synchronous; the <em>environment</em> provides asynchrony.</li>
+<li>Saying “<code>setTimeout(0)</code> runs immediately”. It queues a task after the current one and after all microtasks, and browsers clamp nested timers to at least 4 ms.</li>
+<li>Describing only “callback queue” and “microtask queue” and forgetting the rendering step, which is where most real-world jank questions go.</li>
+<li>Claiming async code runs in parallel. Callbacks never run at the same time as your other JavaScript; only workers give real parallelism (J23).</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why can a long loop freeze the UI?</dt><dd>The task runs to completion on the same thread that renders and handles input. Nothing can interrupt it.</dd>
+<dt>How do you process a million items without freezing the page?</dt><dd>Chunk the work and yield between chunks, move it to a Web Worker, or use virtualisation so you never process everything.</dd>
+<dt>What is a microtask starvation?</dt><dd>Microtasks that keep scheduling more microtasks keep the drain loop busy, so rendering and other tasks never run.</dd>
+<dt>Where do <code>MessageChannel</code> and <code>postMessage</code> fit?</dt><dd>They queue a task with no 4 ms clamp, which is why schedulers use them to yield quickly.</dd>
+<dt>How does this relate to Core Web Vitals?</dt><dd>Long tasks delay input handling and hurt INP. Keeping tasks under 50 ms is the practical target.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J19 ============ -->
+<section class="q" id="j19">
+<header class="qh">
+  <div class="qrow"><span class="qid">J19</span><span class="tag added">Added</span></div>
+  <h2>Promises</h2>
+  <p class="qtext">“What is a promise? Explain its states, chaining, and error propagation. What is the difference between <code>Promise.all</code>, <code>allSettled</code>, <code>race</code> and <code>any</code>? Why were promises introduced?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A promise is an object representing the eventual result of an asynchronous operation. It starts pending and settles exactly once, either fulfilled with a value or rejected with a reason, and a settled promise never changes. You attach handlers with <code>then</code>, <code>catch</code> and <code>finally</code>; each returns a new promise, which is what makes chaining work, and handlers always run asynchronously as microtasks. A rejection skips <code>then</code> handlers until a <code>catch</code> handles it. Promises fixed callback hell and inconsistent error handling, and gave a composable value for combinators: <code>all</code> waits for everything and fails fast, <code>allSettled</code> waits and reports each outcome, <code>race</code> takes the first to settle, and <code>any</code> takes the first to fulfil.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Left: promise state machine, pending moves once to fulfilled or rejected. Middle: a chain where a throw in a then skips to catch. Right: how all, allSettled, race and any react to three input promises.">
+  <text x="10" y="18" class="bd">States (settle once)</text>
+  <rect x="10" y="36" width="120" height="40" rx="20" class="w"/><text x="38" y="61" class="bd">pending</text>
+  <rect x="10" y="120" width="120" height="40" rx="20" class="g"/><text x="26" y="145" class="bd">fulfilled(v)</text>
+  <rect x="10" y="190" width="120" height="40" rx="20" class="x"/><text x="26" y="215" class="bd">rejected(e)</text>
+  <path class="a" d="M60 76V118"/><text x="68" y="100" class="sm">resolve</text>
+  <path class="a" d="M30 76C-6 120 -6 170 28 188"/><text x="136" y="212" class="sm">reject / throw</text>
+  <text x="10" y="258" class="sm">Immutable once settled.</text><text x="10" y="274" class="sm">then callbacks run as microtasks.</text>
+  <text x="250" y="18" class="bd">Chaining and propagation</text>
+  <rect x="250" y="30" width="155" height="30" class="b"/><text x="260" y="50" class="mono">fetch(url)</text>
+  <rect x="250" y="82" width="155" height="30" class="b"/><text x="260" y="102" class="mono">.then(parse)</text>
+  <rect x="250" y="134" width="155" height="30" class="x"/><text x="260" y="154" class="mono">.then(use) throws</text>
+  <rect x="250" y="186" width="155" height="30" class="b" style="stroke-dasharray:3 3"/><text x="260" y="206" class="mono">.then(more) skipped</text>
+  <rect x="250" y="238" width="155" height="30" class="h"/><text x="260" y="258" class="mono">.catch(handle)</text>
+  <path class="a" d="M327 60V80"/><path class="a" d="M327 112V132"/><path class="a" d="M327 164V184"/><path class="ax" d="M405 150C425 170 425 240 407 250"/><path class="a" d="M327 216V236"/>
+  <text x="250" y="288" class="sm">each then returns a NEW promise; returning a promise adopts it</text>
+  <text x="440" y="18" class="bd">Combinators on [A, B, C]</text>
+  <rect x="440" y="30" width="310" height="52" rx="4" class="g"/><text x="450" y="50" class="mono">all</text><text x="490" y="50" class="sm">fulfils with [a, b, c]; rejects at the FIRST rejection</text><text x="450" y="70" class="sm">fail fast; use when every result is required</text>
+  <rect x="440" y="90" width="310" height="52" rx="4" class="b"/><text x="450" y="110" class="mono">allSettled</text><text x="540" y="110" class="sm">fulfils with every outcome</text><text x="450" y="130" class="sm">use when partial success is acceptable</text>
+  <rect x="440" y="150" width="310" height="52" rx="4" class="w"/><text x="450" y="170" class="mono">race</text><text x="492" y="170" class="sm">settles like the FIRST to settle (value or error)</text><text x="450" y="190" class="sm">use for timeouts: race(request, timeout)</text>
+  <rect x="440" y="210" width="310" height="52" rx="4" class="h"/><text x="450" y="230" class="mono">any</text><text x="486" y="230" class="sm">fulfils with the FIRST fulfilment; if all reject,</text><text x="450" y="250" class="sm">rejects with AggregateError (use for mirrors, fallbacks)</text>
+</svg></div>
+<figcaption><b>What to remember.</b> Settle once, then returns a new promise, rejections travel down the chain, and the four combinators differ in what they wait for and when they fail.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Why promises:</b> callbacks invert control (you hand your continuation to someone else, who may call it twice, late or never), nest into pyramids, and make errors manual. A promise is a first-class value: composable, always asynchronous, settled once.</li>
+<li><b>The executor runs synchronously:</b> <code>new Promise((resolve, reject) =&gt; …)</code> runs the function immediately; only the <em>handlers</em> are async. Throwing inside the executor rejects the promise.</li>
+<li><b>Chaining rules:</b> whatever a handler returns becomes the next promise’s value; returning a promise (or any “thenable”) makes the chain wait for it; throwing becomes a rejection; returning nothing passes <code>undefined</code>. Forgetting to <code>return</code> inside a <code>then</code> is the most common chaining bug: the chain does not wait.</li>
+<li><b><code>catch</code> and recovery:</b> <code>catch(fn)</code> is <code>then(undefined, fn)</code>. If the handler returns normally, the chain continues fulfilled. <code>finally</code> runs on both outcomes, receives no argument and passes the original value or reason through (unless it throws).</li>
+<li><b><code>Promise.resolve(x)</code>:</b> wraps a plain value, or returns <code>x</code> itself if it is already a native promise. Resolving with another promise adopts its state, which costs extra microtask ticks.</li>
+<li><b>Unhandled rejections:</b> a rejection with no handler fires <code>unhandledrejection</code> on <code>window</code> (browser) or terminates the process by default in Node 15 and later. Always end a chain with <code>catch</code> or handle it in <code>await</code> with <code>try/catch</code>.</li>
+<li><b>Combinator choice:</b> <code>all</code> for “need everything”, <code>allSettled</code> for dashboards and batch jobs, <code>race</code> for timeouts, <code>any</code> for redundancy. None of them cancel the losers; the other requests keep running unless you use an <code>AbortController</code> (J22).</li>
+<li><b>Newer helpers:</b> <code>Promise.withResolvers()</code> (ES2024) returns <code>{ promise, resolve, reject }</code> <span class="verify">verify</span>; <code>Promise.try()</code> (ES2025) starts a chain from a function that may throw or return synchronously <span class="verify">verify</span>.</li>
+<li><b>Promises are eager and not cancellable:</b> creating one starts the work. Cancellation is a separate concern, handled with <code>AbortSignal</code>.</li>
+<li><b>Promisifying callbacks:</b> wrap in <code>new Promise</code> and call <code>resolve</code> or <code>reject</code> in the callback; in Node use <code>util.promisify</code>.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Nesting <code>then</code> inside <code>then</code> (“promise hell”) instead of returning and flattening.</li>
+<li>Forgetting <code>return</code>, so the next <code>then</code> runs before the inner work is done.</li>
+<li>Putting <code>catch</code> in the middle of a chain and then continuing as if the step succeeded (it did, as far as later handlers can tell).</li>
+<li>Calling <code>Promise.all</code> on a list where one failure should not discard the other results.</li>
+<li>Believing <code>race</code> cancels the slower promises. It does not.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is a thenable?</dt><dd>Any object with a <code>then</code> method. Promise resolution assimilates it, which is how libraries interoperate.</dd>
+<dt>How would you add a timeout to a request?</dt><dd><code>Promise.race</code> against a timer, or better <code>AbortSignal.timeout(ms)</code> passed to <code>fetch</code>, which actually cancels the request.</dd>
+<dt>How would you limit concurrency to five requests at a time?</dt><dd>Keep a pool of five workers that each pull the next item from a shared queue, or use a library such as p-limit. Explain the idea; do not rebuild it from memory.</dd>
+<dt>Promise versus Observable?</dt><dd>A promise is one value, eager and not cancellable. An observable is a stream of values over time, lazy and cancellable by unsubscribing (RxJS, common in Angular).</dd>
+</dl></div>
+</section>
+
+<!-- ============ J20 ============ -->
+<section class="q" id="j20">
+<header class="qh">
+  <div class="qrow"><span class="qid">J20</span><span class="tag added">Added</span></div>
+  <h2>async / await</h2>
+  <p class="qtext">“How does async/await work under the hood? How do you run requests in parallel? How do you handle errors? What are the common pitfalls, for example in loops?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“<code>async/await</code> is syntax over promises. An <code>async</code> function always returns a promise. <code>await</code> pauses that function, not the thread, until the awaited promise settles, and the rest of the function resumes as a microtask. The caller gets control back at the first <code>await</code>. It makes asynchronous code read like synchronous code and lets me use <code>try/catch</code> for rejections. The main pitfall is accidental serialisation: awaiting independent requests one after another is slow, so I start them together and await <code>Promise.all</code>. Others are using <code>await</code> inside <code>forEach</code>, which does not wait, and forgetting that an unawaited promise can fail silently.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="Timeline comparing sequential awaits, where request B starts after A finishes and total time is A plus B, with parallel awaits using Promise.all, where both start together and total time is the longer of the two.">
+  <text x="10" y="18" class="bd">Sequential awaits: total = A + B</text>
+  <line x1="10" y1="132" x2="740" y2="132" class="d"/>
+  <rect x="10" y="30" width="250" height="26" class="h"/><text x="20" y="48" class="sm">await getUser()  (A: 300 ms)</text>
+  <rect x="260" y="62" width="320" height="26" class="h"/><text x="270" y="80" class="sm">await getOrders()  (B: 400 ms)  starts only after A</text>
+  <text x="590" y="80" class="bd">≈ 700 ms</text>
+  <text x="10" y="150" class="bd">Parallel: start both, then await together: total = max(A, B)</text>
+  <rect x="10" y="164" width="250" height="26" class="g"/><text x="20" y="182" class="sm">getUser()  (A: 300 ms)</text>
+  <rect x="10" y="196" width="320" height="26" class="g"/><text x="20" y="214" class="sm">getOrders()  (B: 400 ms)  starts at the same time</text>
+  <text x="590" y="214" class="bd">≈ 400 ms</text>
+  <text x="10" y="250" class="mono">const [u, o] = await Promise.all([getUser(), getOrders()]);</text>
+</svg></div>
+<figcaption><b>The most common performance bug in async code.</b> Independent calls should start together. Dependent calls (B needs A’s result) must stay sequential.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Mechanism:</b> an <code>async</code> function is a state machine, similar to a generator driven by promises. Each <code>await x</code> wraps <code>x</code> with <code>Promise.resolve</code>, subscribes a continuation and returns. Modern V8 needs only one microtask tick to resume after awaiting a native promise.</li>
+<li><b>Return values:</b> returning a value resolves the promise with it; throwing rejects it. <code>return await p</code> versus <code>return p</code>: inside <code>try/catch</code> you need the <code>await</code> for the catch to see the rejection; elsewhere it is redundant.</li>
+<li><b>Error handling:</b> wrap in <code>try/catch/finally</code>, or call <code>.catch</code> on the returned promise. Wrap only what can fail and keep the <code>try</code> block small so unrelated bugs are not swallowed. Handle errors at a boundary that can do something useful (retry, show message, report).</li>
+<li><b>Loops:</b> <code>for…of</code> with <code>await</code> runs items one at a time (correct when order matters or you must limit load). <code>array.forEach(async …)</code> fires everything and does <em>not</em> wait; <code>map(async …)</code> returns promises you can pass to <code>Promise.all</code>. For controlled concurrency use a pool or a library.</li>
+<li><b>Fire and forget:</b> calling an async function without <code>await</code> or <code>catch</code> loses its errors (they become unhandled rejections). Lint rule: no-floating-promises.</li>
+<li><b><code>for await…of</code>:</b> consumes async iterables, such as streams, paginated APIs and async generators. Each iteration awaits the next value.</li>
+<li><b>Top-level await:</b> allowed in ES modules (ES2022). It makes the module’s evaluation asynchronous, so importers wait for it; it can delay startup, so avoid it on the critical path.</li>
+<li><b>Async in non-obvious places:</b> constructors cannot be async (use a static factory), <code>useEffect</code> callbacks must not be async (declare an inner async function), array callbacks like <code>sort</code> cannot await.</li>
+<li><b>Race conditions:</b> a slower earlier request can overwrite a newer result (typeahead, route changes). Fix with an abort signal, a request id or a “latest only” guard, which is what TanStack Query and <code>useEffect</code> cleanup patterns do.</li>
+<li><b>Retry and backoff:</b> wrap an operation, retry only idempotent calls, use exponential backoff with jitter, cap attempts, and respect <code>AbortSignal</code>.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“await blocks the thread.” It suspends only the function; the event loop keeps running.</li>
+<li>Awaiting independent calls in sequence, then claiming “async is slow”.</li>
+<li>Using <code>forEach</code> with <code>await</code> and assuming the code after it runs afterwards.</li>
+<li>A <code>try/catch</code> around a call that is not awaited: the rejection escapes it.</li>
+<li>Making a function <code>async</code> just so it returns a promise, hiding that it is synchronous and adding an extra tick.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Is async/await faster than promises?</dt><dd>No. It is syntax; performance is about the same. The benefit is readability and error handling.</dd>
+<dt>How do you run tasks in parallel but limit concurrency?</dt><dd>A fixed set of worker loops that each take the next job from a shared iterator, or a library. <code>Promise.all</code> alone starts everything at once.</dd>
+<dt>What happens to an error in an un-awaited promise?</dt><dd>It becomes an unhandled rejection: an event in the browser, a crash by default in Node.</dd>
+<dt>Async generators?</dt><dd><code>async function*</code> yields values asynchronously; consume with <code>for await</code>. Good for pagination and streaming.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J21 ============ -->
+<section class="q" id="j21">
+<header class="qh">
+  <div class="qrow"><span class="qid">J21</span><span class="tag added">Added</span></div>
+  <h2>Error handling</h2>
+  <p class="qtext">“How do you handle errors in JavaScript? Synchronous versus asynchronous errors, custom errors, global handlers, and how would you design error handling for a production frontend?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Errors are objects, normally instances of <code>Error</code>, thrown with <code>throw</code> and caught with <code>try/catch/finally</code>. Synchronous throws use <code>try/catch</code>; promise rejections use <code>catch</code> or <code>try/catch</code> around <code>await</code>. I create custom error classes that extend <code>Error</code>, set a name and a code, and use the <code>cause</code> option to keep the original error. For anything that escapes, there are global handlers: <code>window.onerror</code> and <code>unhandledrejection</code> in the browser. In a production app I add layers: validation near the source, typed errors, a boundary that shows a fallback, such as a React error boundary, and reporting to a service like Sentry with source maps. I do not swallow errors silently.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 290" role="img" aria-label="Where different kinds of errors are caught: a synchronous throw by try/catch, a promise rejection by catch or await in try/catch, an unhandled error by window.onerror, an unhandled rejection by the unhandledrejection event, and a React render error by an error boundary, all feeding a reporting service.">
+  <text x="10" y="18" class="bd">Error sources</text>
+  <rect x="10" y="30" width="190" height="40" rx="5" class="b"/><text x="20" y="48" class="bd">Synchronous throw</text><text x="20" y="63" class="sm">throw new Error(…)</text>
+  <rect x="10" y="82" width="190" height="40" rx="5" class="b"/><text x="20" y="100" class="bd">Promise rejection</text><text x="20" y="115" class="sm">reject(), throw in async</text>
+  <rect x="10" y="134" width="190" height="40" rx="5" class="b"/><text x="20" y="152" class="bd">Event handler / timer</text><text x="20" y="167" class="sm">throw inside callback</text>
+  <rect x="10" y="186" width="190" height="40" rx="5" class="b"/><text x="20" y="204" class="bd">Render error (React)</text><text x="20" y="219" class="sm">throw while rendering</text>
+  <rect x="10" y="238" width="190" height="40" rx="5" class="b"/><text x="20" y="256" class="bd">HTTP failure</text><text x="20" y="271" class="sm">fetch resolves on 404/500!</text>
+  <text x="260" y="18" class="bd">Where it can be caught</text>
+  <rect x="260" y="30" width="230" height="40" rx="5" class="h"/><text x="270" y="48" class="mono">try { } catch (e) { }</text><text x="270" y="63" class="sm">nearest enclosing try on the stack</text>
+  <rect x="260" y="82" width="230" height="40" rx="5" class="h"/><text x="270" y="100" class="mono">.catch() / try { await }</text><text x="270" y="115" class="sm">a try does not catch un-awaited ones</text>
+  <rect x="260" y="134" width="230" height="40" rx="5" class="w"/><text x="270" y="152" class="mono">window.onerror</text><text x="270" y="167" class="sm">try/catch around the schedule is useless</text>
+  <rect x="260" y="186" width="230" height="40" rx="5" class="h"/><text x="270" y="204" class="bd">Error boundary</text><text x="270" y="219" class="sm">not for events, async or SSR errors</text>
+  <rect x="260" y="238" width="230" height="40" rx="5" class="g"/><text x="270" y="256" class="mono">if (!res.ok) throw …</text><text x="270" y="271" class="sm">check status yourself</text>
+  <path class="a" d="M200 50H258"/><path class="a" d="M200 102H258"/><path class="a" d="M200 154H258"/><path class="a" d="M200 206H258"/><path class="a" d="M200 258H258"/>
+  <rect x="540" y="86" width="210" height="116" rx="5" class="g"/><text x="550" y="108" class="bd">Last line of defence</text><text x="550" y="128" class="mono" style="font-size:11px">onerror</text><text x="550" y="144" class="mono" style="font-size:11px">unhandledrejection</text><text x="550" y="162" class="sm">→ report (Sentry, logs)</text><text x="550" y="178" class="sm">→ with release, user id,</text><text x="550" y="193" class="sm">breadcrumbs, source map</text>
+  <path class="a" d="M490 154H538"/>
+</svg></div>
+<figcaption><b>Principle.</b> Catch where you can recover or add context, let the rest bubble to a boundary, and make sure nothing disappears without being reported.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Built-in types:</b> <code>Error</code>, <code>TypeError</code> (wrong type, calling undefined), <code>ReferenceError</code> (undeclared name or TDZ), <code>SyntaxError</code>, <code>RangeError</code> (out-of-range value, stack overflow), <code>URIError</code>, <code>EvalError</code>, <code>AggregateError</code> (from <code>Promise.any</code>).</li>
+<li><b>try / catch / finally:</b> <code>finally</code> always runs, even after <code>return</code> or <code>throw</code>, and a <code>return</code> in <code>finally</code> overrides the earlier one. The catch binding is optional (<code>catch { }</code>).</li>
+<li><b>Throw <code>Error</code> objects,</b> not strings: only <code>Error</code> carries a stack trace. Anything can be thrown, so in TypeScript <code>catch (e)</code> is <code>unknown</code> and you must narrow it.</li>
+<li><b>Custom errors:</b> <code>class ApiError extends Error { constructor(msg, { status, cause }) { super(msg, { cause }); this.name = 'ApiError'; this.status = status; } }</code>. They let callers branch with <code>instanceof</code> or a <code>code</code> field. Preserve the original with <code>cause</code> (ES2022), and avoid relying on <code>message</code> strings.</li>
+<li><b><code>fetch</code> does not reject on HTTP errors:</b> it rejects only on network failure. Check <code>response.ok</code> and throw. Parsing JSON can also fail.</li>
+<li><b>Global handlers:</b> <code>window.addEventListener('error', …)</code> for uncaught sync errors (and resource load failures in capture phase); <code>'unhandledrejection'</code> for promise rejections. Node: <code>process.on('uncaughtException')</code> and <code>'unhandledRejection'</code>; treat them as “log and exit”, not “continue”.</li>
+<li><b>React:</b> error boundaries (class components, or <code>react-error-boundary</code>) catch errors in rendering, lifecycle and constructors of descendants. They do not catch event handlers, async code, SSR or errors in the boundary itself. In Next.js use <code>error.js</code> and <code>global-error.js</code>.</li>
+<li><b>Operational errors versus programmer errors:</b> expected failures (network, validation, 404) are handled and shown to the user; bugs (<code>TypeError</code> from undefined) should be reported and fixed. Do not catch bugs just to hide them.</li>
+<li><b>Result / either style:</b> return <code>{ ok, value | error }</code> for expected failures instead of throwing; common in TypeScript for validation and parsing.</li>
+<li><b>Production practice:</b> user-friendly message plus a retry; no stack traces shown to users; structured logging; release tagging and source maps for readable stacks; alert on error rate; sanitise personal data before reporting.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Empty <code>catch</code> blocks. If you must ignore an error, say why in a comment.</li>
+<li>Catching an error, logging it and returning <code>undefined</code>, so the caller continues with bad data.</li>
+<li>Rethrowing a new error without <code>cause</code>, which loses the original stack.</li>
+<li>Expecting <code>try/catch</code> to catch errors inside <code>setTimeout</code> or un-awaited promises.</li>
+<li>Assuming an error boundary covers everything.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why do cross-origin script errors show as “Script error.”?</dt><dd>The browser hides details for scripts from another origin unless they are served with CORS and loaded with <code>crossorigin</code>.</dd>
+<dt>How do you make minified stack traces readable?</dt><dd>Upload source maps to the error service at build time, keep them off the public site or restrict access, and tag each release.</dd>
+<dt>Retry or fail?</dt><dd>Retry transient, idempotent failures with backoff and a cap; fail fast on validation or auth errors.</dd>
+<dt>How do you test error paths?</dt><dd>Assert on error types and codes, mock failing dependencies, and test that the boundary renders a fallback.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J22 ============ -->
+<section class="q" id="j22">
+<header class="qh">
+  <div class="qrow"><span class="qid">J22</span><span class="tag added">Added</span></div>
+  <h2>Timers, scheduling, debounce, throttle and cancellation</h2>
+  <p class="qtext">“Explain <code>setTimeout</code>, <code>setInterval</code> and <code>requestAnimationFrame</code>. What is the difference between debounce and throttle, and when do you use each? How do you cancel an in-flight request?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“<code>setTimeout</code> schedules a task after at least the delay, not exactly after it, because the loop must be free. <code>setInterval</code> repeats and can drift or stack up if the callback is slow, so I prefer a self-rescheduling timeout for work with variable length. <code>requestAnimationFrame</code> runs before the next paint and is the right tool for visual updates. Debounce waits until events stop for a given time and then fires once, which suits search-as-you-type and resize-end. Throttle lets a function run at most once per interval, which suits scroll, mousemove and drag. To cancel a request I use an <code>AbortController</code> and pass its signal to <code>fetch</code>; aborting rejects with an <code>AbortError</code>, which I ignore.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 290" role="img" aria-label="A row of burst events on a timeline, then below it a debounce row firing once after the burst ends, and a throttle row firing at regular intervals during the burst.">
+  <text x="10" y="18" class="bd">Raw events (a burst of keystrokes or scroll events)</text>
+  <line x1="10" y1="52" x2="750" y2="52" class="d"/>
+  <g class="fillm"><rect x="40" y="36" width="3" height="32"/><rect x="70" y="36" width="3" height="32"/><rect x="95" y="36" width="3" height="32"/><rect x="130" y="36" width="3" height="32"/><rect x="160" y="36" width="3" height="32"/><rect x="190" y="36" width="3" height="32"/><rect x="215" y="36" width="3" height="32"/><rect x="250" y="36" width="3" height="32"/><rect x="280" y="36" width="3" height="32"/><rect x="310" y="36" width="3" height="32"/><rect x="520" y="36" width="3" height="32"/><rect x="545" y="36" width="3" height="32"/></g>
+  <text x="10" y="100" class="bd">Debounce (wait 200 ms of quiet, then fire once)</text>
+  <line x1="10" y1="130" x2="750" y2="130" class="d"/>
+  <rect x="313" y="116" width="200" height="28" class="w" style="stroke-dasharray:none;opacity:.6"/><text x="323" y="134" class="sm">quiet period</text>
+  <circle cx="513" cy="130" r="8" class="fillh"/><text x="500" y="162" class="sm">fires</text>
+  <rect x="548" y="116" width="200" height="28" class="w" style="stroke-dasharray:none;opacity:.6"/><circle cx="748" cy="130" r="8" class="fillh"/>
+  <text x="10" y="190" class="bd">Throttle (at most once per 100 ms)</text>
+  <line x1="10" y1="220" x2="750" y2="220" class="d"/>
+  <g class="fillh"><circle cx="40" cy="220" r="8"/><circle cx="140" cy="220" r="8"/><circle cx="240" cy="220" r="8"/><circle cx="340" cy="220" r="8"/><circle cx="520" cy="220" r="8"/></g>
+  <text x="10" y="258" class="sm">Debounce: “only the last one matters” (search box, autosave after typing, window resize end).</text>
+  <text x="10" y="276" class="sm">Throttle: “keep up, but not too often” (scroll position, drag, mousemove, rate-limited button).</text>
+</svg></div>
+<figcaption><b>Same input, different policy.</b> Debounce collapses a burst into one call at the end (or the start, if “leading”). Throttle samples a burst at a steady rate.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Timer guarantees:</b> the delay is a minimum. A busy main thread, nested timers (clamped to at least 4 ms after five levels) and background tabs (throttled to about once per second, more aggressively when the tab is hidden for long) all delay callbacks. Never use timers for accurate timekeeping; compare <code>Date.now()</code> or <code>performance.now()</code>.</li>
+<li><b><code>setInterval</code> issues:</b> if the callback takes longer than the interval, runs queue up back to back and drift accumulates. A recursive <code>setTimeout</code> that schedules the next run after finishing keeps a stable gap. Always store the id and clear it (<code>clearInterval</code>) on cleanup, such as in a React effect.</li>
+<li><b><code>requestAnimationFrame</code>:</b> runs once per frame, paused in background tabs, so it saves battery and avoids useless work. Use it for animations and for batching DOM writes. Pass the timestamp it gives you to compute progress instead of counting frames. It is not for non-visual work.</li>
+<li><b><code>requestIdleCallback</code>:</b> runs low-priority work when the main thread is idle, with an optional timeout. Not available in Safari <span class="verify">verify</span>; polyfill with a timeout. <code>scheduler.postTask()</code> and <code>scheduler.yield()</code> give prioritised scheduling in Chromium <span class="verify">verify</span>.</li>
+<li><b>Debounce implementation idea (explain, do not code):</b> keep a timer id in a closure; on each call clear it and set a new one; when it finally fires, call the function with the latest arguments. Options: leading versus trailing edge, <code>cancel()</code> and <code>flush()</code>.</li>
+<li><b>Throttle implementation idea:</b> remember the last run time or a “waiting” flag; ignore calls until the interval passes; optionally run once more at the end (trailing).</li>
+<li><b>In React:</b> create the debounced function once (<code>useMemo</code>/<code>useRef</code>) or debounce the <em>value</em> with a hook; a debounced function recreated on every render never debounces. Clean up on unmount. <code>useDeferredValue</code> and transitions are alternatives for rendering cost.</li>
+<li><b>Prefer CSS or passive listeners where possible:</b> <code>{ passive: true }</code> scroll listeners, <code>IntersectionObserver</code> instead of scroll polling, CSS <code>scroll-snap</code> and <code>position: sticky</code>.</li>
+<li><b>Cancellation:</b> <code>const ctrl = new AbortController(); fetch(url, { signal: ctrl.signal }); ctrl.abort();</code> The promise rejects with <code>DOMException</code> named <code>AbortError</code>. <code>AbortSignal.timeout(ms)</code> aborts after a delay; <code>AbortSignal.any([a, b])</code> combines signals <span class="verify">verify</span>. Signals also work with <code>addEventListener</code> (<code>{ signal }</code> removes the listener on abort) and in many Node APIs.</li>
+<li><b>Aborting does not undo server work:</b> the request may already have been processed. Mutations need idempotency keys.</li>
+<li><b>Promises themselves cannot be cancelled;</b> design your own APIs to accept an <code>AbortSignal</code> and check <code>signal.aborted</code> or listen to its <code>abort</code> event.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Mixing up debounce and throttle, or saying “throttle ignores the last event” without mentioning trailing calls.</li>
+<li>Debouncing a handler inside a component body so a new debounced function is created each render.</li>
+<li>Forgetting to clear timers and abort requests on unmount, causing updates on unmounted components and leaks.</li>
+<li>Treating an <code>AbortError</code> as a real failure and showing an error toast.</li>
+<li>Relying on <code>setInterval</code> for a clock or countdown instead of computing from real time.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you avoid showing results from an older request?</dt><dd>Abort the previous request when a new one starts, or tag requests with an id and ignore stale responses. Libraries such as TanStack Query handle this.</dd>
+<dt><code>requestAnimationFrame</code> versus <code>setTimeout(…, 16)</code>?</dt><dd>rAF is synchronised with the display, paused when hidden and passes a precise timestamp; the timer is not synchronised and drifts.</dd>
+<dt>When would you choose <code>requestIdleCallback</code>?</dt><dd>Analytics beacons, prefetching, non-urgent caching: work that must not compete with input and rendering.</dd>
+<dt>Debounce delay choice?</dt><dd>Around 200 to 300 ms for typing; shorter for resize; measure with real users. Always show immediate feedback so the UI never feels dead.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J23 ============ -->
+<section class="q" id="j23">
+<header class="qh">
+  <div class="qrow"><span class="qid">J23</span><span class="tag added">Added</span></div>
+  <h2>Workers and concurrency</h2>
+  <p class="qtext">“JavaScript is single-threaded. How do you do CPU-heavy work without blocking the UI? What are Web Workers, Service Workers and <code>SharedArrayBuffer</code>? What are the trade-offs?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Each JavaScript thread has its own event loop, heap and stack, so the main thread can be blocked by heavy computation. A Web Worker runs a script on a separate thread with no access to the DOM, and communicates by <code>postMessage</code>, which copies data with the structured clone algorithm, or transfers ownership of buffers without copying. <code>SharedArrayBuffer</code> with <code>Atomics</code> lets threads share memory, but needs cross-origin isolation headers. A Service Worker is a different thing: an event-driven proxy between the page and the network, used for offline support, caching and push. I use workers for parsing, image processing, crypto and large data transforms, and avoid them for small tasks, because startup and message copying have a cost.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Main thread with the DOM, a dedicated worker thread connected by postMessage, a shared memory buffer between them, and a service worker sitting between the page and the network cache.">
+  <rect x="10" y="30" width="250" height="130" rx="6" class="h"/><text x="22" y="52" class="bd">Main thread</text><text x="22" y="72" class="sm">DOM, layout, paint, input, your UI code</text><text x="22" y="90" class="sm">own event loop and heap</text><text x="22" y="112" class="sm">must stay free: tasks under 50 ms</text>
+  <rect x="500" y="30" width="250" height="130" rx="6" class="g"/><text x="512" y="52" class="bd">Dedicated Worker</text><text x="512" y="72" class="sm">no DOM, no window; has fetch, IndexedDB,</text><text x="512" y="88" class="sm">timers, crypto, WebAssembly</text><text x="512" y="110" class="sm">own event loop and heap</text><text x="512" y="128" class="sm">true parallelism</text>
+  <path class="a" d="M260 70H498"/><text x="290" y="64" class="sm">postMessage(data): copied</text>
+  <path class="a" d="M498 112H262"/><text x="340" y="130" class="sm">postMessage(result)</text>
+  <text x="270" y="150" class="sm">transfer list: moves the buffer, no copy</text>
+  <rect x="270" y="168" width="220" height="34" rx="5" class="w"/><text x="280" y="190" class="bd">SharedArrayBuffer + Atomics</text>
+  <path class="d" d="M135 160V185H268"/><path class="d" d="M625 160V185H492"/>
+  <text x="10" y="226" class="sm">Shared memory needs cross-origin isolation (COOP and COEP headers) and careful synchronisation.</text>
+  <rect x="10" y="244" width="340" height="46" rx="5" class="b"/><text x="20" y="262" class="bd">Service Worker (page ⇄ SW ⇄ network)</text><text x="20" y="278" class="sm">cache strategies, offline, background sync, push</text>
+  <rect x="380" y="244" width="370" height="46" rx="5" class="b"/><text x="390" y="262" class="bd">Other workers</text><text x="390" y="278" class="sm">Shared Worker (tabs), Worklets, Node worker_threads</text>
+</svg></div>
+<figcaption><b>Key point.</b> Workers give parallelism without shared mutable state by default: threads talk by messages. Sharing memory is opt-in and hard.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Why workers, not <code>async</code>:</b> <code>async</code> only helps with <em>waiting</em> (I/O). CPU-bound work still occupies the thread. A worker moves that computation off the main thread.</li>
+<li><b>Communication:</b> messages are copied with structured clone, which supports most data types (objects, arrays, Map, Set, Date, typed arrays) but not functions or DOM nodes. Large payloads are expensive; use transferable objects (<code>ArrayBuffer</code>, <code>MessagePort</code>, <code>ImageBitmap</code>, <code>OffscreenCanvas</code>) to move them without copying.</li>
+<li><b>Ergonomics:</b> raw <code>postMessage</code> is event-based. Libraries such as Comlink wrap a worker as an async RPC object. Module workers (<code>new Worker(url, { type: 'module' })</code>) support <code>import</code>. Bundlers (Vite, webpack 5) handle worker URLs.</li>
+<li><b>Costs:</b> thread startup (tens of milliseconds), memory per worker, message copying, and debugging complexity. Reuse a pool of workers; do not spawn one per task. Limit to <code>navigator.hardwareConcurrency</code> or fewer.</li>
+<li><b>Good use cases:</b> parsing big JSON or CSV, search indexing, image and video processing, compression and crypto, syntax highlighting or Markdown rendering, running WebAssembly, offscreen canvas rendering, heavy diffing.</li>
+<li><b><code>SharedArrayBuffer</code> and <code>Atomics</code>:</b> shared memory plus atomic operations (<code>add</code>, <code>compareExchange</code>, <code>wait</code>, <code>notify</code>) to avoid data races. It needs a cross-origin isolated page (<code>Cross-Origin-Opener-Policy: same-origin</code> and <code>Cross-Origin-Embedder-Policy: require-corp</code>), a requirement introduced after Spectre. Use only when copying is the bottleneck.</li>
+<li><b>Service Worker:</b> runs in its own thread with a lifecycle (install, activate, fetch), intercepts network requests for the pages it controls, needs HTTPS, and is terminated when idle, so it must not keep state in memory. Caching strategies: cache-first, network-first, stale-while-revalidate. Details in the PWA guide.</li>
+<li><b>Alternatives to a worker:</b> chunk and yield (J18), move work to the server, virtualise lists, use <code>requestIdleCallback</code>, use CSS or the GPU, or avoid doing the work at all (memoise, paginate).</li>
+<li><b>Node.js:</b> <code>worker_threads</code> for CPU work, <code>cluster</code> or multiple processes for scaling across cores, and the libuv thread pool for file system and DNS. I/O-heavy servers need no workers.</li>
+<li><b>Concurrency versus parallelism:</b> concurrency is interleaving tasks (event loop); parallelism is running at the same instant (workers, processes).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“Web Workers can update the DOM.” They cannot; the result must go back to the main thread.</li>
+<li>Confusing Service Workers with Web Workers; their purposes and lifecycles differ.</li>
+<li>Sending huge objects back and forth on every keystroke and making things slower than before.</li>
+<li>Using workers for I/O-bound work, where <code>fetch</code> is already non-blocking.</li>
+<li>Reaching for <code>SharedArrayBuffer</code> first. Message passing is safer; shared memory brings race conditions.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you terminate a worker?</dt><dd><code>worker.terminate()</code> from outside, or <code>self.close()</code> from inside. Always do it on component unmount.</dd>
+<dt>Can a worker start another worker?</dt><dd>Yes, in modern browsers (nested workers), but a pool managed from one place is simpler.</dd>
+<dt>What is <code>OffscreenCanvas</code> for?</dt><dd>Rendering canvas or WebGL in a worker so heavy drawing does not block the UI.</dd>
+<dt>How does React’s concurrent rendering relate?</dt><dd>It is still single-threaded: it slices rendering work and yields to the loop so input stays responsive. It is not workers.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Memory and the engine</h1>
+
+<!-- ============ J24 ============ -->
+<section class="q" id="j24">
+<header class="qh">
+  <div class="qrow"><span class="qid">J24</span><span class="tag added">Added</span></div>
+  <h2>Memory management and garbage collection</h2>
+  <p class="qtext">“How does memory management work in JavaScript? How does garbage collection decide what to free? What is the difference between the stack and the heap, and what are <code>WeakRef</code> and <code>FinalizationRegistry</code>?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“JavaScript manages memory automatically. Primitives and call frames live on the stack, and objects, arrays and closures live on the heap. The garbage collector frees heap objects that are no longer <em>reachable</em> from the roots: the global object, the current stack and active closures. Modern engines such as V8 use mark-and-sweep, not reference counting, so cycles are collected. V8 is generational: new objects go into a small young generation that is collected often and cheaply, and survivors are promoted to the old generation, collected less often with incremental, concurrent and parallel marking to keep pauses short. I cannot force a collection, so the practical job is to avoid keeping references to things I no longer need.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="Left: a reachability graph from roots to live objects, with an unreachable cycle that is collected. Right: the generational heap, where new objects are allocated in the young generation, a scavenge copies survivors, and objects that survive twice are promoted to the old generation which is collected by mark-sweep-compact.">
+  <text x="10" y="18" class="bd">Reachability, not reference counting</text>
+  <rect x="10" y="34" width="86" height="34" rx="17" class="h"/><text x="26" y="56" class="bd">roots</text>
+  <text x="10" y="150" class="sm">roots: global object, stack,</text><text x="10" y="164" class="sm">active closures and timers</text>
+  <rect x="190" y="30" width="60" height="30" class="g"/><text x="203" y="50" class="mono">A</text>
+  <rect x="190" y="100" width="60" height="30" class="g"/><text x="203" y="120" class="mono">B</text>
+  <rect x="290" y="64" width="60" height="30" class="g"/><text x="303" y="84" class="mono">C</text>
+  <path class="a" d="M96 46H188"/><path class="a" d="M60 68C70 100 120 114 188 114"/><path class="a" d="M250 48L288 74"/><path class="a" d="M250 114L290 90"/>
+  <rect x="190" y="190" width="60" height="30" class="x"/><text x="203" y="210" class="mono">D</text>
+  <rect x="300" y="190" width="60" height="30" class="x"/><text x="313" y="210" class="mono">E</text>
+  <path class="ax" d="M250 200H298"/><path class="ax" d="M300 212H252"/>
+  <text x="10" y="196" class="sm">D and E point at each other</text><text x="10" y="212" class="sm">but nothing reaches them:</text><text x="10" y="228" class="sm">they are garbage.</text>
+  <text x="10" y="262" class="sm">Mark: walk from roots, flag everything reachable.</text><text x="10" y="278" class="sm">Sweep: free the unflagged. (Compact: defragment.)</text><text x="10" y="294" class="sm">Reference counting would leak D and E.</text>
+  <text x="400" y="18" class="bd">V8 generational heap</text>
+  <rect x="400" y="30" width="350" height="104" rx="6" class="w"/><text x="412" y="50" class="bd">Young generation (about 1 to 16 MB) <tspan class="sm">· scavenger</tspan></text>
+  <rect x="412" y="62" width="150" height="56" rx="4" class="b"/><text x="422" y="82" class="sm">from-space: new objects</text><text x="422" y="100" class="sm">most die young</text>
+  <rect x="580" y="62" width="160" height="56" rx="4" class="b"/><text x="590" y="82" class="sm">to-space: survivors are</text><text x="590" y="100" class="sm">copied here (fast)</text>
+  <path class="a" d="M562 90H578"/>
+  <rect x="400" y="170" width="350" height="104" rx="6" class="h"/><text x="412" y="190" class="bd">Old generation (hundreds of MB) <tspan class="sm">· major GC</tspan></text>
+  <text x="412" y="212" class="sm">long-lived objects: caches, app state, DOM wrappers</text><text x="412" y="230" class="sm">mark-sweep-compact, run incrementally and concurrently</text><text x="412" y="248" class="sm">on helper threads; short pauses on the main thread</text>
+  <path class="a" d="M660 120V168"/><text x="650" y="146" class="sm" text-anchor="end">survives 2 scavenges:</text><text x="650" y="160" class="sm" text-anchor="end">promoted</text>
+  <text x="400" y="298" class="sm">Cost model: allocation is cheap, retained memory is the problem.</text>
+</svg></div>
+<figcaption><b>Why it works.</b> Most objects die young, so a cheap, frequent collection of a small area reclaims most memory; only the long-lived survivors need the heavier algorithm.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Lifecycle:</b> allocate (when you create a value), use, release (when it becomes unreachable). You never call <code>free</code>; you only drop references.</li>
+<li><b>Stack versus heap:</b> the stack holds call frames, local primitives and references, and is freed when functions return. The heap holds objects, arrays, strings of non-trivial size and closures, and is collected by the GC. (Engines optimise this; treat it as a mental model.)</li>
+<li><b>Reachability:</b> an object is alive if a chain of references connects it to a root. Roots include globals, the stack, active timers, registered event listeners and pending promise reactions.</li>
+<li><b>Old approach: reference counting</b> frees an object when its count hits zero but cannot free cycles; some old browsers leaked DOM cycles this way. Modern engines use tracing.</li>
+<li><b>V8 (Orinoco project) techniques:</b> generational collection, <em>parallel</em> (several threads at once), <em>incremental</em> (small slices between tasks) and <em>concurrent</em> (on a background thread while JavaScript runs) marking, write barriers to track old-to-new references, idle-time GC, and compaction. Pauses are mostly well under a few milliseconds but a large heap can still cause jank.</li>
+<li><b>What triggers GC:</b> allocation pressure, not a timer. Creating many short-lived objects in a hot loop (animations, mapping huge arrays on scroll) triggers frequent scavenges and can drop frames.</li>
+<li><b>Reduce garbage:</b> reuse objects and arrays in hot paths (object pools), avoid allocating in <code>requestAnimationFrame</code> loops, prefer typed arrays for numeric data, stream or paginate large data instead of loading all of it.</li>
+<li><b>Off-heap memory:</b> <code>ArrayBuffer</code> contents, WebAssembly memory, GPU textures and canvases are not in the JS heap; they have their own limits and release rules.</li>
+<li><b><code>WeakMap</code> / <code>WeakSet</code>:</b> hold keys weakly, so an entry does not keep the key alive. Good for per-object metadata and private data (J11).</li>
+<li><b><code>WeakRef</code> and <code>FinalizationRegistry</code>:</b> a <code>WeakRef</code> lets you point to an object without keeping it alive (<code>ref.deref()</code> returns it or <code>undefined</code>). A registry runs a callback after an object is collected. Behaviour is non-deterministic and may never run, so use them only for caches and cleanup of external resources, never for program logic.</li>
+<li><b>Manual control:</b> <code>global.gc()</code> exists only with <code>--expose-gc</code> in Node, for testing. In browsers you cannot call it in production code.</li>
+<li><b>Limits:</b> V8’s default old-space limit depends on the version and system memory; in Node set it with <code>--max-old-space-size</code>. Mobile browsers kill tabs at much lower memory, so web apps must be careful on low-end devices.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“Setting a variable to <code>null</code> frees memory.” It only drops that reference; the object is freed when <em>nothing</em> reaches it, at the collector’s discretion.</li>
+<li>“JavaScript uses reference counting.” Modern engines trace reachability.</li>
+<li>“Garbage collection is a pause that freezes everything for a long time.” Modern V8 mostly does the work incrementally and concurrently.</li>
+<li>Using <code>FinalizationRegistry</code> for essential cleanup such as closing connections.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Does a closure cause a leak?</dt><dd>Not by itself. A closure keeps its captured variables alive as long as the closure itself is reachable, so a long-lived closure over large data retains that data (J25).</dd>
+<dt>Why are strings and arrays special for memory?</dt><dd>String concatenation can build rope structures, and sparse or holey arrays use different representations. Large arrays of numbers are far smaller as typed arrays.</dd>
+<dt>How do you see memory use?</dt><dd>DevTools Performance monitor and Memory panel (heap snapshots, allocation timeline); in Node <code>process.memoryUsage()</code> and <code>--inspect</code>.</dd>
+<dt>Why might memory not drop after you release data?</dt><dd>The collector has not run yet, something still references it, or the engine keeps freed pages for reuse.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J25 ============ -->
+<section class="q" id="j25">
+<header class="qh">
+  <div class="qrow"><span class="qid">J25</span><span class="tag added">Added</span></div>
+  <h2>Memory leaks in the browser</h2>
+  <p class="qtext">“What are common causes of memory leaks in a web app, how do you detect them, and how do you prevent them in a single-page app?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A leak is memory that is still reachable but no longer needed, so the garbage collector cannot free it. In single-page apps the usual causes are event listeners and timers that are never removed, subscriptions that are never cancelled, detached DOM nodes still referenced from JavaScript, closures that capture large objects, unbounded caches and accidental globals. I detect them in Chrome DevTools: the Performance monitor shows heap growing in a staircase pattern, and the Memory panel lets me take heap snapshots before and after repeating an action, then compare to see which objects survive and what retains them. I prevent them by always pairing setup with cleanup: in React, return a cleanup function from <code>useEffect</code>; in general, use <code>AbortController</code> signals, weak collections and bounded caches.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Left: heap size over time, a healthy sawtooth that returns to the same baseline versus a leaking staircase that rises after each collection. Right: a retainer chain from window through an event listener and closure to a detached DOM subtree that cannot be collected.">
+  <text x="10" y="18" class="bd">Heap size over time</text>
+  <line x1="40" y1="30" x2="40" y2="250" class="l"/><line x1="40" y1="250" x2="370" y2="250" class="l"/>
+  <text x="46" y="44" class="sm">memory</text><text x="320" y="268" class="sm">time</text>
+  <polyline points="40,200 80,150 80,200 120,150 120,200 160,150 160,200 200,150 200,200 240,150 240,200 280,150 280,200 320,150 320,200" fill="none" style="stroke:var(--good)" stroke-width="2"/>
+  <text x="58" y="224" class="sm" style="fill:var(--good)">healthy: sawtooth, same baseline</text>
+  <polyline points="40,170 80,120 80,138 120,90 120,108 160,66 160,84 200,50 200,64 240,40 240,50 280,34 280,40" fill="none" style="stroke:var(--bad)" stroke-width="2"/>
+  <text x="200" y="100" class="sm" style="fill:var(--bad)">leak: staircase, baseline rises</text>
+  <text x="10" y="290" class="sm">GC drops show as cliffs; if the floor keeps rising, something still holds references.</text>
+  <text x="400" y="18" class="bd">A typical retainer chain (what a heap snapshot shows)</text>
+  <rect x="400" y="34" width="100" height="32" rx="5" class="h"/><text x="412" y="55" class="bd">window</text>
+  <rect x="540" y="34" width="210" height="32" rx="5" class="b"/><text x="550" y="55" class="mono">resize listener (closure)</text>
+  <path class="a" d="M500 50H538"/>
+  <rect x="540" y="96" width="210" height="32" rx="5" class="b"/><text x="550" y="117" class="mono">captured: table, rows[]</text>
+  <path class="a" d="M645 66V94"/>
+  <rect x="540" y="158" width="210" height="68" rx="5" class="x"/><text x="550" y="178" class="bd">detached DOM subtree</text><text x="550" y="196" class="sm">removed from the page, but still</text><text x="550" y="212" class="sm">referenced, so it is never freed</text>
+  <path class="a" d="M645 128V156"/>
+  <text x="400" y="104" class="sm">Component unmounted,</text><text x="400" y="120" class="sm">listener never removed.</text><text x="400" y="136" class="sm">Fix: remove in cleanup,</text><text x="400" y="152" class="sm">or use an abort signal.</text>
+  <text x="400" y="260" class="sm">Detached nodes and “retained size” are the numbers to look at.</text>
+</svg></div>
+<figcaption><b>Diagnosis.</b> A healthy app’s memory returns to a stable baseline after collections. A leak raises that baseline each time you repeat an action, and the snapshot comparison shows the retainer path.</figcaption></figure>
+
+<h3>Common causes and fixes</h3>
+<div class="tw"><table>
+<tr><th>Cause</th><th>Why it leaks</th><th>Fix</th></tr>
+<tr><td>Event listeners not removed</td><td>The target (often <code>window</code>/<code>document</code>) holds the callback, and the callback holds its closure and components.</td><td>Remove in cleanup; use <code>{ signal }</code> with an <code>AbortController</code>; prefer delegation.</td></tr>
+<tr><td>Timers and intervals</td><td>An active timer is a root; it holds its callback and everything captured.</td><td><code>clearTimeout</code>/<code>clearInterval</code> on unmount.</td></tr>
+<tr><td>Subscriptions, observers, sockets</td><td>Stores, <code>EventEmitter</code>s, WebSocket handlers and observers keep subscribers.</td><td>Unsubscribe, disconnect, close in cleanup.</td></tr>
+<tr><td>Detached DOM nodes</td><td>A JS variable or cache still references an element that was removed from the document.</td><td>Null out references, avoid caching DOM nodes, use <code>WeakMap</code>/<code>WeakRef</code>.</td></tr>
+<tr><td>Closures over large data</td><td>A long-lived callback keeps everything in its scope alive, even variables it does not use in some engines.</td><td>Narrow the captured data; move large values out of long-lived closures.</td></tr>
+<tr><td>Unbounded caches and memo tables</td><td>Entries added on each key and never evicted.</td><td>LRU with a size cap, TTL, or <code>WeakMap</code> keyed by object.</td></tr>
+<tr><td>Accidental globals</td><td>Assigning to an undeclared name (sloppy mode) or attaching to <code>window</code> keeps values for the page’s life.</td><td>Modules and strict mode; lint no-undef.</td></tr>
+<tr><td>Pending promises and fetches</td><td>Callbacks keep components alive until they settle; stale responses set state after unmount.</td><td>Abort in cleanup; ignore results after cleanup.</td></tr>
+<tr><td>Third-party scripts and libraries</td><td>Charts, maps and editors need explicit <code>destroy()</code>/<code>dispose()</code>.</td><td>Call it in unmount; test by mounting and unmounting repeatedly.</td></tr>
+<tr><td>Big objects in state or stores</td><td>History, undo stacks, logs and normalised data grow without bound.</td><td>Cap length, drop old items, paginate.</td></tr>
+</table></div>
+
+<h3>How to investigate (explain this sequence)</h3>
+<ul>
+<li><b>Confirm:</b> open DevTools, Performance monitor (JS heap size), and repeat the suspect action (open and close a dialog 20 times, navigate between routes). A rising floor means a leak.</li>
+<li><b>Three-snapshot technique:</b> take a heap snapshot, do the action, force GC (trash can icon), snapshot again, repeat, then use the “Objects allocated between Snapshot 1 and 2” filter. Objects that appear in every cycle are leaking.</li>
+<li><b>Read the snapshot:</b> search for “Detached” DOM nodes, sort by retained size, and follow the <em>Retainers</em> panel up to the root that holds them.</li>
+<li><b>Allocation timeline/sampling:</b> shows which function allocates memory that is never released.</li>
+<li><b>Node.js:</b> <code>node --inspect</code> with Chrome DevTools, <code>process.memoryUsage()</code>, heap snapshots, and production APM to watch RSS and heap over days.</li>
+<li><b>Prevent:</b> a lint rule for effect cleanups, unmount tests in CI, memory budgets in end-to-end tests with repeated navigation, and error reporting that includes performance data.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Describing a “leak” as high memory use. A leak is <em>growth that does not stabilise</em>, not a big but steady footprint.</li>
+<li>Only knowing the textbook “forgot to remove a listener” and nothing about detection tools.</li>
+<li>Forgetting that caching is a deliberate leak unless it has a bound.</li>
+<li>Assuming React prevents leaks. It cleans up its own state; your subscriptions are your responsibility.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Does removing a DOM node free it?</dt><dd>Only if no JavaScript references remain. Removed but referenced nodes are “detached” and retained.</dd>
+<dt>How do you leak-test in CI?</dt><dd>A scripted loop in Playwright or Puppeteer that repeats a flow, forces GC through the DevTools protocol and compares heap sizes against a threshold.</dd>
+<dt>What does “retained size” mean?</dt><dd>The memory that would be freed if this object were removed, including everything only it keeps alive.</dd>
+<dt>Is the <code>WeakRef</code> a fix?</dt><dd>For specific caches, yes. For lifecycle bugs the fix is cleanup, not weak references.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J26 ============ -->
+<section class="q" id="j26">
+<header class="qh">
+  <div class="qrow"><span class="qid">J26</span><span class="tag added">Added</span></div>
+  <h2>V8 internals and JIT-friendly code</h2>
+  <p class="qtext">“How does V8 execute JavaScript? What are the interpreter and the optimising compiler, hidden classes and deoptimisation? How does that affect the way you write code?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“V8 parses source into an AST and compiles it to bytecode, which the Ignition interpreter runs immediately for fast startup. While running, V8 collects feedback about the types it sees. Hot functions are compiled to optimised machine code by TurboFan, which makes assumptions based on that feedback, for example that an object always has the same shape. Objects with the same properties added in the same order share a hidden class, which lets property access become a fast fixed-offset load with inline caching. If an assumption breaks, V8 deoptimises back to bytecode. So predictable code is fast code: consistent object shapes, stable types in hot paths, and no changing structures after creation. But I do not micro-optimise before measuring; algorithms and avoiding unnecessary work matter far more.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Top: the V8 pipeline from source code through parser and AST to Ignition bytecode, then the baseline and optimising compilers, with type feedback flowing up and a deoptimisation arrow back down. Bottom: hidden classes, where objects built with the same property order share a class and a different order creates a different class.">
+  <rect x="10" y="30" width="100" height="44" rx="5" class="b"/><text x="20" y="50" class="bd">Source</text><text x="20" y="66" class="sm">JavaScript</text>
+  <rect x="140" y="30" width="110" height="44" rx="5" class="b"/><text x="150" y="50" class="bd">Parser</text><text x="150" y="66" class="sm">lazy → AST</text>
+  <rect x="280" y="30" width="130" height="44" rx="5" class="h"/><text x="290" y="50" class="bd">Ignition</text><text x="290" y="66" class="sm">bytecode interpreter</text>
+  <rect x="440" y="30" width="140" height="44" rx="5" class="w"/><text x="450" y="50" class="bd">Sparkplug / Maglev</text><text x="450" y="66" class="sm">baseline, mid-tier</text>
+  <rect x="610" y="30" width="140" height="44" rx="5" class="g"/><text x="620" y="50" class="bd">TurboFan</text><text x="620" y="66" class="sm">optimised machine code</text>
+  <path class="a" d="M110 52H138"/><path class="a" d="M250 52H278"/><path class="a" d="M410 52H438"/><path class="a" d="M580 52H608"/>
+  <text x="440" y="96" class="sm">hot code is promoted as feedback grows</text>
+  <path class="ax" d="M680 74V114H345V76"/><text x="360" y="130" class="bd" style="fill:var(--bad)">deoptimise: an assumption failed (new type or shape)</text>
+  <text x="10" y="162" class="bd">Hidden classes (shapes / maps)</text>
+  <rect x="10" y="174" width="220" height="62" rx="5" class="g"/><text x="20" y="194" class="mono" style="font-size:11px">a = {x:1}; a.y = 2</text><text x="20" y="212" class="mono" style="font-size:11px">b = {x:5}; b.y = 6</text><text x="20" y="228" class="sm">same order → shared shape → fast</text>
+  <rect x="260" y="174" width="200" height="62" rx="5" class="x"/><text x="270" y="194" class="mono" style="font-size:11px">c = {y:1}; c.x = 2</text><text x="270" y="212" class="sm">different order → different shape</text><text x="270" y="228" class="sm">→ call sites become polymorphic</text>
+  <rect x="490" y="174" width="260" height="62" rx="5" class="b"/><text x="500" y="194" class="bd">Inline cache states</text><text x="500" y="212" class="sm">monomorphic (1 shape): fastest</text><text x="500" y="228" class="sm">polymorphic (2-4) · megamorphic (5+): slow</text>
+  <text x="10" y="266" class="sm">Shape chain: {} → {x} → {x, y}. Each added property creates a transition; objects following the same path share it.</text>
+  <text x="10" y="284" class="sm">Property reads at a monomorphic site become “check shape, load from fixed offset” instead of a dictionary lookup.</text>
+  <text x="10" y="302" class="sm">Other engines have the same idea: SpiderMonkey (Firefox) and JavaScriptCore (Safari) have their own tiers and shapes.</text>
+</svg></div>
+<figcaption><b>What matters.</b> Tiered compilation trades startup speed for peak speed, and speculation is fast only while the runtime keeps seeing the same types and shapes.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Why a JIT:</b> JavaScript is dynamic, so ahead-of-time compilation cannot know types. A JIT observes real behaviour and generates specialised code, falling back if it was wrong. The tiers exist because compiling everything with the heavy optimiser would delay startup.</li>
+<li><b>Pipeline:</b> lazy parsing (inner functions are pre-parsed and only fully compiled when first called), Ignition bytecode, then Sparkplug (fast baseline compiler), Maglev (mid-tier optimiser added in recent Chrome versions) and TurboFan <span class="verify">verify tier names for the Chrome version in question</span>. The details change between versions; the principle does not.</li>
+<li><b>Inline caches and feedback:</b> each property access or call site records the shapes and types it has seen. Optimised code assumes that profile.</li>
+<li><b>Deoptimisation:</b> if an optimised function meets a value that breaks an assumption (a different shape, a number where a string was always seen, an out-of-bounds read), V8 discards the optimised code and returns to bytecode, then may re-optimise. Repeated cycles are visible in the profiler.</li>
+<li><b>Numbers:</b> small integers (Smi) are stored directly; other numbers are boxed heap numbers, which is slower. Mixing integers and floats in an array changes its “elements kind”, and the engine does not go back.</li>
+<li><b>Arrays have elements kinds:</b> packed integers, packed doubles, packed generic, and holey variants. Holes (<code>new Array(100)</code>, <code>delete arr[i]</code>, writing far past the end) make arrays “holey” and slower; very sparse arrays fall back to dictionary mode.</li>
+<li><b>Practical guidance:</b> initialise all properties in the constructor in the same order; do not add or <code>delete</code> properties later (use <code>undefined</code>/<code>null</code> or a <code>Map</code>); keep function parameters and return types consistent; avoid mixing types in arrays; use classes or factory functions for objects of the same kind; avoid <code>arguments</code> leaking and <code>with</code>/<code>eval</code> in hot code.</li>
+<li><b>Measure first:</b> use the DevTools Performance panel, flame charts, and Node’s <code>--prof</code>/<code>--cpu-prof</code>. Check that you are not optimising something that takes 1% of the time. Most real slowness is network, rendering, too much DOM or too much JavaScript shipped, not property shapes.</li>
+<li><b>Startup costs:</b> parse and compile time grows with bundle size; code caching (V8 caches bytecode for scripts that are reused), splitting bundles and deferring unused code help. Fewer bytes of JavaScript is the best optimisation.</li>
+<li><b>WebAssembly:</b> compiled ahead of time to a compact binary format with predictable performance; useful for compute-heavy modules (codecs, games, Figma, image processing), not for DOM-heavy UI.</li>
+<li><b>Security link:</b> Spectre mitigations (site isolation, reduced timer precision, cross-origin isolation) came from speculative execution attacks and shaped <code>SharedArrayBuffer</code> rules (J23).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Treating hidden classes as something you tune daily. Know the concept and the two or three habits it implies; do not recommend rewriting code for them without a profile.</li>
+<li>“JavaScript is interpreted.” Modern engines compile to bytecode and machine code at run time.</li>
+<li>“Using <code>delete</code> is always bad.” It is harmful in hot paths with many objects; in normal app code the effect is negligible.</li>
+<li>Quoting engine tier names with certainty. They change; say “baseline and optimising tiers” if unsure.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is the difference between Ignition and TurboFan?</dt><dd>Ignition interprets compact bytecode for quick start and gathers type feedback. TurboFan compiles hot functions to speculative, optimised machine code.</dd>
+<dt>Why is a class with fields initialised in the constructor faster than adding fields later?</dt><dd>All instances follow one shape-transition path and share one hidden class, so access sites stay monomorphic.</dd>
+<dt>What is code caching?</dt><dd>The browser stores compiled bytecode for a script so repeat visits skip parsing and compilation. Stable file URLs and content help.</dd>
+<dt>How do you find a performance problem in JavaScript?</dt><dd>Record a profile, read the flame chart for long tasks and hot functions, fix the biggest, and measure again. Use real devices, not only a fast laptop.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Events, patterns and security</h1>
+
+<!-- ============ J27 ============ -->
+<section class="q" id="j27">
+<header class="qh">
+  <div class="qrow"><span class="qid">J27</span><span class="tag added">Added</span></div>
+  <h2>Events, delegation and observers</h2>
+  <p class="qtext">“Explain event bubbling and capturing. What is event delegation and why use it? What is the difference between <code>stopPropagation</code> and <code>preventDefault</code>? What are the Observer APIs?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“When an event fires on an element, it travels in three phases: capture, from the window down to the target; the target phase; then bubble, back up to the window. Listeners run in the bubble phase by default; passing <code>capture: true</code> listens on the way down. Event delegation puts one listener on a common ancestor and uses <code>event.target</code>, usually with <code>closest()</code>, to find which child was hit. It uses less memory and works for elements added later. <code>stopPropagation</code> stops the event travelling further; <code>preventDefault</code> cancels the browser’s default action, such as following a link or submitting a form; they are independent. For observing changes without polling, I use <code>IntersectionObserver</code>, <code>ResizeObserver</code> and <code>MutationObserver</code>.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Left: nested boxes window, ul and li with a capture arrow going down and a bubble arrow going up, with one listener on the ul used for delegation. Right: summary of stopPropagation, stopImmediatePropagation and preventDefault.">
+  <text x="10" y="18" class="bd">Three phases</text>
+  <rect x="10" y="30" width="360" height="262" rx="6" class="b"/><text x="20" y="50" class="sm">window / document</text>
+  <rect x="40" y="62" width="300" height="196" rx="6" class="b"/><text x="50" y="82" class="mono">&lt;ul id="list"&gt;  ← one delegated listener</text>
+  <rect x="70" y="100" width="240" height="132" rx="6" class="h"/><text x="80" y="120" class="mono">&lt;li&gt;</text>
+  <rect x="100" y="138" width="180" height="60" rx="6" class="w"/><text x="112" y="162" class="mono">&lt;button&gt;</text><text x="112" y="182" class="sm">event.target (the click)</text>
+  <path class="a" d="M26 56V140"/><text x="20" y="272" class="sm">↓ 1 capture: window → target</text>
+  <path class="a" d="M354 140V56"/><text x="20" y="286" class="sm">↑ 3 bubble: target → window</text>
+  <text x="130" y="226" class="sm">2 target phase</text>
+  <text x="400" y="18" class="bd">Controlling an event</text>
+  <rect x="400" y="30" width="350" height="50" rx="4" class="b"/><text x="410" y="50" class="mono">stopPropagation()</text><text x="410" y="64" class="sm">stops other elements receiving it;</text><text x="410" y="76" class="sm">other listeners on this element still run</text>
+  <rect x="400" y="88" width="350" height="50" rx="4" class="b"/><text x="410" y="108" class="mono">stopImmediatePropagation()</text><text x="410" y="126" class="sm">also stops the remaining listeners on this element</text>
+  <rect x="400" y="146" width="350" height="50" rx="4" class="w"/><text x="410" y="166" class="mono">preventDefault()</text><text x="410" y="184" class="sm">cancels the default action; event still propagates (if cancelable)</text>
+  <rect x="400" y="204" width="350" height="88" rx="4" class="g"/><text x="410" y="224" class="bd">Delegation checklist</text><text x="410" y="242" class="sm">use event.target.closest('li') (target may be a child)</text><text x="410" y="258" class="sm">currentTarget is the element holding the listener</text><text x="410" y="274" class="sm">check the match lives inside your container</text>
+</svg></div>
+<figcaption><b>Remember.</b> <code>target</code> is where it started, <code>currentTarget</code> is where the listener sits. Delegation relies on bubbling.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b><code>addEventListener(type, fn, options)</code>:</b> options are <code>capture</code>, <code>once</code> (auto remove), <code>passive</code> (promise not to call <code>preventDefault</code>, so scrolling is not blocked) and <code>signal</code> (remove when the signal aborts). To remove a listener you need the same function reference and same capture flag.</li>
+<li><b>Delegation benefits:</b> one listener rather than thousands (memory), handles dynamically added children, simpler cleanup. Limits: events that do not bubble (<code>focus</code>, <code>blur</code>, <code>mouseenter</code>, <code>mouseleave</code>, <code>load</code>; use <code>focusin</code>/<code>focusout</code>, <code>mouseover</code>/<code>mouseout</code> or capture), and a handler that must run before ancestors’ handlers.</li>
+<li><b><code>this</code> in listeners:</b> in a regular function it is <code>currentTarget</code>; in an arrow function it is the lexical <code>this</code> (J5).</li>
+<li><b>Cancelable and default actions:</b> not every event is cancelable (<code>event.cancelable</code>). Passive listeners for <code>touchstart</code>, <code>wheel</code> make scrolling smooth; calling <code>preventDefault</code> inside one is ignored with a console warning.</li>
+<li><b>Custom events:</b> <code>el.dispatchEvent(new CustomEvent('item:add', { detail, bubbles: true, composed: true }))</code> for component communication; <code>composed</code> lets it cross Shadow DOM boundaries. <code>EventTarget</code> can be used as a lightweight event bus.</li>
+<li><b>Shadow DOM:</b> events are retargeted so outside listeners see the host as <code>target</code>; <code>event.composedPath()</code> gives the real path for open shadow roots.</li>
+<li><b>Framework note:</b> React attaches listeners at the root container and dispatches its own synthetic events (a delegation mechanism); since React 17 events are attached to the root, not <code>document</code>. Mixing native and React handlers can lead to ordering surprises with <code>stopPropagation</code>.</li>
+<li><b>Event timing and INP:</b> slow handlers delay the next paint; do light work in the handler and defer the rest (J18, J22). Prefer <code>pointer</code> events over separate mouse/touch handlers.</li>
+<li><b>IntersectionObserver:</b> reports when an element enters or leaves the viewport (or another root) by a threshold; used for lazy loading, infinite scroll, analytics visibility and sticky headers, without scroll listeners.</li>
+<li><b>ResizeObserver:</b> notifies when an element’s box changes size; used for responsive components, charts and virtual lists; avoid changing size inside the callback in a loop.</li>
+<li><b>MutationObserver:</b> watches DOM changes (children, attributes, text); callbacks run as microtasks; used by extensions and libraries; always <code>disconnect()</code> when done.</li>
+<li><b>PerformanceObserver:</b> receives performance entries (long tasks, LCP, layout shift, event timing) for monitoring.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using <code>event.target</code> directly in a delegated handler when the click may land on an inner icon or span; use <code>closest</code>.</li>
+<li>Calling <code>stopPropagation</code> to “fix” things, breaking analytics, dropdown-close logic and delegation elsewhere. Prefer checking <code>event.target</code>.</li>
+<li>Removing an anonymous listener: a new function is a different reference and nothing is removed.</li>
+<li>Saying <code>preventDefault</code> stops bubbling, or the reverse.</li>
+<li>Forgetting that <code>return false</code> in an inline handler does both, but not in <code>addEventListener</code>.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Which events do not bubble?</dt><dd>Mainly <code>focus</code>, <code>blur</code>, <code>mouseenter</code>, <code>mouseleave</code>, <code>load</code>, <code>unload</code>, <code>scroll</code> on elements (document scroll bubbles to window), and media events.</dd>
+<dt>Why use <code>{ passive: true }</code>?</dt><dd>The browser can scroll immediately instead of waiting to see whether you call <code>preventDefault</code>.</dd>
+<dt>Delegation in a React app?</dt><dd>Usually unnecessary: React already delegates. Use it for large lists of native DOM or non-React widgets.</dd>
+<dt>How would you implement lazy-loading images?</dt><dd><code>loading="lazy"</code> first; <code>IntersectionObserver</code> when you need control (placeholders, thresholds).</dd>
+</dl></div>
+</section>
+
+<!-- ============ J28 ============ -->
+<section class="q" id="j28">
+<header class="qh">
+  <div class="qrow"><span class="qid">J28</span><span class="tag added">Added</span></div>
+  <h2>Design patterns in JavaScript</h2>
+  <p class="qtext">“Which design patterns do you use in JavaScript and where? Explain the module, singleton, factory, observer, strategy, decorator and proxy patterns. What are the SOLID principles in a frontend context?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Patterns are named, reusable solutions to recurring design problems. JavaScript’s first-class functions, closures and modules make many of them lighter than in class-based languages. The ones I use most are the module pattern, now ES modules, for encapsulation; factory functions to create objects; observer or publish/subscribe for decoupled communication, which is how events, stores and RxJS work; strategy, passing behaviour as a function; decorator, wrapping a function to add behaviour such as logging or caching; and middleware, a chain of responsibility, as in Express and Redux. I choose a pattern to solve a concrete problem, not to show I know it, and I prefer composition over inheritance.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Left: observer or publish-subscribe, where a publisher emits to an event bus that notifies several subscribers. Right: a middleware chain where a request passes through logging, auth and validation functions to the handler, and each can short-circuit.">
+  <text x="10" y="18" class="bd">Observer / publish-subscribe</text>
+  <rect x="10" y="40" width="110" height="50" rx="5" class="b"/><text x="20" y="60" class="bd">Publisher</text><text x="20" y="78" class="sm">emit('cart:add')</text>
+  <rect x="150" y="30" width="110" height="70" rx="5" class="h"/><text x="160" y="56" class="bd">Event bus /</text><text x="160" y="72" class="bd">subject</text><text x="160" y="90" class="sm">topic → [fns]</text>
+  <path class="a" d="M120 65H148"/>
+  <rect x="290" y="30" width="80" height="30" rx="4" class="g"/><text x="298" y="50" class="sm">badge</text>
+  <rect x="290" y="68" width="80" height="30" rx="4" class="g"/><text x="298" y="88" class="sm">analytics</text>
+  <rect x="290" y="106" width="80" height="30" rx="4" class="g"/><text x="298" y="126" class="sm">toast</text>
+  <path class="a" d="M260 50L288 46"/><path class="a" d="M260 66L288 82"/><path class="a" d="M260 82L288 120"/>
+  <text x="10" y="116" class="sm">publisher does not know subscribers</text><text x="10" y="132" class="sm">loose coupling · on / off / emit</text>
+  <text x="10" y="156" class="sm">Used by: DOM events, Redux subscribe, Node</text><text x="10" y="172" class="sm">EventEmitter, RxJS, WebSocket handlers</text>
+  <text x="10" y="196" class="sm" style="fill:var(--bad)">Risk: hidden control flow, leaks if you never unsubscribe</text>
+  <text x="400" y="18" class="bd">Middleware (chain of responsibility) and decorator</text>
+  <rect x="400" y="40" width="70" height="40" rx="5" class="b"/><text x="410" y="64" class="sm">request</text>
+  <rect x="490" y="40" width="70" height="40" rx="5" class="h"/><text x="500" y="64" class="sm">logger</text>
+  <rect x="580" y="40" width="70" height="40" rx="5" class="h"/><text x="590" y="64" class="sm">auth</text>
+  <rect x="670" y="40" width="80" height="40" rx="5" class="g"/><text x="680" y="64" class="sm">handler</text>
+  <path class="a" d="M470 60H488"/><path class="a" d="M560 60H578"/><path class="a" d="M650 60H668"/>
+  <path class="ax" d="M615 80V108H470"/><text x="480" y="124" class="sm">auth fails: short-circuit, respond 401</text>
+  <text x="400" y="156" class="mono" style="font-size:10.5px">const withLog = (fn) =&gt; (...a) =&gt; (log(a), fn(...a));</text>
+  <text x="400" y="176" class="sm">a decorator wraps a function and returns a function with the same</text><text x="400" y="192" class="sm">signature plus extra behaviour (memoise, retry, log, authorise)</text>
+  <text x="400" y="216" class="sm">Used by: Express and Koa middleware, Redux middleware,</text><text x="400" y="232" class="sm">Axios interceptors, higher-order functions and HOCs</text>
+  <text x="10" y="264" class="sm">Each pattern is a few lines in JavaScript because functions are values. The skill is knowing which problem it solves.</text>
+</svg></div>
+<figcaption><b>Two patterns that appear everywhere.</b> Observer decouples who emits from who reacts. Middleware composes small steps that can each continue or stop the flow.</figcaption></figure>
+
+<h3>Catalogue (what, when, JavaScript form)</h3>
+<div class="tw"><table>
+<tr><th>Pattern</th><th>Intent</th><th>JavaScript form and example</th></tr>
+<tr><td>Module</td><td>Encapsulate private state, expose a public API</td><td>ES modules (file scope is private, <code>export</code> is public). Before ESM, an IIFE returning an object. Private class fields <code>#x</code>.</td></tr>
+<tr><td>Singleton</td><td>One shared instance</td><td>A module that exports an instance (modules are evaluated once). Use for config, logger, store. Beware hidden global state and test isolation.</td></tr>
+<tr><td>Factory</td><td>Create objects without exposing construction details</td><td>A function returning objects or classes by type: <code>createLogger(env)</code>. Lets you swap implementations and avoid <code>new</code> everywhere.</td></tr>
+<tr><td>Builder</td><td>Construct a complex object step by step</td><td>Chained methods returning <code>this</code> (query builders, test data builders).</td></tr>
+<tr><td>Observer / pub-sub</td><td>One-to-many notifications</td><td><code>EventTarget</code>, <code>EventEmitter</code>, store subscriptions, RxJS.</td></tr>
+<tr><td>Strategy</td><td>Swap algorithms at run time</td><td>Pass a function or a map of functions: sort comparators, validation rules, pricing.</td></tr>
+<tr><td>Decorator</td><td>Add behaviour without modifying the original</td><td>Higher-order functions: memoise, debounce, retry, withAuth. Also HOCs in React.</td></tr>
+<tr><td>Proxy</td><td>Control access to an object</td><td>The <code>Proxy</code> object (J9): validation, lazy loading, change tracking (Vue 3 reactivity, Immer).</td></tr>
+<tr><td>Facade</td><td>Simple interface to a complex subsystem</td><td>An API client module hiding fetch, headers, retries and parsing.</td></tr>
+<tr><td>Adapter</td><td>Make an incompatible interface fit</td><td>Mapping a backend response shape into the UI model; wrapping a third-party library.</td></tr>
+<tr><td>Command</td><td>Represent an action as an object</td><td>Redux actions, undo/redo stacks, queued offline mutations.</td></tr>
+<tr><td>Mediator</td><td>Central coordinator between components</td><td>A store or service that components talk to instead of to each other.</td></tr>
+<tr><td>Iterator</td><td>Traverse a collection uniformly</td><td><code>Symbol.iterator</code> and generators (J12).</td></tr>
+<tr><td>Dependency injection</td><td>Pass dependencies in rather than creating them</td><td>Function arguments or constructor parameters; Angular DI; React context as a form of DI. Makes testing easy.</td></tr>
+</table></div>
+
+<h3>Principles worth mentioning</h3>
+<ul>
+<li><b>SOLID in frontend terms:</b> <em>single responsibility</em> (a component or hook does one thing; split fetching, state and presentation); <em>open/closed</em> (extend via props, slots and composition rather than editing the component); <em>Liskov</em> (a replacement component honours the same contract); <em>interface segregation</em> (pass components only the props they need, not whole objects); <em>dependency inversion</em> (depend on abstractions like a repository or hook, so you can swap or mock the API layer).</li>
+<li><b>Composition over inheritance:</b> combine small functions and objects; deep class hierarchies are rigid. React moved from mixins and HOCs to hooks for this reason.</li>
+<li><b>DRY, KISS, YAGNI:</b> duplication is cheaper than the wrong abstraction; add a pattern when the third use appears.</li>
+<li><b>Separation of concerns:</b> data access, business rules and UI in different layers, which is also what enables testing.</li>
+<li><b>State architecture patterns:</b> Flux/Redux (one-way data flow), observer-based stores (Zustand, MobX), state machines (XState) for complex flows.</li>
+<li><b>Anti-patterns:</b> god objects, deep inheritance, global mutable state, callback pyramids, premature abstraction, patterns used for their own sake.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Reciting a list of Gang of Four names without a real example from your own work. Prepare two: say where you used one and what it improved.</li>
+<li>Calling every shared module a “singleton” without noting the downside: global state that complicates tests and server rendering (state shared between requests).</li>
+<li>Over-engineering with patterns where a plain function would do.</li>
+<li>Confusing observer with pub-sub: in observer, subjects know their observers; in pub-sub a broker sits between them.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Observer versus pub-sub?</dt><dd>Observer: subject holds and notifies its observers directly. Pub-sub: publishers and subscribers only know the broker and topic names, so they are fully decoupled.</dd>
+<dt>Why are ES modules good singletons?</dt><dd>The module is evaluated once and cached; every importer sees the same instance. On a server, the cache is shared across requests, so do not keep per-user data there.</dd>
+<dt>Which pattern is Redux?</dt><dd>Command (actions), observer (subscribe), mediator (central store), with a reducer as a pure function.</dd>
+<dt>What pattern is React’s <code>children</code> and render props?</dt><dd>Composition, a form of strategy: the parent provides the rendering behaviour.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J29 ============ -->
+<section class="q" id="j29">
+<header class="qh">
+  <div class="qrow"><span class="qid">J29</span><span class="tag added">Added</span></div>
+  <h2>JavaScript security</h2>
+  <p class="qtext">“What are the main security risks in a JavaScript frontend? Explain XSS, CSRF, prototype pollution and supply-chain risk, and how you defend against them. Where should you store tokens?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The biggest frontend risk is cross-site scripting: untrusted data ends up executed as code in my origin, so an attacker can read tokens and act as the user. I prevent it by treating all external data as text, using framework auto-escaping, avoiding <code>innerHTML</code>, <code>eval</code> and <code>dangerouslySetInnerHTML</code> unless the HTML is sanitised with DOMPurify, and adding a strict Content Security Policy, with Trusted Types where possible. CSRF abuses the browser sending cookies automatically; I defend with <code>SameSite</code> cookies and anti-CSRF tokens. Prototype pollution comes from merging untrusted keys such as <code>__proto__</code>. Dependencies are a supply-chain risk, so I use lockfiles, audits and minimal packages. The client is never trusted: authorisation always lives on the server.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Left: an XSS attack path from attacker input through the app into a dangerous sink so that the script runs in the site origin and steals data. Right: layered defences: encode output, sanitise HTML, Content Security Policy and Trusted Types, httpOnly cookies, and server-side checks.">
+  <text x="10" y="18" class="bd">How XSS happens</text>
+  <rect x="10" y="30" width="150" height="46" rx="5" class="x"/><text x="20" y="50" class="bd">Untrusted input</text><text x="20" y="66" class="sm">comment, URL, JSON</text>
+  <rect x="190" y="30" width="150" height="46" rx="5" class="b"/><text x="200" y="50" class="bd">Your app</text><text x="200" y="66" class="sm">stores / forwards it</text>
+  <rect x="190" y="104" width="150" height="46" rx="5" class="w"/><text x="200" y="124" class="bd">Dangerous sink</text><text x="200" y="140" class="mono" style="font-size:11px">innerHTML, eval, href</text>
+  <rect x="10" y="104" width="150" height="46" rx="5" class="x"/><text x="20" y="124" class="bd">Script runs</text><text x="20" y="140" class="sm">in YOUR origin</text>
+  <path class="a" d="M160 53H188"/><path class="a" d="M265 76V102"/><path class="a" d="M190 127H162"/>
+  <rect x="10" y="176" width="330" height="62" rx="5" class="x"/><text x="20" y="196" class="bd">Impact</text><text x="20" y="214" class="sm">read cookies/localStorage tokens, call APIs as the user,</text><text x="20" y="230" class="sm">rewrite the page, keylog, redirect, install a skimmer</text>
+  <text x="10" y="266" class="sm">Types: stored (in the database), reflected (in the URL), DOM-based</text><text x="10" y="282" class="sm">(client code writes to a sink without the server being involved).</text>
+  <text x="380" y="18" class="bd">Defence in depth</text>
+  <rect x="380" y="30" width="370" height="38" rx="4" class="g"/><text x="390" y="47" class="bd">1 Encode on output</text><text x="390" y="62" class="sm">framework auto-escaping, textContent, never string-build HTML</text>
+  <rect x="380" y="74" width="370" height="38" rx="4" class="g"/><text x="390" y="91" class="bd">2 Sanitise rich HTML</text><text x="390" y="106" class="sm">DOMPurify with an allowlist, on the way in and out</text>
+  <rect x="380" y="118" width="370" height="38" rx="4" class="h"/><text x="390" y="135" class="bd">3 CSP and Trusted Types</text><text x="390" y="150" class="sm">nonce or hash, no unsafe-inline, restrict sources and sinks</text>
+  <rect x="380" y="162" width="370" height="38" rx="4" class="h"/><text x="390" y="179" class="bd">4 Limit the blast radius</text><text x="390" y="194" class="sm">HttpOnly + Secure + SameSite cookies; short-lived tokens</text>
+  <rect x="380" y="206" width="370" height="38" rx="4" class="w"/><text x="390" y="223" class="bd">5 Server enforces everything</text><text x="390" y="238" class="sm">authz, validation, rate limits; client checks are UX only</text>
+  <text x="380" y="270" class="sm">No single control is enough; assume one will fail.</text>
+</svg></div>
+<figcaption><b>Mindset.</b> Data is only dangerous at the point where it is interpreted (HTML, JavaScript, URL, SQL), so encode for that context at the point of output.</figcaption></figure>
+
+<h3>Threats and defences</h3>
+<ul>
+<li><b>XSS sinks to avoid:</b> <code>innerHTML</code>, <code>outerHTML</code>, <code>insertAdjacentHTML</code>, <code>document.write</code>, <code>eval</code>, <code>new Function</code>, string arguments to <code>setTimeout</code>, <code>javascript:</code> URLs in <code>href</code>, and React’s <code>dangerouslySetInnerHTML</code>. Safe by default: <code>textContent</code>, framework interpolation, <code>setAttribute</code> with validated values.</li>
+<li><b>URLs are a sink too:</b> validate scheme (<code>http</code>, <code>https</code>, <code>mailto</code>) before putting user data in <code>href</code> or <code>src</code>; guard open redirects (<code>?next=</code> parameters).</li>
+<li><b>Content Security Policy:</b> an HTTP response header telling the browser which sources of script, style, images and frames are allowed. A strict policy uses nonces or hashes with <code>strict-dynamic</code> and avoids <code>unsafe-inline</code> and <code>unsafe-eval</code>. Start with report-only to see violations. <code>frame-ancestors</code> prevents clickjacking.</li>
+<li><b>Trusted Types</b> <span class="verify">verify browser support</span>: forces dangerous sinks to accept only values created by approved policies, which turns DOM XSS into a compile-time-like error in supported browsers.</li>
+<li><b>Token storage:</b> <code>localStorage</code> is readable by any script on the page, so an XSS steals the token. An <code>HttpOnly</code> cookie cannot be read by JavaScript but is sent automatically, so it needs CSRF protection (<code>SameSite=Lax/Strict</code>, anti-CSRF token). A common recommendation: short-lived access token in memory, refresh token in an HttpOnly cookie, or a backend-for-frontend that keeps tokens server-side. There is a trade-off; be ready to explain it, not claim a single right answer.</li>
+<li><b>CSRF:</b> a malicious site makes the user’s browser send an authenticated request. Defences: <code>SameSite</code> cookies, CSRF tokens (synchroniser or double-submit), checking <code>Origin</code>/<code>Referer</code>, requiring custom headers or JSON content type on state-changing requests. Not an issue for APIs that use <code>Authorization</code> headers from JavaScript rather than cookies.</li>
+<li><b>CORS is not a security feature for your server:</b> it relaxes the browser’s same-origin policy for reads. It does not stop non-browser clients, and misconfiguration (<code>*</code> with credentials, reflecting any origin) creates holes.</li>
+<li><b>Prototype pollution:</b> a merge, clone or path-set function that accepts keys like <code>__proto__</code>, <code>constructor</code> or <code>prototype</code> from untrusted JSON modifies <code>Object.prototype</code> for the whole app, enabling logic bypass or even XSS gadgets. Defences: reject those keys, use <code>Object.create(null)</code> or <code>Map</code> for dictionaries, validate with schemas, <code>Object.freeze(Object.prototype)</code> in controlled environments, keep libraries patched (J6).</li>
+<li><b>Supply chain:</b> a malicious or hijacked npm package runs with your app’s power at build and at run time. Mitigate with lockfiles and <code>npm ci</code>, pinned versions, <code>npm audit</code>/Dependabot/Renovate, fewer dependencies, review install scripts (<code>--ignore-scripts</code>), package provenance, Subresource Integrity (<code>integrity</code> attribute) for CDN scripts, and a vetted internal registry.</li>
+<li><b>Third-party scripts:</b> tags and widgets run with full page privileges. Load them in sandboxed iframes where possible, or use a tag manager with governance.</li>
+<li><b>ReDoS:</b> a regular expression with nested quantifiers on user input can take exponential time and freeze the thread (J14). Use linear-time patterns, input length limits, or a safe engine.</li>
+<li><b><code>postMessage</code>:</b> always check <code>event.origin</code> against an allowlist and never send secrets to <code>*</code>.</li>
+<li><b>Iframes:</b> use the <code>sandbox</code> attribute for untrusted content, <code>rel="noopener"</code> on external links (default in modern browsers), and <code>frame-ancestors</code> or <code>X-Frame-Options</code> against clickjacking.</li>
+<li><b>Secrets:</b> anything shipped to the browser is public: API keys in bundles, source maps with comments, environment variables exposed by the build tool prefix (<code>VITE_</code>, <code>NEXT_PUBLIC_</code>). Keep real secrets on the server.</li>
+<li><b>Sensitive data:</b> avoid putting tokens or personal data in URLs, logs and analytics; clear caches on logout; set <code>Cache-Control: no-store</code> on sensitive responses.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“React is safe from XSS.” It escapes interpolated text, but <code>dangerouslySetInnerHTML</code>, <code>href</code> with <code>javascript:</code>, server-rendered HTML and third-party libraries remain risks.</li>
+<li>Believing “we sanitise on input” is enough. Encode at output for the right context.</li>
+<li>“Put the token in <code>localStorage</code> because it is simple” without acknowledging XSS exposure, or “cookies are always safer” without mentioning CSRF.</li>
+<li>Treating CORS errors as something to silence with <code>*</code>.</li>
+<li>Client-side role checks as the only access control.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Stored versus reflected versus DOM XSS?</dt><dd>Stored: payload persisted on the server and served to many users. Reflected: payload in the request echoed in the response. DOM-based: client-side code reads attacker-controlled data (URL hash, <code>postMessage</code>) and writes it to a sink.</dd>
+<dt>What does <code>SameSite</code> do?</dt><dd>Controls whether cookies are sent on cross-site requests: <code>Strict</code> never, <code>Lax</code> only on top-level navigations (the modern default), <code>None</code> always (requires <code>Secure</code>).</dd>
+<dt>How would you secure a CDN script?</dt><dd>Subresource Integrity hash plus <code>crossorigin</code>, a CSP that allows only that host, and ideally self-hosting a pinned copy.</dd>
+<dt>What is the OWASP Top 10 relevance for frontend?</dt><dd>Injection (XSS), broken access control, vulnerable and outdated components, security misconfiguration (CSP, CORS), and identification failures (token handling).</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 4 · Browser platform APIs</h1>
+
+<!-- ============ J30 ============ -->
+<section class="q" id="j30">
+<header class="qh">
+  <div class="qrow"><span class="qid">J30</span><span class="tag added">Added</span></div>
+  <h2>Network, streams and storage APIs</h2>
+  <p class="qtext">“How do you make network requests in the browser? Compare polling, Server-Sent Events and WebSockets. What are the client-side storage options and when do you use each?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“For requests I use <code>fetch</code>, which returns a promise, does not reject on HTTP errors, and exposes the body as a stream. I control it with <code>AbortSignal</code>, <code>credentials</code> and <code>cache</code> options. For live updates I choose by direction and cost: polling is simplest, Server-Sent Events give one-way server push over plain HTTP with automatic reconnect, and WebSockets give a full-duplex channel for chat, collaboration and games. For storage: cookies for small server-visible data such as sessions, <code>localStorage</code> for small synchronous preferences, <code>sessionStorage</code> per tab, IndexedDB for large structured data and offline apps, and the Cache API for request and response pairs used by Service Workers. Everything is per origin and can be evicted.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="Four lanes between client and server over time: polling asks repeatedly and often gets nothing, long polling holds a request until data arrives, Server-Sent Events keep one connection with server messages only, and WebSockets keep one connection with messages in both directions.">
+  <text x="10" y="18" class="bd">Getting updates from the server</text>
+  <text x="10" y="50" class="bd">Polling</text>
+  <g class="fillm"><rect x="120" y="36" width="3" height="24"/><rect x="220" y="36" width="3" height="24"/><rect x="320" y="36" width="3" height="24"/><rect x="420" y="36" width="3" height="24"/><rect x="520" y="36" width="3" height="24"/></g>
+  <circle cx="420" cy="48" r="7" class="fillh"/><text x="120" y="76" class="sm">request every N seconds; most return nothing, latency up to N</text>
+  <text x="10" y="102" class="bd">Long polling</text>
+  <rect x="120" y="90" width="280" height="22" class="w" style="opacity:.7"/><circle cx="400" cy="101" r="7" class="fillh"/><rect x="410" y="90" width="160" height="22" class="w" style="opacity:.7"/><text x="580" y="105" class="sm">held open, re-request</text>
+  <text x="10" y="154" class="bd">SSE</text>
+  <line x1="120" y1="150" x2="740" y2="150" class="l"/>
+  <g class="fillh"><circle cx="220" cy="150" r="7"/><circle cx="330" cy="150" r="7"/><circle cx="560" cy="150" r="7"/></g><text x="120" y="176" class="sm">one HTTP response kept open · server → client only · auto-reconnect · text events</text>
+  <text x="10" y="226" class="bd">WebSocket</text>
+  <line x1="120" y1="222" x2="740" y2="222" class="l"/>
+  <g class="fillh"><circle cx="200" cy="222" r="7"/><circle cx="420" cy="222" r="7"/></g><g class="fillw"><circle cx="300" cy="222" r="7"/><circle cx="500" cy="222" r="7"/><circle cx="620" cy="222" r="7"/></g>
+  <text x="120" y="248" class="sm">one upgraded connection · both directions · text or binary · you handle reconnect and heartbeats</text>
+  <text x="10" y="284" class="sm">Teal: server → client. Brown: client → server. Choose the simplest transport that meets the need;</text><text x="10" y="300" class="sm">WebSockets need sticky or scalable infrastructure (load balancers, pub/sub behind them).</text>
+</svg></div>
+<figcaption><b>Decision rule.</b> One-way notifications: SSE. Two-way and low latency: WebSocket. Rare or simple: polling. Details on HTTP/2 and HTTP/3 are in the protocols guide.</figcaption></figure>
+
+<h3>Fetch in depth</h3>
+<ul>
+<li><b>Basics:</b> <code>fetch(url, { method, headers, body, signal, credentials, cache, mode, redirect, keepalive })</code> returns a promise for a <code>Response</code>. It rejects only on network failure or abort; check <code>response.ok</code> or <code>status</code>. Read the body once with <code>json()</code>, <code>text()</code>, <code>blob()</code> or <code>arrayBuffer()</code>; use <code>clone()</code> to read twice.</li>
+<li><b><code>credentials</code>:</b> <code>same-origin</code> (default) sends cookies only to your origin; <code>include</code> sends them cross-origin (the server must allow it explicitly with CORS); <code>omit</code> never.</li>
+<li><b><code>mode</code> and CORS:</b> cross-origin reads need CORS headers from the server. Non-simple requests trigger a preflight <code>OPTIONS</code>. <code>no-cors</code> returns an opaque response you cannot read; it is rarely what you want.</li>
+<li><b>Cache control:</b> the <code>cache</code> option (<code>default</code>, <code>no-store</code>, <code>reload</code>, <code>force-cache</code>) interacts with HTTP caching headers; the real policy belongs on the server.</li>
+<li><b>Streams:</b> <code>response.body</code> is a <code>ReadableStream</code>. You can process large or incremental responses chunk by chunk (progress bars, NDJSON, LLM token streaming) through <code>getReader()</code> or <code>for await</code>, and pipe through <code>TextDecoderStream</code> or <code>CompressionStream</code>. Streaming request bodies need HTTP/2 or newer and <code>duplex: 'half'</code> <span class="verify">verify support</span>.</li>
+<li><b>Fire-and-forget on page exit:</b> <code>navigator.sendBeacon(url, data)</code> or <code>fetch(..., { keepalive: true })</code> survive page unload; use for analytics and logs. Do not use <code>unload</code> handlers; they block back/forward caching.</li>
+<li><b>Helpers:</b> <code>URL</code> and <code>URLSearchParams</code> build and parse URLs safely (never concatenate query strings by hand); <code>FormData</code> for forms and file uploads (do not set the multipart <code>Content-Type</code> yourself); <code>Blob</code>, <code>File</code> and <code>URL.createObjectURL</code> for local previews (revoke when done); <code>Headers</code>, <code>Request</code>, <code>Response</code>; <code>TextEncoder</code>/<code>TextDecoder</code>.</li>
+<li><b>Progress and uploads:</b> <code>fetch</code> has no upload progress event; use <code>XMLHttpRequest</code> (<code>upload.onprogress</code>) or streaming uploads.</li>
+<li><b>Production concerns:</b> timeouts (<code>AbortSignal.timeout</code>), retries with backoff for idempotent calls, deduplication and caching (TanStack Query), error mapping (J21), and request ids for tracing.</li>
+</ul>
+
+<h3>Real-time options compared</h3>
+<div class="tw"><table>
+<tr><th></th><th>Polling</th><th>SSE (<code>EventSource</code>)</th><th>WebSocket</th></tr>
+<tr><td>Direction</td><td>client asks</td><td>server → client</td><td>both</td></tr>
+<tr><td>Protocol</td><td>plain HTTP</td><td>HTTP, <code>text/event-stream</code></td><td>upgrade to <code>ws</code>/<code>wss</code></td></tr>
+<tr><td>Reconnect</td><td>inherent</td><td>automatic, with <code>Last-Event-ID</code></td><td>manual (backoff, heartbeat)</td></tr>
+<tr><td>Data</td><td>any</td><td>text only</td><td>text and binary</td></tr>
+<tr><td>Fits</td><td>low frequency, simple</td><td>feeds, notifications, progress, LLM streaming</td><td>chat, collaboration, games, trading</td></tr>
+<tr><td>Cost</td><td>wasted requests</td><td>one open connection per client; limited per domain on HTTP/1.1</td><td>stateful servers, harder to scale and secure</td></tr>
+</table></div>
+
+<h3>Client-side storage</h3>
+<div class="tw"><table>
+<tr><th>Option</th><th>Size (typical)</th><th>API</th><th>Sent to server?</th><th>Use for</th></tr>
+<tr><td>Cookies</td><td>about 4 KB each</td><td>string, <code>document.cookie</code> or <code>Set-Cookie</code></td><td>yes, every request</td><td>sessions (HttpOnly, Secure, SameSite), small server-needed state</td></tr>
+<tr><td><code>localStorage</code></td><td>about 5 MB</td><td>sync, strings</td><td>no</td><td>small preferences; blocks the main thread; never for secrets</td></tr>
+<tr><td><code>sessionStorage</code></td><td>about 5 MB</td><td>sync, strings</td><td>no</td><td>per-tab state, wizards</td></tr>
+<tr><td>IndexedDB</td><td>large (a share of disk)</td><td>async, structured clone, indexes, transactions</td><td>no</td><td>offline data, caches, queues; use a wrapper such as idb or Dexie</td></tr>
+<tr><td>Cache API</td><td>large</td><td>async, Request/Response pairs</td><td>no</td><td>Service Worker caches, offline assets</td></tr>
+<tr><td>OPFS (origin private file system)</td><td>large</td><td>async, files; fast sync access in workers</td><td>no</td><td>databases (SQLite WASM), big files <span class="verify">verify</span></td></tr>
+</table></div>
+<ul>
+<li><b>Quota and eviction:</b> storage is per origin, measured with <code>navigator.storage.estimate()</code>, and can be evicted under pressure unless the origin is granted <code>navigator.storage.persist()</code>. Safari may clear script-written storage after a period without use.</li>
+<li><b>Cross-tab communication:</b> the <code>storage</code> event (localStorage changes), <code>BroadcastChannel</code> (named channel between same-origin tabs and workers), <code>MessageChannel</code> (private two-port pipe), Web Locks API (coordinate across tabs).</li>
+<li><b>Security:</b> any script on the page can read <code>localStorage</code> and IndexedDB, so XSS reads them (J29).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Assuming <code>fetch</code> throws on 4xx and 5xx.</li>
+<li>Putting tokens or personal data in <code>localStorage</code>, or storing large objects there (synchronous and blocking).</li>
+<li>Choosing WebSockets by default when SSE or polling is enough and far simpler to operate.</li>
+<li>Forgetting to revoke object URLs, close sockets, and abort streams on unmount.</li>
+<li>Relying on <code>unload</code> to send data. Use <code>pagehide</code>, <code>visibilitychange</code> with <code>sendBeacon</code>.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How would you show download progress?</dt><dd>Read <code>response.body</code> with a reader, count bytes against <code>Content-Length</code> (may be absent or compressed length), and update the UI.</dd>
+<dt>How do you handle WebSocket reconnects?</dt><dd>Exponential backoff with jitter, heartbeats (ping/pong), resubscribe, and resume from a last-seen id to avoid gaps.</dd>
+<dt>Why is <code>localStorage</code> considered slow?</dt><dd>It is synchronous, so reading and writing blocks the main thread, and it stores only strings, so large values need parsing.</dd>
+<dt>When IndexedDB over <code>localStorage</code>?</dt><dd>More than a few hundred KB, structured or queryable data, binary data, offline-first apps, or when you need transactions.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J31 ============ -->
+<section class="q" id="j31">
+<header class="qh">
+  <div class="qrow"><span class="qid">J31</span><span class="tag added">Added</span></div>
+  <h2>Modern browser APIs and the page lifecycle</h2>
+  <p class="qtext">“Which modern browser APIs do you know and use? How do you use a new API safely across browsers? What is the page lifecycle and the back/forward cache?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The platform now covers much of what libraries used to do: <code>structuredClone</code>, <code>URL</code>, <code>AbortController</code>, Intersection, Resize and Mutation observers, the Clipboard, Web Share, Web Crypto, the View Transitions API, the Popover and dialog elements, and the Page Visibility and Page Lifecycle events. I never assume support: I feature-detect with <code>'api' in window</code>, check Baseline or Can I Use for the browsers in our support matrix, provide a fallback or progressive enhancement, and polyfill only when necessary. I also design for the back/forward cache: no <code>unload</code> handlers, and I use <code>pagehide</code> and <code>visibilitychange</code> to save state or send beacons.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 290" role="img" aria-label="The page lifecycle: active, passive, hidden, frozen and terminated, with the events that move between them, and the back/forward cache storing a frozen page that can be restored with pageshow.">
+  <text x="10" y="18" class="bd">Page lifecycle and events</text>
+  <rect x="10" y="34" width="110" height="46" rx="5" class="g"/><text x="20" y="54" class="bd">Active</text><text x="20" y="70" class="sm">visible, focused</text>
+  <rect x="160" y="34" width="110" height="46" rx="5" class="b"/><text x="170" y="54" class="bd">Passive</text><text x="170" y="70" class="sm">visible, no focus</text>
+  <rect x="310" y="34" width="120" height="46" rx="5" class="w"/><text x="320" y="54" class="bd">Hidden</text><text x="320" y="70" class="sm">tab in background</text>
+  <rect x="470" y="34" width="120" height="46" rx="5" class="h"/><text x="480" y="54" class="bd">Frozen</text><text x="480" y="70" class="sm">CPU stopped, kept</text>
+  <rect x="630" y="34" width="120" height="46" rx="5" class="x"/><text x="640" y="54" class="bd">Terminated</text><text x="640" y="70" class="sm">gone (or discarded)</text>
+  <path class="a" d="M120 57H158"/><path class="a" d="M270 57H308"/><path class="a" d="M430 57H468"/><path class="a" d="M590 57H628"/>
+  <text x="124" y="30" class="sm">blur</text><text x="262" y="30" class="sm">visibilitychange</text><text x="440" y="30" class="sm">freeze</text><text x="596" y="30" class="sm">pagehide</text>
+  <text x="10" y="110" class="bd">Back/forward cache (bfcache)</text>
+  <rect x="10" y="122" width="360" height="86" rx="5" class="h"/><text x="20" y="142" class="bd">User navigates away</text><text x="20" y="160" class="sm">the whole page (DOM, JS heap) is frozen and stored in memory</text><text x="20" y="176" class="sm">Back button: instant restore, <tspan class="mono" style="font-size:11px">pageshow</tspan> fires</text><text x="20" y="192" class="sm">no reload, no re-run of scripts: feels instant</text>
+  <rect x="390" y="122" width="360" height="86" rx="5" class="x"/><text x="400" y="142" class="bd">What blocks bfcache</text><text x="400" y="160" class="sm"><tspan class="mono" style="font-size:11px">unload</tspan> handlers, open WebSocket/WebRTC connections,</text><text x="400" y="176" class="sm">in-flight fetches on some browsers, <tspan class="mono" style="font-size:11px">Cache-Control: no-store</tspan>,</text><text x="400" y="192" class="sm">some opener links. Check DevTools → Application.</text>
+  <text x="10" y="236" class="sm">Use <tspan class="mono" style="font-size:11px">visibilitychange</tspan> (hidden) as the reliable “save now” signal, especially on mobile. Pause timers, video, polling when hidden.</text>
+  <text x="10" y="254" class="sm">Use <tspan class="mono" style="font-size:11px">pageshow</tspan> to refresh stale data after a bfcache restore (auth state, cart, time-sensitive content).</text>
+</svg></div>
+<figcaption><b>Why it matters.</b> Respecting the lifecycle makes navigation instant (bfcache), saves battery and data, and avoids lost analytics or unsaved work.</figcaption></figure>
+
+<h3>APIs worth knowing, by problem</h3>
+<div class="tw"><table>
+<tr><th>Need</th><th>API</th><th>Notes</th></tr>
+<tr><td>Copy and paste</td><td>Async Clipboard (<code>navigator.clipboard.writeText/readText</code>)</td><td>Needs a secure context and a user gesture; read needs permission.</td></tr>
+<tr><td>Share</td><td>Web Share (<code>navigator.share</code>)</td><td>Mostly mobile; always provide a fallback.</td></tr>
+<tr><td>Animations</td><td>Web Animations (<code>el.animate()</code>), View Transitions (<code>document.startViewTransition</code>), scroll-driven animations (CSS)</td><td>Compositor-friendly (transform, opacity). View Transitions: same-document broadly supported, cross-document newer <span class="verify">verify</span>.</td></tr>
+<tr><td>Navigation and URLs</td><td>History API (<code>pushState</code>, <code>popstate</code>), Navigation API, <code>URLPattern</code></td><td>History powers SPA routers; Navigation API is the modern replacement <span class="verify">verify</span>.</td></tr>
+<tr><td>Observing</td><td>Intersection, Resize, Mutation, Performance observers</td><td>Event-free change detection (J27).</td></tr>
+<tr><td>Crypto and ids</td><td>Web Crypto (<code>crypto.subtle</code>, <code>crypto.getRandomValues</code>, <code>crypto.randomUUID()</code>)</td><td>Never use <code>Math.random</code> for security. Secure contexts only.</td></tr>
+<tr><td>Internationalisation</td><td><code>Intl</code>: <code>DateTimeFormat</code>, <code>NumberFormat</code>, <code>RelativeTimeFormat</code>, <code>PluralRules</code>, <code>Collator</code>, <code>Segmenter</code></td><td>Built in and locale-aware: avoid heavy date libraries for formatting (J13).</td></tr>
+<tr><td>Files</td><td>File API, drag-and-drop, File System Access, OPFS</td><td>File System Access is Chromium-led <span class="verify">verify</span>.</td></tr>
+<tr><td>Device and permissions</td><td>Geolocation, Permissions, Screen Wake Lock, Vibration, Battery-like sensors</td><td>Permission prompts need context; query <code>navigator.permissions</code> first. Several are Chromium-only.</td></tr>
+<tr><td>Background and notifications</td><td>Service Worker, Push, Notifications, Background Sync, Periodic Sync</td><td>Push on iOS needs an installed PWA <span class="verify">verify</span>. See the PWA guide.</td></tr>
+<tr><td>Auth</td><td>WebAuthn / passkeys (<code>navigator.credentials</code>), Credential Management</td><td>Phishing-resistant sign-in.</td></tr>
+<tr><td>UI primitives</td><td><code>&lt;dialog&gt;</code>, Popover API (<code>popover</code> attribute), <code>&lt;details&gt;</code>, anchor positioning</td><td>Less JavaScript, built-in focus and accessibility behaviour.</td></tr>
+<tr><td>Performance signals</td><td>Performance API (<code>performance.mark/measure</code>), Long Tasks, LoAF, Event Timing, Navigation Timing, Resource Timing</td><td>Basis for real-user monitoring and Core Web Vitals.</td></tr>
+<tr><td>Parallelism and compute</td><td>Web Workers, WebAssembly, WebGPU, OffscreenCanvas</td><td>J23.</td></tr>
+<tr><td>Data helpers</td><td><code>structuredClone</code>, <code>AbortSignal.timeout</code>, <code>queueMicrotask</code>, <code>Array.fromAsync</code>, <code>Object.groupBy</code></td><td>Check Baseline for each <span class="verify">verify</span>.</td></tr>
+</table></div>
+
+<h3>Using new APIs safely</h3>
+<ul>
+<li><b>Feature detection, not browser detection:</b> <code>if ('IntersectionObserver' in window)</code>, <code>if (navigator.share)</code>, <code>CSS.supports()</code>. User-agent sniffing breaks as browsers change.</li>
+<li><b>Progressive enhancement:</b> the core task works without the API; the API improves it (share sheet, instant transitions, offline mode).</li>
+<li><b>Baseline:</b> a shared definition (web.dev, MDN) of features that work in all current major browsers; “Baseline widely available” is safe, “newly available” needs a check against your audience. Use <code>browserslist</code> and analytics to decide your support matrix.</li>
+<li><b>Polyfills versus ponyfills:</b> a polyfill patches the global; a ponyfill exports a function without touching globals. Polyfill only what your targets lack, loaded conditionally; tools: core-js with <code>useBuiltIns</code>, or a polyfill service.</li>
+<li><b>Secure contexts and permissions:</b> many APIs need HTTPS and a user gesture; handle denial and unavailability gracefully.</li>
+<li><b>Origin trials and flags:</b> experimental features may change or disappear; keep them behind detection and never as a hard dependency.</li>
+<li><b>Page lifecycle events:</b> <code>visibilitychange</code> (hidden), <code>pagehide</code> (leaving, bfcache-safe), <code>pageshow</code> (restored), <code>freeze</code>/<code>resume</code> (Chromium); avoid <code>beforeunload</code> except for real unsaved-changes warnings and <code>unload</code> entirely.</li>
+<li><b>Privacy and consent:</b> geolocation, camera and notifications are sensitive; ask in context, explain why, and have a fallback.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“Just use it, everyone has Chrome.” Your audience may include Safari on iOS, which sets the floor for many APIs.</li>
+<li>Calling a permission API on page load, so users deny it before understanding why.</li>
+<li>Using <code>unload</code> or <code>beforeunload</code> for analytics and killing the back/forward cache.</li>
+<li>Shipping a polyfill bundle to every browser rather than conditionally.</li>
+<li>Using <code>Math.random()</code> for tokens or ids that need to be unguessable.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you decide whether you can use a new API?</dt><dd>Check Baseline and Can I Use against the support matrix from real analytics, feature-detect, provide a fallback, and decide whether the enhancement justifies the maintenance.</dd>
+<dt>What is the difference between <code>visibilitychange</code> and <code>pagehide</code>?</dt><dd><code>visibilitychange</code> fires when the tab is hidden or shown, including switching tabs; <code>pagehide</code> fires when the page is being navigated away from or closed. Use the first as the main save signal, the second as a backup.</dd>
+<dt>Why does bfcache matter for performance?</dt><dd>A restored page skips the network and script startup, so back navigation is instant and improves real-user metrics.</dd>
+<dt>Which API would replace a scroll listener for lazy loading?</dt><dd><code>IntersectionObserver</code>, or the native <code>loading="lazy"</code> attribute.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>34 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>Is JavaScript asynchronous?</td><td>No: the language is single-threaded; the host (browser, Node) provides async I/O and timers.</td><td>J18</td></tr>
+<tr><td>2</td><td>One turn of the event loop?</td><td>Run one task, drain all microtasks, render if a frame is due, repeat.</td><td>J18</td></tr>
+<tr><td>3</td><td>Which are microtasks?</td><td>Promise reactions, code after <code>await</code>, <code>queueMicrotask</code>, MutationObserver callbacks.</td><td>J18</td></tr>
+<tr><td>4</td><td>Why can microtasks block rendering?</td><td>The queue is drained completely before the render step, so endless re-queuing starves it.</td><td>J18</td></tr>
+<tr><td>5</td><td>What is a long task?</td><td>A task over 50 ms; it delays input and paint, and hurts INP.</td><td>J18</td></tr>
+<tr><td>6</td><td>Promise states?</td><td>Pending, then fulfilled or rejected exactly once; a settled promise never changes.</td><td>J19</td></tr>
+<tr><td>7</td><td><code>Promise.all</code> versus <code>allSettled</code>?</td><td><code>all</code> rejects at the first failure; <code>allSettled</code> always fulfils with every outcome.</td><td>J19</td></tr>
+<tr><td>8</td><td><code>race</code> versus <code>any</code>?</td><td><code>race</code> takes the first to settle; <code>any</code> the first to fulfil (AggregateError if all reject).</td><td>J19</td></tr>
+<tr><td>9</td><td>Does <code>race</code> cancel the losers?</td><td>No; use an <code>AbortController</code> to cancel work.</td><td>J19</td></tr>
+<tr><td>10</td><td>Does the promise executor run asynchronously?</td><td>No, it runs synchronously; only handlers are async microtasks.</td><td>J19</td></tr>
+<tr><td>11</td><td>What does <code>await</code> block?</td><td>Only the async function; the thread and event loop keep running.</td><td>J20</td></tr>
+<tr><td>12</td><td>How do you run requests in parallel?</td><td>Start them all, then <code>await Promise.all([...])</code>.</td><td>J20</td></tr>
+<tr><td>13</td><td>Why does <code>forEach(async …)</code> not wait?</td><td><code>forEach</code> ignores returned promises; use <code>for…of</code> or <code>Promise.all(map(...))</code>.</td><td>J20</td></tr>
+<tr><td>14</td><td>Is <code>async/await</code> faster than <code>.then</code>?</td><td>No; it is syntax over promises, chosen for readability and error handling.</td><td>J20</td></tr>
+<tr><td>15</td><td>Does <code>fetch</code> reject on a 404?</td><td>No; only on network failure. Check <code>response.ok</code>.</td><td>J21</td></tr>
+<tr><td>16</td><td>What does <code>finally</code> do with a return?</td><td>Always runs; a <code>return</code> inside it overrides earlier returns and throws.</td><td>J21</td></tr>
+<tr><td>17</td><td>What is <code>cause</code> in an Error?</td><td>An option that chains the original error to a new one, preserving context.</td><td>J21</td></tr>
+<tr><td>18</td><td>What do error boundaries miss?</td><td>Event handlers, async code, SSR and errors in the boundary itself.</td><td>J21</td></tr>
+<tr><td>19</td><td>Debounce versus throttle?</td><td>Debounce fires once after quiet; throttle fires at most once per interval.</td><td>J22</td></tr>
+<tr><td>20</td><td>How do you cancel a fetch?</td><td><code>AbortController</code>: pass <code>signal</code>; <code>abort()</code> rejects with <code>AbortError</code>.</td><td>J22</td></tr>
+<tr><td>21</td><td><code>requestAnimationFrame</code> versus <code>setTimeout</code>?</td><td>rAF runs before the next paint and pauses in hidden tabs; timers are not frame-aligned.</td><td>J22</td></tr>
+<tr><td>22</td><td>When use a Web Worker?</td><td>CPU-heavy work that would block the main thread; not for I/O waiting.</td><td>J23</td></tr>
+<tr><td>23</td><td>Worker versus Service Worker?</td><td>Worker: background computation. Service Worker: network proxy for caching, offline and push.</td><td>J23</td></tr>
+<tr><td>24</td><td>How do workers share data?</td><td><code>postMessage</code> (copy or transfer); <code>SharedArrayBuffer</code> needs cross-origin isolation.</td><td>J23</td></tr>
+<tr><td>25</td><td>How does V8 decide what to free?</td><td>Reachability from roots (mark-and-sweep), generational with incremental and concurrent marking.</td><td>J24</td></tr>
+<tr><td>26</td><td>Top three browser leak causes?</td><td>Listeners/timers not removed, detached DOM nodes, unbounded caches or closures.</td><td>J25</td></tr>
+<tr><td>27</td><td>What is a hidden class?</td><td>An internal shape shared by objects with the same properties in the same order; enables fast access.</td><td>J26</td></tr>
+<tr><td>28</td><td>Capture versus bubble?</td><td>Capture goes window → target, bubble goes target → window; listeners default to bubble.</td><td>J27</td></tr>
+<tr><td>29</td><td>Observer versus pub-sub?</td><td>Observer: subject knows observers. Pub-sub: a broker decouples both sides.</td><td>J28</td></tr>
+<tr><td>30</td><td>Where to store auth tokens?</td><td>Trade-off: <code>localStorage</code> is exposed to XSS; HttpOnly cookies need CSRF protection.</td><td>J29</td></tr>
+<tr><td>31</td><td>Polling, SSE or WebSocket?</td><td>Polling: simple. SSE: one-way server push over HTTP. WebSocket: two-way, stateful, harder to scale.</td><td>J30</td></tr>
+<tr><td>32</td><td>When use IndexedDB instead of <code>localStorage</code>?</td><td>Large, structured, binary or offline data; <code>localStorage</code> is small, synchronous and string-only.</td><td>J30</td></tr>
+<tr><td>33</td><td>How do you use a new browser API safely?</td><td>Feature-detect, check Baseline against your support matrix, progressively enhance, polyfill conditionally.</td><td>J31</td></tr>
+<tr><td>34</td><td>What is bfcache and what breaks it?</td><td>Instant back/forward restore of a frozen page; <code>unload</code> handlers, open connections and <code>no-store</code> can block it.</td><td>J31</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer runtime and engine questions at L4</h4>
+<ul>
+<li>Start with the one-sentence model (“one task, then all microtasks, then render”), then go one level deeper only if asked. Interviewers reward a clear mental model over a memorised list.</li>
+<li>Always attach a production consequence: a long task hurts INP, a missing cleanup leaks memory, a floating promise loses an error, a stale response overwrites a newer one.</li>
+<li>Name trade-offs, not just features: workers cost startup and copying, throttling costs freshness, a strict CSP costs integration effort, <code>localStorage</code> tokens cost XSS exposure.</li>
+<li>For engine internals (V8 tiers, GC details) state the principle confidently and say “I would check the exact version details” for the specifics.</li>
+<li>Connect to React and tooling: effect cleanup, concurrent rendering as scheduling, error boundaries, bundle size and parse cost.</li>
+<li>The interview is theoretical: expect “explain”, “compare”, “how would you debug”, and “what are the trade-offs”, not code puzzles.</li>
+</ul></div>
+</section>
+
+</div>

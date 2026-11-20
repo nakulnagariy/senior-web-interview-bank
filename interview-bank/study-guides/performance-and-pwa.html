@@ -1,0 +1,869 @@
+<title>Performance and PWA Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"Performance and PWA Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"Performance and PWA Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · Performance and PWA · Expert level</div>
+  <h1>Performance and PWA Study Guide</h1>
+  <p>How to make web applications fast and resilient, and how to measure it: Core Web Vitals, loading performance and resource hints, images, fonts and media, JavaScript and main-thread performance, rendering and interaction responsiveness, measurement and monitoring (lab versus field), caching strategies, Progressive Web Apps, service workers and offline, and performance on slow networks and low-end devices. The interview is theoretical, so every topic is something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> metrics and thresholds evolve: check web.dev before quoting numbers</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Metrics and loading</h3>
+    <ol>
+      <li><b>F1</b><a href="#f1">Core Web Vitals and performance metrics</a></li>
+      <li><b>F2</b><a href="#f2">Loading performance and resource hints</a></li>
+      <li><b>F3</b><a href="#f3">Images, fonts and media</a></li>
+      <li><b>F4</b><a href="#f4">JavaScript and main-thread performance</a></li>
+      <li><b>F5</b><a href="#f5">Interaction and rendering performance</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>2 · Measuring and caching</h3>
+    <ol>
+      <li><b>F6</b><a href="#f6">Measurement, monitoring and budgets</a></li>
+      <li><b>F7</b><a href="#f7">Caching and delivery strategies</a></li>
+    </ol>
+    <h3 style="margin-top:16px">3 · Progressive Web Apps</h3>
+    <ol>
+      <li><b>F8</b><a href="#f8">PWA fundamentals</a></li>
+      <li><b>F9</b><a href="#f9">Service workers in depth</a></li>
+      <li><b>F10</b><a href="#f10">Resilience: slow networks, low-end devices, offline UX</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">F1 and F6 give you the measurement vocabulary; start there. F2 to F5 are the optimisation toolbox. F8 and F9 are the PWA questions.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Related guides: Browser and build (rendering pipeline, bundling), Web protocols (HTTP caching, CDNs), Next.js (rendering strategy and image/font features).</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Metrics and loading</h1>
+
+<!-- ============ F1 ============ -->
+<section class="q" id="f1">
+<header class="qh">
+  <div class="qrow"><span class="qid">F1</span><span class="tag added">Added</span></div>
+  <h2>Core Web Vitals and performance metrics</h2>
+  <p class="qtext">“What are the Core Web Vitals? Explain LCP, INP and CLS, their thresholds, how each is measured, and what typically makes them bad. What other metrics matter (TTFB, FCP, TBT)? Why do they matter for the business?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Core Web Vitals are Google’s user-centred metrics for loading, interactivity and visual stability. Largest Contentful Paint measures when the main content appears, good is 2.5 seconds or less. Interaction to Next Paint measures responsiveness across all interactions on the page, good is 200 milliseconds or less; it replaced First Input Delay in 2024. Cumulative Layout Shift measures unexpected movement of content, good is 0.1 or less. They are assessed at the 75th percentile of real users, split by mobile and desktop. Supporting diagnostics include Time to First Byte, First Contentful Paint and Total Blocking Time, which is a lab proxy for responsiveness. They matter because speed affects conversion, engagement and search ranking, but I treat them as a user-experience tool, not a score to game.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="A loading timeline marking TTFB, FCP and LCP, with thresholds, a layout shift example for CLS, and an interaction with input delay, processing time and presentation delay for INP.">
+  <text x="10" y="18" class="bd">Page load timeline</text>
+  <line x1="10" y1="60" x2="750" y2="60" class="l"/>
+  <rect x="10" y="40" width="150" height="40" rx="3" class="w" style="opacity:.7"/><text x="16" y="64" class="sm">TTFB  &lt; 0.8 s</text>
+  <circle cx="250" cy="60" r="6" class="fillh"/><text x="214" y="34" class="bd">FCP</text><text x="190" y="96" class="sm">first content, &lt; 1.8 s</text>
+  <circle cx="470" cy="60" r="6" class="fillg"/><text x="436" y="34" class="bd">LCP</text><text x="410" y="96" class="sm">largest element, ≤ 2.5 s</text>
+  <rect x="470" y="46" width="150" height="28" rx="3" class="x" style="opacity:.6"/><text x="476" y="64" class="sm">TBT (lab): long tasks</text>
+  <text x="10" y="126" class="bd">LCP candidates and what delays them</text>
+  <rect x="10" y="136" width="360" height="62" rx="5" class="b"/><text x="18" y="156" class="sm">hero image, large text block, video poster, background image</text><text x="18" y="172" class="sm">delays: slow TTFB · late discovery · render-blocking CSS/JS ·</text><text x="18" y="188" class="sm">heavy image · client-side rendering before the element exists</text>
+  <text x="400" y="126" class="bd">CLS: unexpected movement (≤ 0.1)</text>
+  <rect x="400" y="136" width="170" height="62" rx="5" class="b"/><text x="408" y="154" class="sm">before</text><rect x="408" y="162" width="150" height="14" class="g"/><rect x="408" y="180" width="150" height="12" class="b"/>
+  <rect x="580" y="136" width="170" height="62" rx="5" class="x"/><text x="588" y="154" class="sm">banner loads late</text><rect x="588" y="158" width="150" height="14" class="w"/><rect x="588" y="176" width="150" height="14" class="g"/>
+  <text x="400" y="216" class="sm">causes: images without dimensions, late ads/embeds, web fonts</text><text x="400" y="232" class="sm">swapping, content injected above existing content</text>
+  <text x="10" y="226" class="bd">INP: the slowest typical interaction (≤ 200 ms)</text>
+  <rect x="10" y="236" width="360" height="30" rx="3" class="b"/><rect x="10" y="236" width="80" height="30" class="w"/><text x="16" y="256" class="sm">input delay</text><rect x="90" y="236" width="170" height="30" class="x"/><text x="96" y="256" class="sm">processing (handlers)</text><rect x="260" y="236" width="110" height="30" class="h"/><text x="266" y="256" class="sm">presentation</text>
+  <text x="10" y="284" class="sm">click → handlers run → next frame painted. Long tasks and heavy renders raise it.</text>
+  <text x="400" y="266" class="sm">Thresholds: good / needs improvement / poor</text><text x="400" y="282" class="sm">LCP 2.5 s / 4 s · INP 200 / 500 ms · CLS 0.1 / 0.25</text><text x="400" y="298" class="sm">judged at the 75th percentile of field data.</text>
+</svg></div>
+<figcaption><b>Idea.</b> Loading (LCP), responsiveness (INP) and stability (CLS), each measured on real users and judged at p75.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>LCP:</b> render time of the largest image, video poster or block-level text in the viewport. Breakdown: TTFB, resource load delay, resource load duration, element render delay. Improve by faster server and CDN, preloading the LCP resource with <code>fetchpriority="high"</code>, not lazy-loading it, optimising its size and format, removing render-blocking resources, and server rendering the element so it does not wait for JavaScript.</li>
+<li><b>INP:</b> considers all clicks, taps and key presses; reports a high percentile of interaction latencies (roughly the worst). Components: input delay (main thread busy), processing time (event handlers), presentation delay (rendering the next frame). Improve by breaking up long tasks, doing less work in handlers, deferring non-urgent updates (transitions), avoiding layout thrash, reducing DOM size and hydration cost, and moving heavy work to workers (J18, J23, R9).</li>
+<li><b>CLS:</b> sum of layout-shift scores (impact fraction × distance fraction) in the worst session window, ignoring shifts within 500 ms of user input. Fix by reserving space (width/height or <code>aspect-ratio</code>), <code>font-display</code> with size-adjust fallback, skeletons of the right size, avoiding insertion above content, and composited animations (<code>transform</code>).</li>
+<li><b>Other metrics:</b> TTFB (server and network), FCP (first text or image), Speed Index and Total Blocking Time (lab), Time to Interactive (deprecated), First Input Delay (replaced by INP). Custom metrics with the User Timing API (<code>performance.mark</code>/<code>measure</code>) capture business milestones (search results visible, checkout ready).</li>
+<li><b>Lab versus field:</b> lab (Lighthouse, WebPageTest) is repeatable and good for debugging; field (Chrome User Experience Report, RUM) reflects real devices, networks and behaviour and is what Google ranks on. Lab can pass while field fails because users have slower phones and different content.</li>
+<li><b>Percentiles:</b> use p75 for Core Web Vitals; look at p90/p95 for tail pain; averages hide problems. Segment by device, connection, country, page type and logged-in state.</li>
+<li><b>Business impact:</b> case studies link speed to conversion, bounce and revenue; Core Web Vitals are a ranking signal (modest). Tie performance work to measurable outcomes (conversion funnel, engagement) when asking for time.</li>
+<li><b>Metrics evolve:</b> INP replaced FID (March 2024); thresholds and new metrics (such as Long Animation Frames) change, so check web.dev <span class="verify">verify current thresholds</span>.</li>
+<li><b>SPA nuance:</b> metrics were designed for page loads; soft navigations in single-page apps may not be fully measured by CWV (experimental soft navigation support) so add custom route-change metrics.</li>
+<li><b>Where Core Web Vitals show up:</b> Search Console report, PageSpeed Insights (field data from CrUX plus lab), Chrome DevTools Performance and Insights, the <code>web-vitals</code> JavaScript library, and RUM vendors.</li>
+<li><b>Trade-offs:</b> optimising one metric can hurt another (preloading everything improves LCP but wastes bandwidth; aggressive lazy-loading delays LCP). Focus on the user journey that matters most.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Still quoting First Input Delay as a Core Web Vital.</li>
+<li>Reporting a single Lighthouse score as the performance state of the site.</li>
+<li>Using averages instead of the 75th percentile.</li>
+<li>Lazy-loading the LCP image or hiding it behind client-side rendering.</li>
+<li>Ignoring CLS on pages that load fine on a fast desktop.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How is INP different from FID?</dt><dd>FID measured only the delay before the first interaction’s handler; INP measures the full latency (to the next paint) of all interactions and reports a high percentile.</dd>
+<dt>What is the LCP element on a typical page?</dt><dd>Usually the hero image or a heading block; find it in DevTools Performance or PageSpeed Insights and optimise that specific resource.</dd>
+<dt>Why might field data be worse than lab data?</dt><dd>Real users have slower CPUs and networks, cold caches, extensions, and interact in ways the lab script does not.</dd>
+<dt>How do you improve CLS caused by web fonts?</dt><dd>Preload the key font, use <code>font-display: swap</code> or <code>optional</code> with fallback metrics adjusted via <code>size-adjust</code> and <code>ascent-override</code>.</dd>
+</dl></div>
+</section>
+
+<!-- ============ F2 ============ -->
+<section class="q" id="f2">
+<header class="qh">
+  <div class="qrow"><span class="qid">F2</span><span class="tag added">Added</span></div>
+  <h2>Loading performance and resource hints</h2>
+  <p class="qtext">“How do you make a page load faster? Explain preload, preconnect, prefetch, <code>fetchpriority</code>, critical CSS, <code>defer</code>/<code>async</code>, compression, CDNs and the effect of third-party scripts.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Loading performance is about shortening the critical path: get the first bytes quickly, discover important resources early, and avoid blocking rendering. I reduce server and network latency with a CDN, caching, compression and HTTP/2 or 3. I inline or prioritise critical CSS and defer the rest, load JavaScript with <code>defer</code> or modules and ship less of it. I help the browser with hints: <code>preload</code> for resources needed soon, <code>preconnect</code> for important third-party origins, <code>fetchpriority</code> to raise the LCP image, and <code>prefetch</code> for likely next navigations. I control third-party scripts, which are a major cause of slow pages, and I measure the waterfall to confirm the critical chain actually got shorter.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a request waterfall before optimisation with a chain of dependent resources, and after with preload and preconnect making resources parallel. Right: a table of resource hints and when to use each.">
+  <text x="10" y="18" class="bd">Critical chain before and after</text>
+  <text x="10" y="42" class="sm">before</text>
+  <rect x="60" y="30" width="60" height="14" class="b"/><text x="66" y="41" class="sm" style="font-size:10px">HTML</text>
+  <rect x="120" y="48" width="70" height="14" class="b"/><text x="126" y="59" class="sm" style="font-size:10px">CSS</text>
+  <rect x="190" y="66" width="70" height="14" class="b"/><text x="196" y="77" class="sm" style="font-size:10px">font (css)</text>
+  <rect x="120" y="84" width="90" height="14" class="b"/><text x="126" y="95" class="sm" style="font-size:10px">app.js</text>
+  <rect x="210" y="102" width="70" height="14" class="b"/><text x="216" y="113" class="sm" style="font-size:10px">API data</text>
+  <rect x="280" y="120" width="90" height="14" class="x"/><text x="286" y="131" class="sm" style="font-size:10px">hero image</text>
+  <text x="10" y="160" class="sm">after</text>
+  <rect x="60" y="148" width="60" height="14" class="g"/><text x="66" y="159" class="sm" style="font-size:10px">HTML</text>
+  <rect x="120" y="148" width="70" height="14" class="g"/><text x="126" y="159" class="sm" style="font-size:10px">CSS</text>
+  <rect x="120" y="166" width="70" height="14" class="g"/><text x="126" y="177" class="sm" style="font-size:10px">hero (preload)</text>
+  <rect x="120" y="184" width="70" height="14" class="g"/><text x="126" y="195" class="sm" style="font-size:10px">font (preload)</text>
+  <rect x="120" y="202" width="90" height="14" class="g"/><text x="126" y="213" class="sm" style="font-size:10px">app.js (defer)</text>
+  <text x="10" y="244" class="sm">Shorten the chain: discover early, fetch in parallel,</text><text x="10" y="260" class="sm">avoid CSS → font and JS → API → image dependencies.</text><text x="10" y="284" class="sm">Server render or embed data so the page does not wait</text><text x="10" y="300" class="sm">for JavaScript to start the LCP request.</text>
+  <text x="400" y="18" class="bd">Resource hints</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="b"/>
+  <text x="410" y="50" class="mono" style="font-size:10px">preload</text><text x="480" y="50" class="sm">fetch a needed-soon resource now (LCP</text><text x="480" y="64" class="sm">image, key font, critical chunk)</text>
+  <text x="410" y="88" class="mono" style="font-size:10px">modulepreload</text><text x="504" y="88" class="sm">module and its dependencies</text>
+  <text x="410" y="112" class="mono" style="font-size:10px">preconnect</text><text x="490" y="112" class="sm">DNS + TCP + TLS to a key third</text><text x="490" y="126" class="sm">party (few, with crossorigin if needed)</text>
+  <text x="410" y="150" class="mono" style="font-size:10px">dns-prefetch</text><text x="496" y="150" class="sm">cheap DNS-only for many origins</text>
+  <text x="410" y="174" class="mono" style="font-size:10px">prefetch</text><text x="476" y="174" class="sm">low priority fetch for the next page</text><text x="476" y="188" class="sm">(idle time, cached for later)</text>
+  <text x="410" y="212" class="mono" style="font-size:10px">fetchpriority</text><text x="496" y="212" class="sm">high on LCP image, low on below-fold</text>
+  <text x="410" y="236" class="mono" style="font-size:10px">103 Early Hints</text><text x="508" y="236" class="sm">server sends preloads before the</text><text x="508" y="250" class="sm">final response is ready</text>
+  <text x="410" y="278" class="bd">Use sparingly</text><text x="410" y="294" class="sm">Too many preloads compete with critical resources and</text><text x="410" y="308" class="sm">can slow the page; verify in the waterfall.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Start important downloads earlier and in parallel; do not preload everything.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Server and network:</b> reduce TTFB with caching (full-page, CDN, edge), fast data access, streaming HTML, HTTP/2 or 3, Brotli compression, keep-alive, and servers near users. Static and ISR pages served from a CDN beat dynamic rendering for TTFB (N1).</li>
+<li><b>Render-blocking resources:</b> CSS blocks rendering, synchronous scripts block parsing. Inline critical CSS (small, above-the-fold), load the rest with <code>media</code> tricks or preload-and-swap, split CSS per route, and use <code>defer</code>/<code>type="module"</code> for scripts (B1).</li>
+<li><b>Preloading correctly:</b> <code>&lt;link rel="preload" as="image" href imagesrcset&gt;</code> for the LCP image when it is not discoverable in HTML (CSS background, JS-injected); <code>as="font" crossorigin</code> for fonts (crossorigin is required even for same-origin). Unused preloads trigger warnings and waste bandwidth.</li>
+<li><b>Priority hints:</b> <code>fetchpriority="high"</code> on the LCP image, <code>low</code> on carousels’ off-screen images and non-critical scripts; browsers have defaults that you refine.</li>
+<li><b>Preconnect limits:</b> use for the two to four origins you need soon (API, font host, image CDN); each connection consumes resources. Consider self-hosting third-party assets to avoid new connections.</li>
+<li><b>Prefetch and speculation:</b> <code>&lt;link rel="prefetch"&gt;</code> for likely next resources; framework Link prefetching; the Speculation Rules API for prefetch/prerender of likely next pages with instant navigations <span class="verify">verify browser support</span>.</li>
+<li><b>Reduce what you load:</b> remove unused JavaScript and CSS (Coverage panel), lazy-load below-the-fold images and iframes, split bundles, avoid large fonts and icon libraries, and trim third-party tags (B6).</li>
+<li><b>Third-party scripts:</b> analytics, ads, chat, tag managers and A/B tools often dominate blocking time and CLS. Audit with the Network/Performance panels or Lighthouse’s third-party summary; load with <code>async</code>/<code>defer</code>, after interaction or idle; use facades (click-to-load YouTube or chat); self-host critical ones; use server-side tagging; set budgets and review owners.</li>
+<li><b>Compression and formats:</b> Brotli for text (pre-compress static assets), gzip fallback; minify JS and CSS; WebP/AVIF for images; WOFF2 for fonts; avoid huge JSON, and compress API responses.</li>
+<li><b>Fonts in the critical path:</b> preload the one or two fonts used above the fold, subset, <code>font-display</code>, self-host to avoid extra origins (F3).</li>
+<li><b>Client-side rendering costs:</b> JavaScript must download, parse, execute and fetch data before content appears; SSR/SSG, streaming and Server Components avoid that chain (N1, R11).</li>
+<li><b>Measuring the result:</b> DevTools waterfall (critical request chains), WebPageTest filmstrip and connection view, Lighthouse “Reduce unused” and “Render-blocking” audits; compare before and after on throttled mobile profiles.</li>
+<li><b>Anti-patterns:</b> CSS <code>@import</code> chains, JS-injected stylesheets, giant above-the-fold carousels, loading all fonts and weights, synchronous third-party tags in <code>&lt;head&gt;</code>, redirect chains (each costs a round trip), and no cache headers.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Preloading many resources and starving the truly critical ones.</li>
+<li>Forgetting <code>crossorigin</code> on font preloads, so they are fetched twice.</li>
+<li>Inlining so much CSS that HTML grows and cannot be cached.</li>
+<li>Optimising the lab waterfall on a fast connection but not throttled mobile.</li>
+<li>Adding a tag manager with no governance and then wondering why the page is slow.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Preload versus prefetch?</dt><dd>Preload is high-priority for the current page; prefetch is low-priority for a future navigation.</dd>
+<dt>How do you find render-blocking resources?</dt><dd>Lighthouse audit, DevTools Network “Priority” and the Performance panel; check stylesheets and synchronous scripts in the head.</dd>
+<dt>How do you handle a tag manager that owns many scripts?</dt><dd>Governance (approval process), load after consent and idle, limit tags, monitor their cost, and consider server-side tagging.</dd>
+<dt>Why do redirects hurt?</dt><dd>Each hop costs a full round trip plus potential connection setup; avoid chains and use direct canonical URLs.</dd>
+</dl></div>
+</section>
+
+<!-- ============ F3 ============ -->
+<section class="q" id="f3">
+<header class="qh">
+  <div class="qrow"><span class="qid">F3</span><span class="tag added">Added</span></div>
+  <h2>Images, fonts and media</h2>
+  <p class="qtext">“How do you optimise images, web fonts, video and icons? Explain responsive images (<code>srcset</code>, <code>sizes</code>, <code>&lt;picture&gt;</code>), lazy loading, AVIF/WebP, font loading and layout shift.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Images are usually the largest bytes on a page, so I serve the right size and format: responsive <code>srcset</code> and <code>sizes</code> so the browser picks an appropriate width, modern formats such as AVIF or WebP with fallbacks, compression tuned by content, and dimensions on every image to avoid layout shift. Below-the-fold images use <code>loading="lazy"</code>, but the LCP image is eager with high priority. A CDN with an image transformation service can resize and convert on demand. For fonts I use WOFF2, subset, self-host, preload only the critical ones, and use <code>font-display</code> with adjusted fallbacks to limit shift. Video gets proper encoding, poster images and lazy loading, and SVG or CSS replace raster icons where possible.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: how the browser picks an image candidate using srcset widths and the sizes attribute against the viewport and device pixel ratio. Right: format comparison and font loading strategies.">
+  <text x="10" y="18" class="bd">Responsive image selection</text>
+  <rect x="10" y="30" width="360" height="84" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10px">&lt;img src="hero-800.avif" width="1200" height="600"</text><text x="18" y="62" class="mono" style="font-size:10px">  srcset="hero-400.avif 400w, hero-800.avif 800w,</text><text x="18" y="76" class="mono" style="font-size:10px">          hero-1600.avif 1600w"</text><text x="18" y="90" class="mono" style="font-size:10px">  sizes="(min-width: 900px) 50vw, 100vw" alt="…"&gt;</text><text x="18" y="106" class="sm">width/height give the aspect ratio before load (no layout shift)</text>
+  <text x="10" y="138" class="sm">The browser multiplies the displayed width from sizes by the device</text><text x="10" y="154" class="sm">pixel ratio and picks the smallest candidate that is large enough.</text><text x="10" y="170" class="sm">Without sizes it assumes 100vw and downloads too much.</text>
+  <rect x="10" y="186" width="360" height="62" rx="5" class="w"/><text x="18" y="206" class="bd">&lt;picture&gt; for art direction and formats</text><text x="18" y="224" class="mono" style="font-size:10px">&lt;source type="image/avif" srcset=…&gt;</text><text x="18" y="240" class="sm">different crops per breakpoint; JPEG fallback in the img tag</text>
+  <rect x="10" y="258" width="360" height="52" rx="5" class="g"/><text x="18" y="278" class="bd">Loading</text><text x="18" y="296" class="sm">LCP: eager + fetchpriority=high · others: lazy</text>
+  <text x="400" y="18" class="bd">Formats (typical use)</text>
+  <rect x="400" y="30" width="350" height="106" rx="5" class="b"/><text x="408" y="50" class="sm"><tspan class="bd">AVIF</tspan> best compression, slower encode, wide support now</text><text x="408" y="70" class="sm"><tspan class="bd">WebP</tspan> good compression, very broad support</text><text x="408" y="90" class="sm"><tspan class="bd">JPEG / PNG</tspan> fallback; PNG for flat graphics (or use SVG)</text><text x="408" y="110" class="sm"><tspan class="bd">SVG</tspan> icons, logos, illustrations (inline or sprite, sanitise)</text><text x="408" y="128" class="sm"><tspan class="bd">GIF</tspan> avoid: use MP4/WebM or animated AVIF instead</text>
+  <text x="400" y="162" class="bd">Font loading</text>
+  <rect x="400" y="172" width="350" height="138" rx="5" class="g"/><text x="408" y="192" class="sm">WOFF2 only, subset glyphs, variable fonts</text><text x="408" y="210" class="mono" style="font-size:10px">@font-face { font-display: swap; size-adjust: 105%; }</text><text x="408" y="228" class="sm">swap: show fallback, then swap (some shift) · optional: use only if</text><text x="408" y="244" class="sm">cached fast (no shift) · fallback metrics via size-adjust</text><text x="408" y="262" class="sm">self-host, preload 1 to 2 critical fonts with crossorigin</text><text x="408" y="280" class="sm">system font stack for body is the fastest option</text><text x="408" y="298" class="sm">avoid icon fonts: use inline SVG</text>
+</svg></div>
+<figcaption><b>Rule.</b> Right size, right format, reserved space, loaded at the right priority.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Choosing widths:</b> generate a ladder of widths (for example 320, 640, 960, 1280, 1920) and let <code>srcset</code> with <code>w</code> descriptors and an accurate <code>sizes</code> do the selection; use <code>x</code> descriptors only for fixed-size images (<code>1x, 2x</code>). Do not serve a desktop 2000 px image to a phone.</li>
+<li><b>Dimensions and aspect ratio:</b> always set <code>width</code> and <code>height</code> attributes (modern browsers compute <code>aspect-ratio</code> from them) or use CSS <code>aspect-ratio</code>, so the layout reserves space (CLS).</li>
+<li><b>Lazy loading:</b> native <code>loading="lazy"</code> for images and iframes below the fold; never on the LCP image; <code>decoding="async"</code> to avoid blocking; for carousels and tabs, lazy-load hidden slides. IntersectionObserver for custom behaviour (J27).</li>
+<li><b>Compression strategy:</b> pick quality per content type (photography around quality 60 to 80 in AVIF/WebP), strip metadata, consider perceptual metrics (SSIM, Butteraugli), and automate in the build or at the CDN (Cloudinary, Imgix, Cloudflare Images, <code>next/image</code>) (N9).</li>
+<li><b>Placeholders:</b> dominant-colour or blurred low-quality placeholders (LQIP, BlurHash, ThumbHash) improve perceived performance; keep placeholder data tiny and avoid shifts.</li>
+<li><b>Background images in CSS:</b> not discovered by the preload scanner; for LCP use an <code>&lt;img&gt;</code> or preload; <code>image-set()</code> provides resolution switching.</li>
+<li><b>Video:</b> encode to H.264/H.265/AV1 and VP9, serve adaptive streaming (HLS/DASH) for long content, use <code>preload="none"</code> or <code>metadata</code>, poster images, <code>playsinline muted loop</code> for animation replacements, lazy-load below the fold, and facade embeds for YouTube to avoid loading heavy players upfront.</li>
+<li><b>Icons:</b> inline SVG or an SVG sprite with <code>&lt;use&gt;</code>; tree-shaken icon components; avoid whole-icon-font downloads; optimise SVG with SVGO; ensure accessible names.</li>
+<li><b>Fonts, deeper:</b> each additional weight or style is another file; subset by Unicode range (<code>unicode-range</code>) to load scripts only when needed; <code>font-display: optional</code> removes shift but may skip the custom font on first visit; preload with <code>crossorigin</code>; avoid blocking third-party font CSS (self-host Google Fonts or use <code>next/font</code>).</li>
+<li><b>Layout shift from fonts:</b> fallback font metrics differ; tune with <code>size-adjust</code>, <code>ascent-override</code>, <code>descent-override</code>, <code>line-gap-override</code>, or use frameworks that compute them automatically.</li>
+<li><b>Caching and CDNs:</b> immutable caching for fingerprinted images; <code>Vary: Accept</code> when negotiating format on the server; CDN image resizing with signed URLs to prevent abuse; set sensible limits and allowlists.</li>
+<li><b>Accessibility:</b> meaningful <code>alt</code>, empty alt for decorative images, captions for video, avoid text in images, <code>prefers-reduced-motion</code> for autoplaying animation.</li>
+<li><b>Auditing:</b> Lighthouse “Properly size images”, “Serve images in next-gen formats”, “Efficiently encode”, Network panel sizes and priorities, Squoosh for experiments, WebPageTest image analysis.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li><code>srcset</code> without <code>sizes</code> on responsive layouts, so browsers assume full width.</li>
+<li>Lazy-loading the hero image, delaying LCP.</li>
+<li>Missing width and height, causing layout shift as images load.</li>
+<li>Serving animated GIFs instead of video.</li>
+<li>Loading six font weights for a design that uses two.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How does the browser choose from <code>srcset</code>?</dt><dd>It calculates the needed pixel width from <code>sizes</code> and the device pixel ratio and picks the best candidate, also considering network conditions and cache.</dd>
+<dt>AVIF or WebP?</dt><dd>AVIF compresses better but encodes slower; serve AVIF with WebP and JPEG fallbacks via <code>&lt;picture&gt;</code> or content negotiation.</dd>
+<dt>How do you prevent font-related layout shift?</dt><dd>Preload critical fonts, adjust fallback metrics, subset, and choose <code>swap</code> or <code>optional</code> by tolerance.</dd>
+<dt>Is lazy loading always good?</dt><dd>No: only for off-screen content. Above-the-fold and LCP images must load immediately.</dd>
+</dl></div>
+</section>
+
+<!-- ============ F4 ============ -->
+<section class="q" id="f4">
+<header class="qh">
+  <div class="qrow"><span class="qid">F4</span><span class="tag added">Added</span></div>
+  <h2>JavaScript and main-thread performance</h2>
+  <p class="qtext">“How do you reduce JavaScript cost? What are long tasks and Total Blocking Time? How do you break up work, defer third-party code and reduce hydration cost? How do web workers help?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“JavaScript is the most expensive resource byte for byte because it must be downloaded, parsed, compiled and executed on the main thread, which also handles input and rendering. So I ship less: code splitting, tree shaking, lighter dependencies, and moving work to the server with SSR and Server Components. I break long tasks, anything over 50 ms, into smaller chunks that yield to the browser using <code>scheduler.yield</code> or timeouts, defer non-critical and third-party code until after interaction or idle, reduce hydration with partial hydration and fewer client components, and move heavy computation to Web Workers. I confirm in the Performance panel using CPU throttling that long tasks are gone and Interaction to Next Paint improved.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="Left: one long task blocking input versus the same work chunked into small tasks with yields allowing input to be handled. Right: the cost chain of a JavaScript byte and the strategies to reduce each part.">
+  <text x="10" y="18" class="bd">Long task versus chunked work</text>
+  <text x="10" y="42" class="sm">before</text>
+  <rect x="60" y="30" width="300" height="24" rx="3" class="x"/><text x="66" y="46" class="sm">one 400 ms task: input waits, UI frozen</text>
+  <text x="10" y="86" class="sm">after</text>
+  <rect x="60" y="74" width="44" height="24" rx="3" class="g"/><rect x="108" y="74" width="8" height="24" rx="2" class="h"/><rect x="120" y="74" width="44" height="24" rx="3" class="g"/><rect x="168" y="74" width="8" height="24" rx="2" class="h"/><rect x="180" y="74" width="44" height="24" rx="3" class="g"/><rect x="228" y="74" width="8" height="24" rx="2" class="h"/><rect x="240" y="74" width="44" height="24" rx="3" class="g"/><rect x="288" y="74" width="8" height="24" rx="2" class="h"/><rect x="300" y="74" width="44" height="24" rx="3" class="g"/>
+  <text x="60" y="116" class="sm">green: chunks under 50 ms · blue: input handled between chunks</text>
+  <rect x="10" y="130" width="360" height="62" rx="5" class="b"/><text x="18" y="150" class="mono" style="font-size:10.5px">for (const chunk of chunks) {</text><text x="18" y="166" class="mono" style="font-size:10.5px">  process(chunk); await scheduler.yield(); }</text><text x="18" y="184" class="sm">fallback: setTimeout(0) or MessageChannel (J18, J22)</text>
+  <rect x="10" y="206" width="360" height="94" rx="5" class="w"/><text x="18" y="226" class="bd">Move work off the main thread</text><text x="18" y="244" class="sm">Web Workers for parsing, search, crypto, image work (J23)</text><text x="18" y="260" class="sm">server for heavy data shaping · WebAssembly for compute</text><text x="18" y="276" class="sm">requestIdleCallback for non-urgent tasks · avoid sync loops</text><text x="18" y="292" class="sm">over large arrays in event handlers</text>
+  <text x="400" y="18" class="bd">Cost of a JavaScript byte</text>
+  <rect x="400" y="30" width="80" height="40" rx="4" class="b"/><text x="408" y="48" class="sm">download</text><text x="408" y="62" class="sm">bytes</text>
+  <rect x="486" y="30" width="80" height="40" rx="4" class="h"/><text x="494" y="48" class="sm">parse +</text><text x="494" y="62" class="sm">compile</text>
+  <rect x="572" y="30" width="80" height="40" rx="4" class="w"/><text x="580" y="48" class="sm">execute</text><text x="580" y="62" class="sm">main thread</text>
+  <rect x="658" y="30" width="92" height="40" rx="4" class="x"/><text x="666" y="48" class="sm">hydrate +</text><text x="666" y="62" class="sm">re-render</text>
+  <path class="a" d="M480 50H484"/><path class="a" d="M566 50H570"/><path class="a" d="M652 50H656"/>
+  <rect x="400" y="86" width="350" height="214" rx="5" class="g"/><text x="408" y="106" class="bd">Reduce each stage</text><text x="408" y="126" class="sm">bytes: split, tree shake, lighter libs, Brotli, remove dead code</text><text x="408" y="144" class="sm">parse: smaller bundles, code caching, modern output</text><text x="408" y="162" class="sm">execute: defer non-critical, lazy-load, avoid heavy init work</text><text x="408" y="180" class="sm">hydrate: Server Components, fewer client components, islands,</text><text x="408" y="196" class="sm">lazy hydration of below-fold widgets</text><text x="408" y="218" class="bd">Third parties</text><text x="408" y="236" class="sm">async/defer · load on interaction or idle · facades ·</text><text x="408" y="252" class="sm">server-side tagging · self-host · budgets and owners</text><text x="408" y="274" class="bd">Verify</text><text x="408" y="290" class="sm">Performance panel, 4x CPU throttle, long tasks, TBT, INP</text>
+</svg></div>
+<figcaption><b>Reminder.</b> On a mid-range phone, executing JavaScript can cost many times more than downloading it.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Long tasks and TBT:</b> a long task is any main-thread task over 50 ms; Total Blocking Time sums the portion beyond 50 ms between FCP and interactive in lab runs and correlates with INP. Find them in the Performance panel (red corner markers) and the Long Tasks / Long Animation Frames API <span class="verify">verify LoAF support</span>.</li>
+<li><b>Yielding strategies:</b> <code>scheduler.yield()</code> (continue with higher priority than other tasks), <code>scheduler.postTask()</code> with priorities, <code>setTimeout</code> or <code>MessageChannel</code> fallbacks, <code>requestIdleCallback</code> for low-priority work, and <code>isInputPending()</code> in specialised cases. Chunk loops, batch DOM updates, and avoid doing large work inside event handlers (J22).</li>
+<li><b>Hydration costs:</b> every client component must hydrate, executing component code and attaching handlers; large trees delay interactivity (INP). Reduce with Server Components, smaller client islands, lazy hydration on visibility or interaction, route-level code splitting, and avoiding rendering huge lists on first load (R11, N8).</li>
+<li><b>Execution cost reduction:</b> avoid expensive work at module load, memoise results, debounce and throttle handlers, use <code>passive</code> listeners, and avoid synchronous layout reads (B2). Prefer CSS to JavaScript for layout and animation.</li>
+<li><b>Dependency hygiene:</b> audit what is large (bundle analyser), replace moment/lodash/heavy UI kits, avoid duplicate libraries, check <code>sideEffects</code>, and lazy-load heavy features such as editors, charts and maps (B6, E11).</li>
+<li><b>Third-party management:</b> inventory and cost per tag; defer until after load or consent; use <code>async</code>; facade pattern; resource budgets; Partytown for web-worker execution (experimental); review contracts and remove unused tags regularly.</li>
+<li><b>Code caching:</b> browsers cache compiled code for scripts with stable URLs after repeat visits; avoid changing filenames unnecessarily and keep vendor chunks stable.</li>
+<li><b>Modern syntax output:</b> targeting modern browsers avoids transpilation overhead and polyfills, shrinking and speeding up code (B7).</li>
+<li><b>Web Workers and Comlink:</b> move non-UI work off thread; mind the message cost; reuse a pool; transfer large buffers (J23).</li>
+<li><b>React-specific:</b> avoid unnecessary re-renders (R5), use transitions and deferred values for expensive updates, virtualise lists, split routes, keep client state small, and measure with the Profiler.</li>
+<li><b>Memory and GC pressure:</b> allocations in hot paths trigger garbage collection pauses; leaks degrade performance over time (J24, J25).</li>
+<li><b>Mobile reality:</b> test on mid-range Android devices or use 4x to 6x CPU throttling; desktop machines hide problems; use field data segmented by device class.</li>
+<li><b>Server alternatives:</b> shifting work to the server (data shaping, rendering) reduces client execution; edge caching and streaming improve perceived speed.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Focusing on download size alone and ignoring parse and execution cost.</li>
+<li>Testing only on a fast development machine.</li>
+<li>Wrapping everything in <code>useMemo</code> instead of removing work or splitting code.</li>
+<li>Treating third-party tags as outside engineering’s responsibility.</li>
+<li>Moving work to a Web Worker without accounting for message-passing overhead.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you find which script causes a long task?</dt><dd>Record a Performance profile; the flame chart attributes the task to functions and scripts, and the Bottom-Up tab ranks self time by source.</dd>
+<dt>What is TBT and how does it relate to INP?</dt><dd>TBT is a lab measure of main-thread blocking during load; it correlates with INP, which measures real interaction latency in the field.</dd>
+<dt>Defer, async or dynamic import for a non-critical script?</dt><dd>Dynamic import or idle loading for features; <code>async</code>/<code>defer</code> for independent scripts; choose by whether it is needed for first interaction.</dd>
+<dt>How do you reduce hydration time?</dt><dd>Send less client code, use server rendering for static parts, lazy-hydrate below-the-fold components, and avoid large initial state payloads.</dd>
+</dl></div>
+</section>
+
+<!-- ============ F5 ============ -->
+<section class="q" id="f5">
+<header class="qh">
+  <div class="qrow"><span class="qid">F5</span><span class="tag added">Added</span></div>
+  <h2>Interaction and rendering performance</h2>
+  <p class="qtext">“How do you make interactions feel instant? How do you keep scrolling and animation at 60 fps, optimise long lists, and use <code>content-visibility</code>, virtualisation and optimistic UI?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Interactions feel instant when feedback appears within about 100 milliseconds and the page stays responsive. I keep event handlers light, show immediate visual feedback, and defer expensive work. For rendering, I avoid layout thrashing, animate only <code>transform</code> and <code>opacity</code> so animations run on the compositor, use CSS containment and <code>content-visibility</code> to skip off-screen work, and keep the DOM small. Long lists are virtualised so only visible rows render. In React I use transitions, memoisation where it helps and optimistic UI so the interface reacts before the server answers. I verify smoothness with the Performance panel and INP.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 310" role="img" aria-label="Left: virtualisation, where only visible rows plus a small buffer are in the DOM within a tall scroll container. Right: response time thresholds for interaction and an optimistic UI timeline.">
+  <text x="10" y="18" class="bd">Virtualised list: render only what is visible</text>
+  <rect x="10" y="30" width="170" height="190" rx="5" class="b"/><text x="18" y="48" class="sm">10,000 items (data)</text>
+  <rect x="200" y="30" width="170" height="190" rx="5" class="h"/><rect x="208" y="40" width="154" height="22" class="b" style="stroke-dasharray:3 3"/><text x="214" y="55" class="sm">buffer (above)</text><rect x="208" y="66" width="154" height="22" class="g"/><text x="214" y="81" class="sm">row 41</text><rect x="208" y="92" width="154" height="22" class="g"/><text x="214" y="107" class="sm">row 42</text><rect x="208" y="118" width="154" height="22" class="g"/><text x="214" y="133" class="sm">row 43</text><rect x="208" y="144" width="154" height="22" class="g"/><text x="214" y="159" class="sm">row 44</text><rect x="208" y="170" width="154" height="22" class="g"/><text x="214" y="185" class="sm">row 45</text><rect x="208" y="196" width="154" height="18" class="b" style="stroke-dasharray:3 3"/><text x="214" y="209" class="sm">buffer (below)</text>
+  <path class="a" d="M180 125H198"/>
+  <text x="10" y="244" class="sm">DOM holds ~20 nodes instead of 10,000. A spacer element keeps the</text><text x="10" y="260" class="sm">scrollbar honest; rows are positioned with transform. Libraries:</text><text x="10" y="276" class="sm">TanStack Virtual, react-window, react-virtuoso. Keep a11y in mind</text><text x="10" y="292" class="sm">(aria-rowcount, keyboard navigation, find in page limits).</text>
+  <text x="400" y="18" class="bd">Perceived response thresholds</text>
+  <rect x="400" y="30" width="350" height="26" rx="4" class="g"/><text x="408" y="48" class="sm"><tspan class="bd">≤ 100 ms</tspan> feels instantaneous: acknowledge input</text>
+  <rect x="400" y="60" width="350" height="26" rx="4" class="w"/><text x="408" y="78" class="sm"><tspan class="bd">~1 s</tspan> flow of thought kept: show progress for longer work</text>
+  <rect x="400" y="90" width="350" height="26" rx="4" class="x"/><text x="408" y="108" class="sm"><tspan class="bd">≥ 10 s</tspan> attention lost: provide progress, allow cancel</text>
+  <text x="400" y="142" class="bd">Optimistic UI</text>
+  <rect x="400" y="152" width="350" height="40" rx="5" class="h"/><text x="408" y="170" class="sm">click “Like” → UI updates instantly → request sent in background</text><text x="408" y="186" class="sm">on failure: roll back and show a message (R8, E4)</text>
+  <text x="400" y="216" class="bd">Frame budget at 60 Hz = 16.7 ms</text>
+  <rect x="400" y="226" width="350" height="26" rx="3" class="b"/><rect x="400" y="226" width="90" height="26" class="w"/><text x="406" y="243" class="sm">JS ≤ 6 ms</text><rect x="490" y="226" width="70" height="26" class="h"/><text x="496" y="243" class="sm">style</text><rect x="560" y="226" width="70" height="26" class="h"/><text x="566" y="243" class="sm">layout</text><rect x="630" y="226" width="60" height="26" class="g"/><text x="636" y="243" class="sm">paint</text><rect x="690" y="226" width="60" height="26" class="g"/><text x="694" y="243" class="sm">comp.</text>
+  <text x="400" y="276" class="sm">At 120 Hz the budget is 8.3 ms. Skip work that is not visible:</text><text x="400" y="292" class="sm">content-visibility, containment, virtualisation, lazy rendering.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Feedback fast, work small, render only what the user can see.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Instant feedback patterns:</b> pressed states and spinners within 100 ms, skeletons instead of blank areas, optimistic updates, preserving previous content while loading (stale-while-revalidate UI), prefetching on hover or viewport entry, and instant client-side navigation with prefetched data.</li>
+<li><b>Handlers:</b> keep them short; do heavy logic after the visual update with <code>startTransition</code>, <code>requestAnimationFrame</code> or idle callbacks; avoid synchronous storage or heavy JSON work; split rendering of large results; debounce search (J22).</li>
+<li><b>Scrolling:</b> use <code>passive</code> listeners, avoid layout reads in scroll handlers, prefer CSS (<code>scroll-snap</code>, <code>position: sticky</code>) and IntersectionObserver, avoid large fixed or blurred layers that repaint each scroll, and test with “paint flashing”.</li>
+<li><b>Animation:</b> compositor-friendly properties (<code>transform</code>, <code>opacity</code>), the Web Animations API or CSS, <code>will-change</code> sparingly, no layout-property animation, reduce motion via <code>prefers-reduced-motion</code>; FLIP technique for layout-change animation (B2).</li>
+<li><b>Rendering containment:</b> <code>content-visibility: auto</code> with <code>contain-intrinsic-size</code> skips rendering for off-screen sections; <code>contain: layout paint</code> isolates components; keeps style and layout recalculation local.</li>
+<li><b>DOM size:</b> large DOMs slow style, layout, memory and interaction; aim for fewer nodes, avoid deep nesting, virtualise lists and tables, paginate or “load more”, and avoid hidden but mounted heavy components.</li>
+<li><b>Virtualisation caveats:</b> variable heights need measurement, scroll position restoration, accessibility semantics, sticky headers, keyboard navigation and browser find-in-page limitations; sometimes pagination or server-side filtering is a better fix.</li>
+<li><b>React interaction patterns:</b> transitions for filtering large lists, <code>useDeferredValue</code>, memoised rows with stable props, avoiding context churn, keys that preserve DOM, Suspense boundaries for loading regions (R5, R9).</li>
+<li><b>Forms and typing:</b> keep controlled inputs fast (colocate state, uncontrolled libraries), avoid re-rendering the whole page per keystroke, debounce validation and search, and do not block typing on network.</li>
+<li><b>Image decode and layout during interaction:</b> avoid layout shifts after clicks (expanding sections smoothly with <code>grid-template-rows</code> transitions or measured heights).</li>
+<li><b>Measure:</b> Performance panel interactions, the Rendering tab (FPS meter, paint flashing, layer borders), INP attribution with the <code>web-vitals</code> library (which element and which phase), and Long Animation Frames data in RUM.</li>
+<li><b>Perceived performance tricks:</b> progressive loading, content placeholders, preloading next steps, animations that mask latency, and avoiding spinners for very short waits (flash of loading) with a small delay threshold.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Virtualising without handling accessibility and scroll restoration.</li>
+<li>Animating <code>height</code>, <code>top</code> or <code>box-shadow</code> and blaming the device.</li>
+<li>Optimistic UI without rollback and error messaging.</li>
+<li>Putting expensive work inside scroll and input handlers.</li>
+<li>Ignoring DOM size and then adding memoisation to compensate.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you keep typing responsive while filtering a big list?</dt><dd>Keep input state urgent and defer the filtering render with a transition or deferred value, memoise rows, and virtualise the list.</dd>
+<dt>What is the FLIP technique?</dt><dd>First, Last, Invert, Play: measure start and end positions, then animate the difference with <code>transform</code> to avoid layout-property animation.</dd>
+<dt>When is <code>content-visibility: auto</code> risky?</dt><dd>It can shift scroll size when sections render (set <code>contain-intrinsic-size</code>) and hides content from find-in-page until rendered in some cases.</dd>
+<dt>How do you diagnose a janky scroll?</dt><dd>Record while scrolling, look for long main-thread tasks, forced layouts and heavy paints, and check for non-passive handlers and large layers.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Measuring and caching</h1>
+
+<!-- ============ F6 ============ -->
+<section class="q" id="f6">
+<header class="qh">
+  <div class="qrow"><span class="qid">F6</span><span class="tag added">Added</span></div>
+  <h2>Measurement, monitoring and budgets</h2>
+  <p class="qtext">“How do you measure and monitor web performance? Lab versus field data, Lighthouse, WebPageTest, RUM, the <code>web-vitals</code> library, performance budgets and CI gating. How do you build a performance culture?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I combine lab and field data. Lab tools such as Lighthouse and WebPageTest run controlled tests, which are reproducible and good for diagnosing; field data from real users, through the Chrome User Experience Report or my own real-user monitoring with the <code>web-vitals</code> library, shows what customers actually experience and is what I report on, at the 75th percentile and segmented by device, network and page type. I set performance budgets for bundle size and metrics and enforce them in CI with Lighthouse CI or size limits, alert on regressions in production, and attribute problems to releases. Performance is a team habit: budgets in definition of done, dashboards everyone can see, and regular reviews, not a one-off project.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: lab versus field data compared. Middle: a monitoring loop from budgets in CI to RUM in production to alerts to fixes. Right: tool map.">
+  <text x="10" y="18" class="bd">Lab versus field</text>
+  <rect x="10" y="30" width="170" height="130" rx="5" class="h"/><text x="18" y="50" class="bd">Lab (synthetic)</text><text x="18" y="68" class="sm">Lighthouse, WebPageTest,</text><text x="18" y="84" class="sm">DevTools</text><text x="18" y="104" class="sm">+ repeatable, debuggable,</text><text x="18" y="120" class="sm">pre-release, CI-friendly</text><text x="18" y="140" class="sm">− not real users</text>
+  <rect x="200" y="30" width="170" height="130" rx="5" class="g"/><text x="208" y="50" class="bd">Field (RUM, CrUX)</text><text x="208" y="68" class="sm">web-vitals library, vendors,</text><text x="208" y="84" class="sm">CrUX, Search Console</text><text x="208" y="104" class="sm">+ real devices, networks,</text><text x="208" y="120" class="sm">behaviour; ranking data</text><text x="208" y="140" class="sm">− noisy, delayed, hard to debug</text>
+  <text x="10" y="186" class="sm">Use lab to find and fix, field to know whether it worked for users.</text>
+  <rect x="10" y="200" width="360" height="110" rx="5" class="b"/><text x="18" y="220" class="bd">RUM essentials</text><text x="18" y="238" class="sm">collect LCP, INP, CLS, TTFB + attribution (element, phase)</text><text x="18" y="254" class="sm">tag with page type, release, device class, connection, country</text><text x="18" y="270" class="sm">send with sendBeacon on visibilitychange; sample at scale</text><text x="18" y="286" class="sm">respect privacy: no PII; consent where required</text><text x="18" y="302" class="sm">add custom metrics via the User Timing API</text>
+  <text x="400" y="18" class="bd">The loop</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">1 Budgets</tspan>  bundle size, LCP, INP, CLS per route</text>
+  <path class="a" d="M575 64V72"/>
+  <rect x="400" y="74" width="350" height="34" rx="4" class="h"/><text x="408" y="96" class="sm"><tspan class="bd">2 CI gates</tspan>  Lighthouse CI, size-limit fail the PR</text>
+  <path class="a" d="M575 108V116"/>
+  <rect x="400" y="118" width="350" height="34" rx="4" class="w"/><text x="408" y="140" class="sm"><tspan class="bd">3 Production RUM</tspan>  dashboards, p75, by release</text>
+  <path class="a" d="M575 152V160"/>
+  <rect x="400" y="162" width="350" height="34" rx="4" class="x"/><text x="408" y="184" class="sm"><tspan class="bd">4 Alerts</tspan>  regression after deploy, SLO burn</text>
+  <path class="a" d="M575 196V204"/>
+  <rect x="400" y="206" width="350" height="34" rx="4" class="g"/><text x="408" y="228" class="sm"><tspan class="bd">5 Fix and learn</tspan>  root cause, share, update budgets</text>
+  <rect x="400" y="256" width="350" height="54" rx="5" class="b"/><text x="408" y="276" class="bd">Tools</text><text x="408" y="294" class="sm">Lighthouse/PSI, WebPageTest, DevTools, CrUX, SpeedCurve,</text><text x="408" y="308" class="sm">Datadog/Sentry RUM, bundle analysers, size-limit</text>
+</svg></div>
+<figcaption><b>Principle.</b> Budgets prevent regressions, RUM proves impact, and ownership keeps it going.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Lighthouse:</b> lab audits on a throttled simulated device for performance, accessibility, best practices, SEO. Scores vary run to run; use medians of several runs, run in CI (Lighthouse CI) and compare against a baseline rather than chasing 100. It reports metrics plus opportunities and diagnostics.</li>
+<li><b>WebPageTest:</b> real browsers, locations and devices, filmstrip and waterfall, connection throttling profiles, repeat view, scripting, comparison tests, and Core Web Vitals metrics; excellent for diagnosing the critical path and third parties.</li>
+<li><b>CrUX and PageSpeed Insights:</b> Chrome User Experience Report provides 28-day field data at origin and URL level for Chrome users; PSI combines CrUX with a Lighthouse run. Limited to sufficient traffic and Chrome; useful for competitor benchmarks.</li>
+<li><b><code>web-vitals</code> library:</b> <code>onLCP</code>, <code>onINP</code>, <code>onCLS</code>, <code>onTTFB</code>, <code>onFCP</code> report values with attribution builds that tell you which element or event caused the problem; send to analytics or a RUM backend using <code>navigator.sendBeacon</code> when the page becomes hidden (J31).</li>
+<li><b>Browser APIs:</b> <code>PerformanceObserver</code> (paint, LCP, layout-shift, event, longtask, long-animation-frame, resource entries), Navigation Timing and Resource Timing for network breakdown, User Timing marks and measures, Server-Timing headers to expose backend durations in the browser.</li>
+<li><b>Budgets:</b> choose targets from user need and competitors: for example JavaScript under 170 KB gzipped on critical routes, LCP under 2.5 s at p75 on mobile, no long task over 200 ms on key flows. Types: quantity (bytes, requests), timing (metrics), and rule-based (Lighthouse score). Enforce with <code>size-limit</code>, bundlewatch, Lighthouse CI assertions, and webpack/Vite performance hints.</li>
+<li><b>Segmenting RUM data:</b> by device memory and CPU class, connection type, country, browser, logged-in state, page template, A/B variant and release; the worst segments reveal problems averages hide. Compare before and after deploys with release tags.</li>
+<li><b>Alerting:</b> thresholds on p75 or p90 regression percentages, not individual spikes; link alerts to deploys; keep SLOs (for example 75% of mobile sessions with good LCP) and use error budgets to prioritise work.</li>
+<li><b>Investigation workflow:</b> start from RUM to find the worst page and segment; reproduce in the lab with matching throttling; profile; fix; verify in CI; release; confirm in field data after enough traffic (CrUX lags by weeks).</li>
+<li><b>Synthetic monitoring:</b> scheduled tests of critical journeys from several regions (Checkly, Datadog Synthetics, SpeedCurve) detect outages and regressions even with low real traffic.</li>
+<li><b>Culture and process:</b> include performance in design reviews and PR templates, share a dashboard, celebrate wins, assign owners per metric, run periodic audits of third-party tags and bundle growth, and educate with examples. Present business impact (conversion, SEO) to prioritise.</li>
+<li><b>Pitfalls in measurement:</b> cold versus warm cache, test device differences, extensions, A/B tests altering pages, bot traffic, ignoring soft navigations in SPAs, and sampling bias.</li>
+<li><b>Privacy:</b> RUM must avoid personal data, honour consent policies and keep retention limits.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Reporting a Lighthouse score from one run as truth.</li>
+<li>Optimising for lab metrics while field p75 stays poor.</li>
+<li>Budgets that nobody enforces automatically.</li>
+<li>Collecting RUM without segmentation or release tags.</li>
+<li>Declaring victory before field data has had time to update.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you set a performance budget?</dt><dd>Derive from user goals and competitor data, split by route and device class, express in bytes and metrics, and enforce in CI with alerts in production.</dd>
+<dt>How do you find the cause of a poor INP in the field?</dt><dd>Use the web-vitals attribution build to log the interaction target and phase breakdown, then reproduce with CPU throttling.</dd>
+<dt>Why can PSI show different numbers from DevTools?</dt><dd>PSI mixes field data (CrUX) with a simulated lab run; DevTools runs on your machine and network.</dd>
+<dt>What is Server-Timing?</dt><dd>A response header that exposes backend phase durations to the browser’s Performance API for end-to-end analysis.</dd>
+</dl></div>
+</section>
+
+<!-- ============ F7 ============ -->
+<section class="q" id="f7">
+<header class="qh">
+  <div class="qrow"><span class="qid">F7</span><span class="tag added">Added</span></div>
+  <h2>Caching and delivery strategies</h2>
+  <p class="qtext">“Which caching layers can improve frontend performance? How do HTTP caching, CDN caching, service worker caching and application caching work together? How do you cache an SPA, an API, and HTML?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Caching works in layers, and each request should be answered by the nearest layer that is still correct. The browser HTTP cache and the service worker cache serve repeat visits instantly; the CDN serves users from the edge without reaching the origin; the server or reverse proxy caches rendered pages and API results; and in the application, libraries like TanStack Query and memoisation avoid recomputing. Immutable, content-hashed assets get year-long caching; HTML and APIs get short lifetimes with revalidation or stale-while-revalidate; personal data is never cached in shared layers. The hardest part is invalidation, so I design URLs and tags so that changes are visible quickly without purging everything.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Request path through caching layers: app memory cache, service worker, browser HTTP cache, CDN edge, origin cache, and database, with the time saved at each layer. Right: a strategy matrix of resource types and caching approaches.">
+  <text x="10" y="18" class="bd">Layers, nearest first</text>
+  <rect x="10" y="30" width="360" height="34" rx="4" class="h"/><text x="18" y="52" class="sm"><tspan class="bd">App cache</tspan>  TanStack Query, memo, in-memory (0 ms)</text>
+  <rect x="10" y="68" width="360" height="34" rx="4" class="h"/><text x="18" y="90" class="sm"><tspan class="bd">Service worker</tspan>  Cache Storage, programmatic strategies</text>
+  <rect x="10" y="106" width="360" height="34" rx="4" class="w"/><text x="18" y="128" class="sm"><tspan class="bd">Browser HTTP cache</tspan>  Cache-Control, ETag (disk/memory)</text>
+  <rect x="10" y="144" width="360" height="34" rx="4" class="g"/><text x="18" y="166" class="sm"><tspan class="bd">CDN edge</tspan>  nearest POP, s-maxage, purge by tag</text>
+  <rect x="10" y="182" width="360" height="34" rx="4" class="g"/><text x="18" y="204" class="sm"><tspan class="bd">Origin cache</tspan>  reverse proxy, full-page cache, Redis</text>
+  <rect x="10" y="220" width="360" height="34" rx="4" class="b"/><text x="18" y="242" class="sm"><tspan class="bd">Database</tspan>  query cache, read replicas, indexes</text>
+  <text x="10" y="278" class="sm">Each miss falls through to the next layer. Higher layers are faster but</text><text x="10" y="294" class="sm">harder to invalidate: you control the browser only through headers.</text>
+  <text x="400" y="18" class="bd">What to cache how</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="b"/>
+  <text x="410" y="50" class="bd">Resource</text><text x="540" y="50" class="bd">Strategy</text>
+  <text x="410" y="74" class="sm">Hashed JS/CSS/fonts</text><text x="540" y="74" class="sm">immutable, 1 year, everywhere</text>
+  <text x="410" y="98" class="sm">Images (fingerprinted)</text><text x="540" y="98" class="sm">immutable; CDN transforms</text>
+  <text x="410" y="122" class="sm">HTML (static)</text><text x="540" y="122" class="sm">CDN with revalidation or SWR</text>
+  <text x="410" y="146" class="sm">HTML (personalised)</text><text x="540" y="146" class="sm">private/no-store; static shell +</text><text x="540" y="160" class="sm">client or streamed dynamic parts</text>
+  <text x="410" y="184" class="sm">Public API (GET)</text><text x="540" y="184" class="sm">short TTL + stale-while-revalidate</text>
+  <text x="410" y="208" class="sm">User API data</text><text x="540" y="208" class="sm">private; app cache with staleTime</text>
+  <text x="410" y="232" class="sm">Offline shell and data</text><text x="540" y="232" class="sm">service worker + IndexedDB</text>
+  <text x="410" y="256" class="sm">Sensitive responses</text><text x="540" y="256" class="sm">no-store</text>
+  <text x="410" y="286" class="bd">Invalidation tools</text><text x="410" y="302" class="sm">new URL (hash) · tags/surrogate keys · SWR · versioned APIs</text>
+</svg></div>
+<figcaption><b>Principle.</b> Immutable where possible, revalidated where not, private where personal, and observable everywhere.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>HTTP cache directives and CDN behaviour:</b> covered in P3: <code>max-age</code>, <code>s-maxage</code>, <code>immutable</code>, <code>stale-while-revalidate</code>, <code>ETag</code>, <code>Vary</code>. Know the standard recipes by heart.</li>
+<li><b>CDN features:</b> edge caching, cache keys and normalisation, tiered caching and origin shield, stale-if-error for resilience, purge by URL/tag/prefix, edge compute (Workers, Lambda@Edge) for rewrites, A/B tests and auth, image optimisation, DDoS protection. Choose TTLs per content type; confirm cache hit ratio in analytics.</li>
+<li><b>Caching HTML for SPAs and SSR:</b> an SPA shell can be CDN-cached with short TTL or revalidation; SSR pages can be cached at the edge with <code>s-maxage</code> and tags when not personalised (N5); never cache pages containing user data without keys.</li>
+<li><b>API caching:</b> GET with ETag and conditional requests; <code>Cache-Control: public, max-age</code> for public data; CDN caching for read-heavy endpoints; separate personalised endpoints; GraphQL needs persisted queries and GET to cache at the edge.</li>
+<li><b>Client data caches:</b> TanStack Query/SWR/RTK Query as the layer above HTTP: dedupe in-flight requests, <code>staleTime</code>, background refetch, invalidation after mutations, persistence to IndexedDB for offline (E4).</li>
+<li><b>Service worker cache:</b> pre-cache the app shell at install; runtime caching strategies for assets and API responses; versioned cache names; cleanup in activate; remember both service worker and HTTP caches may apply (F9).</li>
+<li><b>Back/forward cache:</b> whole-page restoration for instant back navigation; avoid <code>unload</code> handlers and open connections that block it (J31).</li>
+<li><b>Memoisation and computation caches:</b> <code>useMemo</code>, selectors, server-side memoisation, <code>React.cache</code>; cache keys must include all inputs; bound the size (LRU) to avoid leaks (J25).</li>
+<li><b>Cache invalidation strategies:</b> versioned URLs (cheapest), time-based expiry, event-based purge (webhook on content change), tag-based invalidation, write-through updating, and “stale but fresh enough” with SWR. Be explicit about acceptable staleness per data type.</li>
+<li><b>Cache stampede and resilience:</b> when a hot item expires, many requests hit the origin; mitigate with request coalescing at the CDN, jittered TTLs, stale-while-revalidate and locks in application caches.</li>
+<li><b>Security of caching:</b> avoid caching personalised content in shared caches, beware cache poisoning via unkeyed headers and cache deception (caching a private page under a static-looking URL), use <code>Vary</code> and <code>private</code> correctly (P3).</li>
+<li><b>Observability:</b> track cache hit ratio, TTFB by hit/miss, origin load, error rates; headers like <code>Age</code>, <code>X-Cache</code>; compare pre- and post-change performance.</li>
+<li><b>Edge and regionality:</b> caching improves latency only if the content can be shared; for dynamic data put compute near the database or replicate data; know the speed-of-light limits.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Caching personalised responses at the CDN and leaking them to other users.</li>
+<li>Long cache lifetimes on mutable, non-versioned URLs.</li>
+<li>Adding caches without measuring hit ratio, so they add complexity but little benefit.</li>
+<li>Forgetting that a service worker adds another layer that can serve stale content.</li>
+<li>Believing a purge fixes browsers that already cached the resource for a year.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you roll out new frontend code safely with caching?</dt><dd>Hashed assets are immutable; revalidated HTML points to them; keep previous assets for skew; deploy progressively.</dd>
+<dt>How do you cache a personalised page?</dt><dd>Cache the static shell and fetch or stream the personalised parts separately, or vary the cache key per user segment, never the whole page keyed on cookies.</dd>
+<dt>What is a cache stampede?</dt><dd>Many simultaneous requests for an expired hot key overload the origin; coalescing and SWR prevent it.</dd>
+<dt>How do you measure whether caching helps?</dt><dd>Hit ratio, origin request reduction, TTFB distribution for hits versus misses, and user-facing metrics.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Progressive Web Apps</h1>
+
+<!-- ============ F8 ============ -->
+<section class="q" id="f8">
+<header class="qh">
+  <div class="qrow"><span class="qid">F8</span><span class="tag added">Added</span></div>
+  <h2>PWA fundamentals</h2>
+  <p class="qtext">“What is a Progressive Web App? What makes it installable? Explain the web app manifest, service workers, HTTPS, offline support, push notifications, and PWA versus native apps. What are the platform limitations?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A Progressive Web App is a web app enhanced to behave like an installed app: it is reliable through a service worker that handles offline and flaky networks, fast through caching, and installable, with its own icon and standalone window. The core pieces are HTTPS, a web app manifest describing name, icons, start URL and display mode, and a service worker. Optional capabilities include push notifications, background sync and file handling. PWAs give one codebase across platforms with web distribution and no store review, but have limits: less access to device APIs than native, and iOS historically lagged in push and storage. I adopt PWA features progressively where they add value, such as offline reading or fast repeat visits.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="PWA building blocks: HTTPS, manifest, service worker feeding installability, offline, push; plus a comparison of web, PWA and native apps.">
+  <text x="10" y="18" class="bd">Building blocks</text>
+  <rect x="10" y="30" width="110" height="46" rx="5" class="b"/><text x="18" y="50" class="bd">HTTPS</text><text x="18" y="66" class="sm">secure context</text>
+  <rect x="130" y="30" width="110" height="46" rx="5" class="h"/><text x="138" y="50" class="bd">Manifest</text><text x="138" y="66" class="sm">identity, icons</text>
+  <rect x="250" y="30" width="120" height="46" rx="5" class="w"/><text x="258" y="50" class="bd">Service worker</text><text x="258" y="66" class="sm">network proxy</text>
+  <path class="a" d="M65 76V96"/><path class="a" d="M185 76V96"/><path class="a" d="M310 76V96"/>
+  <rect x="10" y="98" width="360" height="46" rx="5" class="g"/><text x="18" y="118" class="bd">Capabilities unlocked</text><text x="18" y="134" class="sm">install prompt · offline · background sync · push · app-like window</text>
+  <rect x="10" y="156" width="360" height="86" rx="5" class="b"/><text x="18" y="176" class="mono" style="font-size:10px">{ "name": "Shop", "short_name": "Shop",</text><text x="18" y="192" class="mono" style="font-size:10px">  "start_url": "/?source=pwa", "display": "standalone",</text><text x="18" y="208" class="mono" style="font-size:10px">  "theme_color": "#0b5", "background_color": "#fff",</text><text x="18" y="224" class="mono" style="font-size:10px">  "icons": [{ "src": "/i-192.png" }, … ] }</text>
+  <text x="10" y="266" class="sm">Installability (Chromium): manifest with name, icons (192 and 512 px),</text><text x="10" y="282" class="sm">start_url and display; served over HTTPS; (service worker no longer</text><text x="10" y="298" class="sm">strictly required in newer Chrome); iOS: Add to Home Screen from Share.</text>
+  <text x="400" y="18" class="bd">Web vs PWA vs native</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="b"/>
+  <text x="410" y="50" class="bd"></text><text x="520" y="50" class="bd">Web</text><text x="580" y="50" class="bd">PWA</text><text x="640" y="50" class="bd">Native</text>
+  <text x="410" y="74" class="sm">Distribution</text><text x="520" y="74" class="sm">URL</text><text x="580" y="74" class="sm">URL+install</text><text x="640" y="74" class="sm">app stores</text>
+  <text x="410" y="98" class="sm">Offline</text><text x="520" y="98" class="sm">no</text><text x="580" y="98" class="sm">yes (SW)</text><text x="640" y="98" class="sm">yes</text>
+  <text x="410" y="122" class="sm">Push</text><text x="520" y="122" class="sm">limited</text><text x="580" y="122" class="sm">yes*</text><text x="640" y="122" class="sm">yes</text>
+  <text x="410" y="146" class="sm">Device APIs</text><text x="520" y="146" class="sm">some</text><text x="580" y="146" class="sm">some</text><text x="640" y="146" class="sm">full</text>
+  <text x="410" y="170" class="sm">Updates</text><text x="520" y="170" class="sm">instant</text><text x="580" y="170" class="sm">instant</text><text x="640" y="170" class="sm">store review</text>
+  <text x="410" y="194" class="sm">Cost</text><text x="520" y="194" class="sm">lowest</text><text x="580" y="194" class="sm">low</text><text x="640" y="194" class="sm">highest</text>
+  <text x="410" y="218" class="sm">Discoverability</text><text x="520" y="218" class="sm">SEO</text><text x="580" y="218" class="sm">SEO + install</text><text x="640" y="218" class="sm">store search</text>
+  <text x="410" y="246" class="sm">* iOS supports web push only for installed PWAs (16.4+); verify</text>
+  <text x="410" y="270" class="bd">Good fit</text><text x="410" y="288" class="sm">content, commerce, tools, internal apps; not for heavy</text><text x="410" y="302" class="sm">hardware access or store-only distribution needs</text>
+</svg></div>
+<figcaption><b>Idea.</b> “Progressive”: works for everyone, and gains app-like features where the browser supports them.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Characteristics:</b> reliable (loads instantly, works offline or on poor networks), fast, engaging (installable, notifications), progressive (works for all browsers), responsive, secure (HTTPS), linkable. Think enhancement, not a separate product.</li>
+<li><b>Web app manifest:</b> JSON linked by <code>&lt;link rel="manifest"&gt;</code>: <code>name</code>, <code>short_name</code>, <code>icons</code> (including maskable), <code>start_url</code>, <code>scope</code>, <code>display</code> (<code>standalone</code>, <code>minimal-ui</code>, <code>fullscreen</code>, <code>browser</code>), <code>orientation</code>, <code>theme_color</code>, <code>background_color</code>, <code>shortcuts</code>, <code>screenshots</code> (richer install UI), <code>id</code>, <code>display_override</code>, <code>share_target</code>, <code>file_handlers</code>.</li>
+<li><b>Install experience:</b> browsers show an install affordance when criteria are met; the <code>beforeinstallprompt</code> event (Chromium) lets you offer a custom install button; <code>appinstalled</code> event; detect standalone with <code>display-mode</code> media query; iOS Safari requires manual “Add to Home Screen” (and has its own meta tags).</li>
+<li><b>Offline and caching:</b> service worker pre-caches an app shell and serves cached or fallback pages; combine with IndexedDB for data; show offline state clearly (F9, F10).</li>
+<li><b>Push notifications:</b> Push API with a push service (FCM, APNs through browsers), VAPID keys, service worker <code>push</code> and <code>notificationclick</code> events, permission prompt design (ask in context). Support: broad on Android/desktop; iOS and iPadOS 16.4+ for installed PWAs only <span class="verify">verify current</span>.</li>
+<li><b>Background capabilities:</b> Background Sync (retry sends when online), Periodic Background Sync, Background Fetch (large downloads), badges (<code>navigator.setAppBadge</code>), file handling, share target, protocol handlers; many are Chromium-only; always feature-detect (J31).</li>
+<li><b>Storage:</b> quotas per origin, eviction under pressure unless persisted (<code>navigator.storage.persist()</code>); Safari clears script-writable storage after a period without use for non-installed sites; design for data loss with server sync.</li>
+<li><b>PWA versus native trade-offs:</b> one codebase and instant updates versus limited hardware APIs, store presence and background processing; wrappers (Capacitor, TWA for Play Store, PWABuilder for Microsoft Store) allow store distribution of PWAs.</li>
+<li><b>Business cases:</b> faster repeat visits, higher engagement and conversion (many published case studies), offline access for field workers, lower acquisition friction than installs.</li>
+<li><b>Testing and auditing:</b> Lighthouse no longer has a PWA category in recent versions (installability checks moved to DevTools Application panel); test on real devices, offline mode, throttling, and install flows <span class="verify">verify tooling</span>.</li>
+<li><b>Frameworks and tooling:</b> Workbox (service worker libraries), vite-plugin-pwa, next-pwa/Serwist, Angular service worker (<code>ng add @angular/pwa</code>), PWABuilder.</li>
+<li><b>Security and privacy:</b> service workers need HTTPS and are powerful (intercept requests), so prevent XSS and supply-chain compromises; scope narrowly; handle user data in caches carefully (do not cache authenticated responses unsafely); clear caches on logout.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Equating PWA with “offline only” or assuming it needs a framework.</li>
+<li>Prompting for notification permission on first load.</li>
+<li>Assuming iOS behaves like Android for push, storage and install.</li>
+<li>Caching authenticated or personalised responses in the service worker without cleanup on logout.</li>
+<li>Promising native-level capabilities that the web platform cannot deliver.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What makes a site installable?</dt><dd>HTTPS, a valid manifest with name, icons and start URL, and a display mode of standalone or similar; browsers may add engagement heuristics.</dd>
+<dt>When would you choose a PWA over a native app?</dt><dd>When web reach, fast iteration and one codebase matter more than deep device integration or store-only requirements.</dd>
+<dt>How do you ask for push permission well?</dt><dd>After the user takes a related action, explain the value, and respect denial; never at page load.</dd>
+<dt>How do users update a PWA?</dt><dd>The browser checks for a new service worker on navigation; you control activation and can prompt to reload (F9).</dd>
+</dl></div>
+</section>
+
+<!-- ============ F9 ============ -->
+<section class="q" id="f9">
+<header class="qh">
+  <div class="qrow"><span class="qid">F9</span><span class="tag added">Added</span></div>
+  <h2>Service workers in depth</h2>
+  <p class="qtext">“Explain the service worker lifecycle: install, waiting, activate. What are caching strategies? How do you handle updates and avoid stale content? What is Workbox? What are the pitfalls?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A service worker is a script that runs separately from the page and acts as a programmable network proxy for the pages it controls. Its lifecycle has distinct phases: it is registered, then installs, where I pre-cache the app shell; then a new version waits until old versions’ pages close, unless I skip waiting; then it activates, where I clean old caches and may claim open pages. Once active it intercepts <code>fetch</code> events, and I choose strategies per request type: cache-first for versioned assets, network-first for HTML and fresh data, stale-while-revalidate for content that can be slightly old. Workbox provides tested implementations. The main pitfalls are serving stale code, caching errors, and not planning the update flow, so I version caches, prompt users to reload, and test updates carefully.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Service worker lifecycle: registering, installing, installed waiting, activating, active controlling fetches, redundant. Right: three caching strategies as flows: cache first, network first, stale while revalidate.">
+  <text x="10" y="18" class="bd">Lifecycle</text>
+  <rect x="10" y="30" width="110" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">register()</text><text x="18" y="62" class="sm">from the page</text>
+  <rect x="140" y="30" width="110" height="40" rx="5" class="h"/><text x="148" y="48" class="bd">install</text><text x="148" y="62" class="sm">pre-cache shell</text>
+  <rect x="270" y="30" width="100" height="40" rx="5" class="w"/><text x="278" y="48" class="bd">waiting</text><text x="278" y="62" class="sm">old SW still live</text>
+  <path class="a" d="M120 50H138"/><path class="a" d="M250 50H268"/>
+  <rect x="10" y="90" width="110" height="40" rx="5" class="h"/><text x="18" y="108" class="bd">activate</text><text x="18" y="122" class="sm">delete old caches</text>
+  <rect x="140" y="90" width="230" height="40" rx="5" class="g"/><text x="148" y="108" class="bd">active</text><text x="148" y="122" class="sm">controls pages; handles fetch, push, sync</text>
+  <path class="a" d="M320 70V88"/><text x="326" y="84" class="sm">tabs closed or skipWaiting()</text>
+  <path class="a" d="M120 110H138"/>
+  <rect x="10" y="150" width="360" height="84" rx="5" class="b"/><text x="18" y="170" class="bd">Updates</text><text x="18" y="188" class="sm">browser re-fetches sw.js on navigation (byte-compare); a changed</text><text x="18" y="204" class="sm">file installs as a new version and waits. Prompt “New version —</text><text x="18" y="220" class="sm">Reload”, then skipWaiting + reload. Never cache sw.js long.</text>
+  <rect x="10" y="244" width="360" height="76" rx="5" class="x"/><text x="18" y="264" class="bd">Pitfalls</text><text x="18" y="282" class="sm">stale app shell forever · caching 404/500 · opaque responses fill</text><text x="18" y="298" class="sm">quota · cache never cleaned · SW scope too wide · logout leaves</text><text x="18" y="314" class="sm">private data cached · dev tools “Update on reload” hides bugs</text>
+  <text x="400" y="18" class="bd">Strategies</text>
+  <rect x="400" y="30" width="350" height="76" rx="5" class="g"/><text x="408" y="48" class="bd">Cache first</text><text x="408" y="66" class="sm">cache hit → return · miss → network → store → return</text><text x="408" y="82" class="sm">for versioned/hashed assets, fonts, images</text><text x="408" y="98" class="sm">fastest; stale unless the URL changes</text>
+  <rect x="400" y="114" width="350" height="76" rx="5" class="w"/><text x="408" y="132" class="bd">Network first</text><text x="408" y="150" class="sm">network (with timeout) → store → return · failure → cache</text><text x="408" y="166" class="sm">for HTML and API data that should be fresh</text><text x="408" y="182" class="sm">offline fallback page when both fail</text>
+  <rect x="400" y="198" width="350" height="76" rx="5" class="h"/><text x="408" y="216" class="bd">Stale while revalidate</text><text x="408" y="234" class="sm">return cache immediately and refresh in the background</text><text x="408" y="250" class="sm">for avatars, non-critical content, lists</text><text x="408" y="266" class="sm">fast and eventually fresh (next visit)</text>
+  <rect x="400" y="282" width="350" height="38" rx="5" class="b"/><text x="408" y="300" class="sm">Also: network-only (mutations), cache-only (precache). Workbox:</text><text x="408" y="314" class="sm">precacheAndRoute, registerRoute, strategies.</text>
+</svg></div>
+<figcaption><b>Key point.</b> The service worker adds a second cache layer and its own lifecycle; plan updates before shipping the first version.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Registration and scope:</b> <code>navigator.serviceWorker.register('/sw.js', { scope: '/' })</code> after page load (<code>load</code> event) to avoid competing with startup; the worker controls pages under its scope (path of the script by default); one registration per scope; HTTPS required (localhost allowed).</li>
+<li><b>Install event:</b> <code>event.waitUntil(caches.open('v3').then(c =&gt; c.addAll([…])))</code> pre-caches the shell; failure of any request fails installation (use only essential files). Build tools generate the precache manifest with content hashes (Workbox <code>injectManifest</code>/<code>generateSW</code>).</li>
+<li><b>Waiting and activation:</b> a new worker waits while pages use the old one. <code>self.skipWaiting()</code> activates immediately; <code>clients.claim()</code> takes control of open pages. Doing both without coordination can mix new worker logic with old page code and break pages: reload the page after activation or version messages. Provide a UI prompt using the <code>waiting</code> state and <code>postMessage</code>.</li>
+<li><b>Activate event:</b> delete caches not in the current allowlist, migrate IndexedDB data, enable navigation preload (<code>registration.navigationPreload.enable()</code>) so network requests start while the worker boots.</li>
+<li><b>Fetch event:</b> <code>event.respondWith(...)</code> with a strategy; match by URL, request destination and mode; clone responses before caching (<code>response.clone()</code>); only cache OK responses; avoid caching <code>POST</code>; handle range requests for media carefully.</li>
+<li><b>Update flow design:</b> detect updates with <code>registration.onupdatefound</code>; show a toast; on accept send <code>SKIP_WAITING</code>; on <code>controllerchange</code> reload; ensure <code>sw.js</code> itself is served with <code>Cache-Control: no-cache</code>; periodically call <code>registration.update()</code> in long-lived tabs.</li>
+<li><b>HTML and app shell:</b> caching HTML cache-first can trap users on old versions; use network-first or revalidate with a version check; precache hashed assets matched with the current HTML.</li>
+<li><b>Offline fallback:</b> precache <code>/offline.html</code> and return it for navigation requests that fail; for data, serve last-known data with an “offline” indicator and queue writes.</li>
+<li><b>Background Sync and queues:</b> Workbox Background Sync plugin retries failed POSTs when connectivity returns; handle duplicates with idempotency keys; limited browser support, so provide a fallback queue in IndexedDB.</li>
+<li><b>Communication:</b> <code>postMessage</code> between page and worker, <code>MessageChannel</code>, <code>BroadcastChannel</code>, <code>clients.matchAll()</code> to notify all tabs (e.g., update ready).</li>
+<li><b>Lifecycle limits:</b> the worker is terminated when idle and restarted on events, so keep no state in global variables; use IndexedDB or caches for persistence; keep startup fast.</li>
+<li><b>Debugging:</b> DevTools → Application → Service Workers (status, update on reload, bypass for network, unregister), Cache Storage inspector, offline checkbox; <code>chrome://serviceworker-internals</code>; test update flows with two versions, and test first-visit and repeat-visit separately.</li>
+<li><b>Workbox and tooling:</b> strategies (CacheFirst, NetworkFirst, StaleWhileRevalidate), plugins (expiration, cacheable response, broadcast update), precaching with revisioning, build integrations (Vite PWA, webpack plugin, Next.js via Serwist). Kill-switch service worker: ship a worker that unregisters itself if something goes wrong.</li>
+<li><b>Security:</b> a compromised or buggy service worker affects all visits; protect deployment, avoid importing third-party scripts into the worker, and never cache sensitive responses unsafely; clear caches and unregister on logout where appropriate.</li>
+<li><b>When not to use one:</b> simple marketing pages with good HTTP caching may not need a service worker; its complexity and update risk must be justified by offline or push needs.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Caching <code>sw.js</code> or <code>index.html</code> aggressively, so users cannot receive updates.</li>
+<li>Calling <code>skipWaiting</code> and <code>clients.claim</code> blindly and breaking open pages mid-session.</li>
+<li>Forgetting to clone responses before caching them.</li>
+<li>Caching error responses or opaque cross-origin responses.</li>
+<li>Shipping without a kill switch or update plan.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why does a new service worker “wait”?</dt><dd>To avoid replacing the worker controlling open pages mid-session; it activates when old clients close or when you skip waiting.</dd>
+<dt>Which strategy for an API call?</dt><dd>Network-first with a short timeout for fresh data, or stale-while-revalidate for tolerable staleness, with offline fallback.</dd>
+<dt>How do you roll back a broken service worker?</dt><dd>Deploy a fixed or no-op worker that deletes caches and unregisters, served with no-cache headers.</dd>
+<dt>Service worker versus HTTP cache?</dt><dd>HTTP cache follows server headers; the service worker is programmable and can serve offline, apply custom strategies and intercept all requests.</dd>
+</dl></div>
+</section>
+
+<!-- ============ F10 ============ -->
+<section class="q" id="f10">
+<header class="qh">
+  <div class="qrow"><span class="qid">F10</span><span class="tag added">Added</span></div>
+  <h2>Resilience: slow networks, low-end devices, offline UX</h2>
+  <p class="qtext">“How do you design for slow networks, low-end devices and offline use? What are adaptive loading and Save-Data? How do you handle offline data sync and conflicts? How do you balance performance work against business priorities?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Many users have slow, flaky networks and low-end phones, so I design for the median real user, not my laptop. I set budgets for bytes and CPU, test with throttled network and CPU and real devices, and adapt: serve lighter assets under Save-Data or slow connections, avoid heavy JavaScript and animation on weak devices, and keep the core experience working without JavaScript where feasible. For offline I use a service worker for the shell and cached content, store data locally, queue writes with idempotency keys, show clear connectivity state, and sync with conflict handling when back online. I prioritise performance work by impact on key journeys and business metrics, and I communicate trade-offs rather than treating speed as an absolute.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: adaptive loading decision using connection and device signals to choose full, light or minimal experience. Right: offline-first data flow with local database, sync queue and conflict resolution.">
+  <text x="10" y="18" class="bd">Adaptive loading</text>
+  <rect x="10" y="30" width="170" height="44" rx="5" class="b"/><text x="18" y="48" class="bd">Signals</text><text x="18" y="64" class="sm">Save-Data, effectiveType,</text>
+  <rect x="200" y="30" width="170" height="44" rx="5" class="b"/><text x="208" y="48" class="bd">Device</text><text x="208" y="64" class="sm">deviceMemory, cores</text>
+  <path class="a" d="M95 74V94"/><path class="a" d="M285 74V94"/>
+  <rect x="10" y="96" width="360" height="30" rx="5" class="h"/><text x="18" y="116" class="sm">choose a tier: full · light · minimal (server hints via Client Hints)</text>
+  <rect x="10" y="138" width="110" height="64" rx="5" class="g"/><text x="18" y="156" class="bd">Full</text><text x="18" y="172" class="sm">rich media,</text><text x="18" y="188" class="sm">animation</text>
+  <rect x="130" y="138" width="110" height="64" rx="5" class="w"/><text x="138" y="156" class="bd">Light</text><text x="138" y="172" class="sm">smaller images,</text><text x="138" y="188" class="sm">less JS</text>
+  <rect x="250" y="138" width="120" height="64" rx="5" class="x"/><text x="258" y="156" class="bd">Minimal</text><text x="258" y="172" class="sm">text first, no</text><text x="258" y="188" class="sm">autoplay or prefetch</text>
+  <text x="10" y="226" class="sm">APIs: navigator.connection (Chromium only), Save-Data header,</text><text x="10" y="242" class="sm">prefers-reduced-data (proposal), media queries, Client Hints.</text><text x="10" y="262" class="sm">Test: DevTools “Slow 4G” + 4x CPU, real low-end Android, WebPageTest</text><text x="10" y="278" class="sm">profiles; set a budget for the 75th percentile device, not the best one.</text>
+  <text x="400" y="18" class="bd">Offline-first data flow</text>
+  <rect x="400" y="30" width="350" height="34" rx="5" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">UI</tspan> reads and writes the local store first</text>
+  <path class="a" d="M575 64V74"/>
+  <rect x="400" y="76" width="350" height="34" rx="5" class="h"/><text x="408" y="98" class="sm"><tspan class="bd">Local DB</tspan> IndexedDB (Dexie, RxDB), cache of server data</text>
+  <path class="a" d="M575 110V120"/>
+  <rect x="400" y="122" width="350" height="34" rx="5" class="w"/><text x="408" y="144" class="sm"><tspan class="bd">Outbox queue</tspan> pending writes with idempotency keys</text>
+  <path class="a" d="M575 156V166"/>
+  <rect x="400" y="168" width="350" height="34" rx="5" class="g"/><text x="408" y="190" class="sm"><tspan class="bd">Sync</tspan> on reconnect: push, pull, retry with backoff</text>
+  <path class="a" d="M575 202V212"/>
+  <rect x="400" y="214" width="350" height="34" rx="5" class="x"/><text x="408" y="236" class="sm"><tspan class="bd">Conflicts</tspan> last-write-wins, field merge, CRDT, ask user</text>
+  <text x="400" y="272" class="sm">UX: show online/offline state, “saved locally”, sync status, queued</text><text x="400" y="288" class="sm">count; allow retry; never lose user input; explain what is unavailable.</text><text x="400" y="304" class="sm">navigator.onLine is unreliable: confirm with a real request.</text>
+</svg></div>
+<figcaption><b>Principle.</b> Assume constrained conditions as the default, enhance when conditions allow, and never lose user work.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Who your users are:</b> global audiences on mid-range Android phones with 3G/4G, high latency, data caps and throttled CPUs; the performance of “the 75th percentile device” defines success. Use field data segmented by device class (device memory, CPU cores) and connection type.</li>
+<li><b>Network resilience:</b> retries with backoff and timeouts, request deduplication, small payloads (pagination, field selection), compression, caching (F7), progressive loading, optimistic UI, avoiding waterfalls, and handling partial failures gracefully with inline error and retry.</li>
+<li><b>Adaptive loading:</b> use <code>Save-Data</code> header and <code>navigator.connection.saveData/effectiveType</code> (Chromium) and <code>deviceMemory</code> as hints, serve lower image quality or fewer features, skip autoplay and prefetch, and allow users to choose “lite mode”. Respect <code>prefers-reduced-motion</code>. Treat signals as hints; never block features entirely based on them.</li>
+<li><b>Low-end device strategy:</b> less JavaScript, avoid large DOMs and heavy animations, reduce hydration, virtualise lists, use CSS for effects, avoid memory spikes, and test thermal and memory-constrained behaviour; consider server rendering and static content for core flows.</li>
+<li><b>Progressive enhancement:</b> core content and actions work with HTML and links/forms; JavaScript enhances. Server rendering plus progressive enhancement gives resilience when scripts fail to load on poor networks (N8).</li>
+<li><b>Offline UX:</b> offline page and cached last-seen data; indicators for connectivity and sync; disable actions that cannot work offline with explanation; queue allowed actions; avoid error toasts for expected offline states; test airplane mode and “lie-fi” (connected but unusable), which is the hardest case.</li>
+<li><b>Local persistence:</b> IndexedDB for structured data (libraries: Dexie, idb, RxDB, PouchDB), Cache Storage for responses, OPFS for large files; manage quotas and eviction, encrypt sensitive data where needed, and clear on logout (J30).</li>
+<li><b>Sync and conflict resolution:</b> choose per data type: last-write-wins (simple, loses edits), field-level merges, operational transforms or CRDTs for collaborative text, server-authoritative with user resolution UI. Use version numbers or ETags for optimistic concurrency and idempotency keys to avoid duplicates.</li>
+<li><b>Background sync limits:</b> Background Sync is Chromium-only; provide a manual retry and sync when the app opens; keep queues bounded.</li>
+<li><b>Performance versus business trade-offs:</b> quantify impact (conversion by LCP bucket, bounce rates), map to revenue; propose staged improvements with measurable outcomes; negotiate budgets for third-party tags and marketing assets; protect critical journeys (checkout, login) first; document decisions.</li>
+<li><b>Sustainability angle:</b> less data and CPU means lower energy use and cost; mention as a secondary benefit.</li>
+<li><b>Accessibility intersection:</b> slow and low-end users overlap with assistive tech users; keep interfaces simple, stable and keyboard operable; avoid motion and layout shift.</li>
+<li><b>Emerging markets and constraints:</b> data cost sensitivity, intermittent power, shared devices; lite apps, image-light modes and clear data-use controls matter.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Trusting <code>navigator.onLine</code> as the truth about connectivity.</li>
+<li>Offline-first without a conflict strategy, silently overwriting user data.</li>
+<li>Testing performance only on a fast network and a developer laptop.</li>
+<li>Gating features on connection hints that are unavailable in many browsers.</li>
+<li>Treating performance as purely technical and not linking it to user and business outcomes.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you test “lie-fi”?</dt><dd>Throttle or drop packets with network conditioning tools or DevTools custom profiles, set request timeouts, and verify the UI shows retryable errors rather than hanging spinners.</dd>
+<dt>How do you resolve edit conflicts offline?</dt><dd>Choose by data type: last-write-wins for preferences, field-level merge for forms, CRDTs for collaborative text, and user-mediated resolution for critical conflicts.</dd>
+<dt>How do you justify performance work to product owners?</dt><dd>Show the link between metric buckets and conversion or retention, estimate effort, and propose a measurable target on key journeys.</dd>
+<dt>What do you do for a user on Save-Data?</dt><dd>Serve lighter images and fewer third-party scripts, avoid autoplay and prefetch, and keep core functionality intact.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>34 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>The three Core Web Vitals?</td><td>LCP (loading), INP (responsiveness), CLS (visual stability).</td><td>F1</td></tr>
+<tr><td>2</td><td>Good thresholds?</td><td>LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1, at the 75th percentile.</td><td>F1</td></tr>
+<tr><td>3</td><td>What replaced FID?</td><td>INP, measuring the full latency of all interactions.</td><td>F1</td></tr>
+<tr><td>4</td><td>Lab versus field data?</td><td>Lab is controlled and for debugging; field is real users and what rankings use.</td><td>F1</td></tr>
+<tr><td>5</td><td>Preload versus prefetch?</td><td>Preload: needed now, high priority. Prefetch: next navigation, low priority.</td><td>F2</td></tr>
+<tr><td>6</td><td>What does <code>preconnect</code> do?</td><td>Opens DNS, TCP and TLS to an origin early; use for a few key origins.</td><td>F2</td></tr>
+<tr><td>7</td><td>How to speed up the LCP image?</td><td>Not lazy, <code>fetchpriority="high"</code>, preload if hidden from the scanner, right size and format.</td><td>F2</td></tr>
+<tr><td>8</td><td>Biggest third-party risk?</td><td>Blocking main thread time and layout shift from tags you do not control.</td><td>F2</td></tr>
+<tr><td>9</td><td>What does <code>sizes</code> do?</td><td>Tells the browser the displayed width so it picks the right <code>srcset</code> candidate.</td><td>F3</td></tr>
+<tr><td>10</td><td>How to avoid image layout shift?</td><td>Set width and height (or aspect-ratio) so space is reserved.</td><td>F3</td></tr>
+<tr><td>11</td><td>AVIF or WebP?</td><td>AVIF compresses better, WebP is broadly supported; serve both with a fallback.</td><td>F3</td></tr>
+<tr><td>12</td><td>Font loading best practice?</td><td>WOFF2, subset, self-host, preload critical, <code>font-display</code> with adjusted fallback.</td><td>F3</td></tr>
+<tr><td>13</td><td>What is a long task?</td><td>Main-thread task over 50 ms; it delays input and rendering.</td><td>F4</td></tr>
+<tr><td>14</td><td>How to break up long work?</td><td>Chunk it and yield with <code>scheduler.yield</code> or timeouts; move heavy work to workers.</td><td>F4</td></tr>
+<tr><td>15</td><td>Why is JS costly per byte?</td><td>Parse, compile, execute and hydrate on the main thread, not just download.</td><td>F4</td></tr>
+<tr><td>16</td><td>How to cut hydration cost?</td><td>Server Components, fewer client components, lazy hydration, smaller state payloads.</td><td>F4</td></tr>
+<tr><td>17</td><td>Cheap properties to animate?</td><td><code>transform</code> and <code>opacity</code> (compositor only).</td><td>F5</td></tr>
+<tr><td>18</td><td>What is virtualisation?</td><td>Rendering only visible rows plus a buffer for long lists.</td><td>F5</td></tr>
+<tr><td>19</td><td>What does <code>content-visibility: auto</code> do?</td><td>Skips rendering of off-screen content until needed.</td><td>F5</td></tr>
+<tr><td>20</td><td>Frame budget at 60 Hz?</td><td>About 16.7 ms for all work per frame.</td><td>F5</td></tr>
+<tr><td>21</td><td>Which percentile do you report?</td><td>p75 for Core Web Vitals; look at p90 and p95 for tail pain.</td><td>F6</td></tr>
+<tr><td>22</td><td>What is the <code>web-vitals</code> library for?</td><td>Collecting LCP, INP, CLS and attribution in real user monitoring.</td><td>F6</td></tr>
+<tr><td>23</td><td>How do budgets help?</td><td>They fail CI on regressions so performance does not erode silently.</td><td>F6</td></tr>
+<tr><td>24</td><td>Hashed asset cache rule?</td><td>One-year immutable; HTML revalidated.</td><td>F7</td></tr>
+<tr><td>25</td><td>What is a cache stampede?</td><td>Many requests hit the origin when a hot item expires; coalesce or use SWR.</td><td>F7</td></tr>
+<tr><td>26</td><td>Danger of CDN caching personal pages?</td><td>One user’s data served to others; use private/no-store or vary properly.</td><td>F7</td></tr>
+<tr><td>27</td><td>What makes a PWA?</td><td>HTTPS, a manifest, and a service worker for reliable, installable behaviour.</td><td>F8</td></tr>
+<tr><td>28</td><td>iOS PWA caveat?</td><td>Web push only for installed PWAs; storage and install behave differently.</td><td>F8</td></tr>
+<tr><td>29</td><td>Service worker lifecycle?</td><td>Install, waiting, activate, then controls fetches; new versions wait for old to close.</td><td>F9</td></tr>
+<tr><td>30</td><td>Cache first versus network first?</td><td>Cache first for hashed assets; network first for HTML and fresh data.</td><td>F9</td></tr>
+<tr><td>31</td><td>Why never cache <code>sw.js</code> long?</td><td>The browser must see updates; a cached worker traps users on old code.</td><td>F9</td></tr>
+<tr><td>32</td><td>Is <code>navigator.onLine</code> reliable?</td><td>No: it only reports a network interface; confirm with a request.</td><td>F10</td></tr>
+<tr><td>33</td><td>What does Save-Data signal?</td><td>The user wants reduced data use: send lighter assets and skip prefetch.</td><td>F10</td></tr>
+<tr><td>34</td><td>Offline sync conflict options?</td><td>Last-write-wins, field merge, CRDTs, or user-mediated resolution.</td><td>F10</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer performance questions at L4</h4>
+<ul>
+<li>Start from the user and the metric: name the metric that is failing, the segment affected, and the evidence (field data), before proposing fixes.</li>
+<li>Follow a method: measure, find the largest contributor, change one thing, verify, and prevent regression with budgets and monitoring.</li>
+<li>Show breadth across the stack: network, server, build, runtime, rendering, and product trade-offs; connect to Core Web Vitals.</li>
+<li>Bring numbers from your own work: before and after LCP or INP, bundle size, conversion impact, how you proved it.</li>
+<li>Be careful with thresholds and APIs that change; say “I would confirm on web.dev”.</li>
+<li>The interview is theoretical: expect “how would you diagnose”, “what would you do first” and “what are the trade-offs”, not live coding.</li>
+</ul></div>
+</section>
+
+</div>

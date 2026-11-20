@@ -1,0 +1,1545 @@
+<title>HTML Interview Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"HTML Interview Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"HTML Interview Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · JavaScript Frontend</div>
+  <h1>HTML Interview Study Guide</h1>
+  <p>Every HTML question asked so far, plus the adjacent questions a panel is likely to follow with. Each topic opens with a 30-second spoken answer, then the full background, a diagram, the traps, and follow-ups with one-line answers. Printed double-sided, each question starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely follow-up topic</span><span><span class="verify">verify</span> check the linked spec or MDN before stating as fact</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes). In Firefox or Safari the built-in page numbers may not appear: switch on "Headers and footers" there instead.</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Semantics and accessibility</h3>
+    <ol>
+      <li><b>Q1</b><a href="#q1">Clickable div: semantics and the accessibility tree</a></li>
+      <li><b>Q2</b><a href="#q2">&lt;a&gt; versus &lt;button&gt;</a></li>
+      <li><b>Q3</b><a href="#q3">Landmarks, headings, &lt;article&gt;</a></li>
+      <li><b>Q4</b><a href="#q4">ARIA essentials and accessible names</a></li>
+      <li><b>Q5</b><a href="#q5">Keyboard and focus management</a></li>
+      <li><b>Q6</b><a href="#q6">Labels and touch targets</a></li>
+      <li><b>Q7</b><a href="#q7">Semantic HTML and SEO</a></li>
+      <li><b>Q8</b><a href="#q8">Native &lt;dialog&gt; versus custom modal</a></li>
+      <li><b>Q9</b><a href="#q9">What automated a11y tools can catch</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>2 · Forms and components</h3>
+    <ol>
+      <li><b>Q10</b><a href="#q10">Accessible, good-UX signup form</a></li>
+      <li><b>Q11</b><a href="#q11">Web Components: when and when not</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Cross-browser</h3>
+    <ol><li><b>Q17</b><a href="#q17">Progressive enhancement and feature detection</a></li></ol>
+    <h3 style="margin-top:16px">5 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>3 · Loading and rendering</h3>
+    <ol>
+      <li><b>Q12</b><a href="#q12">Document head and resource hints</a></li>
+      <li><b>Q13</b><a href="#q13">async, defer and module scripts</a></li>
+      <li><b>Q14</b><a href="#q14">Serving and preloading images</a></li>
+      <li><b>Q15</b><a href="#q15">HTML to pixels: rendering pipeline</a></li>
+      <li><b>Q16</b><a href="#q16">iframes and third-party embeds</a></li>
+    </ol>
+  </div>
+</nav>
+<h1 class="part">Part 1 · Semantics and accessibility</h1>
+
+<!-- ============ Q1 ============ -->
+<section class="q" id="q1">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q1</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>Clickable div: semantics and the accessibility tree</h2>
+  <p class="qtext">“How do you make a clickable &lt;div&gt; accessible, and why prefer a native element?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I wouldn’t make it accessible, I’d replace it with a <code>&lt;button&gt;</code>. A native button gives me four things for free: a role, an accessible name from its content, keyboard focus, and Enter and Space activation. A div gives me none of them. To fake it I need <code>role="button"</code>, <code>tabindex="0"</code>, a keydown handler for Enter and a keyup handler for Space, visible focus styles, and ARIA state like <code>aria-pressed</code> or <code>aria-disabled</code>. That is five things to get right and test, so the first rule of ARIA is: use the native element if one exists.”</p></div>
+
+<h3>What the browser builds from your markup</h3>
+<p>The browser builds two trees from the HTML. The DOM tree is for scripts and CSS. The <b>accessibility tree</b> is for assistive technology (screen readers, voice control, switch devices). Each node in the accessibility tree has four things: <b>role</b> (what it is), <b>name</b> (what it is called), <b>state/value</b> (checked, expanded, disabled) and <b>relationships</b> (described by, controls). A <code>&lt;div&gt;</code> maps to a generic node with no role and no name, so a screen reader user does not know it is clickable. Tab skips it, because a div is not focusable.</p>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="The same markup becomes very different accessibility tree nodes: a div with onclick becomes a generic node with no role, name or keyboard access, while a button becomes a button node with a name, focusable and keyboard operable.">
+  <text x="10" y="20" class="bd">&lt;div onclick="save()"&gt;Save&lt;/div&gt;</text>
+  <text x="400" y="20" class="bd">&lt;button type="button"&gt;Save&lt;/button&gt;</text>
+  <rect x="10" y="34" width="340" height="60" class="x"/><text x="24" y="58" class="bd">DOM node: div</text><text x="24" y="78" class="sm">Mouse click works. Nothing else does.</text>
+  <rect x="400" y="34" width="340" height="60" class="h"/><text x="414" y="58" class="bd">DOM node: button</text><text x="414" y="78" class="sm">Mouse, keyboard, touch, voice: all work.</text>
+  <path class="a" d="M180 94V120"/><path class="a" d="M570 94V120"/>
+  <text x="190" y="112" class="sm">accessibility tree</text><text x="580" y="112" class="sm">accessibility tree</text>
+  <rect x="10" y="124" width="340" height="130" class="b"/>
+  <text x="24" y="148" class="bd">generic</text>
+  <text x="24" y="170" class="sm">role: none</text><text x="24" y="188" class="sm">name: “Save” (text only, not announced as a control)</text>
+  <text x="24" y="206" class="sm">focusable: no  ·  Enter/Space: nothing</text><text x="24" y="224" class="sm">state: none  ·  voice control “click Save”: unreliable</text>
+  <rect x="400" y="124" width="340" height="130" class="b"/>
+  <text x="414" y="148" class="bd">button</text>
+  <text x="414" y="170" class="sm">role: button</text><text x="414" y="188" class="sm">name: “Save” (from content)</text>
+  <text x="414" y="206" class="sm">focusable: yes (Tab)  ·  Enter and Space: click</text><text x="414" y="224" class="sm">state: disabled supported  ·  :focus-visible ring</text>
+</svg></div>
+<figcaption><b>Same visual, different tree.</b> Assistive technology reads the right-hand tree, not the pixels.</figcaption></figure>
+
+<h3>What a native &lt;button&gt; gives you</h3>
+<div class="tw"><table>
+<tr><th>Need</th><th>Native &lt;button&gt;</th><th>Div you have to build</th></tr>
+<tr><td>Role</td><td>implicit <code>button</code></td><td><code>role="button"</code></td></tr>
+<tr><td>Name</td><td>from text content, or <code>aria-label</code></td><td>same, but you must check it is computed</td></tr>
+<tr><td>Focus</td><td>in the tab order</td><td><code>tabindex="0"</code></td></tr>
+<tr><td>Activation</td><td>click on Enter (keydown) and Space (keyup)</td><td>both key handlers; <code>preventDefault()</code> on Space or the page scrolls</td></tr>
+<tr><td>Disabled</td><td><code>disabled</code> removes it from tab order and blocks clicks</td><td><code>aria-disabled</code> + ignore events + <code>tabindex="-1"</code></td></tr>
+<tr><td>Form behaviour</td><td>submits its form (default <code>type="submit"</code>)</td><td>none</td></tr>
+<tr><td>Focus ring</td><td>UA default, <code>:focus-visible</code></td><td>you write it</td></tr>
+<tr><td>Forced colors (Windows high contrast)</td><td>themed automatically</td><td>often invisible</td></tr>
+</table></div>
+
+<h3>If you truly cannot change the element</h3>
+<pre><code>&lt;div role="button" tabindex="0" class="btn" aria-pressed="false"&gt;Mute&lt;/div&gt;
+
+el.addEventListener('click', toggle);
+el.addEventListener('keydown', e =&gt; { if (e.key === 'Enter') { e.preventDefault(); toggle(); } });
+el.addEventListener('keyup',   e =&gt; { if (e.key === ' ')     { e.preventDefault(); toggle(); } });
+/* plus: .btn:focus-visible { outline: 2px solid } and aria-pressed updated in toggle() */</code></pre>
+<p>Real cases: a third-party library renders the div, a legacy component cannot be changed yet, or you are building a widget with no native equivalent (tabs, combobox, tree). Even then, follow the ARIA Authoring Practices pattern for that widget.</p>
+
+<div class="box note"><h4>Related: why <code>tabindex</code> alone is not enough</h4>
+<p><code>tabindex="0"</code> makes the div focusable. It does not give it a role, so a screen reader says “Save, group” or just “Save”, with no hint that it is a control. Keyboard users can focus it but pressing Enter does nothing unless you wrote the handler. This was the gap in the first answer.</p></div>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Claiming Lighthouse will catch a click handler on a div. It will not; it cannot know the div is interactive. Use manual keyboard testing, <code>eslint-plugin-jsx-a11y</code> (<code>click-events-have-key-events</code>, <code>no-static-element-interactions</code>) and axe in CI.</li>
+<li>Putting <code>role="button"</code> on a <code>&lt;div&gt;</code> and thinking you are done. The role is only a promise; you still owe the behaviour.</li>
+<li>Nesting interactive elements, for example a button inside <code>&lt;a&gt;</code>. It is invalid HTML and screen readers announce it badly.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is the first rule of ARIA?</dt><dd>Do not use ARIA if a native HTML element or attribute already has the semantics and behaviour you need.</dd>
+<dt>Does Space or Enter activate a button on keydown?</dt><dd>Enter fires click on keydown; Space fires click on keyup. That is why the div needs two handlers.</dd>
+<dt>Can a button contain a heading or a div?</dt><dd>No. Button content must be phrasing content, and the button’s children are presentational for assistive technology.</dd>
+<dt>How would you test this?</dt><dd>Unplug the mouse: Tab to it, activate with Enter and Space, check focus ring, then run NVDA or VoiceOver and listen for “button”.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q2 ============ -->
+<section class="q" id="q2">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q2</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>&lt;a&gt; versus &lt;button&gt;</h2>
+  <p class="qtext">“When do you use &lt;a&gt; and when do you use &lt;button&gt;?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A link <b>goes somewhere</b>: it has a URL, so it works with middle click, open in new tab, copy link, bookmarks, history and crawlers. A button <b>does something</b> on the current page: submit, toggle, open a menu. I decide by asking: does this change the URL? If yes, it is an <code>&lt;a href&gt;</code>, even in a single-page app. If no, it is a <code>&lt;button type="button"&gt;</code>. Inside a form, a button defaults to <code>type="submit"</code>, so I always set the type explicitly.”</p></div>
+
+<figure><svg class="dg" viewBox="0 0 760 250" role="img" aria-label="Decision tree: if the control navigates to a URL use an anchor with href, otherwise if it submits a form use a button of type submit, otherwise use a button of type button.">
+  <rect x="270" y="8" width="220" height="44" rx="6" class="b"/><text x="380" y="35" text-anchor="middle" class="bd">What does the control do?</text>
+  <path class="a" d="M320 52L140 98"/><path class="a" d="M380 52V98"/><path class="a" d="M440 52L620 98"/>
+  <rect x="30" y="100" width="220" height="56" rx="6" class="h"/><text x="140" y="122" text-anchor="middle" class="bd">Goes to a URL / resource</text><text x="140" y="142" text-anchor="middle" class="sm">new page, section, file, mailto</text>
+  <rect x="270" y="100" width="220" height="56" rx="6" class="h"/><text x="380" y="122" text-anchor="middle" class="bd">Submits a form</text><text x="380" y="142" text-anchor="middle" class="sm">sends data, validates</text>
+  <rect x="510" y="100" width="220" height="56" rx="6" class="h"/><text x="620" y="122" text-anchor="middle" class="bd">Changes UI on this page</text><text x="620" y="142" text-anchor="middle" class="sm">toggle, open menu, delete row</text>
+  <path class="a" d="M140 156V186"/><path class="a" d="M380 156V186"/><path class="a" d="M620 156V186"/>
+  <rect x="30" y="188" width="220" height="48" rx="6" class="g"/><text x="140" y="210" text-anchor="middle" class="mono">&lt;a href="/pricing"&gt;</text><text x="140" y="227" text-anchor="middle" class="sm">Enter only · role link</text>
+  <rect x="270" y="188" width="220" height="48" rx="6" class="g"/><text x="380" y="210" text-anchor="middle" class="mono">&lt;button type="submit"&gt;</text><text x="380" y="227" text-anchor="middle" class="sm">Enter and Space · role button</text>
+  <rect x="510" y="188" width="220" height="48" rx="6" class="g"/><text x="620" y="210" text-anchor="middle" class="mono">&lt;button type="button"&gt;</text><text x="620" y="227" text-anchor="middle" class="sm">+ aria-expanded / aria-pressed</text>
+</svg>
+<figcaption><b>Decide by the outcome, not the look.</b> You can style either one to look like the other; the semantics follow the behaviour.</figcaption></figure>
+
+<h3>Differences that show up in practice</h3>
+<div class="tw"><table>
+<tr><th></th><th>&lt;a href&gt;</th><th>&lt;button&gt;</th></tr>
+<tr><td>Role announced</td><td>link</td><td>button</td></tr>
+<tr><td>Activates with</td><td>Enter</td><td>Enter and Space</td></tr>
+<tr><td>Browser features</td><td>open in new tab, copy link, preview URL on hover, history</td><td>none</td></tr>
+<tr><td>Crawlable</td><td>yes, crawlers follow <code>href</code></td><td>no</td></tr>
+<tr><td>In a form</td><td>not involved</td><td>defaults to submit</td></tr>
+<tr><td>Screen reader shortcut</td><td>links list (K, Insert+F7)</td><td>buttons list (B)</td></tr>
+<tr><td>Disabled</td><td>no such concept; hide or remove</td><td><code>disabled</code> attribute</td></tr>
+</table></div>
+
+<h3>Single-page apps</h3>
+<p>Client-side routing still needs real anchors. Use the router’s <code>&lt;Link to="/x"&gt;</code> (it renders <code>&lt;a href="/x"&gt;</code> and intercepts the click). Do not write <code>&lt;button onClick={() =&gt; navigate('/x')}&gt;</code>: the user loses open-in-new-tab and crawlers lose the link.</p>
+<p><b>Opening in a new tab:</b> <code>target="_blank"</code> with <code>rel="noopener"</code>. Modern browsers treat <code>_blank</code> as noopener by default <span class="verify">verify</span>, but writing it is harmless. Warn users (visually and in the name) when a link opens a new window.</p>
+<p><b>Download:</b> <code>&lt;a href="/file.pdf" download&gt;</code> is still a link. Name it with file type and size.</p>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li><code>&lt;a href="#" onclick="..."&gt;</code> or <code>&lt;a role="button"&gt;</code>: a link used as a button. The URL changes to <code>#</code>, Space scrolls the page, and the screen reader says “link”. Use a button.</li>
+<li><code>&lt;button&gt;</code> inside a form without <code>type="button"</code>: it submits the form when clicked, a very common bug in a “Cancel” or “Add row” button.</li>
+<li>A “skip to content” control must be an anchor (<code>href="#main"</code>), because it navigates to a place in the page.</li>
+<li>Wrapping a button in an anchor, or an anchor in a button. Invalid; one interactive element per control.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>A “Learn more” card is fully clickable. How do you build it?</dt><dd>One real link on the heading, stretched over the card with a <code>::after</code> pseudo-element (position absolute, inset 0). Do not wrap the whole card in an anchor with nested links.</dd>
+<dt>Why does a link not activate on Space?</dt><dd>By design: Space scrolls the page for a link. A link is for navigation; Space is reserved for the button role.</dd>
+<dt>Menu that opens on click: link or button?</dt><dd>Button with <code>aria-expanded</code> and <code>aria-controls</code>. Items inside are links if they navigate.</dd>
+<dt>Is <code>&lt;a&gt;</code> without <code>href</code> a link?</dt><dd>No, it is a placeholder with no role and no focus. Always give it an <code>href</code> or use a different element.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q3 ============ -->
+<section class="q" id="q3">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q3</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>Landmarks, headings and &lt;article&gt;</h2>
+  <p class="qtext">“Landmarks and heading structure; what does &lt;article&gt; mean?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Landmarks and headings are how screen reader users scan a page the way sighted users scan visually. Landmarks are the big regions: <code>header</code>, <code>nav</code>, <code>main</code>, <code>aside</code>, <code>footer</code>. Headings give the outline: one <code>h1</code>, then <code>h2</code> sections, without skipping levels, chosen by structure and not by font size. <code>&lt;article&gt;</code> is a self-contained piece of content that makes sense on its own and could be syndicated: a blog post, a comment, a news item. It is not a generic layout wrapper; that is a <code>div</code>.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="A page wireframe with landmark regions labelled banner, navigation, main, complementary and contentinfo, next to the heading outline h1, h2, h3 that the page produces.">
+  <rect x="10" y="10" width="440" height="310" rx="4" class="b"/>
+  <rect x="20" y="20" width="420" height="40" class="h"/><text x="30" y="45" class="bd">&lt;header&gt;</text><text x="440" y="45" text-anchor="end" class="sm">landmark: banner</text>
+  <rect x="20" y="66" width="420" height="30" class="h"/><text x="30" y="86" class="bd">&lt;nav aria-label="Main"&gt;</text><text x="440" y="86" text-anchor="end" class="sm">navigation</text>
+  <rect x="20" y="102" width="290" height="170" class="h"/><text x="30" y="122" class="bd">&lt;main&gt;</text><text x="300" y="122" text-anchor="end" class="sm">main (only one)</text>
+  <rect x="34" y="132" width="262" height="60" class="w"/><text x="44" y="152" class="bd">&lt;article&gt;</text><text x="44" y="172" class="sm">self-contained: post, comment, card</text>
+  <rect x="34" y="200" width="262" height="60" class="w"/><text x="44" y="220" class="bd">&lt;section aria-labelledby&gt;</text><text x="44" y="240" class="sm">region only if it has a name</text>
+  <rect x="316" y="102" width="124" height="170" class="h"/><text x="326" y="122" class="bd">&lt;aside&gt;</text><text x="326" y="142" class="sm">complementary</text>
+  <rect x="20" y="278" width="420" height="34" class="h"/><text x="30" y="300" class="bd">&lt;footer&gt;</text><text x="440" y="300" text-anchor="end" class="sm">contentinfo</text>
+  <text x="480" y="30" class="bd">Heading outline (what H key jumps through)</text>
+  <text x="480" y="62" class="mono">h1  Product name</text>
+  <text x="500" y="88" class="mono">h2  Features</text>
+  <text x="520" y="114" class="mono">h3  Offline mode</text>
+  <text x="520" y="140" class="mono">h3  Sync</text>
+  <text x="500" y="166" class="mono">h2  Pricing</text>
+  <text x="500" y="192" class="mono">h2  FAQ</text>
+  <rect x="470" y="212" width="280" height="100" rx="4" class="x"/>
+  <text x="482" y="234" class="bd">Wrong</text><text x="482" y="254" class="sm">h1 → h4 (skipped levels)</text><text x="482" y="272" class="sm">h2 chosen because it “looks smaller”</text><text x="482" y="290" class="sm">landmarks used as styling wrappers</text>
+</svg></div>
+<figcaption><b>Two parallel maps of one page.</b> Landmarks answer “where am I”; headings answer “what is this part about”.</figcaption></figure>
+
+<h3>Landmark roles and their elements</h3>
+<div class="tw"><table>
+<tr><th>Element</th><th>Landmark role</th><th>Rule</th></tr>
+<tr><td><code>&lt;header&gt;</code></td><td><code>banner</code></td><td>only when it is a direct child of <code>body</code>. Inside <code>article</code> or <code>section</code> it is just a header.</td></tr>
+<tr><td><code>&lt;nav&gt;</code></td><td><code>navigation</code></td><td>label each one if there are several: <code>aria-label="Breadcrumb"</code>.</td></tr>
+<tr><td><code>&lt;main&gt;</code></td><td><code>main</code></td><td>exactly one visible per page. The target of the skip link.</td></tr>
+<tr><td><code>&lt;aside&gt;</code></td><td><code>complementary</code></td><td>tangential content, related links, sidebars.</td></tr>
+<tr><td><code>&lt;footer&gt;</code></td><td><code>contentinfo</code></td><td>only when a direct child of <code>body</code>.</td></tr>
+<tr><td><code>&lt;section&gt;</code></td><td><code>region</code></td><td>only if it has an accessible name; otherwise no landmark.</td></tr>
+<tr><td><code>&lt;form&gt;</code></td><td><code>form</code></td><td>only if it has an accessible name.</td></tr>
+<tr><td><code>&lt;search&gt;</code></td><td><code>search</code></td><td>newer element; or <code>role="search"</code> on a form <span class="verify">verify support</span>.</td></tr>
+</table></div>
+
+<h3>Headings</h3>
+<ul>
+<li>Screen reader users navigate by heading (H key, or a headings list) more than by any other method, so headings are the table of contents.</li>
+<li>One <code>h1</code> per page is the safe convention. HTML allows more, but the “outline algorithm” was never implemented in browsers or assistive tech, so do not rely on nested sectioning to reset levels.</li>
+<li>Do not skip levels. Do not pick a level for its size; style with CSS.</li>
+<li>In a component library the heading level must be a prop (<code>as="h3"</code>) because the correct level depends on where the component is placed.</li>
+</ul>
+
+<h3>What &lt;article&gt; and &lt;section&gt; mean</h3>
+<ul>
+<li><b><code>&lt;article&gt;</code></b>: independently distributable or reusable content. Test: “would this still make sense in an RSS reader?” Blog post, forum post, comment (nested articles are allowed), product card in a listing, widget.</li>
+<li><b><code>&lt;section&gt;</code></b>: a thematic grouping that normally has a heading. Without a name it is not a landmark.</li>
+<li><b><code>&lt;div&gt;</code></b>: no meaning. When you only need a style or layout hook, use this.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying <code>article</code> is for “a block of text”. It is about self-containment, not text.</li>
+<li>Wrapping every block in a <code>&lt;section&gt;</code> with no heading: no benefit, noisy markup.</li>
+<li>Two <code>&lt;nav&gt;</code> elements both announced as “navigation” with no labels. Label them.</li>
+<li>Using headings for visual emphasis (a bold “Note:” as <code>h4</code>), or using bold text for real headings.</li>
+<li>Content outside any landmark. Screen reader users jumping by landmark miss it.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Which landmarks must every page have?</dt><dd><code>main</code> at minimum; <code>banner</code>, <code>navigation</code> and <code>contentinfo</code> in most layouts.</dd>
+<dt>How do you let keyboard users bypass the header?</dt><dd>A skip link as the first focusable element: <code>&lt;a href="#main"&gt;Skip to content&lt;/a&gt;</code>, visible on focus, with <code>main</code> having <code>id="main"</code> and <code>tabindex="-1"</code> so focus really moves.</dd>
+<dt>Is a heading inside <code>&lt;button&gt;</code> okay?</dt><dd>No. The reverse is the accordion pattern: the heading contains the button.</dd>
+<dt>How do you check the outline?</dt><dd>Browser accessibility tree in DevTools, the axe or WAVE extension, or a screen reader headings list.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q4 ============ -->
+<section class="q" id="q4">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q4</span><span class="tag added">Added</span></div>
+  <h2>ARIA essentials and accessible names</h2>
+  <p class="qtext">“What is ARIA, when would you use it, and how does a control get its accessible name?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“ARIA is a set of attributes that adds roles, states and properties to the accessibility tree where HTML cannot express them. It changes what assistive technology hears and nothing else: no behaviour, no focus, no styling. So the first rule is to prefer native HTML. I use ARIA for what HTML cannot say: <code>aria-expanded</code> on a disclosure, <code>aria-live</code> for status messages, <code>aria-current</code> in navigation, labels on icon-only buttons, and roles for widgets with no native element, like tabs or combobox. Bad ARIA is worse than none.”</p></div>
+
+<h3>The five rules of ARIA</h3>
+<ol>
+<li>Do not use ARIA if a native element can do it.</li>
+<li>Do not change native semantics (<code>&lt;h2 role="tab"&gt;</code> is wrong; put a button inside).</li>
+<li>All interactive ARIA controls must be keyboard operable.</li>
+<li>Do not use <code>role="presentation"</code> or <code>aria-hidden="true"</code> on a focusable element.</li>
+<li>Every interactive element needs an accessible name.</li>
+</ol>
+
+<h3>Three kinds of attributes</h3>
+<div class="tw"><table>
+<tr><th>Kind</th><th>Examples</th><th>Changes?</th></tr>
+<tr><td><b>Roles</b></td><td><code>dialog</code>, <code>tablist</code>, <code>tab</code>, <code>combobox</code>, <code>alert</code>, <code>status</code></td><td>static</td></tr>
+<tr><td><b>States</b></td><td><code>aria-expanded</code>, <code>aria-checked</code>, <code>aria-pressed</code>, <code>aria-selected</code>, <code>aria-disabled</code>, <code>aria-invalid</code></td><td>changes with interaction: you must update from JS</td></tr>
+<tr><td><b>Properties</b></td><td><code>aria-label</code>, <code>aria-labelledby</code>, <code>aria-describedby</code>, <code>aria-controls</code>, <code>aria-live</code>, <code>aria-current</code></td><td>mostly static relationships</td></tr>
+</table></div>
+
+<h3>How the accessible name is computed</h3>
+<figure><svg class="dg" viewBox="0 0 760 230" role="img" aria-label="Accessible name priority ladder: aria-labelledby wins, then aria-label, then native sources like label element, alt, or text content, then title, then placeholder as last resort.">
+  <rect x="20" y="10" width="360" height="34" class="h"/><text x="34" y="32" class="mono">1  aria-labelledby="id1 id2"</text>
+  <rect x="20" y="50" width="360" height="34" class="h"/><text x="34" y="72" class="mono">2  aria-label="Close"</text>
+  <rect x="20" y="90" width="360" height="34" class="b"/><text x="34" y="112" class="mono">3  native: &lt;label for&gt; · alt · text content · legend</text>
+  <rect x="20" y="130" width="360" height="34" class="w"/><text x="34" y="152" class="mono">4  title attribute (fallback, weak)</text>
+  <rect x="20" y="170" width="360" height="34" class="x"/><text x="34" y="192" class="mono">5  placeholder (last resort, do not rely)</text>
+  <path class="a" d="M400 20V190"/><text x="412" y="105" class="sm">first non-empty</text><text x="412" y="122" class="sm">source wins</text>
+  <text x="520" y="30" class="bd">Examples</text>
+  <text x="520" y="56" class="mono">&lt;button aria-label="Close"&gt;×&lt;/button&gt;</text>
+  <text x="520" y="82" class="sm">icon button: no text, so name it</text>
+  <text x="520" y="112" class="mono">&lt;section aria-labelledby="t"&gt;</text>
+  <text x="520" y="130" class="mono">  &lt;h2 id="t"&gt;Pricing&lt;/h2&gt;</text>
+  <text x="520" y="156" class="sm">name comes from the visible heading</text>
+  <text x="520" y="186" class="mono">&lt;img alt=""&gt; → decorative</text>
+</svg>
+<figcaption><b>Accessible name ladder (simplified).</b> The full algorithm is the W3C “Accname” spec; DevTools → Accessibility panel shows the computed name.</figcaption></figure>
+
+<h3>aria-label vs aria-labelledby vs aria-describedby</h3>
+<ul>
+<li><b>aria-labelledby</b>: points to visible text by id. Preferred, because the name stays in sync with the UI and is translated with it.</li>
+<li><b>aria-label</b>: a string. For things with no visible text (icon buttons, a second <code>nav</code>). Not auto-translated by page translation tools in every browser; keep it short. Include the visible text when there is any, so voice control (“click Search”) matches <span class="verify">WCAG 2.5.3 Label in Name</span>.</li>
+<li><b>aria-describedby</b>: extra description read after the name: hints, errors, password rules.</li>
+</ul>
+
+<h3>Live regions: announcing changes without moving focus</h3>
+<pre><code>&lt;div id="status" role="status" aria-live="polite"&gt;&lt;/div&gt;   &lt;!-- present at page load --&gt;
+status.textContent = '3 results found';          &lt;!-- inject text later --&gt;</code></pre>
+<ul>
+<li><code>polite</code> (role <code>status</code>): waits for the user to be idle. For search results, saved, cart updated.</li>
+<li><code>assertive</code> (role <code>alert</code>): interrupts. Only for errors and critical warnings.</li>
+<li>The container must exist in the DOM <b>before</b> the text changes. Inserting a new <code>role="alert"</code> element with text is unreliable across screen readers <span class="verify">test</span>.</li>
+</ul>
+
+<h3>Other attributes you should know</h3>
+<ul>
+<li><code>aria-expanded</code> on the control that toggles; <code>aria-controls</code> has weak real support, do not rely on it alone.</li>
+<li><code>aria-current="page"</code> on the active nav link; <code>aria-current="step"</code> in a wizard.</li>
+<li><code>aria-hidden="true"</code>: removes from the accessibility tree only, the element stays focusable. Never put it on or around focusable content. Use <code>inert</code> to remove both.</li>
+<li><code>aria-invalid</code>, <code>aria-required</code> (prefer native <code>required</code>), <code>aria-busy</code>.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li><code>aria-label</code> on a <code>div</code> or <code>span</code> with no role: ignored by most screen readers.</li>
+<li>Redundant ARIA: <code>&lt;button role="button"&gt;</code>, <code>&lt;nav role="navigation"&gt;</code>.</li>
+<li>Putting <code>aria-label</code> on everything “to be safe”. It overrides real visible text and breaks voice control.</li>
+<li>Role without keyboard support: <code>role="tab"</code> needs arrow-key handling and roving tabindex.</li>
+<li>Forgetting that states are only attributes: <code>aria-expanded="true"</code> does not open anything.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Where do you find the correct pattern for a custom widget?</dt><dd>The W3C ARIA Authoring Practices Guide (APG): roles, states and keyboard model per widget.</dd>
+<dt>What is the difference between <code>alert</code> and <code>status</code>?</dt><dd>Alert is assertive and interrupts; status is polite and waits.</dd>
+<dt>An icon button has an SVG inside. What do you do?</dt><dd><code>aria-label</code> on the button (or visually hidden text), and <code>aria-hidden="true"</code> and <code>focusable="false"</code> on the SVG.</dd>
+<dt>What does <code>role="presentation"</code> do?</dt><dd>Strips the native semantics of an element (for example layout tables); children still exposed.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q5 ============ -->
+<section class="q" id="q5">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q5</span><span class="tag added">Added</span></div>
+  <h2>Keyboard and focus management</h2>
+  <p class="qtext">“How do you make a custom component keyboard accessible? How do you manage focus in a single-page app?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Everything a mouse can do must work with a keyboard, in a logical order, with a visible focus indicator. Native controls already do this. For custom widgets I follow the ARIA Authoring Practices keyboard model: one tab stop for the whole widget, arrow keys inside it (roving tabindex), Escape to close, and focus returned to the trigger afterwards. In a single-page app, route changes do not reload the page, so I move focus myself to the new page’s heading or main container and announce the change.”</p></div>
+
+<h3>Tabindex</h3>
+<div class="tw"><table>
+<tr><th>Value</th><th>Meaning</th><th>Use</th></tr>
+<tr><td>not set</td><td>native controls only (a[href], button, input, select, textarea, summary)</td><td>default</td></tr>
+<tr><td><code>0</code></td><td>focusable, in DOM order</td><td>custom widget that should be a tab stop</td></tr>
+<tr><td><code>-1</code></td><td>focusable by script (<code>el.focus()</code>), not by Tab</td><td>roving items, focus targets like headings and <code>main</code></td></tr>
+<tr><td>positive (1, 2…)</td><td>jumps the order</td><td><span class="no">Avoid.</span> Breaks the natural order and is unmaintainable.</td></tr>
+</table></div>
+
+<h3>Roving tabindex: one tab stop, arrows inside</h3>
+<figure><svg class="dg" viewBox="0 0 760 190" role="img" aria-label="A toolbar with four buttons where only the active one has tabindex 0. Tab enters and leaves the toolbar in one stop, arrow keys move between buttons.">
+  <text x="10" y="20" class="bd">Toolbar: Tab reaches ONE button; arrows move inside</text>
+  <rect x="30" y="40" width="110" height="50" rx="5" class="b"/><text x="85" y="62" text-anchor="middle" class="bd">Bold</text><text x="85" y="80" text-anchor="middle" class="mono">tabindex=-1</text>
+  <rect x="160" y="40" width="110" height="50" rx="5" class="h"/><text x="215" y="62" text-anchor="middle" class="bd">Italic</text><text x="215" y="80" text-anchor="middle" class="mono">tabindex=0</text>
+  <rect x="290" y="40" width="110" height="50" rx="5" class="b"/><text x="345" y="62" text-anchor="middle" class="bd">Link</text><text x="345" y="80" text-anchor="middle" class="mono">tabindex=-1</text>
+  <rect x="420" y="40" width="110" height="50" rx="5" class="b"/><text x="475" y="62" text-anchor="middle" class="bd">Code</text><text x="475" y="80" text-anchor="middle" class="mono">tabindex=-1</text>
+  <path class="a" d="M215 150V94"/><text x="228" y="140" class="sm">current item (focus ring here)</text>
+  <path class="a" d="M10 118H28" /><text x="10" y="170" class="sm">Tab in →</text>
+  <path class="d" d="M600 65H700"/><text x="560" y="115" class="sm">← →  move and update tabindex</text><text x="560" y="133" class="sm">Home / End  first / last</text><text x="560" y="151" class="sm">Tab  leaves the toolbar</text>
+</svg>
+<figcaption><b>Why:</b> a toolbar of 20 buttons would otherwise be 20 tab stops. Used for toolbars, tablists, menus, radio groups, grids. Alternative: <code>aria-activedescendant</code> where the container keeps focus.</figcaption></figure>
+
+<h3>Focus indicators</h3>
+<ul>
+<li>Never <code>outline: none</code> without a replacement. Use <code>:focus-visible</code> so the ring shows for keyboard and not on mouse click.</li>
+<li>WCAG 2.2: focus must be visible (2.4.7), not hidden behind sticky headers or cookie banners (2.4.11 Focus Not Obscured, AA), and the indicator needs enough contrast and size (2.4.13, AAA) <span class="verify">verify numbers</span>. Use <code>scroll-padding-top</code> so a sticky header does not cover the focused item.</li>
+<li>Windows forced-colors mode: use <code>outline</code> (it is kept) and not only <code>box-shadow</code> (it is removed).</li>
+</ul>
+
+<h3>Focus in a single-page app</h3>
+<ol>
+<li><b>Route change:</b> move focus to the page <code>h1</code> (give it <code>tabindex="-1"</code>) or the <code>main</code>, and update <code>document.title</code>. Without it keyboard users stay on the old link and screen reader users hear nothing. Many routers have this built in or as an option <span class="verify">check yours</span>.</li>
+<li><b>Open a modal:</b> focus first meaningful element inside; on close, return focus to the trigger (see Q8).</li>
+<li><b>Delete an item:</b> the focused element vanishes, so focus drops to <code>body</code>. Move it to the next item or the list heading.</li>
+<li><b>Async content (toasts, results):</b> use a live region instead of stealing focus.</li>
+<li><b>Skip link</b> to <code>#main</code> at the top.</li>
+</ol>
+
+<h3>The keyboard map you should know</h3>
+<div class="tw"><table>
+<tr><th>Key</th><th>Standard behaviour</th></tr>
+<tr><td>Tab / Shift+Tab</td><td>move between tab stops</td></tr>
+<tr><td>Enter</td><td>activate links, buttons; submit forms</td></tr>
+<tr><td>Space</td><td>activate buttons, toggle checkbox, scroll page</td></tr>
+<tr><td>Escape</td><td>close dialog, menu, popover; cancel</td></tr>
+<tr><td>Arrow keys</td><td>move inside radio group, tabs, menu, listbox, slider</td></tr>
+<tr><td>Home / End</td><td>first or last item in composite widgets</td></tr>
+</table></div>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li><code>tabindex="0"</code> on everything. Only on interactive custom widgets, otherwise the tab order fills with noise.</li>
+<li>Keyboard trap: focus enters a widget and cannot leave (WCAG 2.1.2). Only a modal may contain focus, and Escape must close it.</li>
+<li>CSS <code>order</code>, grid placement or <code>position</code> that makes the visual order differ from the DOM order. Tab follows the DOM.</li>
+<li><code>display:none</code> or <code>visibility:hidden</code> content is not focusable; <code>opacity:0</code> content still is (a ghost tab stop).</li>
+<li>Calling <code>focus()</code> on page load without a reason. It scrolls and surprises users.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you make a tab list accessible?</dt><dd><code>role="tablist"</code>, <code>tab</code> and <code>tabpanel</code>, <code>aria-selected</code>, roving tabindex, arrow keys switch tabs, panel linked via <code>aria-controls</code> / <code>aria-labelledby</code>.</dd>
+<dt>What is <code>inert</code>?</dt><dd>HTML attribute that makes a subtree non-interactive: not focusable, not clickable, hidden from assistive tech. The right tool for the background of a custom modal.</dd>
+<dt>How do you test keyboard accessibility?</dt><dd>Unplug the mouse and do the main flows. Look for: reachability, order, visible focus, traps, Escape behaviour.</dd>
+<dt>Why avoid positive tabindex?</dt><dd>It forces those elements to the front of the order, ahead of the rest of the page; every new element then needs a number.</dd>
+</dl></div>
+</section>
+<!-- ============ Q6 ============ -->
+<section class="q" id="q6">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q6</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>Form labels and touch targets</h2>
+  <p class="qtext">“How do you label inputs properly? What about touch target size?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Every input gets a visible, programmatically associated <code>&lt;label&gt;</code>: either <code>for</code> matching the input’s <code>id</code>, or the input wrapped inside the label. A placeholder is not a label: it disappears when you type, usually has low contrast, and is not reliably exposed as a name. The label also enlarges the click target. For touch, WCAG 2.2 sets a minimum of 24 by 24 CSS pixels at AA, and 44 by 44 is the recommended target; Apple uses 44 points and Material uses 48 dp. I add padding or a larger hit area instead of making the visual bigger.”</p></div>
+
+<h3>Ways to label a control</h3>
+<pre><code>&lt;!-- 1. explicit: best default --&gt;
+&lt;label for="email"&gt;Email&lt;/label&gt;
+&lt;input id="email" name="email" type="email" autocomplete="email"&gt;
+
+&lt;!-- 2. implicit: wrapping (works, but some AT combos are weaker than explicit) --&gt;
+&lt;label&gt;Email &lt;input name="email" type="email"&gt;&lt;/label&gt;
+
+&lt;!-- 3. no visible text possible (search icon): name it, but a visible label is still better --&gt;
+&lt;input type="search" aria-label="Search the docs"&gt;
+
+&lt;!-- 4. group: radios and checkboxes need a group name --&gt;
+&lt;fieldset&gt;&lt;legend&gt;Delivery speed&lt;/legend&gt; ... radios ... &lt;/fieldset&gt;</code></pre>
+
+<h3>Why placeholder is not a label</h3>
+<ul>
+<li>It vanishes on input, so users with memory or cognitive difficulties lose the prompt, and cannot review a filled form.</li>
+<li>Default placeholder colour often fails the 4.5:1 text contrast ratio.</li>
+<li>Not a reliable accessible name in all browser and screen reader combinations. Use it only for an example format (“name@company.com”), together with a label.</li>
+<li>Floating labels are acceptable only if the label stays visible and legible after the float.</li>
+</ul>
+
+<h3>Target size</h3>
+<figure><svg class="dg" viewBox="0 0 760 220" role="img" aria-label="Three squares at the same scale: 24 by 24 pixel minimum for WCAG 2.2 AA, 44 by 44 recommended target, 48 by 48 Material. A checkbox with a label shows the clickable label area widening the hit target.">
+  <text x="10" y="20" class="bd">Target sizes drawn at 2× scale (CSS px)</text>
+  <rect x="30" y="50" width="48" height="48" class="w"/><text x="54" y="125" text-anchor="middle" class="bd">24 × 24</text><text x="54" y="143" text-anchor="middle" class="sm">WCAG 2.2 AA min</text><text x="54" y="159" text-anchor="middle" class="sm">(2.5.8)</text>
+  <rect x="140" y="50" width="88" height="88" class="h"/><text x="184" y="162" text-anchor="middle" class="bd">44 × 44</text><text x="184" y="180" text-anchor="middle" class="sm">Apple HIG · WCAG 2.5.5 AAA</text>
+  <rect x="280" y="50" width="96" height="96" class="h"/><text x="328" y="170" text-anchor="middle" class="bd">48 × 48</text><text x="328" y="188" text-anchor="middle" class="sm">Material Design</text>
+  <text x="440" y="40" class="bd">A label widens the target</text>
+  <rect x="440" y="52" width="300" height="52" rx="4" class="h"/>
+  <rect x="456" y="66" width="24" height="24" class="b"/><text x="496" y="84" class="bd">Remember me</text>
+  <text x="440" y="124" class="sm">Visual box is 16–24px, but clicking the</text><text x="440" y="141" class="sm">label text toggles it: use label for/id.</text>
+  <text x="440" y="170" class="sm">Spacing can substitute for size: a 24px circle</text><text x="440" y="187" class="sm">around each small target must not overlap another.</text>
+</svg>
+<figcaption><b>Exceptions exist</b> (inline links in text, browser-controlled controls, equivalent larger control available). Know the 24 px rule is about CSS pixels and distance between targets.</figcaption></figure>
+
+<pre><code>.icon-btn { min-inline-size: 44px; min-block-size: 44px; display: inline-grid; place-items: center; }
+/* small visual, large hit area */
+.chip::after { content: ""; position: absolute; inset: -8px; }</code></pre>
+
+<h3>Related form accessibility checklist</h3>
+<ul>
+<li><b>Hints and errors</b> linked with <code>aria-describedby</code>; invalid fields get <code>aria-invalid="true"</code>; error text states what to do, not just “invalid”.</li>
+<li><b>Required</b>: native <code>required</code>, and say it in text (“required”), not only with a red asterisk.</li>
+<li><b>Autocomplete</b> tokens (<code>email</code>, <code>given-name</code>, <code>new-password</code>) satisfy WCAG 1.3.5 and help password managers.</li>
+<li><b>Mobile keyboards</b>: correct <code>type</code>, <code>inputmode</code>, <code>enterkeyhint</code>.</li>
+<li>Do not disable paste on password or confirm fields.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li><code>for</code> that points to an id which does not exist (or duplicate ids), silently no label.</li>
+<li>Using the same <code>aria-label</code> text for all repeated controls: “Delete”, “Delete”, “Delete”. Say what: “Delete invoice 1042”.</li>
+<li>Reporting 44 px as the WCAG AA requirement. AA is 24 px (2.2); 44 is AAA and platform guidance.</li>
+<li>Making tiny icon-only controls with 4 px gaps: fails target spacing.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Label above, beside or inside the field?</dt><dd>Above is the most scannable and works at narrow widths and with zoom; side-by-side wastes space on mobile; inside only as floating label with care.</dd>
+<dt>How do you name a group of radios?</dt><dd><code>fieldset</code> + <code>legend</code>, or <code>role="radiogroup"</code> with <code>aria-labelledby</code>.</dd>
+<dt>Can you hide a label?</dt><dd>Yes, visually, with the visually-hidden pattern, when the context is obvious (search box with a button). Never <code>display:none</code>.</dd>
+<dt>What is the accessible name of an <code>&lt;input&gt;</code> with both label and placeholder?</dt><dd>The label. Placeholder is the last source in the name computation.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q7 ============ -->
+<section class="q" id="q7">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q7</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>Semantic HTML and SEO</h2>
+  <p class="qtext">“Does semantic HTML improve SEO?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Not directly. Search engines do not rank a page higher because it uses <code>&lt;nav&gt;</code> instead of <code>&lt;div&gt;</code>. But semantics help in indirect ways: crawlers understand the structure and the main content, real <code>&lt;a href&gt;</code> links are followed, headings and a correct title give the topic, and image <code>alt</code> text feeds image search. The same markup also gives better accessibility and often better user experience signals. The bigger SEO levers are rendering strategy (SSR or SSG so content is in the HTML), page speed and Core Web Vitals, unique titles and meta descriptions, canonical URLs, and structured data.”</p></div>
+
+<h3>What really helps crawlers</h3>
+<figure><svg class="dg" viewBox="0 0 760 210" role="img" aria-label="A crawler pipeline: fetch HTML, render JavaScript if needed, extract links, index content. Real anchor links and server-rendered content pass through; buttons with click handlers and client-only content do not.">
+  <rect x="10" y="60" width="110" height="50" rx="5" class="b"/><text x="65" y="82" text-anchor="middle" class="bd">Fetch</text><text x="65" y="99" text-anchor="middle" class="sm">HTML + headers</text>
+  <rect x="160" y="60" width="130" height="50" rx="5" class="w"/><text x="225" y="82" text-anchor="middle" class="bd">Render (queued)</text><text x="225" y="99" text-anchor="middle" class="sm">runs JS, later</text>
+  <rect x="330" y="60" width="130" height="50" rx="5" class="b"/><text x="395" y="82" text-anchor="middle" class="bd">Extract</text><text x="395" y="99" text-anchor="middle" class="sm">links, text, meta</text>
+  <rect x="500" y="60" width="110" height="50" rx="5" class="b"/><text x="555" y="82" text-anchor="middle" class="bd">Index + rank</text><text x="555" y="99" text-anchor="middle" class="sm">hundreds of signals</text>
+  <path class="a" d="M120 85H158"/><path class="a" d="M290 85H328"/><path class="a" d="M460 85H498"/>
+  <rect x="10" y="140" width="350" height="60" rx="5" class="g"/><text x="22" y="162" class="bd">Visible at fetch time</text><text x="22" y="181" class="sm">SSR/SSG content · &lt;a href&gt; · title · meta · headings · alt</text>
+  <rect x="390" y="140" width="360" height="60" rx="5" class="x"/><text x="402" y="162" class="bd">Risky or lost</text><text x="402" y="181" class="sm">client-only content · onClick navigation · hash-only routes · blocked JS</text>
+  <text x="630" y="40" class="sm">Semantic tags: small, indirect help</text>
+  <text x="630" y="58" class="sm">Speed, content, links: big levers</text>
+</svg>
+<figcaption><b>Where semantics sit.</b> They help the Extract step understand the page; they are not a ranking multiplier.</figcaption></figure>
+
+<h3>Checklist you can recite</h3>
+<div class="tw"><table>
+<tr><th>Area</th><th>Do</th></tr>
+<tr><td>Document</td><td>unique <code>&lt;title&gt;</code> and meta description per page; <code>lang</code>; canonical URL; <code>robots</code> meta only when needed</td></tr>
+<tr><td>Structure</td><td>one <code>h1</code>, logical headings, <code>main</code>, <code>nav</code>; keep important content out of tabs that load on demand</td></tr>
+<tr><td>Links</td><td>real <code>&lt;a href&gt;</code>; descriptive link text (not “click here”); <code>rel="nofollow"</code>/<code>ugc</code>/<code>sponsored</code> where right</td></tr>
+<tr><td>Images</td><td>meaningful <code>alt</code>, real file names, <code>width</code>/<code>height</code>, modern formats; image sitemap if needed</td></tr>
+<tr><td>Structured data</td><td>JSON-LD (<code>Article</code>, <code>Product</code>, <code>BreadcrumbList</code>); validate in Google’s Rich Results Test</td></tr>
+<tr><td>Rendering</td><td>SSR, SSG or ISR for content pages (Next.js); avoid content only after hydration</td></tr>
+<tr><td>Performance</td><td>Core Web Vitals (LCP, INP, CLS) are a page experience signal, minor tie-breaker</td></tr>
+<tr><td>Internationalisation</td><td><code>hreflang</code> alternates</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to phrase it carefully</h4>
+<p>Say “no direct ranking boost” and “indirect benefits”. Avoid absolute claims like “semantic HTML improves rankings”. Google has said it does not use semantic elements as a ranking factor, and that wording is safer in an interview <span class="verify">Google Search Central docs</span>.</p></div>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying “yes, big boost” without evidence, or the opposite: “no effect at all”. The right answer is “indirect”.</li>
+<li>Router links built with <code>onClick</code> and <code>window.location</code>: invisible to crawlers.</li>
+<li>Hiding text with <code>display:none</code> for keyword stuffing; treated as a spam signal.</li>
+<li>Multiple <code>h1</code> stuffed with keywords.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Does Google run JavaScript?</dt><dd>Yes, with an evergreen Chromium renderer, but rendering is queued and can be delayed, so critical content should be in the initial HTML.</dd>
+<dt>Which Next.js strategy for a blog? A dashboard?</dt><dd>Blog: SSG or ISR. Dashboard behind login: client rendering or SSR; SEO is irrelevant.</dd>
+<dt>What is canonical for?</dt><dd>Tells search engines which URL is the main version when several URLs serve the same content (tracking params, filters).</dd>
+<dt>What is a sitemap?</dt><dd>An XML list of URLs that helps discovery; it does not guarantee indexing.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q8 ============ -->
+<section class="q" id="q8">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q8</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>Native &lt;dialog&gt; versus a custom modal</h2>
+  <p class="qtext">“Native &lt;dialog&gt; versus a custom modal; how do you build and test an accessible one?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I prefer the native <code>&lt;dialog&gt;</code> with <code>showModal()</code>. The browser puts it in the top layer, makes everything else inert (so no clicking or tabbing behind it), moves focus into it, closes on Escape, and returns focus to the trigger when it closes. A custom modal needs all of that by hand: <code>role="dialog"</code> and <code>aria-modal</code>, a label, focus management, inert background, Escape handling, scroll lock, and a portal. The native element does not do everything: scroll lock, backdrop click to close, and animations are still my job. I test with the keyboard, axe, and a screen reader.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 290" role="img" aria-label="Modal dialog lifecycle: the trigger button is focused, showModal puts the dialog in the top layer and makes the page inert, focus moves inside, Escape or close returns focus to the trigger.">
+  <rect x="10" y="30" width="200" height="120" rx="5" class="b"/><text x="20" y="50" class="bd">Page (inert while open)</text>
+  <rect x="26" y="66" width="120" height="34" rx="4" class="h"/><text x="86" y="88" text-anchor="middle" class="bd">Open settings</text>
+  <text x="20" y="128" class="sm">1 focus on trigger</text>
+  <path class="a" d="M210 83H290"/><text x="215" y="72" class="sm">2 dialog.showModal()</text>
+  <rect x="294" y="10" width="260" height="170" rx="6" class="h"/><text x="306" y="32" class="bd">&lt;dialog&gt; · top layer · ::backdrop</text>
+  <text x="306" y="54" class="mono">aria-labelledby="t"</text>
+  <rect x="306" y="66" width="236" height="28" rx="3" class="b"/><text x="316" y="85" class="sm">3 focus moves here (autofocus / first control)</text>
+  <rect x="306" y="102" width="110" height="30" rx="3" class="b"/><text x="361" y="122" text-anchor="middle" class="sm">Save</text>
+  <rect x="428" y="102" width="114" height="30" rx="3" class="b"/><text x="485" y="122" text-anchor="middle" class="sm">Cancel</text>
+  <text x="306" y="158" class="sm">Tab cycles inside the dialog and browser UI</text><text x="306" y="173" class="sm">Everything else: inert</text>
+  <path class="a" d="M554 140H620V250H86V104"/><text x="400" y="244" class="sm">4 Escape / Cancel / close() → focus returns to the trigger</text>
+  <rect x="574" y="30" width="176" height="86" rx="5" class="w"/><text x="584" y="50" class="bd">Still your job</text><text x="584" y="70" class="sm">· scroll lock on body</text><text x="584" y="86" class="sm">· click on backdrop closes</text><text x="584" y="102" class="sm">· enter/exit animation</text>
+</svg></div>
+<figcaption><b>Modal dialog lifecycle.</b> Native <code>showModal()</code> does steps 2–4 by itself.</figcaption></figure>
+
+<h3>Native dialog: what it gives</h3>
+<ul>
+<li><b>Top layer</b>: renders above everything, no z-index war, no portal needed.</li>
+<li><b>Inert background</b>: page behind cannot be clicked, focused or read. This is not a classic focus trap; the browser UI (address bar) stays reachable, which is the intended behaviour.</li>
+<li><b>Focus</b>: moves to the first focusable element, or the one with <code>autofocus</code>. When the dialog closes, the spec restores focus to the previously focused element. State this confidently.</li>
+<li><b>Escape</b> fires a <code>cancel</code> event (<code>preventDefault()</code> to stop it) then <code>close</code>.</li>
+<li><b>Forms</b>: <code>&lt;form method="dialog"&gt;</code> closes the dialog on submit and sets <code>dialog.returnValue</code> to the clicked button’s value.</li>
+<li><code>role="dialog"</code> is implicit. You must still give it a name: <code>aria-labelledby</code> pointing at its heading. Use <code>role="alertdialog"</code> for confirmations that need an answer.</li>
+<li><code>aria-modal</code> on a custom dialog is only a hint to assistive tech; it does not block interaction in the DOM.</li>
+</ul>
+
+<pre><code>&lt;button id="open"&gt;Edit profile&lt;/button&gt;
+&lt;dialog id="dlg" aria-labelledby="dlg-title"&gt;
+  &lt;form method="dialog"&gt;
+    &lt;h2 id="dlg-title"&gt;Edit profile&lt;/h2&gt;
+    &lt;label&gt;Name &lt;input name="n" autofocus&gt;&lt;/label&gt;
+    &lt;button value="cancel"&gt;Cancel&lt;/button&gt;
+    &lt;button value="save"&gt;Save&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/dialog&gt;
+&lt;script&gt;
+  open.onclick = () =&gt; dlg.showModal();
+  dlg.addEventListener('click', e =&gt; { if (e.target === dlg) dlg.close('backdrop'); }); // backdrop click
+  dlg.addEventListener('close', () =&gt; console.log(dlg.returnValue));
+&lt;/script&gt;
+&lt;style&gt; body:has(dialog[open]) { overflow: hidden } &lt;/style&gt;   /* scroll lock (verify :has support target) */</code></pre>
+
+<h3>What a custom modal must implement</h3>
+<div class="tw"><table>
+<tr><th>Requirement</th><th>How</th></tr>
+<tr><td>Role and name</td><td><code>role="dialog"</code> (or <code>alertdialog</code>), <code>aria-modal="true"</code>, <code>aria-labelledby</code></td></tr>
+<tr><td>Block the background</td><td><code>inert</code> on siblings of the portal root (best), or <code>aria-hidden</code> + a focus trap</td></tr>
+<tr><td>Focus in</td><td>focus first control or heading with <code>tabindex="-1"</code> on open</td></tr>
+<tr><td>Contain focus</td><td>trap Tab / Shift+Tab, or rely on inert</td></tr>
+<tr><td>Escape</td><td>close handler; ensure it does not close a nested popover wrongly</td></tr>
+<tr><td>Restore focus</td><td>remember <code>document.activeElement</code> before opening; refocus after closing (if it still exists)</td></tr>
+<tr><td>Scroll lock</td><td><code>overflow:hidden</code> on body; handle scrollbar width shift on desktop</td></tr>
+<tr><td>Stacking</td><td>render in a portal at the end of <code>body</code></td></tr>
+</table></div>
+<p>In React, libraries such as Radix UI, React Aria or Headless UI implement this; pick one instead of rewriting it, unless you are building the design system.</p>
+
+<h3>When custom ARIA is right</h3>
+<p>Native elements cover dialog, popover (<code>popover</code> attribute), <code>details</code>, <code>select</code>. There is no native element for combobox with async filtering, tabs, tree, or menu bar, so the ARIA pattern from the Authoring Practices Guide applies. Consider the native <code>popover</code> attribute for non-modal overlays (tooltips, menus) <span class="verify">check Baseline support</span>.</p>
+
+<h3>How to test</h3>
+<div class="tw"><table>
+<tr><th>Tool</th><th>What it proves</th></tr>
+<tr><td>Keyboard only</td><td>open with Enter, focus inside, Tab cycles, Escape closes, focus returns</td></tr>
+<tr><td>axe / Lighthouse</td><td>role, name and ARIA attribute validity, contrast. Cannot judge focus behaviour.</td></tr>
+<tr><td>Playwright / Testing Library</td><td>automated focus assertions: <code>expect(trigger).toBeFocused()</code> after close; background has <code>inert</code></td></tr>
+<tr><td>NVDA + Firefox/Chrome, VoiceOver + Safari</td><td>announcement: “Edit profile, dialog”, background not readable</td></tr>
+<tr><td>200% zoom and mobile viewport</td><td>content scrolls inside the dialog, close button reachable</td></tr>
+</table></div>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Calling <code>dialog.show()</code> (non-modal) and expecting inert background and backdrop. Use <code>showModal()</code>.</li>
+<li>Setting the <code>open</code> attribute manually: skips the top layer and the focus behaviour.</li>
+<li>Believing <code>aria-modal="true"</code> blocks the background. It is a hint; use <code>inert</code>.</li>
+<li>Hedging on facts you know (“I think it restores focus”). It does, per spec.</li>
+<li>Animating <code>display</code> directly; use <code>@starting-style</code> and <code>transition-behavior: allow-discrete</code> <span class="verify">verify support</span>.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you close on backdrop click with native dialog?</dt><dd>Listen for click on the dialog and check <code>e.target === dialog</code> (padding on an inner wrapper so content clicks do not match). Newer <code>closedby</code> attribute may do it declaratively <span class="verify">verify</span>.</dd>
+<dt>Dialog vs popover?</dt><dd>Dialog modal blocks the page; popover is light-dismiss, non-modal, for menus and tooltips.</dd>
+<dt>Where do you put the trigger label for confirmations?</dt><dd>Use verbs: “Delete project” / “Keep project”, not “OK / Cancel”.</dd>
+<dt>What happens if two dialogs are open?</dt><dd>The later one is on top in the top layer; Escape closes the topmost first.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q9 ============ -->
+<section class="q" id="q9">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q9</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>What automated accessibility tools can catch</h2>
+  <p class="qtext">“Which accessibility problems can automated tools catch?” (follow-up)</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Automated tools catch a minority of problems, roughly a third to a half depending on how you count <span class="verify">verify the source</span>, and mostly the mechanical ones: missing alt attributes, missing form labels, insufficient colour contrast, invalid ARIA, duplicate ids, missing <code>lang</code>. They cannot judge meaning: whether alt text is good, whether focus order makes sense, whether a custom widget works with a keyboard, or whether a screen reader announces the right thing. So I use layers: lint in the editor, axe in CI, manual keyboard checks on every feature, a screen reader pass on critical flows, and user testing where possible.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="Layered accessibility testing from cheap and narrow to expensive and wide: lint in editor, unit tests with axe, CI axe on pages, manual keyboard check, screen reader test, user testing with disabled people.">
+  <rect x="10" y="16" width="330" height="40" class="h"/><text x="22" y="40" class="bd">1  Lint in editor</text><text x="190" y="40" class="sm">jsx-a11y</text>
+  <rect x="10" y="62" width="330" height="40" class="h"/><text x="22" y="86" class="bd">2  Component tests</text><text x="190" y="86" class="sm">jest-axe, Storybook a11y</text>
+  <rect x="10" y="108" width="330" height="40" class="h"/><text x="22" y="132" class="bd">3  CI on real pages</text><text x="190" y="132" class="sm">@axe-core/playwright, Lighthouse</text>
+  <rect x="10" y="154" width="330" height="40" class="w"/><text x="22" y="178" class="bd">4  Manual keyboard + zoom</text><text x="250" y="178" class="sm">every feature</text>
+  <rect x="10" y="200" width="330" height="40" class="w"/><text x="22" y="224" class="bd">5  Screen reader</text><text x="190" y="224" class="sm">NVDA, JAWS, VoiceOver</text>
+  <rect x="10" y="246" width="330" height="20" class="w"/><text x="22" y="260" class="bd" style="font-size:11.5px">6  Testing with disabled users</text>
+  <path class="a" d="M370 30V250"/><text x="380" y="130" class="sm">cost and effort ↓</text>
+  <text x="380" y="148" class="sm">coverage of real problems ↑</text>
+  <text x="500" y="30" class="bd">Automation can see</text>
+  <text x="500" y="52" class="sm">✓ missing alt, label, lang, title</text><text x="500" y="70" class="sm">✓ contrast of text on solid colours</text><text x="500" y="88" class="sm">✓ invalid / unknown ARIA, duplicate ids</text><text x="500" y="106" class="sm">✓ missing names on buttons and links</text>
+  <text x="500" y="146" class="bd">Only humans can judge</text>
+  <text x="500" y="168" class="sm">✗ is the alt text meaningful?</text><text x="500" y="186" class="sm">✗ logical focus and reading order</text><text x="500" y="204" class="sm">✗ keyboard traps, widget behaviour</text><text x="500" y="222" class="sm">✗ screen reader announcements</text><text x="500" y="240" class="sm">✗ clear language, error recovery</text>
+</svg></div>
+<figcaption><b>Left:</b> layers from cheap and narrow to expensive and deep. <b>Right:</b> what each class of tool can and cannot judge.</figcaption></figure>
+
+<h3>Details worth knowing</h3>
+<ul>
+<li><b>Lighthouse</b> runs a subset of axe-core rules and gives a score. A 100 does not mean accessible. It will not flag a div with a click handler.</li>
+<li><b>axe-core</b> is the engine behind most tools (browser extension, <code>jest-axe</code>, <code>@axe-core/playwright</code>, Storybook). Its rule set reports “violations”, “incomplete” (needs human review) and “passes”. Read the <b>incomplete</b> list.</li>
+<li><b>Contrast</b> checkers fail on gradients, images, hover states, and text over video.</li>
+<li><b>Static lint</b> (<code>eslint-plugin-jsx-a11y</code>) catches patterns such as click-without-key handler, <code>alt</code> missing, invalid roles.</li>
+<li><b>WCAG basics</b>: 4 principles (POUR: perceivable, operable, understandable, robust), levels A / AA / AAA; target AA, current version 2.2. Legal context: European Accessibility Act (applies from June 2025 <span class="verify">verify</span>), ADA and Section 508 in the US.</li>
+</ul>
+
+<h3>A realistic team process</h3>
+<ol>
+<li>Design: contrast, focus states, target size and error states in the design system.</li>
+<li>Build: use native elements and an accessible primitive library.</li>
+<li>PR: lint + component axe tests; a keyboard walkthrough noted in the PR description.</li>
+<li>CI: axe on key pages, fail the build on new serious violations only (baseline the old ones).</li>
+<li>Release: screen reader pass on the top journeys; track issues in the backlog with severity.</li>
+</ol>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Quoting a precise percentage with confidence. Say “roughly a third to a half”.</li>
+<li>Treating a Lighthouse score as a compliance certificate.</li>
+<li>Saying screen reader testing is optional. Different screen reader and browser pairs behave differently.</li>
+<li>Testing only in Chrome with no assistive technology.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Which screen reader / browser pairs?</dt><dd>NVDA + Firefox or Chrome and JAWS + Chrome on Windows; VoiceOver + Safari on macOS and iOS; TalkBack + Chrome on Android.</dd>
+<dt>What contrast ratios do you need?</dt><dd>AA: 4.5:1 for normal text, 3:1 for large text (18pt, or 14pt bold) and UI components.</dd>
+<dt>How do you introduce accessibility into an existing product?</dt><dd>Audit key flows, baseline automated violations, fix design system components first (biggest leverage), add CI gating for new issues, train the team.</dd>
+<dt>What is the difference between WCAG A, AA and AAA?</dt><dd>Increasing strictness. AA is the usual legal and contractual target; AAA is not required in full.</dd>
+</dl></div>
+</section>
+<h1 class="part">Part 2 · Forms and components</h1>
+
+<!-- ============ Q10 ============ -->
+<section class="q" id="q10">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q10</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>Accessible, good-UX signup form</h2>
+  <p class="qtext">“Design an accessible, good-UX signup form.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I start with native elements: a <code>&lt;form&gt;</code>, a visible <code>&lt;label&gt;</code> for every input, the right <code>type</code> and <code>autocomplete</code> tokens so mobile keyboards and password managers work. I ask for as little as possible. For validation I use native constraints plus my own messages: errors in text, linked to the field with <code>aria-describedby</code>, shown after the user leaves the field or submits, and on submit I move focus to the first invalid field or an error summary. I never block paste, I show password rules up front, and I make sure the whole thing works with a keyboard, at 200% zoom, and with a screen reader.”</p></div>
+
+<h3>Anatomy of one accessible field</h3>
+<figure><svg class="dg" viewBox="0 0 760 250" role="img" aria-label="A field with a visible label connected by for and id to the input, a hint and an error message connected to the input by aria-describedby, and aria-invalid set on error.">
+  <rect x="10" y="10" width="360" height="226" rx="6" class="b"/>
+  <rect x="26" y="26" width="120" height="26" class="h"/><text x="36" y="44" class="bd">Email address</text><text x="156" y="44" class="sm">&lt;label for="email"&gt;</text>
+  <rect x="26" y="62" width="326" height="36" rx="4" class="x"/><text x="38" y="85" class="mono">nakul@example</text>
+  <text x="26" y="118" class="sm" style="fill:var(--muted)">We send the confirmation link here.</text><text x="26" y="136" class="mono" style="font-size:11px">id="email-hint"</text>
+  <rect x="26" y="150" width="326" height="32" class="x"/><text x="36" y="171" class="bd" style="fill:var(--bad)">Enter a full address, like name@example.com</text>
+  <text x="26" y="198" class="mono" style="font-size:11px">id="email-err"  (visible text + icon, not only red)</text>
+  <text x="26" y="222" class="sm">Order read: label → type → invalid → hint → error</text>
+  <path class="a" d="M156 49H400"/><path class="a" d="M352 80H400"/><path class="a" d="M352 130H400"/><path class="a" d="M352 166H400"/>
+  <text x="410" y="42" class="mono">for="email" ↔ id="email"</text>
+  <text x="410" y="74" class="mono">type="email" autocomplete="email"</text>
+  <text x="410" y="96" class="mono">required</text>
+  <text x="410" y="120" class="mono">aria-invalid="true"  (only on error)</text>
+  <text x="410" y="142" class="mono">aria-describedby="email-hint email-err"</text>
+  <text x="410" y="176" class="sm">Error element is removed or emptied when fixed;</text><text x="410" y="194" class="sm">aria-invalid and the describedby id are updated.</text>
+</svg>
+<figcaption><b>The connections are the accessibility.</b> Each arrow is an attribute that links two pieces of the field in the accessibility tree.</figcaption></figure>
+
+<h3>Signup form checklist</h3>
+<div class="tw"><table>
+<tr><th>Topic</th><th>Decision</th></tr>
+<tr><td>Fields</td><td>Email + password is often enough. Ask for the rest later (progressive profiling). Fewer fields convert better.</td></tr>
+<tr><td>Types and tokens</td><td><code>type="email"</code> <code>autocomplete="email"</code>; <code>autocomplete="new-password"</code>; <code>name</code>/<code>given-name</code>/<code>family-name</code>; <code>bday</code>; <code>country</code>; <code>one-time-code</code> for OTP. Tokens satisfy WCAG 1.3.5 and help autofill.</td></tr>
+<tr><td>Mobile</td><td><code>inputmode</code> (numeric, email), <code>enterkeyhint="next"</code>, no autocapitalise on email (<code>autocapitalize="none"</code>), <code>spellcheck="false"</code> where relevant.</td></tr>
+<tr><td>Password</td><td>Allow paste and password managers. Show requirements before typing. Provide show/hide toggle (a real button with <code>aria-pressed</code>, <code>type="password"</code> ↔ <code>text</code>). Prefer length over arbitrary complexity; check against breached lists server-side.</td></tr>
+<tr><td>Validation timing</td><td>Do not show errors while the user is still typing the first time. Validate on blur and on submit; then re-validate live while fixing. Use <code>:user-invalid</code> (or classes toggled after interaction) and not bare <code>:invalid</code>, which shows red on an untouched empty form <span class="verify">verify support</span>.</td></tr>
+<tr><td>Native vs custom validation</td><td>Use <code>novalidate</code> on the form when you provide your own messages and layout. The browser’s native bubbles are not stylable, vary between browsers, and are poorly announced. Keep the same constraints (<code>required</code>, <code>pattern</code>, <code>type</code>) and use the Constraint Validation API (<code>checkValidity()</code>, <code>validity</code>, <code>setCustomValidity()</code>).</td></tr>
+<tr><td>Errors on submit</td><td>Focus the first invalid field (or an error summary at the top with links to each field). Do not use many <code>role="alert"</code> regions at once; they talk over each other. Error text: say what went wrong and how to fix it.</td></tr>
+<tr><td>Server errors</td><td>Show the same inline pattern. For “email already in use”, avoid leaking whether an account exists: use a generic message in the form and send an email (account enumeration risk). Debounce any async check.</td></tr>
+<tr><td>Submit button</td><td>Keep it enabled and explain what is missing; a disabled button gives no reason. While sending, set <code>aria-busy</code>, show progress, prevent double submit.</td></tr>
+<tr><td>Success</td><td>Move focus to a heading or a status message; announce with <code>role="status"</code>. Do not rely on a toast that vanishes.</td></tr>
+<tr><td>Security</td><td>CSRF protection, rate limiting, CAPTCHA only if needed and with an accessible alternative, HTTPS, no sensitive data in query strings, honeypot or bot detection server-side.</td></tr>
+<tr><td>Consent and legal</td><td>Terms checkbox unchecked by default; link opens in new tab with a warning in the link text; marketing opt-in separate (GDPR).</td></tr>
+<tr><td>Social signup</td><td>Offer “Continue with Google”, but keep email signup visible; buttons are real buttons with provider name.</td></tr>
+</table></div>
+
+<h3>Markup skeleton</h3>
+<pre><code>&lt;form id="signup" method="post" action="/signup" novalidate&gt;
+  &lt;div id="summary" role="alert" tabindex="-1" hidden&gt;&lt;/div&gt;     &lt;!-- error summary, filled on submit --&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label for="email"&gt;Email address&lt;/label&gt;
+    &lt;input id="email" name="email" type="email" required autocomplete="email"
+           aria-describedby="email-hint email-err"&gt;
+    &lt;p id="email-hint" class="hint"&gt;We send the confirmation link here.&lt;/p&gt;
+    &lt;p id="email-err" class="err" hidden&gt;&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="field"&gt;
+    &lt;label for="pw"&gt;Password&lt;/label&gt;
+    &lt;input id="pw" name="password" type="password" required minlength="12" autocomplete="new-password"
+           aria-describedby="pw-hint"&gt;
+    &lt;p id="pw-hint" class="hint"&gt;At least 12 characters. Paste is fine.&lt;/p&gt;
+    &lt;button type="button" aria-pressed="false" id="toggle"&gt;Show password&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;label&gt;&lt;input type="checkbox" name="terms" required&gt; I accept the &lt;a href="/terms" target="_blank"&gt;terms (opens in new tab)&lt;/a&gt;&lt;/label&gt;
+  &lt;button type="submit"&gt;Create account&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+<pre><code>form.addEventListener('submit', e =&gt; {
+  const bad = [...form.elements].filter(el =&gt; el.willValidate &amp;&amp; !el.checkValidity());
+  if (!bad.length) return;                     // let it submit (or fetch)
+  e.preventDefault();
+  bad.forEach(el =&gt; showError(el, el.validationMessage));  // sets aria-invalid + error text
+  bad[0].focus();                              // or focus the summary
+});</code></pre>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Describing the whole answer as a long written essay. In the interview, give the 30-second outline then go deeper on the parts the panel asks about.</li>
+<li>Placeholder as label; red-only errors; disabled submit with no explanation.</li>
+<li>Clearing the form after a server error. Users lose their input.</li>
+<li>Password rules revealed only after failure; <code>autocomplete="off"</code> on password fields (blocks managers).</li>
+<li>Async “email taken” check on blur: account enumeration plus extra load.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Native validation or custom?</dt><dd>Use native constraints for logic, custom messages for presentation (<code>novalidate</code> + Constraint Validation API).</dd>
+<dt>Where does focus go after a failed submit?</dt><dd>To the first invalid field, or to an error summary that links to each field.</dd>
+<dt>How would you build this in React?</dt><dd>Uncontrolled inputs with FormData for simple forms; React Hook Form + a schema (Zod) for complex ones; server actions or an API with the same schema on the server. Keep ids stable with <code>useId</code>.</dd>
+<dt>How do you protect against bots without hurting accessibility?</dt><dd>Honeypot field (hidden with <code>aria-hidden</code> and removed from tab order), rate limiting, invisible challenges, and an accessible alternative for any CAPTCHA.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q11 ============ -->
+<section class="q" id="q11">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q11</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>Web Components: when and when not</h2>
+  <p class="qtext">“Web Components: when would you use them and when not?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Web Components are the browser’s native component model: custom elements, shadow DOM for encapsulation, and templates with slots. They are framework-agnostic, so they fit a design system shared by React, Angular and plain pages, micro-frontends, and widgets embedded in third-party sites. I would not use them for an app that lives in one framework, where the framework’s components are simpler; or where SSR and SEO matter and I cannot use declarative shadow DOM; or for form-heavy components without extra work, because shadow DOM breaks label and ARIA id references and needs <code>ElementInternals</code> for forms.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 300" role="img" aria-label="Anatomy of a web component: a custom element host in the light DOM with slotted children, a shadow root with encapsulated styles and a slot, CSS custom properties and parts crossing in, composed events crossing out.">
+  <rect x="10" y="10" width="480" height="280" rx="8" class="b"/><text x="24" y="32" class="bd">Light DOM (page)</text>
+  <rect x="30" y="46" width="440" height="230" rx="6" class="h"/><text x="44" y="68" class="mono">&lt;my-card theme="dark"&gt;</text><text x="440" y="68" text-anchor="end" class="sm">host element</text>
+  <rect x="50" y="82" width="400" height="140" rx="5" class="b" style="stroke-dasharray:6 3"/><text x="62" y="102" class="bd">#shadow-root (open)</text>
+  <text x="62" y="122" class="sm">scoped CSS · own DOM · own ids</text>
+  <rect x="62" y="134" width="180" height="30" class="w"/><text x="72" y="154" class="mono">&lt;h3 part="title"&gt;</text>
+  <rect x="62" y="172" width="376" height="38" class="g"/><text x="72" y="196" class="mono">&lt;slot&gt;&lt;/slot&gt;  ← light DOM children render here</text>
+  <text x="44" y="246" class="mono">&lt;p slot="body"&gt;Hello&lt;/p&gt;</text><text x="44" y="264" class="sm">children stay in the page DOM, styled by page CSS</text>
+  <rect x="520" y="22" width="230" height="74" rx="5" class="g"/><text x="532" y="44" class="bd">IN: how you style it</text><text x="532" y="62" class="sm">CSS custom properties inherit</text><text x="532" y="78" class="sm">::part(title), :host, ::slotted()</text>
+  <path class="a" d="M520 60H450"/>
+  <rect x="520" y="116" width="230" height="74" rx="5" class="w"/><text x="532" y="138" class="bd">OUT: events</text><text x="532" y="156" class="sm">bubbles + composed: true</text><text x="532" y="172" class="sm">to cross the shadow boundary</text>
+  <path class="a" d="M450 150H520" style="marker-end:none;marker-start:url(#ar)"/>
+  <rect x="520" y="210" width="230" height="74" rx="5" class="x"/><text x="532" y="232" class="bd">Does NOT cross</text><text x="532" y="250" class="sm">global CSS selectors · for/id</text><text x="532" y="266" class="sm">aria-labelledby id refs · querySelector</text>
+</svg></div>
+<figcaption><b>What crosses the shadow boundary.</b> Theming goes in through custom properties and parts; events go out when composed.</figcaption></figure>
+
+<h3>The four building blocks</h3>
+<ul>
+<li><b>Custom elements</b>: <code>customElements.define('my-card', class extends HTMLElement {…})</code>. Name must contain a hyphen.</li>
+<li><b>Shadow DOM</b>: <code>this.attachShadow({mode:'open'})</code> encapsulates markup and CSS.</li>
+<li><b>HTML templates and slots</b>: <code>&lt;template&gt;</code> clones markup; <code>&lt;slot&gt;</code> projects light DOM children (named slots too).</li>
+<li><b>ES modules</b> to ship and import them.</li>
+</ul>
+
+<h3>Lifecycle</h3>
+<div class="tw"><table>
+<tr><th>Callback</th><th>When</th><th>Use</th></tr>
+<tr><td><code>constructor()</code></td><td>created</td><td>attach shadow root; no attribute reads, no children</td></tr>
+<tr><td><code>connectedCallback()</code></td><td>inserted in DOM (may run more than once)</td><td>render, add listeners, start fetches</td></tr>
+<tr><td><code>disconnectedCallback()</code></td><td>removed</td><td>cleanup listeners, observers, timers</td></tr>
+<tr><td><code>attributeChangedCallback(name, old, new)</code></td><td>for names in <code>static observedAttributes</code></td><td>react to attribute changes</td></tr>
+<tr><td><code>adoptedCallback()</code></td><td>moved to another document</td><td>rare</td></tr>
+</table></div>
+
+<pre><code>class RatingStars extends HTMLElement {
+  static observedAttributes = ['value'];
+  static formAssociated = true;                       // participates in &lt;form&gt;
+  #internals = this.attachInternals();
+  constructor() { super(); this.attachShadow({ mode: 'open' }).innerHTML =
+      `&lt;style&gt;:host{display:inline-block;color:var(--star,gold)}&lt;/style&gt;&lt;slot&gt;&lt;/slot&gt;&lt;span part="stars"&gt;&lt;/span&gt;`; }
+  attributeChangedCallback() { this.#render(); }
+  get value() { return +this.getAttribute('value') || 0; }
+  set value(v) { this.setAttribute('value', v); }     // property &lt;-&gt; attribute sync
+  #render() {
+    this.shadowRoot.querySelector('[part=stars]').textContent = '★'.repeat(this.value);
+    this.#internals.setFormValue(String(this.value));
+    this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: this.value }));
+  }
+}
+customElements.define('rating-stars', RatingStars);</code></pre>
+
+<h3>When to choose Web Components</h3>
+<ul>
+<li><b>One design system, many frameworks</b> (React, Angular, legacy jQuery pages). Examples: Salesforce Lightning, Adobe Spectrum Web Components, Shoelace/Web Awesome, Material Web.</li>
+<li><b>Micro-frontends</b> and widgets embedded in sites you do not control (chat widgets, payment forms), where style isolation matters.</li>
+<li><b>Long-lived UI primitives</b> that should survive framework rewrites.</li>
+<li>Progressive enhancement of server-rendered pages with small interactive pieces.</li>
+</ul>
+
+<h3>When not</h3>
+<ul>
+<li>The whole app is React/Angular with one team: framework components are simpler, have better tooling, and avoid shadow DOM friction.</li>
+<li>SEO or first paint depends on server HTML: needs <b>declarative shadow DOM</b> (<code>&lt;template shadowrootmode="open"&gt;</code>) or a framework such as Lit with SSR support <span class="verify">verify tooling</span>.</li>
+<li>Rich forms and accessibility-heavy widgets: labels (<code>for</code>/<code>id</code>) and ARIA id references do not cross shadow boundaries; need <code>ElementInternals</code> and careful design <span class="verify">cross-root ARIA is still evolving</span>.</li>
+<li>Global styling or CSS-in-JS expected to reach inside (utility CSS like Tailwind does not).</li>
+<li>No one owns it long-term, or the team is small.</li>
+</ul>
+
+<h3>Notes you should know</h3>
+<ul>
+<li>No polyfill needed in modern browsers. jQuery and other libraries work with custom elements directly.</li>
+<li><b>Lit</b> (small library, reactive properties, templating) is the usual way to write them without boilerplate.</li>
+<li><b>React:</b> React 19 improved custom element support (props set as properties when defined, custom events). Earlier versions needed refs and manual event wiring <span class="verify">check React docs</span>.</li>
+<li>Prefer native: <code>&lt;select&gt;</code>, <code>&lt;details&gt;</code>, <code>&lt;dialog&gt;</code>, <code>popover</code> before inventing a custom element. <b>Customized built-ins</b> (<code>is="…"</code>) are not supported in Safari.</li>
+<li>Theming strategy: expose CSS custom properties (design tokens), and <code>::part()</code> for deliberate hooks. Do not leave users with only a closed shadow root.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“Web Components replace React.” They are a lower-level standard; there is no reactive rendering or state management built in.</li>
+<li>Forgetting <code>composed: true</code> so the event never leaves the shadow root.</li>
+<li>Reading attributes or children in the constructor (not available yet).</li>
+<li>Using closed shadow roots for “security”. It is not a security boundary and blocks tools and testing.</li>
+<li>Saying “needs a polyfill”. It does not in current evergreen browsers.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you style a component from outside?</dt><dd>CSS custom properties (inherit through shadow), <code>::part()</code> for exposed parts, and slotted content is styled by the page.</dd>
+<dt>How do you make it work in a form?</dt><dd><code>static formAssociated = true</code> and <code>attachInternals()</code> to set value, validity and participate in <code>FormData</code>.</dd>
+<dt>Light DOM vs shadow DOM?</dt><dd>Light DOM component (no shadow root) gets page styles and accessibility refs but no encapsulation; choose per component.</dd>
+<dt>How do you test them?</dt><dd>Playwright or Web Test Runner in a real browser; query through shadow roots with locators that pierce open roots.</dd>
+</dl></div>
+</section>
+<h1 class="part">Part 3 · Loading and rendering</h1>
+
+<!-- ============ Q12 ============ -->
+<section class="q" id="q12">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q12</span><span class="tag added">Added</span></div>
+  <h2>Document head and resource hints</h2>
+  <p class="qtext">“What goes in the &lt;head&gt;, and in what order? What is the difference between preload, preconnect, prefetch and dns-prefetch?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The head is the page’s metadata and its resource plan. First <code>&lt;meta charset&gt;</code> within the first 1024 bytes, then the viewport meta, title, and the critical CSS and preload hints, then scripts with <code>defer</code>. Resource hints tell the browser what to do early: <code>preconnect</code> opens the connection to another origin now, <code>preload</code> fetches a resource I know the current page needs with high priority, <code>prefetch</code> fetches something for a likely next navigation at low priority, and <code>dns-prefetch</code> only resolves the DNS. I use them sparingly and measure, because too many hints compete for bandwidth.”</p></div>
+
+<h3>Essentials</h3>
+<pre><code>&lt;!doctype html&gt;                                   &lt;!-- standards mode; without it: quirks mode --&gt;
+&lt;html lang="en"&gt;                                   &lt;!-- screen reader pronunciation, hyphenation, translate --&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;                          &lt;!-- first, within first 1024 bytes --&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;   &lt;!-- never user-scalable=no --&gt;
+  &lt;title&gt;Pricing – Acme&lt;/title&gt;                    &lt;!-- unique per page --&gt;
+  &lt;meta name="description" content="..."&gt;
+  &lt;link rel="canonical" href="https://acme.com/pricing"&gt;
+  &lt;meta name="color-scheme" content="light dark"&gt;
+  &lt;link rel="preconnect" href="https://cdn.acme.com" crossorigin&gt;
+  &lt;link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin&gt;
+  &lt;link rel="stylesheet" href="/app.css"&gt;
+  &lt;script src="/app.js" defer&gt;&lt;/script&gt;
+  &lt;meta property="og:title" content="..."&gt;       &lt;!-- social previews --&gt;
+&lt;/head&gt;</code></pre>
+
+<div class="tw"><table>
+<tr><th>Item</th><th>Why it matters</th></tr>
+<tr><td>doctype</td><td>Missing doctype triggers quirks mode (different box model and layout rules).</td></tr>
+<tr><td><code>lang</code></td><td>Screen readers choose the voice; browsers choose hyphenation and quotes; translation tools detect language. WCAG 3.1.1.</td></tr>
+<tr><td>charset</td><td>If it appears late, the browser may re-parse. Also send <code>Content-Type: text/html; charset=utf-8</code> header.</td></tr>
+<tr><td>viewport</td><td>Without it, mobile browsers render a ~980px desktop layout. Do not disable zoom (<code>user-scalable=no</code>), an accessibility failure.</td></tr>
+<tr><td>title</td><td>First thing a screen reader reads; tab text; SEO; update it on client-side route change.</td></tr>
+<tr><td>CSP and security meta</td><td>Prefer HTTP headers (CSP, HSTS, Permissions-Policy). A CSP <code>&lt;meta&gt;</code> works for some directives only.</td></tr>
+</table></div>
+
+<h3>Resource hints compared</h3>
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="Resource hints by how much work they do: dns-prefetch resolves DNS only, preconnect resolves DNS plus TCP plus TLS, preload downloads a current page resource at high priority, prefetch downloads a future page resource at low priority.">
+  <text x="10" y="20" class="bd">What each hint does</text>
+  <text x="180" y="20" class="sm">DNS</text><text x="260" y="20" class="sm">TCP</text><text x="340" y="20" class="sm">TLS</text><text x="440" y="20" class="sm">Download</text><text x="560" y="20" class="sm">Priority / use</text>
+  <rect x="10" y="30" width="740" height="44" class="b"/><text x="20" y="57" class="mono">dns-prefetch</text>
+  <rect x="170" y="42" width="60" height="20" class="h"/>
+  <text x="560" y="57" class="sm">cheap; legacy fallback for preconnect</text>
+  <rect x="10" y="80" width="740" height="44" class="b"/><text x="20" y="107" class="mono">preconnect</text>
+  <rect x="170" y="92" width="60" height="20" class="h"/><rect x="250" y="92" width="60" height="20" class="h"/><rect x="330" y="92" width="60" height="20" class="h"/>
+  <text x="560" y="107" class="sm">max 2–4 critical origins; crossorigin for fonts</text>
+  <rect x="10" y="130" width="740" height="44" class="b"/><text x="20" y="157" class="mono">preload</text>
+  <rect x="170" y="142" width="60" height="20" class="h"/><rect x="250" y="142" width="60" height="20" class="h"/><rect x="330" y="142" width="60" height="20" class="h"/><rect x="410" y="142" width="110" height="20" class="g"/>
+  <text x="560" y="157" class="sm">high · needed on THIS page, soon</text>
+  <rect x="10" y="180" width="740" height="44" class="b"/><text x="20" y="207" class="mono">prefetch</text>
+  <rect x="170" y="192" width="60" height="20" class="h"/><rect x="250" y="192" width="60" height="20" class="h"/><rect x="330" y="192" width="60" height="20" class="h"/><rect x="410" y="192" width="110" height="20" class="w"/>
+  <text x="560" y="207" class="sm">lowest · NEXT navigation, idle time</text>
+  <text x="10" y="248" class="sm">modulepreload: like preload for ES modules (fetch + parse + compile dependencies).</text>
+  <text x="10" y="264" class="sm">Speculation Rules (&lt;script type="speculationrules"&gt;): prefetch or prerender next pages, Chromium only (verify).</text>
+</svg></div>
+<figcaption><b>Each hint does more work than the one above it.</b> Green is current-page, amber is future-page.</figcaption></figure>
+
+<ul>
+<li><b>preload</b> requires <code>as</code> (and <code>type</code>, <code>crossorigin</code> for fonts). A preload that is not used within a few seconds gives a console warning. Preloading things already discoverable in markup is usually redundant.</li>
+<li><b>preload is for things the preload scanner cannot find</b>: fonts referenced from CSS, background images in CSS, resources injected by JS, the LCP image in CSS.</li>
+<li><b>preconnect</b>: use for the 2–4 origins you will use right away (CDN, API, font host); an unused preconnect wastes a connection.</li>
+<li><b>fetchpriority</b> (<code>high</code>/<code>low</code>) on <code>img</code>, <code>link</code>, <code>script</code> adjusts priority within a type.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Preloading everything: priority inflation means the real critical resources compete with the rest.</li>
+<li>Forgetting <code>crossorigin</code> on font preload: browser downloads it twice.</li>
+<li>Mixing up preload (this page) with prefetch (next page).</li>
+<li>Putting <code>&lt;meta charset&gt;</code> after a long title or scripts.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why <code>font-display: swap</code>?</dt><dd>Show fallback text immediately and swap when the font loads (avoids invisible text); pair with <code>size-adjust</code> or metric overrides to limit layout shift.</dd>
+<dt>What is the preload scanner?</dt><dd>A lightweight parser that runs ahead while the main parser is blocked and starts fetching discovered resources (img, script, link).</dd>
+<dt>What is <code>103 Early Hints</code>?</dt><dd>HTTP status the server sends before the final response with <code>Link: rel=preload/preconnect</code>, so the browser starts work during server think time.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q13 ============ -->
+<section class="q" id="q13">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q13</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>async, defer and module scripts</h2>
+  <p class="qtext">“async versus defer versus module scripts, and what each does to DOMContentLoaded.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A normal script blocks the HTML parser while it downloads and runs. <code>async</code> downloads in parallel and runs as soon as it arrives, interrupting the parser, in no guaranteed order, and DOMContentLoaded does not wait for it: right for independent scripts like analytics. <code>defer</code> downloads in parallel, runs after parsing finishes, in document order, before DOMContentLoaded: right for application code. A <code>type="module"</code> script is deferred by default, plus it is strict mode, has its own scope, runs once per URL, needs CORS, and supports <code>import</code>. Put them in the <code>&lt;head&gt;</code> so the browser finds them early.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Timeline of four script modes against HTML parsing. Classic blocks the parser during download and execution. Async downloads in parallel then pauses the parser to execute. Defer downloads in parallel and executes after parsing, before DOMContentLoaded. Module is the same as defer.">
+  <text x="10" y="18" class="bd">Time →</text>
+  <rect x="150" y="26" width="580" height="22" class="b"/><text x="160" y="42" class="sm">HTML parsing (parser)</text>
+  <text x="10" y="82" class="mono">&lt;script&gt;</text><text x="10" y="98" class="sm">classic</text>
+  <rect x="150" y="68" width="150" height="22" class="b"/><text x="158" y="83" class="sm">parse</text>
+  <rect x="300" y="68" width="100" height="22" class="w"/><text x="306" y="83" class="sm">download</text>
+  <rect x="400" y="68" width="50" height="22" class="x"/><text x="404" y="83" class="sm">run</text>
+  <rect x="450" y="68" width="280" height="22" class="b"/><text x="458" y="83" class="sm">parse resumes (was BLOCKED)</text>
+  <text x="10" y="142" class="mono">async</text><text x="10" y="158" class="sm">independent</text>
+  <rect x="150" y="128" width="150" height="22" class="b"/><text x="158" y="143" class="sm">parse</text>
+  <rect x="200" y="154" width="140" height="14" class="w"/><text x="206" y="165" class="sm" style="font-size:10px">download (parallel)</text>
+  <rect x="300" y="128" width="40" height="22" class="x"/><text x="304" y="143" class="sm">run</text>
+  <rect x="340" y="128" width="390" height="22" class="b"/><text x="348" y="143" class="sm">parse continues; run ASAP, order not guaranteed</text>
+  <text x="10" y="212" class="mono">defer</text><text x="10" y="228" class="sm">ordered, after parse</text>
+  <rect x="150" y="198" width="460" height="22" class="b"/><text x="158" y="213" class="sm">parse finishes without waiting</text>
+  <rect x="170" y="224" width="200" height="14" class="w"/><text x="176" y="235" class="sm" style="font-size:10px">download (parallel)</text>
+  <rect x="610" y="198" width="60" height="22" class="x"/><text x="616" y="213" class="sm">run</text>
+  <text x="10" y="282" class="mono">type="module"</text><text x="10" y="298" class="sm">deferred by default</text>
+  <rect x="150" y="268" width="460" height="22" class="b"/><text x="158" y="283" class="sm">parse finishes (imports fetched in parallel)</text>
+  <rect x="610" y="268" width="60" height="22" class="x"/><text x="616" y="283" class="sm">run</text>
+  <path class="d" d="M670 30V320"/><text x="676" y="316" class="bd" style="font-size:11px">DOMContentLoaded</text>
+  <text x="150" y="322" class="sm">async: DCL does NOT wait · defer / module: DCL waits for them</text>
+</svg></div>
+<figcaption><b>Orange = download, red = execute.</b> The dashed line is DOMContentLoaded: it fires after deferred and module scripts have run, and does not wait for async scripts.</figcaption></figure>
+
+<h3>Side by side</h3>
+<div class="tw"><table>
+<tr><th></th><th>classic</th><th><code>async</code></th><th><code>defer</code></th><th><code>type="module"</code></th></tr>
+<tr><td>Blocks parser</td><td>yes</td><td>only while executing</td><td>no</td><td>no</td></tr>
+<tr><td>Execution order</td><td>document order</td><td><b>unordered</b>, first come first run</td><td>document order</td><td>dependency order, then document order</td></tr>
+<tr><td>Runs</td><td>immediately</td><td>when downloaded</td><td>after parsing, before DOMContentLoaded</td><td>same as defer</td></tr>
+<tr><td>DOMContentLoaded waits?</td><td>yes</td><td><b>no</b> (may fire before or after)</td><td>yes</td><td>yes (unless <code>async</code> added)</td></tr>
+<tr><td>Scope / mode</td><td>global, sloppy</td><td>same</td><td>same</td><td>module scope, strict mode</td></tr>
+<tr><td>Executed how often</td><td>per tag</td><td>per tag</td><td>per tag</td><td><b>once per URL</b></td></tr>
+<tr><td>Cross-origin</td><td>no CORS needed</td><td>same</td><td>same</td><td><b>CORS required</b></td></tr>
+<tr><td>Inline</td><td>runs now</td><td>async/defer <b>ignored</b></td><td>ignored</td><td>inline module is deferred</td></tr>
+</table></div>
+
+<h3>Rules to remember</h3>
+<ul>
+<li><code>async</code> is for scripts that do not depend on anything else (analytics, ads), not for “dependent” ones.</li>
+<li><code>defer</code> and <code>async</code> only work on scripts with a <code>src</code>. <code>async</code> on a module overrides deferral: it runs when ready.</li>
+<li><code>nomodule</code> marks a fallback for browsers that do not understand modules (largely historic now).</li>
+<li>Dynamically inserted scripts (<code>document.createElement('script')</code>) behave as <code>async</code> by default; set <code>script.async = false</code> to keep order.</li>
+<li><b>CSS and scripts:</b> a classic script cannot execute until earlier stylesheets have loaded, because it might read styles. A slow CSS therefore delays scripts as well as rendering.</li>
+<li>Putting scripts at the end of <code>&lt;body&gt;</code> is outdated: the preload scanner finds them late. Use <code>&lt;script defer&gt;</code> in the head.</li>
+<li><b>DOMContentLoaded</b>: HTML parsed and deferred/module scripts done; stylesheets and images may still load. <b>load</b>: everything including images and sub-resources.</li>
+</ul>
+
+<div class="box note"><h4>Which should I use? A quick guide</h4>
+<ul>
+<li>Your application bundle: <code>type="module"</code> (or <code>defer</code>).</li>
+<li>Analytics, tag managers, ads: <code>async</code>, or inject after <code>load</code> / idle.</li>
+<li>Script that must run before first paint (theme flag to prevent flash): a tiny inline classic script in the head.</li>
+<li>Heavy third party: load on interaction or via a facade; Partytown/Worker for long-running ones.</li>
+</ul></div>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Calling async “for scripts that depend on each other”. It is for independent scripts.</li>
+<li>Expecting <code>defer</code> on an inline script to do anything.</li>
+<li>Believing DOMContentLoaded waits for async. It does not.</li>
+<li>Forgetting that modules need CORS headers when served from a CDN.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Does defer help LCP?</dt><dd>It stops scripts blocking HTML parsing, so content and the LCP element are discovered and painted earlier; execution cost still counts toward INP and TBT.</dd>
+<dt>Why do modules need CORS?</dt><dd>They are fetched in CORS mode (credentials omitted by default) for same-origin and cross-origin loads alike.</dd>
+<dt>What does <code>import()</code> do?</dt><dd>Dynamic import: loads a module on demand, returns a promise; the basis of code splitting.</dd>
+<dt>Where does the bundler fit?</dt><dd>Bundlers (Vite, webpack) emit module scripts plus preload tags for chunks; configure code splitting and <code>modulepreload</code>.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q14 ============ -->
+<section class="q" id="q14">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q14</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>Serving and preloading images for performance</h2>
+  <p class="qtext">“How do you serve and preload images for performance?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“First I send the right bytes: modern formats (AVIF or WebP with JPEG fallback), resized to the displayed size and compressed, with <code>srcset</code> and <code>sizes</code> so the browser picks the right width for the device. Then I send them at the right time: below-the-fold images get <code>loading="lazy"</code>; the LCP image is never lazy and gets <code>fetchpriority="high"</code>. I always set <code>width</code> and <code>height</code> to prevent layout shift. I only add a preload when the browser cannot discover the image early, for example a CSS background or a JS-inserted hero.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Decision tree for an image: is it above the fold and the LCP candidate, then eager with fetchpriority high and no lazy loading; otherwise lazy. Does the art direction change across breakpoints, then picture with media; do formats differ, then picture with type; otherwise img with srcset and sizes.">
+  <rect x="250" y="8" width="260" height="40" rx="6" class="b"/><text x="380" y="33" text-anchor="middle" class="bd">An image on the page</text>
+  <path class="a" d="M300 48L170 80"/><path class="a" d="M460 48L590 80"/>
+  <rect x="40" y="82" width="260" height="62" rx="6" class="h"/><text x="170" y="104" text-anchor="middle" class="bd">Above the fold / LCP?</text><text x="170" y="124" text-anchor="middle" class="sm">hero, first screen</text>
+  <rect x="460" y="82" width="260" height="62" rx="6" class="b"/><text x="590" y="104" text-anchor="middle" class="bd">Below the fold</text><text x="590" y="124" text-anchor="middle" class="sm">carousel slides 2+, footer, cards</text>
+  <path class="a" d="M170 144V174"/><path class="a" d="M590 144V174"/>
+  <rect x="40" y="176" width="260" height="62" rx="6" class="g"/><text x="170" y="198" text-anchor="middle" class="mono">fetchpriority="high"</text><text x="170" y="216" text-anchor="middle" class="mono">no loading="lazy"</text><text x="170" y="231" text-anchor="middle" class="sm">+ preload only if not in markup</text>
+  <rect x="460" y="176" width="260" height="62" rx="6" class="g"/><text x="590" y="198" text-anchor="middle" class="mono">loading="lazy"</text><text x="590" y="216" text-anchor="middle" class="mono">decoding="async"</text><text x="590" y="231" text-anchor="middle" class="sm">+ width/height always</text>
+  <text x="10" y="266" class="bd">Then choose the markup shape</text>
+  <rect x="10" y="276" width="236" height="46" rx="5" class="b"/><text x="20" y="296" class="mono">&lt;img srcset sizes&gt;</text><text x="20" y="313" class="sm">same picture, different widths</text>
+  <rect x="262" y="276" width="236" height="46" rx="5" class="b"/><text x="272" y="296" class="mono">&lt;picture&gt;&lt;source type&gt;</text><text x="272" y="313" class="sm">same picture, different formats</text>
+  <rect x="514" y="276" width="236" height="46" rx="5" class="b"/><text x="524" y="296" class="mono">&lt;picture&gt;&lt;source media&gt;</text><text x="524" y="313" class="sm">different crop per breakpoint</text>
+</svg></div>
+<figcaption><b>Two decisions:</b> priority (when to load) and markup shape (which bytes). They combine.</figcaption></figure>
+
+<h3>Responsive images: srcset and sizes</h3>
+<pre><code>&lt;img
+  src="/img/hero-800.jpg"
+  srcset="/img/hero-480.avif 480w, /img/hero-800.avif 800w, /img/hero-1200.avif 1200w, /img/hero-1600.avif 1600w"
+  sizes="(min-width: 1024px) 50vw, 100vw"
+  width="1600" height="900"
+  alt="Engineers reviewing a dashboard"
+  fetchpriority="high"&gt;</code></pre>
+<ul>
+<li><code>w</code> descriptors tell the browser each file’s width; <code>sizes</code> tells it how wide the slot will be. The browser multiplies by device pixel ratio and picks. You declare options; the browser decides (network, cache may influence).</li>
+<li>If <code>sizes</code> is omitted the default is <code>100vw</code>, so the browser may download an image far larger than needed.</li>
+<li><code>x</code> descriptors (<code>1x, 2x</code>) are for fixed-size images (logos).</li>
+</ul>
+
+<h3>&lt;picture&gt;: formats and art direction</h3>
+<pre><code>&lt;picture&gt;
+  &lt;source type="image/avif" srcset="a.avif"&gt;                       &lt;!-- format switching --&gt;
+  &lt;source type="image/webp" srcset="a.webp"&gt;
+  &lt;source media="(max-width: 600px)" srcset="a-crop.jpg"&gt;        &lt;!-- art direction: different crop --&gt;
+  &lt;img src="a.jpg" alt="..." width="1200" height="675"&gt;           &lt;!-- required, carries alt and size --&gt;
+&lt;/picture&gt;</code></pre>
+<p>The browser takes the first <code>&lt;source&gt;</code> that matches. The inner <code>&lt;img&gt;</code> is required and is where <code>alt</code>, <code>width</code>, <code>height</code>, <code>loading</code> and <code>fetchpriority</code> go. Image CDNs (Cloudflare Images, Cloudinary, Imgix, Next.js <code>&lt;Image&gt;</code>) automate format negotiation and resizing.</p>
+
+<h3>Preloading images</h3>
+<pre><code>&lt;link rel="preload" as="image" href="hero-800.avif"
+      imagesrcset="hero-480.avif 480w, hero-800.avif 800w, hero-1200.avif 1200w"
+      imagesizes="(min-width: 1024px) 50vw, 100vw" fetchpriority="high"&gt;</code></pre>
+<ul>
+<li>Preload is a <b>link element</b>, not an attribute on the image. Use <code>imagesrcset</code> and <code>imagesizes</code> so the preloaded candidate matches the one <code>&lt;img&gt;</code> picks.</li>
+<li><b>Redundant if the <code>&lt;img&gt;</code> is already in the HTML</b>: the preload scanner finds it. Use <code>fetchpriority="high"</code> instead. Preload is for CSS backgrounds, JS-rendered images and client-rendered apps.</li>
+<li>Never <code>loading="lazy"</code> on the LCP image: it waits for layout before loading and delays LCP.</li>
+</ul>
+
+<h3>Everything else that matters</h3>
+<div class="tw"><table>
+<tr><th>Lever</th><th>Why</th></tr>
+<tr><td>Resize and compress</td><td>The biggest win is usually a 1.5 MB hero that should be 100–200 KB. Quality 60–80 is often indistinguishable.</td></tr>
+<tr><td>Format</td><td>AVIF and WebP are typically much smaller than JPEG at similar quality (savings vary by image <span class="verify">measure</span>); SVG for icons and logos; avoid GIF for animation (use video).</td></tr>
+<tr><td><code>width</code> / <code>height</code></td><td>Browser reserves space from the aspect ratio before the image arrives: no layout shift. Pair with <code>img { max-width:100%; height:auto }</code>.</td></tr>
+<tr><td>CDN and cache</td><td><code>Cache-Control: public, max-age=31536000, immutable</code> with hashed file names.</td></tr>
+<tr><td>Placeholders</td><td>Dominant colour or blurhash/LQIP to avoid empty boxes (not a replacement for sizing).</td></tr>
+<tr><td><code>alt</code></td><td>Describe purpose, not appearance. Decorative: <code>alt=""</code>. Never omit the attribute.</td></tr>
+<tr><td><code>content-visibility: auto</code></td><td>Skips rendering offscreen sections, helps long image lists.</td></tr>
+<tr><td>Measure</td><td>LCP element breakdown in DevTools or PageSpeed Insights; field data via CrUX/RUM.</td></tr>
+</table></div>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Treating preload as an attribute (<code>&lt;img preload&gt;</code>). It is a <code>&lt;link rel="preload"&gt;</code>.</li>
+<li>Lazy-loading the hero image.</li>
+<li>Using <code>srcset</code> without <code>sizes</code> for fluid images.</li>
+<li>Using <code>&lt;picture&gt;</code> and putting <code>alt</code> on the <code>&lt;source&gt;</code> (invalid).</li>
+<li>Preloading a different candidate than the one the browser selects: two downloads.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does <code>decoding="async"</code> do?</dt><dd>Allows the image to be decoded off the main thread without blocking paint of other content.</dd>
+<dt>Lazy loading in Next.js?</dt><dd><code>next/image</code> lazy loads by default; set <code>priority</code> on the LCP image to disable lazy loading and add preload.</dd>
+<dt>How do you handle high-DPR screens?</dt><dd>Provide widths up to 2x the slot width through <code>srcset</code>; cap at 2x–3x to limit bytes.</dd>
+<dt>Is a background image good for hero content?</dt><dd>Worse: discovered late (needs CSS), no alt, no srcset. Prefer <code>&lt;img&gt;</code> for content, CSS for decoration.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q15 ============ -->
+<section class="q" id="q15">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q15</span><span class="tag asked">Asked · 29 Sep</span></div>
+  <h2>From HTML to pixels: the rendering pipeline</h2>
+  <p class="qtext">“What does the browser do between receiving HTML and showing pixels; how do you speed it up?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The browser parses bytes into tokens and builds the DOM, parses CSS into the CSSOM, combines them into a render tree (anything with <code>display:none</code> is excluded), runs layout to compute geometry, paints the layers, and the compositor combines them on the GPU. CSS blocks rendering and later synchronous scripts; scripts block the parser. So I speed it up by sending less and sending it earlier: inline critical CSS, defer JS, preload what the scanner cannot see, preconnect to key origins, compress and cache, and keep the DOM small. I measure first with DevTools Performance, Lighthouse and WebPageTest, then verify with field data.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="The browser rendering pipeline: HTML bytes become DOM, CSS bytes become CSSOM, both combine into the render tree, then layout, paint, and composite. CSS blocks rendering, JavaScript can block parsing, and transform and opacity changes skip layout and paint.">
+  <rect x="10" y="20" width="110" height="46" rx="5" class="b"/><text x="65" y="40" text-anchor="middle" class="bd">HTML</text><text x="65" y="57" text-anchor="middle" class="sm">bytes → tokens</text>
+  <rect x="150" y="20" width="110" height="46" rx="5" class="h"/><text x="205" y="40" text-anchor="middle" class="bd">DOM</text><text x="205" y="57" text-anchor="middle" class="sm">tree of nodes</text>
+  <rect x="10" y="100" width="110" height="46" rx="5" class="b"/><text x="65" y="120" text-anchor="middle" class="bd">CSS</text><text x="65" y="137" text-anchor="middle" class="sm">bytes → rules</text>
+  <rect x="150" y="100" width="110" height="46" rx="5" class="h"/><text x="205" y="120" text-anchor="middle" class="bd">CSSOM</text><text x="205" y="137" text-anchor="middle" class="sm">computed styles</text>
+  <path class="a" d="M120 43H148"/><path class="a" d="M120 123H148"/>
+  <path class="a" d="M260 43H290V70"/><path class="a" d="M260 123H290V96"/>
+  <rect x="290" y="64" width="120" height="38" rx="5" class="h"/><text x="350" y="83" text-anchor="middle" class="bd">Render tree</text><text x="350" y="97" text-anchor="middle" class="sm" style="font-size:10.5px">no display:none</text>
+  <path class="a" d="M410 83H440"/>
+  <rect x="440" y="64" width="90" height="38" rx="5" class="w"/><text x="485" y="83" text-anchor="middle" class="bd">Layout</text><text x="485" y="97" text-anchor="middle" class="sm" style="font-size:10.5px">sizes, positions</text>
+  <path class="a" d="M530 83H560"/>
+  <rect x="560" y="64" width="80" height="38" rx="5" class="w"/><text x="600" y="83" text-anchor="middle" class="bd">Paint</text><text x="600" y="97" text-anchor="middle" class="sm" style="font-size:10.5px">pixels / layers</text>
+  <path class="a" d="M640 83H660"/>
+  <rect x="660" y="64" width="90" height="38" rx="5" class="g"/><text x="705" y="83" text-anchor="middle" class="bd">Composite</text><text x="705" y="97" text-anchor="middle" class="sm" style="font-size:10.5px">GPU, layers</text>
+  <rect x="150" y="162" width="250" height="52" rx="5" class="x"/><text x="162" y="182" class="bd">JS blocks the parser</text><text x="162" y="200" class="sm">classic &lt;script&gt;; use defer / module</text>
+  <path class="ax" d="M205 162V70"/>
+  <rect x="420" y="162" width="330" height="52" rx="5" class="x"/><text x="432" y="182" class="bd">CSS blocks render (and later sync scripts)</text><text x="432" y="200" class="sm">not DOM parsing · inline critical CSS, split the rest</text>
+  <path class="ax" d="M460 162V104"/>
+  <text x="10" y="248" class="bd">What your change triggers</text>
+  <rect x="10" y="258" width="240" height="54" rx="5" class="x"/><text x="20" y="278" class="bd">width, top, margin, font-size</text><text x="20" y="296" class="sm">Layout → Paint → Composite (costly)</text>
+  <rect x="262" y="258" width="240" height="54" rx="5" class="w"/><text x="272" y="278" class="bd">color, background, shadow</text><text x="272" y="296" class="sm">Paint → Composite</text>
+  <rect x="514" y="258" width="236" height="54" rx="5" class="g"/><text x="524" y="278" class="bd">transform, opacity</text><text x="524" y="296" class="sm">Composite only (cheap, smooth)</text>
+</svg></div>
+<figcaption><b>Pipeline and where it stalls.</b> Dashed red arrows are blocking relationships; the bottom row is the cost of each kind of style change.</figcaption></figure>
+
+<h3>Step by step</h3>
+<ol>
+<li><b>Network:</b> DNS, TCP, TLS (QUIC for HTTP/3), request, TTFB. The server may stream HTML so the browser starts early.</li>
+<li><b>Parse HTML:</b> bytes → characters → tokens → nodes → DOM, incrementally as data arrives. A <b>preload scanner</b> runs ahead and starts downloads for images, scripts and styles it spots.</li>
+<li><b>Parse CSS</b> into the CSSOM. Rendering waits until blocking CSS in the head is done (render-blocking), because painting unstyled content would flash.</li>
+<li><b>Run scripts</b> (classic scripts stop the parser; they also wait for pending CSS).</li>
+<li><b>Style + render tree:</b> combine DOM and computed styles; skip <code>display:none</code> and <code>&lt;head&gt;</code>.</li>
+<li><b>Layout (reflow):</b> compute geometry for every box. Triggered again by size or position changes and by reading layout properties after writing (layout thrashing).</li>
+<li><b>Paint:</b> convert boxes into draw instructions, per layer. Includes image decode.</li>
+<li><b>Composite:</b> the compositor thread places layers on the GPU, which makes scrolling and transforms smooth even when the main thread is busy.</li>
+</ol>
+
+<h3>How to speed it up (and what each fixes)</h3>
+<div class="tw"><table>
+<tr><th>Technique</th><th>Helps</th><th>Notes</th></tr>
+<tr><td>Fast server, CDN, compression (Brotli), HTTP/2 or 3, caching</td><td>TTFB, all metrics</td><td>measure TTFB first; everything else waits on it</td></tr>
+<tr><td>Inline critical CSS, load the rest async (<code>media</code> trick or <code>rel=preload</code>)</td><td>FCP, LCP</td><td>keep CSS small; avoid <code>@import</code> chains</td></tr>
+<tr><td><code>defer</code> / module for JS, code splitting, remove unused JS</td><td>FCP, LCP, INP, TBT</td><td>less hydration cost in React</td></tr>
+<tr><td>Preload fonts/LCP image the scanner cannot see; preconnect to key origins</td><td>LCP</td><td>do not over-use</td></tr>
+<tr><td><code>font-display</code>, subset fonts, WOFF2</td><td>FCP, CLS</td><td>match fallback metrics</td></tr>
+<tr><td>Image optimisation (Q14)</td><td>LCP</td><td>often the single biggest win</td></tr>
+<tr><td>Reserve space (<code>width</code>/<code>height</code>, <code>aspect-ratio</code>)</td><td>CLS</td><td>also ads and embeds</td></tr>
+<tr><td>Animate with <code>transform</code>/<code>opacity</code>; avoid forced reflow; <code>content-visibility</code></td><td>INP, smoothness</td><td>batch DOM reads then writes</td></tr>
+<tr><td>Smaller DOM (a few thousand nodes), virtualise long lists</td><td>layout and style cost</td><td></td></tr>
+<tr><td>SSR / SSG / streaming</td><td>FCP, LCP</td><td>HTML contains content on arrival</td></tr>
+</table></div>
+
+<h3>How to measure</h3>
+<ul>
+<li><b>Lab:</b> Chrome DevTools Performance panel (main thread, long tasks, layout, LCP marker), Lighthouse, WebPageTest (filmstrip, waterfall, real devices).</li>
+<li><b>Field (real users):</b> the <code>web-vitals</code> library to your analytics (RUM), CrUX / Search Console (28-day, 75th percentile).</li>
+<li><b>Thresholds (good, p75):</b> LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1.</li>
+<li>Avoid unmeasured claims like “this massively reduces FCP”. Say what you would measure and the expected effect.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying “put scripts at the bottom of the body”. Outdated: use <code>defer</code> in the head.</li>
+<li>Saying CSS blocks HTML parsing. It blocks rendering and later synchronous scripts, not parsing.</li>
+<li>Skipping the second half of the question: the interviewer asks for speed-ups <b>and</b> measurement.</li>
+<li>Forgetting layout, paint and composite and stopping at the DOM.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What triggers a reflow?</dt><dd>Changing geometry (size, position, content), adding/removing elements, and reading properties such as <code>offsetHeight</code> or <code>getBoundingClientRect()</code> after a write.</dd>
+<dt>What is a layer / <code>will-change</code>?</dt><dd>A hint that an element will change, so the browser may promote it to its own compositor layer. Overuse costs memory; use briefly.</dd>
+<dt>FCP vs LCP vs TTI?</dt><dd>FCP: first content painted. LCP: largest content element painted. TTI is deprecated in favour of INP and TBT.</dd>
+<dt>How does React hydration affect this?</dt><dd>Server HTML paints early, but the page is not interactive until JS downloads and hydrates; use streaming SSR, Server Components and selective hydration to shrink that gap.</dd>
+</dl></div>
+</section>
+
+<!-- ============ Q16 ============ -->
+<section class="q" id="q16">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q16</span><span class="tag added">Added</span></div>
+  <h2>iframes and third-party embeds</h2>
+  <p class="qtext">“How do you embed third-party content safely and without hurting performance or accessibility?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“An iframe isolates third-party content in its own browsing context, but it still has cost and risk. For safety I use <code>sandbox</code> with the minimum permissions, <code>allow</code> for specific features, a strict <code>referrerpolicy</code>, and I set a CSP <code>frame-ancestors</code> on my own pages to prevent clickjacking. For performance I add <code>loading="lazy"</code>, set dimensions to avoid shift, and use a facade (a thumbnail that loads the real embed on click) for heavy players. For accessibility every iframe needs a meaningful <code>title</code>.”</p></div>
+
+<h3>Attributes that matter</h3>
+<div class="tw"><table>
+<tr><th>Attribute</th><th>Effect</th></tr>
+<tr><td><code>sandbox</code></td><td>With no value: scripts, forms, popups, same-origin access all blocked. Add back only what is needed: <code>allow-scripts</code>, <code>allow-forms</code>, <code>allow-popups</code>. <b>Never combine <code>allow-scripts</code> and <code>allow-same-origin</code> for untrusted content from your own origin</b>: it can remove the sandbox.</td></tr>
+<tr><td><code>allow</code></td><td>Permissions Policy for the frame: <code>allow="fullscreen; payment; camera 'none'"</code>.</td></tr>
+<tr><td><code>loading="lazy"</code></td><td>Defers offscreen iframes (maps, videos).</td></tr>
+<tr><td><code>referrerpolicy</code></td><td>Limits referrer data sent (<code>strict-origin-when-cross-origin</code> is the browser default).</td></tr>
+<tr><td><code>title</code></td><td>Accessible name; screen readers list frames by it. Required (WCAG 4.1.2 / 2.4.1).</td></tr>
+<tr><td><code>width</code>/<code>height</code> or <code>aspect-ratio</code></td><td>Prevents layout shift when the embed loads.</td></tr>
+<tr><td><code>srcdoc</code>, <code>credentialless</code></td><td>Inline document; cookie-less embedding mode <span class="verify">check status</span>.</td></tr>
+</table></div>
+
+<h3>Protecting your own pages</h3>
+<ul>
+<li><b>Clickjacking:</b> send <code>Content-Security-Policy: frame-ancestors 'self'</code> (or an allow-list). <code>X-Frame-Options</code> is the older equivalent.</li>
+<li><b>postMessage:</b> always check <code>event.origin</code> against an allow-list and validate the data; send to a specific <code>targetOrigin</code>, not <code>"*"</code>.</li>
+<li><b>CSP</b> <code>frame-src</code> / <code>child-src</code> to limit which origins can be embedded.</li>
+<li><b>Third-party cookies</b> are being restricted; embedded auth and payment flows need explicit support (Storage Access API) <span class="verify">verify current browser state</span>.</li>
+</ul>
+
+<h3>Performance patterns</h3>
+<pre><code>&lt;!-- facade: load the heavy player only on click --&gt;
+&lt;button class="yt" data-id="abc123" aria-label="Play video: Release demo"&gt;
+  &lt;img src="thumb.webp" width="560" height="315" alt="" loading="lazy"&gt;
+&lt;/button&gt;
+&lt;script type="module"&gt;
+  document.querySelector('.yt').addEventListener('click', e =&gt; {
+    const f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + e.currentTarget.dataset.id + '?autoplay=1';
+    f.title = 'Release demo'; f.allow = 'autoplay; fullscreen'; e.currentTarget.replaceWith(f);
+  }, { once: true });
+&lt;/script&gt;</code></pre>
+<p>Other tools: lazy-load maps; use <code>preconnect</code> only if the embed is above the fold; run heavy scripts with Partytown/Web Worker; budget third parties (they often account for most of the main-thread time on marketing pages).</p>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Embedding with no <code>title</code>, <code>sandbox</code> or size.</li>
+<li><code>postMessage</code> with <code>"*"</code> or no origin check.</li>
+<li>Calling iframe isolation “secure” without sandbox or CSP.</li>
+<li>Loading five tag-manager vendors synchronously in the head.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Iframe vs Web Component for a widget?</dt><dd>Iframe: strongest isolation (security, separate JS/CSS), higher cost, awkward sizing and a11y. Web Component: lighter and integrated, but shares the JS realm and cookies.</dd>
+<dt>How does an iframe resize to its content?</dt><dd>The child sends its height with <code>postMessage</code> (validated), parent sets the iframe height; or use a ResizeObserver in the child.</dd>
+<dt>What does <code>noopener</code> protect against?</dt><dd>A link opened in a new tab getting access to <code>window.opener</code> and redirecting your page (tabnabbing).</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 4 · Cross-browser</h1>
+
+<!-- ============ Q17 ============ -->
+<section class="q" id="q17">
+<header class="qh">
+  <div class="qrow"><span class="qid">Q17</span><span class="tag added">Added</span></div>
+  <h2>Progressive enhancement and feature detection</h2>
+  <p class="qtext">“How do you approach cross-browser compatibility in HTML (and beyond)?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I build in layers. A baseline of semantic HTML that works everywhere, CSS that improves the layout, and JavaScript that adds behaviour, so a failure in one layer does not break the page. I decide support from data: a browserslist from our analytics, Baseline status from MDN and web-platform-dashboard for new features. I use feature detection and <code>@supports</code> rather than user-agent sniffing, add polyfills only where needed, and run cross-browser tests in CI with Playwright across Chromium, Firefox and WebKit, plus real devices for what matters most.”</p></div>
+
+<figure><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="Concentric layers of progressive enhancement: the core is semantic HTML and content, then CSS for layout and style, then JavaScript for behaviour, then newer platform features guarded by feature detection.">
+  <ellipse cx="190" cy="135" rx="180" ry="125" class="b"/><text x="190" y="38" text-anchor="middle" class="bd">4  New features, guarded</text><text x="190" y="54" text-anchor="middle" class="sm">@supports · CSS.supports · 'x' in window</text>
+  <ellipse cx="190" cy="152" rx="140" ry="92" class="w"/><text x="190" y="90" text-anchor="middle" class="bd">3  JavaScript behaviour</text><text x="190" y="106" text-anchor="middle" class="sm">enhances, never required for content</text>
+  <ellipse cx="190" cy="168" rx="98" ry="58" class="h"/><text x="190" y="156" text-anchor="middle" class="bd">2  CSS</text><text x="190" y="172" text-anchor="middle" class="sm">layout, theme, fallbacks</text>
+  <ellipse cx="190" cy="190" rx="62" ry="28" class="g"/><text x="190" y="188" text-anchor="middle" class="bd">1  HTML</text><text x="190" y="203" text-anchor="middle" class="sm">content + links + forms</text>
+  <text x="400" y="40" class="bd">Tools</text>
+  <text x="400" y="66" class="sm">• Baseline (MDN, web.dev): widely / newly available</text>
+  <text x="400" y="86" class="sm">• browserslist + caniuse-lite: target list from analytics</text>
+  <text x="400" y="106" class="sm">• Autoprefixer, Babel / SWC, core-js for syntax and APIs</text>
+  <text x="400" y="126" class="sm">• @supports, CSS.supports(), 'IntersectionObserver' in window</text>
+  <text x="400" y="146" class="sm">• Playwright: chromium + firefox + webkit in CI</text>
+  <text x="400" y="166" class="sm">• BrowserStack / real devices for iOS Safari</text>
+  <text x="400" y="186" class="sm">• Stylelint no-unsupported-browser-features, eslint-plugin-compat</text>
+  <text x="400" y="216" class="bd">Never</text>
+  <text x="400" y="236" class="sm">✗ user-agent sniffing   ✗ “works in my Chrome”</text>
+</svg>
+<figcaption><b>Layers, not branches.</b> Each layer only adds; removing the outer ones still leaves a usable page.</figcaption></figure>
+
+<h3>HTML-level examples</h3>
+<ul>
+<li><b>Input types</b> (<code>date</code>, <code>email</code>, <code>number</code>) fall back to text. Add <code>pattern</code> and a visible format hint.</li>
+<li><b><code>&lt;picture&gt;</code></b> falls back to the inner <code>&lt;img&gt;</code>; <b>video</b> multiple <code>&lt;source&gt;</code>; <code>&lt;noscript&gt;</code> for content that needs JS.</li>
+<li><b><code>&lt;dialog&gt;</code>, <code>&lt;details&gt;</code>, <code>popover</code></b>: now broadly supported, but check Baseline for newer attributes <span class="verify">check MDN</span>. Provide a fallback or polyfill if your support matrix needs it.</li>
+<li><b>Unknown elements/attributes</b> are ignored by browsers, which is why progressive enhancement is safe by design.</li>
+<li><b>Forms</b> should work with a plain POST and full page reload; JS upgrades to fetch.</li>
+</ul>
+
+<pre><code>/* CSS: fallback first, enhancement inside @supports */
+.grid { display: flex; flex-wrap: wrap; gap: 1rem; }
+@supports (display: grid) { .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
+
+// JS: detect the feature, not the browser
+if ('IntersectionObserver' in window) lazyLoadWithObserver(); else loadAll();
+if (!HTMLDialogElement.prototype.showModal) await import('./dialog-polyfill.js');</code></pre>
+
+<h3>Real-world cross-browser pain</h3>
+<ul>
+<li><b>Safari / iOS WebKit:</b> all iOS browsers use WebKit; viewport units with dynamic toolbar (<code>dvh</code>, <code>svh</code>), form control styling, date inputs, autoplay rules, storage limits, newer features arrive later or differently.</li>
+<li><b>Firefox:</b> scrollbar styling, some CSS (<code>:has</code> arrived later), subpixel differences.</li>
+<li><b>Chromium-only APIs:</b> Speculation Rules, some Web APIs (Bluetooth, USB). Do not depend on them for core features.</li>
+<li><b>Rendering differences:</b> default styles (reset or normalize), font rendering, <code>line-height: normal</code>, form control appearance. Use a reset.</li>
+<li><b>Interop effort:</b> “Interop” yearly project aligns browsers on tests; web-platform-tests is the shared test suite.</li>
+</ul>
+
+<div class="box note"><h4>Process an L4 candidate describes</h4>
+<ol>
+<li>Define the support matrix with product and data (analytics), and write it down.</li>
+<li>Choose tooling to enforce it (browserslist, linters, transpile/polyfill by target).</li>
+<li>Automate cross-engine tests; keep a short manual checklist for visual and touch behaviour.</li>
+<li>Monitor in production: error tracking by browser, RUM by browser, a feature flag to disable a risky enhancement.</li>
+<li>Document known gaps and decisions (ADR) so the team does not re-litigate.</li>
+</ol></div>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Listing tools without a strategy. Start with the support matrix and the layering principle.</li>
+<li>User-agent sniffing, or assuming “Chrome = the web”.</li>
+<li>Polyfilling everything for everyone; ship polyfills only to browsers that need them.</li>
+<li>Forgetting accessibility tree differences between browsers and screen readers.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Graceful degradation vs progressive enhancement?</dt><dd>Degradation starts from the full experience and patches down; enhancement starts from a baseline and adds. The second is more robust.</dd>
+<dt>What is Baseline?</dt><dd>A shared label that says when a feature works across the core browsers (newly available, widely available).</dd>
+<dt>How do you decide to drop a browser?</dt><dd>Traffic share and revenue from analytics, support cost, security (no updates), and legal or contractual requirements.</dd>
+<dt>How would you test Safari without a Mac?</dt><dd>Playwright WebKit in CI approximates it; BrowserStack or real devices for final checks on iOS.</dd>
+</dl></div>
+</section>
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>30 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the question number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>First rule of ARIA?</td><td>Do not use ARIA if a native element does the job.</td><td>4</td></tr>
+<tr><td>2</td><td>What does a native button give you that a div does not?</td><td>Role, name from content, focus, Enter/Space activation, disabled behaviour, form submission.</td><td>1</td></tr>
+<tr><td>3</td><td>Link or button for “open settings panel”?</td><td>Button with <code>aria-expanded</code>: it changes the UI, not the URL.</td><td>2</td></tr>
+<tr><td>4</td><td>Default <code>type</code> of a button in a form?</td><td><code>submit</code>. Set <code>type="button"</code> explicitly.</td><td>2</td></tr>
+<tr><td>5</td><td>Which landmark is <code>&lt;header&gt;</code> inside <code>&lt;article&gt;</code>?</td><td>None. It is a banner only as a direct child of <code>body</code>.</td><td>3</td></tr>
+<tr><td>6</td><td>What makes <code>&lt;section&gt;</code> a landmark?</td><td>An accessible name (<code>aria-labelledby</code> or <code>aria-label</code>).</td><td>3</td></tr>
+<tr><td>7</td><td>Is placeholder a label?</td><td>No. It disappears, fails contrast, and is last in the name computation.</td><td>6</td></tr>
+<tr><td>8</td><td>WCAG 2.2 AA target size?</td><td>24 × 24 CSS px (or spacing); 44 is AAA and platform guidance.</td><td>6</td></tr>
+<tr><td>9</td><td>Name computation order?</td><td><code>aria-labelledby</code>, <code>aria-label</code>, native (label, alt, content), title, placeholder.</td><td>4</td></tr>
+<tr><td>10</td><td><code>aria-hidden="true"</code> on a button?</td><td>Bug: hidden from screen readers but still focusable. Use <code>inert</code>.</td><td>4</td></tr>
+<tr><td>11</td><td>Polite or assertive live region for “saved”?</td><td>Polite (<code>role="status"</code>). Assertive is for errors.</td><td>4</td></tr>
+<tr><td>12</td><td>Why avoid positive tabindex?</td><td>It overrides the natural order and is unmaintainable.</td><td>5</td></tr>
+<tr><td>13</td><td>Where does focus go after a route change in an SPA?</td><td>To the new page heading or main (with <code>tabindex="-1"</code>), and update the title.</td><td>5</td></tr>
+<tr><td>14</td><td>Roving tabindex?</td><td>One element in a widget has <code>tabindex="0"</code>; arrows move it; Tab leaves the widget.</td><td>5</td></tr>
+<tr><td>15</td><td>Does semantic HTML boost ranking?</td><td>Not directly; it helps crawling, accessibility and UX. Real links, SSR and speed matter more.</td><td>7</td></tr>
+<tr><td>16</td><td><code>showModal()</code> vs <code>show()</code>?</td><td><code>showModal</code>: top layer, inert background, backdrop, Escape. <code>show</code>: non-modal.</td><td>8</td></tr>
+<tr><td>17</td><td>Does native dialog restore focus?</td><td>Yes, to the previously focused element when it closes.</td><td>8</td></tr>
+<tr><td>18</td><td>What is not handled by native dialog?</td><td>Scroll lock, backdrop click closing, animations.</td><td>8</td></tr>
+<tr><td>19</td><td>Roughly what do automated tools catch?</td><td>A third to a half of issues: mechanical ones. Not meaning, order or behaviour.</td><td>9</td></tr>
+<tr><td>20</td><td>Validate on which event?</td><td>Blur and submit, then live while fixing; focus the first error on submit.</td><td>10</td></tr>
+<tr><td>21</td><td>Autocomplete token for a new password?</td><td><code>new-password</code>. For OTP: <code>one-time-code</code>.</td><td>10</td></tr>
+<tr><td>22</td><td>Do ARIA id references cross shadow DOM?</td><td>No. <code>for</code>/<code>id</code> and <code>aria-labelledby</code> stop at the shadow boundary.</td><td>11</td></tr>
+<tr><td>23</td><td>How does an event leave a shadow root?</td><td><code>bubbles: true, composed: true</code>.</td><td>11</td></tr>
+<tr><td>24</td><td>preload vs prefetch?</td><td>Preload: needed now, high priority. Prefetch: next navigation, low priority.</td><td>12</td></tr>
+<tr><td>25</td><td>Does <code>async</code> delay DOMContentLoaded?</td><td>No. <code>defer</code> and module scripts do (it waits for them).</td><td>13</td></tr>
+<tr><td>26</td><td>Why is a module fetched with CORS?</td><td>Modules always use CORS mode, same-origin or cross-origin.</td><td>13</td></tr>
+<tr><td>27</td><td>Never lazy-load which image?</td><td>The LCP image. Give it <code>fetchpriority="high"</code>.</td><td>14</td></tr>
+<tr><td>28</td><td>What does <code>sizes</code> default to?</td><td><code>100vw</code>. Omitting it can download oversized images.</td><td>14</td></tr>
+<tr><td>29</td><td>Which style change is compositor-only?</td><td><code>transform</code> and <code>opacity</code>.</td><td>15</td></tr>
+<tr><td>30</td><td>Good thresholds at p75?</td><td>LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1.</td><td>15</td></tr>
+</table></div>
+
+<div class="box note"><h4>Delivery reminders from your sessions</h4>
+<ul>
+<li>Say the 30-second answer first, then go deeper only when asked. Several earlier answers read like pasted essays.</li>
+<li>Do not hedge on facts you know (focus restore in dialog, <code>flex: 1</code> expansion).</li>
+<li>Always cover the second half of a question: “how to measure”, “how to test”, “when not to”.</li>
+<li>Mark uncertainty honestly: “I would verify that in MDN” is better than a wrong detail.</li>
+<li>Avoid unmeasured claims such as “massively reduces”; name the metric and tool.</li>
+</ul></div>
+</section>
+
+</div>

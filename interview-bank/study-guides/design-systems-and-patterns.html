@@ -1,0 +1,854 @@
+<title>Design Systems and Patterns Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"Design Systems and Patterns Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"Design Systems and Patterns Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · Design systems and UI patterns · Lead level</div>
+  <h1>Design Systems and Patterns Study Guide</h1>
+  <p>How to build, ship and govern a design system, and the UI design patterns that sit behind it: what a design system is and its return on investment, design tokens and theming, component API design, accessibility built in, documentation with Storybook and Figma, packaging and versioning, governance and adoption, UI architecture patterns and SOLID, web components and framework-agnostic systems, and quality and performance. The interview is theoretical, so every topic is something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> tools evolve quickly: check current docs</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Foundations</h3>
+    <ol>
+      <li><b>S1</b><a href="#s1">What a design system is and why</a></li>
+      <li><b>S2</b><a href="#s2">Design tokens and theming</a></li>
+      <li><b>S3</b><a href="#s3">Component API design</a></li>
+      <li><b>S4</b><a href="#s4">Accessibility built into the system</a></li>
+    </ol>
+    <h3 style="margin-top:16px">2 · Shipping and governing</h3>
+    <ol>
+      <li><b>S5</b><a href="#s5">Documentation, Storybook and Figma</a></li>
+      <li><b>S6</b><a href="#s6">Packaging, versioning, releases</a></li>
+      <li><b>S7</b><a href="#s7">Governance and adoption</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>3 · Patterns and platforms</h3>
+    <ol>
+      <li><b>S8</b><a href="#s8">UI architecture patterns and SOLID</a></li>
+      <li><b>S9</b><a href="#s9">Web Components and framework-agnostic systems</a></li>
+      <li><b>S10</b><a href="#s10">Quality, performance and a build plan</a></li>
+    </ol>
+    <h3 style="margin-top:16px">4 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">S1 to S3 answer “how would you build a design system”. S6 and S7 are the lead-level questions about versioning, governance and adoption. S8 covers the pattern and SOLID questions.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Related: React core (composition, R7), Ecosystem (headless libraries, E8), CSS guide (custom properties, layers), JavaScript Part 2 (J28 design patterns).</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Foundations</h1>
+
+<!-- ============ S1 ============ -->
+<section class="q" id="s1">
+<header class="qh">
+  <div class="qrow"><span class="qid">S1</span><span class="tag added">Added</span></div>
+  <h2>What a design system is and why</h2>
+  <p class="qtext">“What is a design system? How does it differ from a component library or a style guide? What are its benefits, costs and risks? How do you decide whether to build one, and how do you measure its value?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A design system is the complete set of standards, reusable components, tokens, guidelines and tooling that lets many teams build a consistent, accessible product efficiently. A style guide documents visual rules; a component library is the coded implementation of UI components; a design system includes both and adds principles, patterns, content and accessibility guidance, contribution processes and governance. The benefits are consistency, faster delivery, built-in accessibility and lower design and engineering duplication. The costs are an ongoing team, versioning and support, and the risk is a system that is rigid, unmaintained or ignored. I justify it by the scale of the product surface and number of teams, and measure adoption, delivery speed and consistency rather than component counts.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Layers of a design system from foundations through tokens, components, patterns to products, with documentation and governance around them. Right: maturity stages.">
+  <text x="10" y="18" class="bd">What is inside a design system</text>
+  <rect x="10" y="30" width="360" height="40" rx="5" class="b"/><text x="18" y="48" class="bd">Principles and guidelines</text><text x="18" y="62" class="sm">voice and tone, accessibility rules, usage, content</text>
+  <rect x="10" y="76" width="360" height="40" rx="5" class="h"/><text x="18" y="94" class="bd">Design tokens</text><text x="18" y="108" class="sm">colour, type, spacing, radius, motion: the single source</text>
+  <rect x="10" y="122" width="360" height="40" rx="5" class="h"/><text x="18" y="140" class="bd">Components</text><text x="18" y="154" class="sm">button, input, dialog, table: designed, coded, tested, documented</text>
+  <rect x="10" y="168" width="360" height="40" rx="5" class="g"/><text x="18" y="186" class="bd">Patterns and templates</text><text x="18" y="200" class="sm">forms, navigation, empty states, page layouts</text>
+  <rect x="10" y="214" width="360" height="40" rx="5" class="w"/><text x="18" y="232" class="bd">Tooling and governance</text><text x="18" y="246" class="sm">Storybook, Figma kit, linting, CI, contribution, releases</text>
+  <text x="10" y="278" class="sm">Style guide = documentation · Component library = coded parts ·</text><text x="10" y="294" class="sm">Design system = all of this plus process, ownership and adoption.</text>
+  <text x="400" y="18" class="bd">Maturity (typical path)</text>
+  <rect x="400" y="30" width="350" height="46" rx="5" class="b"/><text x="408" y="48" class="bd">1 · Ad hoc</text><text x="408" y="64" class="sm">copy-pasted UI, inconsistent styles, per-team components</text>
+  <rect x="400" y="80" width="350" height="46" rx="5" class="h"/><text x="408" y="98" class="bd">2 · Shared library</text><text x="408" y="114" class="sm">common components and tokens, small core team</text>
+  <rect x="400" y="130" width="350" height="46" rx="5" class="h"/><text x="408" y="148" class="bd">3 · System</text><text x="408" y="164" class="sm">docs, a11y, versioning, design and code in sync, contribution</text>
+  <rect x="400" y="180" width="350" height="46" rx="5" class="g"/><text x="408" y="198" class="bd">4 · Platform</text><text x="408" y="214" class="sm">multi-brand, multi-framework, automation, metrics, governance</text>
+  <rect x="400" y="236" width="350" height="74" rx="5" class="x"/><text x="408" y="256" class="bd">Value signals</text><text x="408" y="274" class="sm">adoption (% of UI using system components) · time to build a</text><text x="408" y="290" class="sm">screen · a11y defects · design-code drift · support load · NPS</text>
+</svg></div>
+<figcaption><b>Idea.</b> A design system is a product with users (designers and engineers), a roadmap and support, not a one-off project.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Why build one:</b> many teams or products with duplicated UI work, inconsistent experience, accessibility gaps, slow design-to-code handoff, rebranding needs, and onboarding costs. A single team with a small app may not need a full system; a lightweight library and tokens may suffice.</li>
+<li><b>Benefits:</b> consistency and brand coherence, faster feature delivery (compose rather than build), accessibility by default, fewer bugs through shared tested components, easier theming and rebranding, shared language between design and engineering, and lower long-term cost.</li>
+<li><b>Costs and risks:</b> dedicated team and ongoing maintenance, versioning and migration overhead for consumers, becoming a bottleneck, over-abstraction (components so flexible they are unusable), under-adoption because teams are not consulted, and divergence between Figma and code.</li>
+<li><b>Business case:</b> estimate time saved per screen and per team, fewer defects and accessibility remediation, reduced design debt, faster rebrands; compare to the team cost. Start small with high-impact components (button, input, typography) to show value early.</li>
+<li><b>Build, adopt or extend:</b> adopt open-source foundations (Radix, React Aria, Material, Carbon, Polaris) and customise via tokens, or build bespoke where brand and product needs differ; wrap third-party components behind your API (E8). Most “custom” systems are a thin branded layer over headless primitives.</li>
+<li><b>Scope decisions:</b> platforms (web only, or also native), frameworks (React only or framework-agnostic), brands (single or multi), density and themes, internationalisation and RTL, and what is in scope (core components versus domain-specific patterns).</li>
+<li><b>Team and roles:</b> a core team (design system designers, engineers, accessibility specialist, product owner, docs) or a federated model with contributors; clear service model: office hours, support channels, SLAs.</li>
+<li><b>Measuring adoption and success:</b> component usage coverage via code analysis (react-scanner, Omlet), design-token usage, number of one-off overrides, bundle and performance impact, delivery metrics for teams using it, accessibility audit results, satisfaction surveys, time to onboard.</li>
+<li><b>Examples to know:</b> Google Material Design, Atlassian Design System, IBM Carbon, Shopify Polaris, GOV.UK Design System, Salesforce Lightning, Adobe Spectrum, GitHub Primer, Radix Themes; study how they document, version and govern.</li>
+<li><b>Design and engineering alignment:</b> the same component names and variants in Figma and code; Figma variables mapped to tokens; Code Connect or similar; design reviews of implemented components; visual regression to detect drift (S5).</li>
+<li><b>Principles:</b> accessible by default, composable, consistent but flexible, performance-aware, documented, backward compatible, and opinionated where consistency matters.</li>
+<li><b>Anti-patterns:</b> building everything before anyone uses it, a “component zoo” with unused variants, no ownership, breaking changes without migration paths, mandating adoption without support, and ignoring product team feedback.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Treating a design system as a one-time deliverable with no ongoing team.</li>
+<li>Equating it with a Figma file or a Storybook only.</li>
+<li>Measuring success by number of components instead of adoption and outcomes.</li>
+<li>Building for hypothetical needs rather than real, repeated ones.</li>
+<li>Ignoring accessibility, documentation and migration support.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you get teams to adopt it?</dt><dd>Solve their real pain first, involve them in design, make it easy (docs, codemods, migration help), show wins, and keep a responsive support model rather than mandating.</dd>
+<dt>How do you decide what becomes a system component?</dt><dd>Repeated across teams (rule of three), generic enough, stable design, and worth the maintenance; domain-specific pieces stay in product code.</dd>
+<dt>Component library versus design system?</dt><dd>The library is the coded components; the system adds tokens, principles, patterns, documentation, process and governance.</dd>
+<dt>How do you justify the investment?</dt><dd>Quantify saved effort and defects, show consistency and accessibility improvements, and track adoption and delivery speed over time.</dd>
+</dl></div>
+</section>
+
+<!-- ============ S2 ============ -->
+<section class="q" id="s2">
+<header class="qh">
+  <div class="qrow"><span class="qid">S2</span><span class="tag added">Added</span></div>
+  <h2>Design tokens and theming</h2>
+  <p class="qtext">“What are design tokens? Explain primitive, semantic and component tokens. How do you implement theming, dark mode and multi-brand support? How do tokens flow from Figma to code?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Design tokens are named, platform-independent values for visual decisions: colours, typography, spacing, radii, shadows and motion. I organise them in layers: primitive tokens hold raw values such as <code>blue-500</code>; semantic tokens give them meaning, such as <code>color-action-primary</code> or <code>color-text-muted</code>; and component tokens map semantic ones to a component, such as <code>button-bg</code>. Components only use semantic or component tokens, so a theme is just a different mapping: dark mode, another brand or high contrast changes values without touching components. Tokens live in a single source, usually JSON, and a build tool such as Style Dictionary transforms them into CSS custom properties, JavaScript and native formats, kept in sync with Figma variables.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Three token layers: primitive, semantic, component, with a theme mapping semantic tokens to different primitives for light and dark. Right: pipeline from Figma variables to JSON source to Style Dictionary outputs.">
+  <text x="10" y="18" class="bd">Token layers</text>
+  <rect x="10" y="30" width="170" height="86" rx="5" class="b"/><text x="18" y="48" class="bd">Primitive</text><text x="18" y="66" class="mono" style="font-size:10px">blue-500: #2563eb</text><text x="18" y="82" class="mono" style="font-size:10px">gray-900: #111827</text><text x="18" y="100" class="sm">raw palette and scales</text>
+  <rect x="195" y="30" width="170" height="86" rx="5" class="h"/><text x="203" y="48" class="bd">Semantic</text><text x="203" y="66" class="mono" style="font-size:10px">color-action: blue-500</text><text x="203" y="82" class="mono" style="font-size:10px">color-text: gray-900</text><text x="203" y="100" class="sm">meaning and intent</text>
+  <rect x="10" y="124" width="355" height="40" rx="5" class="g"/><text x="18" y="142" class="bd">Component</text><text x="18" y="156" class="mono" style="font-size:10px">button-bg: color-action   button-radius: radius-md</text>
+  <path class="a" d="M180 73H193"/>
+  <text x="10" y="190" class="bd">Themes remap semantic tokens</text>
+  <rect x="10" y="200" width="170" height="64" rx="5" class="w"/><text x="18" y="218" class="bd">Light</text><text x="18" y="236" class="mono" style="font-size:10px">color-bg: white</text><text x="18" y="252" class="mono" style="font-size:10px">color-text: gray-900</text>
+  <rect x="195" y="200" width="170" height="64" rx="5" class="x"/><text x="203" y="218" class="bd">Dark</text><text x="203" y="236" class="mono" style="font-size:10px">color-bg: gray-900</text><text x="203" y="252" class="mono" style="font-size:10px">color-text: gray-50</text>
+  <text x="10" y="288" class="sm">Components never change: only the mapping does. Same idea for</text><text x="10" y="304" class="sm">brands, high contrast and density (compact, comfortable).</text>
+  <text x="400" y="18" class="bd">Tokens pipeline</text>
+  <rect x="400" y="30" width="350" height="36" rx="4" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">Figma variables</tspan>  designers edit values (modes: light, dark)</text>
+  <path class="a" d="M575 66V76"/>
+  <rect x="400" y="78" width="350" height="36" rx="4" class="h"/><text x="408" y="100" class="sm"><tspan class="bd">Token source</tspan>  JSON (W3C format) in Git, reviewed</text>
+  <path class="a" d="M575 114V124"/>
+  <rect x="400" y="126" width="350" height="36" rx="4" class="h"/><text x="408" y="148" class="sm"><tspan class="bd">Style Dictionary</tspan>  transforms and formats</text>
+  <path class="a" d="M475 162V172"/><path class="a" d="M575 162V172"/><path class="a" d="M675 162V172"/>
+  <rect x="400" y="174" width="110" height="36" rx="4" class="g"/><text x="408" y="196" class="sm">CSS variables</text>
+  <rect x="520" y="174" width="110" height="36" rx="4" class="g"/><text x="528" y="196" class="sm">JS / TS</text>
+  <rect x="640" y="174" width="110" height="36" rx="4" class="g"/><text x="648" y="196" class="sm">iOS / Android</text>
+  <rect x="400" y="224" width="350" height="86" rx="5" class="w"/><text x="408" y="244" class="bd">CSS output</text><text x="408" y="262" class="mono" style="font-size:10px">:root { --color-action: #2563eb; }</text><text x="408" y="278" class="mono" style="font-size:10px">[data-theme="dark"] { --color-bg: #111827; }</text><text x="408" y="296" class="sm">runtime theming by swapping a variable scope, no rebuild</text>
+</svg></div>
+<figcaption><b>Key idea.</b> Indirection through semantic tokens is what makes themes and rebrands cheap.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Token categories:</b> colour (palette, semantic roles, states), typography (font families, sizes, weights, line heights, letter spacing), spacing scale, sizing, radii, borders, shadows/elevation, opacity, z-index layers, motion (duration, easing), breakpoints, and grid. Use scales (4 or 8 px spacing) rather than arbitrary values.</li>
+<li><b>Naming:</b> consistent, hierarchical, purpose-based names (<code>color.text.muted</code>, <code>space.4</code>); avoid names that encode the value (<code>light-blue</code>) at the semantic level; document intent. Names are an API: renaming is a breaking change.</li>
+<li><b>Semantic roles:</b> background, surface, text, border, action (default, hover, active, disabled), feedback (success, warning, danger, info), focus ring; each with on-colour pairs ensuring contrast (<code>color.text.on-action</code>).</li>
+<li><b>Theming mechanisms on the web:</b> CSS custom properties scoped to <code>:root</code> or <code>[data-theme]</code>; <code>prefers-color-scheme</code> and user override stored in a cookie or storage; setting the theme before first paint to avoid flash; <code>color-scheme</code> for native controls; <code>light-dark()</code> and <code>@layer</code> help organise styles <span class="verify">verify support</span>; CSS-in-JS theme providers where used (E7).</li>
+<li><b>Multi-brand and white-label:</b> brand layer of primitives swapped per brand while semantic and component layers stay constant; build-time generation per brand or runtime variable sets; test each brand for contrast and layout; limit per-brand component overrides.</li>
+<li><b>Dark mode design:</b> not a simple inversion; adjust elevation (lighter surfaces for higher elevation), reduce saturation, verify contrast ratios, handle images and shadows; provide tokens for both and test every component in both.</li>
+<li><b>Density and responsive tokens:</b> compact/comfortable modes by remapping spacing and size tokens; fluid typography with <code>clamp()</code>; container-aware components.</li>
+<li><b>Tooling:</b> Style Dictionary (transform and format tokens), Tokens Studio and Figma variables for design-side editing, the W3C Design Tokens Community Group format (JSON with <code>$value</code> and <code>$type</code>) for interoperability <span class="verify">verify spec status</span>, Theo and Specify as alternatives, and CI that rebuilds and publishes tokens as a package.</li>
+<li><b>Tokens in code:</b> components consume <code>var(--color-action)</code> or typed JS tokens; lint for hard-coded colours and spacing (Stylelint rules, ESLint plugins); Tailwind theme configured from tokens; avoid duplicating values across CSS and JS.</li>
+<li><b>Accessibility:</b> token pairs must meet WCAG contrast (4.5:1 text, 3:1 large text and UI components); automate contrast checks in the token build; provide high-contrast and reduced-motion variants; respect user font-size preferences (rem units).</li>
+<li><b>Versioning tokens:</b> additive changes are minor; renaming or removing is breaking; deprecate with aliases; communicate visual changes (a colour shift affects every product).</li>
+<li><b>Performance:</b> keep token CSS small (only used variables, or split per theme), avoid huge runtime theme objects, and cache theme files.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Components using primitive tokens directly, so a theme change requires editing components.</li>
+<li>Naming semantic tokens after their colour value, which breaks when themes change.</li>
+<li>Maintaining separate token values in Figma, CSS and JavaScript by hand.</li>
+<li>Dark mode created by inverting colours without checking contrast and elevation.</li>
+<li>Flash of the wrong theme because it is applied after hydration.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why a semantic layer instead of using the palette directly?</dt><dd>It encodes intent, so themes, brands and accessibility variants change mappings without touching component code.</dd>
+<dt>How do you keep Figma and code tokens in sync?</dt><dd>One source of truth (tokens in Git or Figma variables exported), automated build and publishing, and checks in CI for drift.</dd>
+<dt>How do you implement dark mode without a flash?</dt><dd>Set the theme attribute before first paint (inline script or server cookie) and use CSS variables so switching needs no re-render.</dd>
+<dt>What is a component token?</dt><dd>A token scoped to a component that references semantic tokens, allowing targeted overrides without affecting other components.</dd>
+</dl></div>
+</section>
+
+<!-- ============ S3 ============ -->
+<section class="q" id="s3">
+<header class="qh">
+  <div class="qrow"><span class="qid">S3</span><span class="tag added">Added</span></div>
+  <h2>Component API design</h2>
+  <p class="qtext">“How do you design the API of a reusable component? Props versus composition, variants, controlled and uncontrolled, polymorphism, extensibility, naming, defaults, and backward compatibility. What makes a component API good or bad?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A component’s API is its public contract, so I design it for the common case first and extension second. I prefer composition, such as compound components and slots, over piling on boolean props, use a small set of well-named variants for visual differences, give sensible defaults, forward native props and refs so the component behaves like the element it wraps, support both controlled and uncontrolled usage for stateful components, and bake in accessibility. I keep the surface small, because every prop is a commitment: additions are cheap and removals are breaking changes. I validate the design by writing real usage examples before implementing, and I test it with product teams.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: boolean prop explosion versus a variant prop versus composition. Right: API design checklist.">
+  <text x="10" y="18" class="bd">Three ways to express options</text>
+  <rect x="10" y="30" width="360" height="62" rx="5" class="x"/><text x="18" y="48" class="bd">Boolean explosion (avoid)</text><text x="18" y="66" class="mono" style="font-size:10px">&lt;Button primary large outline danger loading icon /&gt;</text><text x="18" y="82" class="sm">invalid combinations, hard to document, grows forever</text>
+  <rect x="10" y="98" width="360" height="62" rx="5" class="g"/><text x="18" y="116" class="bd">Variant props (enumerated)</text><text x="18" y="134" class="mono" style="font-size:10px">&lt;Button variant="danger" size="lg" isLoading /&gt;</text><text x="18" y="150" class="sm">finite, typed, mutually exclusive choices</text>
+  <rect x="10" y="166" width="360" height="86" rx="5" class="h"/><text x="18" y="184" class="bd">Composition (flexible structure)</text><text x="18" y="202" class="mono" style="font-size:10px">&lt;Card&gt;&lt;Card.Header&gt;…&lt;/Card.Header&gt;</text><text x="18" y="218" class="mono" style="font-size:10px">  &lt;Card.Body&gt;…&lt;/Card.Body&gt;&lt;/Card&gt;</text><text x="18" y="238" class="sm">consumer controls layout and content; fewer props</text>
+  <text x="10" y="276" class="sm">Rule: use props for data and variants, composition for structure,</text><text x="10" y="292" class="sm">and escape hatches (className, slots, asChild) for the rest.</text>
+  <text x="400" y="18" class="bd">API design checklist</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="b"/>
+  <text x="408" y="50" class="sm">✓ common case needs zero or few props; sensible defaults</text>
+  <text x="408" y="70" class="sm">✓ forwards native props (…rest) and ref to the DOM element</text>
+  <text x="408" y="90" class="sm">✓ controlled (value/onChange) and uncontrolled (defaultValue)</text>
+  <text x="408" y="110" class="sm">✓ event props named onX with typed payloads</text>
+  <text x="408" y="130" class="sm">✓ consistent names across components (size, variant, disabled)</text>
+  <text x="408" y="150" class="sm">✓ accessible by default; required a11y props enforced in types</text>
+  <text x="408" y="170" class="sm">✓ styling via tokens; className allowed, inline style discouraged</text>
+  <text x="408" y="190" class="sm">✓ polymorphism where needed: as / asChild</text>
+  <text x="408" y="210" class="sm">✓ no hidden global state; SSR safe; no layout side effects</text>
+  <text x="408" y="230" class="sm">✓ TypeScript types as documentation; discriminated unions for</text><text x="408" y="246" class="sm">  mutually exclusive props</text>
+  <text x="408" y="266" class="sm">✓ small surface: every prop is a long-term commitment</text>
+  <text x="408" y="286" class="sm">✓ deprecations with warnings and codemods</text>
+  <text x="408" y="304" class="sm">✓ tested usage examples written before implementation</text>
+</svg></div>
+<figcaption><b>Rule.</b> Make the right thing easy and the wrong thing hard, with the smallest possible API.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Variants and sizes:</b> use string unions (<code>variant: 'primary' | 'secondary' | 'ghost'</code>) rather than several booleans; manage styles with variant helpers (class-variance-authority, Stitches-like recipes, vanilla-extract recipes); document which combinations are valid.</li>
+<li><b>Composition and slots:</b> compound components (<code>Tabs</code>, <code>Tabs.List</code>, <code>Tabs.Panel</code>) share state through context; render props or <code>children</code> as functions for custom rendering; named slots (<code>header</code>, <code>footer</code>) as props for simple cases; <code>asChild</code> (Radix Slot) merges props onto a consumer-supplied element (R7).</li>
+<li><b>Polymorphic components:</b> an <code>as</code> prop (<code>&lt;Button as="a" href&gt;</code>) changes the rendered element while preserving styles and typed props; powerful but complex to type (T10); keep to components that really need it (Button, Text, Box).</li>
+<li><b>Controlled versus uncontrolled:</b> expose <code>value</code> and <code>onChange</code> for controlled usage, <code>defaultValue</code> for uncontrolled; internal hook (<code>useControllableState</code>) unifies both; always call <code>onChange</code> even when uncontrolled; do not switch modes at runtime.</li>
+<li><b>Forwarding refs and props:</b> spread unknown props to the root element so <code>aria-*</code>, <code>data-*</code>, <code>id</code> and event handlers work; merge class names rather than overwrite; forward refs (React 19 accepts <code>ref</code> as a prop); merge event handlers when both consumer and component need them.</li>
+<li><b>Extensibility without chaos:</b> allow <code>className</code> and CSS variables for small customisations, tokens for theming, and slots for structure; discourage overriding internals with selectors; provide documented “escape hatches” and track their usage to find missing features.</li>
+<li><b>Naming conventions:</b> boolean props prefixed <code>is</code>/<code>has</code> or plain adjectives consistently (<code>disabled</code>, <code>isLoading</code>), handlers <code>onX</code>, render slots <code>renderX</code>; keep names consistent across the system so developers can guess them.</li>
+<li><b>TypeScript design:</b> exported prop types, discriminated unions to forbid invalid combinations (a button with <code>href</code> versus <code>onClick</code>), generics for data components (Select, Table), <code>ComponentProps&lt;'button'&gt;</code> for native props, and strict <code>aria-label</code> requirements for icon-only buttons (T10).</li>
+<li><b>Layout and spacing responsibility:</b> components should not set their own external margins; layout primitives (Stack, Inline, Grid) handle spacing, so components compose predictably in any layout.</li>
+<li><b>State and side effects:</b> avoid fetching data inside generic UI components; keep them presentational; handle focus, keyboard and ARIA internally; document SSR behaviour and hydration safety (use <code>useId</code>).</li>
+<li><b>Versioning the API:</b> adding optional props is minor; changing defaults or behaviour is breaking; deprecate props first with console warnings in development and a migration path (S6).</li>
+<li><b>Evaluating a design:</b> write usage code for five realistic scenarios; check for awkward patterns; ask consumers; review against similar components in other systems; test with assistive technology.</li>
+<li><b>Performance considerations:</b> avoid creating new objects and functions unnecessarily in render for hot components, memoise context values, keep bundle size small with tree-shakable exports, and avoid heavy dependencies.</li>
+<li><b>Trade-off: flexibility versus consistency:</b> too rigid and teams fork; too flexible and consistency erodes. Provide opinionated defaults with documented extension points, and add features only after repeated demonstrated need.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Adding a prop for every request until the component has dozens of interacting options.</li>
+<li>Not forwarding native props and refs, so consumers cannot add <code>aria-*</code> or focus the element.</li>
+<li>Components that set outer margins, breaking layouts.</li>
+<li>Breaking changes disguised as minor releases (changed defaults, renamed props).</li>
+<li>Designing the API in isolation without real consumer usage.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Props or children for a Card?</dt><dd>Composition (<code>Card.Header</code>, <code>Card.Body</code>) gives structural flexibility; simple data-like pieces may be props.</dd>
+<dt>How do you support custom rendering of a list item?</dt><dd>A <code>renderItem</code> prop or children-as-function, keeping default rendering for the common case.</dd>
+<dt>When is an <code>as</code> prop justified?</dt><dd>For primitives such as Button or Text that must render as different elements (link, heading) while keeping styling and behaviour.</dd>
+<dt>How do you evolve an API safely?</dt><dd>Add optional props, deprecate with warnings and docs, provide a codemod, and remove in a major version after a notice period.</dd>
+</dl></div>
+</section>
+
+<!-- ============ S4 ============ -->
+<section class="q" id="s4">
+<header class="qh">
+  <div class="qrow"><span class="qid">S4</span><span class="tag added">Added</span></div>
+  <h2>Accessibility built into the system</h2>
+  <p class="qtext">“How do you build accessibility into a design system? WCAG levels, keyboard and focus behaviour, ARIA patterns, testing strategy, colour contrast, and accessibility governance across teams.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A design system is the best place to fix accessibility once for every product. I build components on native HTML elements and well-tested headless primitives so keyboard support, focus management and ARIA roles are correct by default; encode contrast and focus styles in tokens; document accessibility behaviour and usage rules for each component; and test at several levels: automated linting and axe checks in unit tests and Storybook, keyboard and screen-reader testing by humans for complex widgets, and audits against WCAG 2.2 AA. Product teams still own the accessibility of the content and compositions they build, so I provide guidance, checklists and training, and treat accessibility defects in the system as high priority because they multiply.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: accessibility test layers: lint, unit axe tests, Storybook a11y, manual keyboard, screen reader, audits. Right: component accessibility spec example for a dialog.">
+  <text x="10" y="18" class="bd">Layers of accessibility assurance</text>
+  <rect x="10" y="30" width="360" height="34" rx="4" class="g"/><text x="18" y="52" class="sm"><tspan class="bd">Design</tspan>  contrast, focus states, touch targets, content</text>
+  <rect x="10" y="68" width="360" height="34" rx="4" class="g"/><text x="18" y="90" class="sm"><tspan class="bd">Native HTML + headless</tspan>  correct semantics by default</text>
+  <rect x="10" y="106" width="360" height="34" rx="4" class="h"/><text x="18" y="128" class="sm"><tspan class="bd">Lint</tspan>  eslint-plugin-jsx-a11y, token contrast checks</text>
+  <rect x="10" y="144" width="360" height="34" rx="4" class="h"/><text x="18" y="166" class="sm"><tspan class="bd">Automated</tspan>  jest-axe, Storybook a11y addon, Playwright axe</text>
+  <rect x="10" y="182" width="360" height="34" rx="4" class="w"/><text x="18" y="204" class="sm"><tspan class="bd">Manual</tspan>  keyboard-only run, zoom 200%, reduced motion</text>
+  <rect x="10" y="220" width="360" height="34" rx="4" class="w"/><text x="18" y="242" class="sm"><tspan class="bd">Screen readers</tspan>  NVDA, JAWS, VoiceOver, TalkBack matrix</text>
+  <rect x="10" y="258" width="360" height="34" rx="4" class="x"/><text x="18" y="280" class="sm"><tspan class="bd">Audit</tspan>  WCAG 2.2 AA review, VPAT/ACR, user testing</text>
+  <text x="10" y="312" class="sm">Automation finds only part of the issues; humans test behaviour.</text>
+  <text x="400" y="18" class="bd">Component spec: Dialog</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="b"/>
+  <text x="408" y="50" class="bd">Semantics</text><text x="408" y="66" class="sm">role="dialog" aria-modal="true", labelled by its title,</text><text x="408" y="82" class="sm">described by body; native &lt;dialog&gt; where possible</text>
+  <text x="408" y="106" class="bd">Keyboard</text><text x="408" y="122" class="sm">focus moves into the dialog on open; Tab and Shift+Tab are</text><text x="408" y="138" class="sm">trapped; Escape closes; focus returns to the trigger</text>
+  <text x="408" y="162" class="bd">Visual</text><text x="408" y="178" class="sm">visible focus ring (3:1); backdrop; scroll lock; content</text><text x="408" y="194" class="sm">reflows at 400% zoom; respects reduced motion</text>
+  <text x="408" y="218" class="bd">Screen reader</text><text x="408" y="234" class="sm">announces title; background inert; close button has a name</text>
+  <text x="408" y="258" class="bd">Tests</text><text x="408" y="274" class="sm">axe, keyboard script, focus restore, Escape, portal events</text>
+  <text x="408" y="298" class="bd">Docs</text><text x="408" y="312" class="sm">usage rules: when not to use; required props</text>
+</svg></div>
+<figcaption><b>Principle.</b> Fix it once in the system, document how to use it correctly, and test beyond what tools can see.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>WCAG basics:</b> principles POUR (Perceivable, Operable, Understandable, Robust); levels A, AA (the usual legal and procurement target), AAA; WCAG 2.2 adds focus appearance, target size minimum, dragging alternatives and accessible authentication <span class="verify">verify criteria</span>; legal frameworks include the European Accessibility Act, ADA and Section 508.</li>
+<li><b>Semantic HTML first:</b> use <code>&lt;button&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;label&gt;</code>, <code>&lt;dialog&gt;</code>, <code>&lt;details&gt;</code> and landmarks; ARIA only where HTML lacks the semantics; follow WAI-ARIA Authoring Practices for tabs, combobox, menu, tree and others (R13).</li>
+<li><b>Focus management:</b> visible, consistent focus indicators from tokens (<code>:focus-visible</code>); logical order; trap and restore for modals and popovers; skip links; avoid <code>tabindex</code> greater than 0; manage focus after dynamic updates and route changes.</li>
+<li><b>Keyboard patterns:</b> every interactive component fully operable by keyboard with the expected keys (arrow keys in tabs and menus, Home/End, Escape, Enter/Space), roving tabindex or <code>aria-activedescendant</code> for composite widgets.</li>
+<li><b>Colour and contrast:</b> text 4.5:1, large text 3:1, UI components and focus 3:1; never convey meaning by colour alone; token pairs validated at build time; support forced-colors (Windows High Contrast) and dark themes.</li>
+<li><b>Forms and errors:</b> programmatic labels, helper text and error association (<code>aria-describedby</code>, <code>aria-invalid</code>), error summaries, required indicators, autocomplete attributes, and inline validation timing that does not trap users.</li>
+<li><b>Motion and media:</b> respect <code>prefers-reduced-motion</code>; no content flashing; captions and transcripts; pause controls for auto-updating content.</li>
+<li><b>Content and internationalisation:</b> alt text guidance, plain language, RTL support with logical properties, text resize and spacing tolerance, and language attributes.</li>
+<li><b>Testing strategy:</b> axe in unit tests and CI for each component state; Storybook a11y addon per story; Playwright flows checking focus order; manual keyboard and screen reader passes for complex components (combobox, date picker, data grid) with a documented device and browser matrix; periodic third-party audits; usability testing with disabled users.</li>
+<li><b>Documentation for consumers:</b> per-component accessibility notes: what the component handles, what the consumer must provide (labels, headings structure), keyboard map, known limitations, and examples of correct and incorrect usage.</li>
+<li><b>Governance:</b> accessibility acceptance criteria in the definition of done, an accessibility champion in the core team, a policy for severity and fix times, publishing conformance reports (ACR/VPAT), and training for product teams.</li>
+<li><b>Common failures in systems:</b> custom selects and menus lacking keyboard support, focus lost after closing overlays, icon buttons without names, low-contrast placeholder text, tooltips unreachable by keyboard, and toasts not announced (R13).</li>
+<li><b>Headless foundations:</b> Radix, React Aria, Headless UI, Ark UI embody tested patterns; contributing fixes upstream or choosing carefully reduces risk (E8).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Relying only on automated checks and declaring components accessible.</li>
+<li>Adding ARIA roles to <code>div</code>s instead of using native elements.</li>
+<li>Accessibility treated as a late audit instead of design and component acceptance criteria.</li>
+<li>Assuming system components make every page accessible; composition and content still matter.</li>
+<li>Skipping real assistive technology testing for complex widgets.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does automated testing miss?</dt><dd>Meaningful labels and alt text, logical focus order, keyboard operability details, screen reader announcement quality and cognitive issues; humans must verify them.</dd>
+<dt>How do you handle a custom select?</dt><dd>Prefer a native <code>&lt;select&gt;</code> or a headless combobox that implements the ARIA pattern fully, and test with keyboard and screen readers.</dd>
+<dt>Who owns accessibility, the system team or product teams?</dt><dd>Both: the system guarantees component behaviour; product teams own page composition, content and flows, with support and guidance from the system.</dd>
+<dt>What is WCAG 2.2 AA in practice?</dt><dd>A set of testable success criteria covering contrast, keyboard, focus, target size, forms and more, which most legal requirements reference.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Shipping and governing</h1>
+
+<!-- ============ S5 ============ -->
+<section class="q" id="s5">
+<header class="qh">
+  <div class="qrow"><span class="qid">S5</span><span class="tag added">Added</span></div>
+  <h2>Documentation, Storybook and Figma</h2>
+  <p class="qtext">“How do you document a design system? What is Storybook and how do you use it for development, testing and docs? How do you keep Figma and code in sync? What goes on a component documentation page?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A design system is only as good as its documentation, because people adopt what they can understand quickly. Each component page covers what it is for, when to use and when not to, anatomy, variants and states, accessibility behaviour, content guidelines, live examples with code, and API tables. Storybook is my workshop and the living documentation: stories show each state in isolation, controls let people explore props, interaction tests and the accessibility addon verify behaviour, and Chromatic or similar runs visual regression. Design and code stay aligned by sharing names and tokens, mapping Figma variables to code tokens, using Figma’s Code Connect or similar to show real code snippets, and reviewing implemented components with designers.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: the contents of a component documentation page. Right: how Storybook stories feed docs, interaction tests, accessibility checks and visual regression, and how Figma connects.">
+  <text x="10" y="18" class="bd">A component documentation page</text>
+  <rect x="10" y="30" width="360" height="280" rx="5" class="b"/>
+  <text x="18" y="50" class="bd">1 Overview</text><text x="120" y="50" class="sm">purpose, status (stable, beta, deprecated)</text>
+  <text x="18" y="72" class="bd">2 Usage</text><text x="120" y="72" class="sm">when to use / when not; alternatives</text>
+  <text x="18" y="94" class="bd">3 Anatomy</text><text x="120" y="94" class="sm">labelled parts diagram</text>
+  <text x="18" y="116" class="bd">4 Variants</text><text x="120" y="116" class="sm">sizes, styles, states: hover, focus, disabled</text>
+  <text x="18" y="138" class="bd">5 Behaviour</text><text x="120" y="138" class="sm">interaction, responsive rules, motion</text>
+  <text x="18" y="160" class="bd">6 Accessibility</text><text x="120" y="160" class="sm">keyboard map, ARIA, requirements for authors</text>
+  <text x="18" y="182" class="bd">7 Content</text><text x="120" y="182" class="sm">labels, tone, error messages, i18n</text>
+  <text x="18" y="204" class="bd">8 Code</text><text x="120" y="204" class="sm">live playground, props table, import</text>
+  <text x="18" y="226" class="bd">9 Design</text><text x="120" y="226" class="sm">Figma link, spacing specs, tokens used</text>
+  <text x="18" y="248" class="bd">10 Changelog</text><text x="120" y="248" class="sm">versions, deprecations, migration</text>
+  <text x="18" y="276" class="sm">Show dos and don’ts with images; keep examples copyable;</text><text x="18" y="292" class="sm">link related patterns; make the page searchable.</text>
+  <text x="400" y="18" class="bd">Storybook as the hub</text>
+  <rect x="400" y="30" width="350" height="36" rx="5" class="h"/><text x="408" y="52" class="sm"><tspan class="bd">Stories (CSF)</tspan>  one per state; args and controls</text>
+  <path class="a" d="M475 66V80"/><path class="a" d="M575 66V80"/><path class="a" d="M675 66V80"/>
+  <rect x="400" y="82" width="110" height="46" rx="4" class="g"/><text x="408" y="100" class="bd">Docs</text><text x="408" y="116" class="sm">autodocs, MDX</text>
+  <rect x="520" y="82" width="110" height="46" rx="4" class="g"/><text x="528" y="100" class="bd">Tests</text><text x="528" y="116" class="sm">play() functions</text>
+  <rect x="640" y="82" width="110" height="46" rx="4" class="g"/><text x="648" y="100" class="bd">A11y</text><text x="648" y="116" class="sm">axe addon</text>
+  <rect x="400" y="138" width="350" height="36" rx="4" class="w"/><text x="408" y="160" class="sm"><tspan class="bd">Visual regression</tspan>  Chromatic or Playwright snapshots in CI</text>
+  <rect x="400" y="184" width="350" height="64" rx="5" class="b"/><text x="408" y="204" class="bd">Figma ⇄ code</text><text x="408" y="222" class="sm">variables = tokens · same component and variant names ·</text><text x="408" y="238" class="sm">Code Connect shows real snippets · design QA on built stories</text>
+  <rect x="400" y="258" width="350" height="52" rx="5" class="x"/><text x="408" y="278" class="bd">Keep docs alive</text><text x="408" y="296" class="sm">docs in the same PR as code; CI fails on missing stories or docs</text>
+</svg></div>
+<figcaption><b>Principle.</b> Documentation is part of the component. A component without docs, stories and a11y notes is unfinished.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Storybook basics:</b> an isolated component development environment; stories written in Component Story Format with <code>args</code>, <code>argTypes</code>, decorators for providers (theme, router), parameters; addons: controls, actions, docs, a11y, viewport, interactions; builds as a static site for sharing; supports React, Vue, Angular, web components, Svelte.</li>
+<li><b>Stories as tests:</b> <code>play</code> functions simulate user interactions (Testing Library API) and assert; run in the browser and in CI (test runner or Vitest integration); combine with accessibility checks and visual snapshots; stories become the shared fixtures for unit, interaction and visual tests (E10).</li>
+<li><b>Autodocs and MDX:</b> prop tables generated from TypeScript types and JSDoc; MDX pages for guidelines, principles and onboarding; keep human-written guidance separate from generated API reference.</li>
+<li><b>Documentation site:</b> Storybook alone is not a full site; many systems use a docs framework (Docusaurus, Nextra, Astro Starlight, Zeroheight) combining guidelines, design resources and embedded Storybook; ensure search, versioned docs, and public or internal access as needed.</li>
+<li><b>Writing good guidance:</b> use cases, anti-patterns with reasons, decision trees (“which component do I use?”), content and microcopy rules, accessibility requirements for authors, and real product examples; avoid duplicating information in many places.</li>
+<li><b>Figma side:</b> a library with components, variants and auto-layout mirroring code, variables for tokens and modes, documentation frames, published and versioned; naming parity with code; deprecation flags; Dev Mode for specs; Code Connect links Figma components to code snippets <span class="verify">verify current features</span>.</li>
+<li><b>Preventing design-code drift:</b> single token source, automated token export, visual regression on stories, regular parity audits, shared status per component (design done, built, documented), designers participating in code review of visual changes, and a process for design changes to flow into code through tickets.</li>
+<li><b>Playgrounds and examples:</b> live code editors, templates and starter repos, Sandbox/StackBlitz links, recipes for common compositions (forms, tables) to show how pieces fit.</li>
+<li><b>Status and lifecycle labels:</b> experimental, beta, stable, deprecated with dates and replacements; this sets expectations and reduces support load.</li>
+<li><b>Contribution docs:</b> how to propose, design, build and document a component; templates for stories and docs; checklists (accessibility, tests, tokens); review expectations.</li>
+<li><b>Search and discoverability:</b> consistent naming, tags, a component finder, a “what’s new” page, release notes, and in-product usage analytics to learn which docs are used.</li>
+<li><b>Measuring documentation quality:</b> support questions about documented topics, time to first component usage, doc page analytics, feedback widgets, and periodic content audits.</li>
+<li><b>Hosting and performance:</b> deploy Storybook previews per pull request for review by designers and QA; keep Storybook build fast with caching and selective builds in monorepos.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Documentation written once and left to rot, diverging from the code.</li>
+<li>Only generated prop tables with no guidance on when and how to use the component.</li>
+<li>Stories that cover only the happy path and not disabled, error, loading and long-text states.</li>
+<li>Figma components that do not match code structure or names.</li>
+<li>Updating visual snapshots blindly without review.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What would you put in a component’s stories?</dt><dd>Default, every variant and size, states (hover, focus, disabled, loading, error), long content and RTL examples, and an interactive story with a play function.</dd>
+<dt>How do you keep documentation current?</dt><dd>Treat docs as part of the definition of done, review them in the same PR, and add CI checks that fail when stories or docs are missing.</dd>
+<dt>Storybook or a docs site?</dt><dd>Storybook for component development and living examples; a docs site for guidelines and design resources; many teams embed one in the other.</dd>
+<dt>How do designers verify implemented components?</dt><dd>Through Storybook PR previews and visual diffs compared with Figma, plus design QA before release.</dd>
+</dl></div>
+</section>
+
+<!-- ============ S6 ============ -->
+<section class="q" id="s6">
+<header class="qh">
+  <div class="qrow"><span class="qid">S6</span><span class="tag added">Added</span></div>
+  <h2>Packaging, versioning, releases</h2>
+  <p class="qtext">“How do you package and distribute a component library? How do you version it, handle breaking changes and deprecations, publish releases, and help consumers upgrade? What about bundling, tree shaking and CSS delivery?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“I publish the system as versioned npm packages, typically a tokens package, a core components package and possibly framework wrappers, built as tree-shakable ES modules with type declarations and an <code>exports</code> map, with React as a peer dependency. Versions follow semantic versioning: patches for fixes, minors for backward-compatible additions, majors for breaking changes. I automate releases with Changesets or semantic-release from pull-request metadata and Conventional Commits, generate changelogs, and publish from CI with provenance. Breaking changes are rare, announced early, preceded by deprecation warnings and accompanied by codemods and migration guides, because the real cost of a design system is paid by consumers during upgrades.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: package structure of a design system monorepo. Middle: release flow from change files to version PR to publish. Right: lifecycle of a deprecation.">
+  <text x="10" y="18" class="bd">Packages</text>
+  <rect x="10" y="30" width="360" height="104" rx="5" class="b"/><text x="18" y="50" class="mono" style="font-size:10px">@acme/tokens      JSON + CSS variables + JS</text><text x="18" y="68" class="mono" style="font-size:10px">@acme/react       components (peer: react)</text><text x="18" y="86" class="mono" style="font-size:10px">@acme/icons       tree-shakable SVG components</text><text x="18" y="104" class="mono" style="font-size:10px">@acme/themes      brand and dark theme files</text><text x="18" y="124" class="mono" style="font-size:10px">@acme/codemods    automated migrations</text>
+  <text x="10" y="156" class="bd">Build output</text>
+  <rect x="10" y="166" width="360" height="144" rx="5" class="w"/><text x="18" y="186" class="sm">ESM (and CJS if needed) with preserved modules for tree shaking</text><text x="18" y="204" class="sm">.d.ts types · "exports" map · "sideEffects": false (list CSS)</text><text x="18" y="222" class="sm">React as peerDependency; minimal runtime deps</text><text x="18" y="240" class="sm">CSS: extracted file or CSS Modules; no global leakage; layers</text><text x="18" y="258" class="sm">Tools: tsup, Rollup, Vite library mode, Turborepo/Nx for builds</text><text x="18" y="276" class="sm">Verify: publint, arethetypeswrong, bundle size checks (size-limit)</text><text x="18" y="294" class="sm">Provide a “use client” directive for RSC compatibility</text>
+  <text x="400" y="18" class="bd">Release flow</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">1 PR</tspan> includes a change file (patch/minor/major + note)</text>
+  <rect x="400" y="68" width="350" height="34" rx="4" class="h"/><text x="408" y="90" class="sm"><tspan class="bd">2 CI</tspan> tests, a11y, visual, size, types, docs build</text>
+  <rect x="400" y="106" width="350" height="34" rx="4" class="h"/><text x="408" y="128" class="sm"><tspan class="bd">3 Version PR</tspan> bot bundles changes, bumps, changelog</text>
+  <rect x="400" y="144" width="350" height="34" rx="4" class="g"/><text x="408" y="166" class="sm"><tspan class="bd">4 Publish</tspan> from CI with provenance; tag; release notes</text>
+  <rect x="400" y="182" width="350" height="34" rx="4" class="g"/><text x="408" y="204" class="sm"><tspan class="bd">5 Announce</tspan> channel, changelog page, upgrade guide</text>
+  <text x="400" y="240" class="bd">Deprecation lifecycle</text>
+  <rect x="400" y="250" width="350" height="60" rx="5" class="x"/><text x="408" y="270" class="sm">mark deprecated (docs + dev warning + types @deprecated) →</text><text x="408" y="286" class="sm">ship replacement and codemod → give a window (e.g. 2 minors or</text><text x="408" y="302" class="sm">3 to 6 months) → remove in the next major</text>
+</svg></div>
+<figcaption><b>Principle.</b> Make upgrading boring: predictable versions, early warnings, automated migrations.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Semantic versioning for UI:</b> breaking changes include removed or renamed props and components, changed defaults, changed behaviour, changed DOM structure that consumers target in tests or CSS, changed token names, raised peer dependency ranges, and visual changes large enough to affect product layouts. Be conservative: classify visual changes by impact and communicate them.</li>
+<li><b>Single versus independent versioning:</b> one version for the whole library (simple for consumers) versus per-package versions (finer control, more complex compatibility matrix). Many systems version all component packages together and tokens separately.</li>
+<li><b>Release automation:</b> Changesets (change files per PR, version PR, publish), semantic-release (derives versions from Conventional Commits), Lerna publish; protect the publish step (2FA, trusted publishing with provenance, protected environment) (B8).</li>
+<li><b>Package design:</b> ESM-first with <code>exports</code> subpaths (<code>@acme/react/button</code> or a single entry with named exports), proper <code>sideEffects</code>, per-component modules preserved for tree shaking, barrel files avoided or configured carefully (B6), types co-published, React and ReactDOM as peers, avoid bundling React inside, and minimal dependencies.</li>
+<li><b>CSS delivery options:</b> a global CSS file imported once; CSS Modules compiled into the package with hashed names; zero-runtime CSS-in-JS extracted at build; Tailwind preset plus plugin; runtime CSS-in-JS (needs SSR handling and may be incompatible with Server Components) (E7). Provide CSS layer ordering (<code>@layer</code>) so consumers can override predictably.</li>
+<li><b>Server Components and SSR:</b> mark client components with <code>'use client'</code>, avoid module-level side effects and browser-only code at import time, keep hydration safe (R11, N3).</li>
+<li><b>Peer dependencies and compatibility:</b> support a range of React versions (for example 18 and 19); test against them in CI; document minimum versions for TypeScript, Node, browsers.</li>
+<li><b>Codemods:</b> jscodeshift or ts-morph scripts that rename props and imports, update usages, and add TODO comments where manual work is needed; ship with the package and test them on real consumer code; they make major versions tolerable.</li>
+<li><b>Migration guides and communication:</b> per-release notes with “what changed, why, how to migrate”, upgrade checklists, office hours for large migrations, and a public roadmap; announce breaking changes weeks ahead and track which teams have migrated.</li>
+<li><b>Release channels:</b> canary or next tags for early adopters, release candidates for majors, long-term support branches for old majors if needed; pre-release testing in a few real apps (dogfooding) before general release.</li>
+<li><b>Backward-compatible evolution:</b> add optional props, support both old and new APIs temporarily with warnings, alias deprecated tokens, avoid behaviour changes inside minor versions.</li>
+<li><b>Consumer upgrade experience:</b> automated PRs with Renovate that run the consumers’ CI; visual regression and type checks reveal breakage; a compatibility matrix; small, frequent releases are easier than rare big ones.</li>
+<li><b>Monitoring and support:</b> track versions in use (telemetry or code analysis), bugs by version, bundle size by release, and deprecation progress; set an end-of-life policy for old majors.</li>
+<li><b>Licensing and publishing scope:</b> private registry (GitHub Packages, Artifactory) for internal systems or public npm for open source; clear licence; supply-chain protections (J29).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Shipping breaking changes in minor releases because “it is only a small tweak”.</li>
+<li>Bundling React into the library or listing it as a dependency instead of a peer.</li>
+<li>Removing deprecated APIs without a notice period, migration guide or codemod.</li>
+<li>Barrel files that disable tree shaking, producing huge consumer bundles.</li>
+<li>Large infrequent majors that no one dares to upgrade to.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Is changing a component’s default size a breaking change?</dt><dd>Yes in practice: it changes layouts in consumers; treat visible default changes as breaking or gate them behind an opt-in until the next major.</dd>
+<dt>How do you support multiple React versions?</dt><dd>Declare a peer range, avoid APIs unavailable in the oldest supported version, and run the test suite against each in CI.</dd>
+<dt>What does a codemod do for you?</dt><dd>It automates repetitive migration edits across many repositories, cutting upgrade cost and speeding adoption of new versions.</dd>
+<dt>How often should you release?</dt><dd>Small, frequent minor and patch releases from CI; majors rarely and with long notice.</dd>
+</dl></div>
+</section>
+
+<!-- ============ S7 ============ -->
+<section class="q" id="s7">
+<header class="qh">
+  <div class="qrow"><span class="qid">S7</span><span class="tag added">Added</span></div>
+  <h2>Governance and adoption</h2>
+  <p class="qtext">“How do you govern a design system? Centralised versus federated models, contribution process, decision making, handling requests, preventing forks, measuring adoption, and keeping the system relevant as products evolve.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Governance is how a design system makes decisions, accepts change and stays trusted. In a centralised model a dedicated core team owns everything, which is consistent but can become a bottleneck; in a federated model product teams contribute components under the core team’s standards, which scales but needs strong guidelines and review; most mature systems use a hybrid. I define a clear contribution path with an intake form, criteria for what belongs in the system, design and accessibility review, templates, and SLAs, plus a public roadmap and release cadence. To prevent forks I make the system easier than building from scratch, listen to teams, and provide support. I measure adoption through code analysis and surveys and share the outcomes so the investment stays visible.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: three governance models: centralised, federated, and hybrid. Right: contribution flow from request to triage, design, build, review, release and the criteria for inclusion.">
+  <text x="10" y="18" class="bd">Operating models</text>
+  <rect x="10" y="30" width="170" height="112" rx="5" class="b"/><text x="18" y="48" class="bd">Centralised</text><text x="18" y="66" class="sm">core team owns all</text><text x="18" y="82" class="sm">+ consistent, high quality</text><text x="18" y="98" class="sm">− bottleneck, slow, far</text><text x="18" y="114" class="sm">from product needs</text>
+  <rect x="190" y="30" width="170" height="112" rx="5" class="h"/><text x="198" y="48" class="bd">Federated</text><text x="198" y="66" class="sm">teams contribute</text><text x="198" y="82" class="sm">+ scales, relevant</text><text x="198" y="98" class="sm">− inconsistency, review</text><text x="198" y="114" class="sm">load, uneven quality</text>
+  <rect x="10" y="150" width="350" height="62" rx="5" class="g"/><text x="18" y="170" class="bd">Hybrid (common)</text><text x="18" y="188" class="sm">core owns foundations and complex parts; product teams</text><text x="18" y="204" class="sm">contribute and pilot, with core review and a path to promotion</text>
+  <text x="10" y="236" class="bd">Roles</text><text x="10" y="254" class="sm">product owner · design lead · engineering lead · accessibility</text><text x="10" y="270" class="sm">specialist · docs/content · contributors from product teams ·</text><text x="10" y="286" class="sm">steering group of consumers for priorities and trade-offs</text>
+  <text x="400" y="18" class="bd">Contribution flow</text>
+  <rect x="400" y="30" width="350" height="32" rx="4" class="b"/><text x="408" y="51" class="sm"><tspan class="bd">1 Request</tspan>  problem, use cases, designs, who needs it</text>
+  <rect x="400" y="66" width="350" height="32" rx="4" class="h"/><text x="408" y="87" class="sm"><tspan class="bd">2 Triage</tspan>  fit criteria, priority, owner, weekly review</text>
+  <rect x="400" y="102" width="350" height="32" rx="4" class="h"/><text x="408" y="123" class="sm"><tspan class="bd">3 Design</tspan>  Figma spec, a11y plan, tokens, API proposal (RFC)</text>
+  <rect x="400" y="138" width="350" height="32" rx="4" class="w"/><text x="408" y="159" class="sm"><tspan class="bd">4 Build</tspan>  code, stories, tests, docs, from templates</text>
+  <rect x="400" y="174" width="350" height="32" rx="4" class="w"/><text x="408" y="195" class="sm"><tspan class="bd">5 Review</tspan>  design, a11y, code, performance checklist</text>
+  <rect x="400" y="210" width="350" height="32" rx="4" class="g"/><text x="408" y="231" class="sm"><tspan class="bd">6 Release</tspan>  version, notes, announce; contributor credited</text>
+  <rect x="400" y="252" width="350" height="58" rx="5" class="x"/><text x="408" y="272" class="bd">Inclusion criteria</text><text x="408" y="290" class="sm">reused by 3+ teams · stable pattern · accessible · generic · has an</text><text x="408" y="304" class="sm">owner · worth the long-term maintenance cost</text>
+</svg></div>
+<figcaption><b>Principle.</b> Make contributing easy but gated by quality, so the system grows with the products without losing coherence.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Intake and prioritisation:</b> a single place for requests (issue template), criteria for acceptance, regular triage meeting, transparent backlog and roadmap, scoring by reach (how many teams), impact and effort; saying no with reasons and pointing to alternatives (product-level components, patterns).</li>
+<li><b>Decision making:</b> clear decision owner (core team lead), RFCs for API-shaping changes with a comment window, a steering committee of product and design representatives for priorities, written principles to resolve conflicts, and recorded decisions (ADRs) (A4).</li>
+<li><b>Contribution model:</b> contribution guide, component templates and generators, definition of done (design spec, accessible, tested, documented, tokens used), mentoring contributors, pairing for first contributions, and recognition. Contributors keep ownership during development, then the core team adopts maintenance.</li>
+<li><b>Avoiding forks and detours:</b> understand why teams build their own (speed, missing features, poor docs, slow support); provide fast paths, “incubator” status for experimental components, escape hatches, and open channels; track and periodically review custom components for promotion into the system.</li>
+<li><b>Support model:</b> office hours, a Slack/Teams channel, response-time targets, an FAQ, onboarding sessions and training, migration assistance for big upgrades, and embedded pairing with teams on critical projects.</li>
+<li><b>Adoption strategy:</b> start with a few friendly teams; deliver early wins; integrate with new-project templates so the system is the default; align with leadership; deprecate legacy UI libraries on a timeline; celebrate adoption stories; provide incentives (faster delivery, accessibility compliance).</li>
+<li><b>Metrics:</b> adoption coverage (component and token usage in repos via static analysis), number of detached or overridden components, design-code parity, support ticket volume and time-to-resolution, release cadence, upgrade lag (versions behind), accessibility defect counts, satisfaction scores, and product delivery metrics for adopters.</li>
+<li><b>Roadmap and communication:</b> public roadmap with themes, release notes, a regular “what’s new” update, demos, and an annual review; align with product roadmaps and design brand changes.</li>
+<li><b>Quality gates for the system itself:</b> CI checks for tests, accessibility, visual regression, bundle size, documentation presence and tokens usage; periodic audits and component health scorecards.</li>
+<li><b>Funding and organisation:</b> secure sustained funding by showing return; staff the team with design, engineering, accessibility and documentation skills; avoid a team of one; treat as a product with product management.</li>
+<li><b>Handling disagreement:</b> use principles and data (usage, usability results), run experiments, allow time-boxed variations, and decide transparently; escalate to the steering group when needed.</li>
+<li><b>Long-term health:</b> remove unused components, consolidate near-duplicates, schedule dependency and design refreshes, keep the system aligned with brand evolution, and plan major version transitions carefully.</li>
+<li><b>Multi-team and multi-brand context:</b> a core system with brand themes and extension packages for product-specific components, with clear ownership boundaries and shared infrastructure.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>A core team that becomes a ticket queue and blocks product delivery.</li>
+<li>Accepting every contribution without quality criteria, creating inconsistent components.</li>
+<li>Mandating adoption from above without support or addressing pain points.</li>
+<li>No metrics, so leadership sees only cost.</li>
+<li>Letting the system drift from product needs because no one talks to consumers.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you handle a team that wants a component not yet in the system?</dt><dd>Offer to pair, let them build it to system standards with core review (incubating it), and promote it if it proves reusable.</dd>
+<dt>How do you measure adoption?</dt><dd>Static analysis of imports and token usage across repos, tracking coverage, overrides and versions in use, plus surveys.</dd>
+<dt>Centralised or federated?</dt><dd>Start centralised for consistency while small, then move to a hybrid with contribution guidelines as the number of teams grows.</dd>
+<dt>How do you stop the design system team being a bottleneck?</dt><dd>Self-service docs, templates and contribution paths, clear SLAs, and delegating ownership of mature components to trained contributors.</dd>
+</dl></div>
+</section>
+
+<!-- ============ S8 ============ -->
+<section class="q" id="s8">
+<header class="qh">
+  <div class="qrow"><span class="qid">S8</span><span class="tag added">Added</span></div>
+  <h2>UI architecture patterns and SOLID</h2>
+  <p class="qtext">“Which design and architecture patterns do you use in UI code? Container and presentational components, MVC, MVVM, Flux, state machines, dependency injection, adapters, facades. How do SOLID principles apply to front-end code?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Patterns give names to recurring solutions. In UI code the important ones are separating presentation from logic, whether as container and presentational components or hooks plus view components; one-way data flow as in Flux and Redux; MVC and MVVM as historical models that React and Angular reinterpret; state machines for complex interaction flows; and structural patterns like adapters and facades to isolate APIs and libraries. SOLID translates well: single responsibility for components and hooks, open-closed through composition and props, Liskov for substitutable components with the same contract, interface segregation by passing only needed props, and dependency inversion by depending on abstractions such as an API client interface or hook that can be swapped in tests. I use patterns to solve a concrete problem, not to decorate the code.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: MVC, MVVM and Flux data flow in one picture. Right: SOLID principles mapped to front-end examples.">
+  <text x="10" y="18" class="bd">Architectural data flows</text>
+  <rect x="10" y="30" width="360" height="56" rx="5" class="b"/><text x="18" y="48" class="bd">MVC</text><text x="18" y="66" class="sm">View ⇄ Controller → Model; model notifies view (two-way links)</text><text x="18" y="80" class="sm">server-side frameworks, Backbone-era SPAs</text>
+  <rect x="10" y="92" width="360" height="56" rx="5" class="b"/><text x="18" y="110" class="bd">MVVM</text><text x="18" y="128" class="sm">View ⇄ ViewModel (binding) → Model; Angular, Vue, Knockout;</text><text x="18" y="142" class="sm">view declares bindings, ViewModel holds state and commands</text>
+  <rect x="10" y="154" width="360" height="86" rx="5" class="g"/><text x="18" y="172" class="bd">Flux / Redux (one-way)</text><text x="18" y="190" class="sm">View → Action → Dispatcher/Reducer → Store → View</text><text x="18" y="206" class="sm">predictable, traceable; React favours this unidirectional flow:</text><text x="18" y="222" class="sm">props down, events up; state changes through explicit updates</text>
+  <rect x="10" y="250" width="360" height="70" rx="5" class="w"/><text x="18" y="270" class="bd">Presentation versus logic</text><text x="18" y="288" class="sm">container/presentational → today: custom hook (logic) + view</text><text x="18" y="304" class="sm">component (markup); easier tests, reuse and Storybook stories</text>
+  <text x="400" y="18" class="bd">SOLID in front-end terms</text>
+  <rect x="400" y="30" width="350" height="46" rx="4" class="h"/><text x="408" y="48" class="bd">S Single responsibility</text><text x="408" y="64" class="sm">a component renders, a hook fetches, a reducer decides</text>
+  <rect x="400" y="80" width="350" height="46" rx="4" class="h"/><text x="408" y="98" class="bd">O Open / closed</text><text x="408" y="114" class="sm">extend through props, slots, composition; do not edit</text>
+  <rect x="400" y="130" width="350" height="46" rx="4" class="h"/><text x="408" y="148" class="bd">L Liskov substitution</text><text x="408" y="164" class="sm">a custom Button works wherever the base Button does</text>
+  <rect x="400" y="180" width="350" height="46" rx="4" class="h"/><text x="408" y="198" class="bd">I Interface segregation</text><text x="408" y="214" class="sm">pass only needed props, not whole objects or stores</text>
+  <rect x="400" y="230" width="350" height="46" rx="4" class="h"/><text x="408" y="248" class="bd">D Dependency inversion</text><text x="408" y="264" class="sm">depend on an API interface or hook; inject real or mock</text>
+  <text x="400" y="298" class="sm">Related: composition over inheritance, DRY (rule of three),</text><text x="400" y="314" class="sm">KISS, YAGNI, separation of concerns, law of Demeter.</text>
+</svg></div>
+<figcaption><b>Point.</b> Patterns are vocabulary for trade-offs. Use the smallest structure that keeps the code testable and changeable.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Container and presentational:</b> containers fetch data and manage state; presentational components render from props. Hooks largely replaced the pattern: a custom hook encapsulates logic, a view component renders. Benefits: reuse, tests and stories without data dependencies. Do not over-split trivial components.</li>
+<li><b>MVC versus MVVM versus Flux:</b> MVC separates model, view and controller with potentially bidirectional updates; MVVM binds the view to a view model automatically (Angular, WPF); Flux/Redux enforce one-way flow with actions and a store; React is “just the view” and works with unidirectional patterns. Be able to compare data flow, testability and complexity.</li>
+<li><b>State machines and statecharts:</b> model flows as explicit states and transitions (idle, loading, success, error; wizard steps) with guards and actions; XState implements them; they eliminate impossible states and document behaviour (E3).</li>
+<li><b>Observer and pub/sub:</b> events, stores, RxJS; decouple producers and consumers; watch for leaks and hidden flow (J28).</li>
+<li><b>Adapter and facade:</b> adapter maps one interface to another (backend DTO to UI model, third-party library to your API); facade offers a simple interface to a complex subsystem (an API client module, a design-system wrapper over a vendor library). Both limit vendor lock-in.</li>
+<li><b>Strategy and command:</b> strategy swaps algorithms (validation rules, sorting, pricing) by passing functions; command represents actions as objects for undo/redo and queues (Redux actions, offline mutation queues).</li>
+<li><b>Decorator and HOC:</b> wrap behaviour around a function or component (logging, authorisation, memoisation); HOCs largely replaced by hooks and composition, still common in libraries.</li>
+<li><b>Dependency injection:</b> pass dependencies (API client, clock, logger) via props, context or parameters instead of importing singletons, enabling tests and variations; Angular has a built-in injector; React uses context or function arguments (NG3).</li>
+<li><b>Repository and service layers:</b> hide data-source details behind typed functions (<code>userRepository.get(id)</code>) used by hooks; swap REST for GraphQL or mocks without touching UI.</li>
+<li><b>Feature-sliced and clean architecture for UI:</b> layers (app, pages, features, entities, shared) with a strict import direction; domain logic independent of frameworks (A1).</li>
+<li><b>SOLID applied:</b> SRP: split a 500-line component into hook, view and subcomponents; OCP: configure via props and render slots instead of adding conditionals; LSP: components accepting <code>ComponentProps&lt;'button'&gt;</code> behave like a button; ISP: <code>UserAvatar</code> takes <code>{ name, imageUrl }</code> not a whole <code>User</code>; DIP: components depend on a <code>useCart()</code> interface, not on <code>fetch</code>.</li>
+<li><b>Other principles:</b> DRY applied after the rule of three; avoid premature abstraction (wrong abstraction costs more than duplication); KISS and YAGNI; composition over inheritance; law of Demeter (do not reach through objects); colocation (keep related code together); fail fast with validation at boundaries.</li>
+<li><b>Anti-patterns:</b> god components, prop drilling through many layers, singletons with hidden global state, deep inheritance, over-use of context, boolean flag soup instead of state machines, premature generic abstractions, and cargo-culting patterns from other languages.</li>
+<li><b>Applying patterns in an interview:</b> describe the problem, name the pattern, show the minimal implementation idea and the trade-off; link to real examples (Redux as command + observer + mediator; React Query as cache + observer; middleware as chain of responsibility).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Reciting pattern names without a concrete use case and trade-off.</li>
+<li>Over-applying patterns and SOLID, producing needless indirection in small features.</li>
+<li>Calling React MVC or two-way binding; it favours one-way data flow.</li>
+<li>Treating presentational/container as a hard rule when hooks give a lighter structure.</li>
+<li>Abstracting after one use instead of waiting for repetition.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How would you apply dependency inversion in a React app?</dt><dd>Components use an interface-like hook or injected API client; production supplies the real implementation and tests supply fakes through context or props.</dd>
+<dt>MVVM versus Flux?</dt><dd>MVVM uses two-way bindings between view and view model; Flux uses one-way flow via actions and a store, making state changes explicit and traceable.</dd>
+<dt>When is a state machine better than booleans?</dt><dd>When there are several modes with valid and invalid transitions, such as multi-step forms, upload flows or authentication.</dd>
+<dt>What is the rule of three?</dt><dd>Wait until a piece of code is duplicated three times before abstracting, so the abstraction fits real variation.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Patterns and platforms</h1>
+
+<!-- ============ S9 ============ -->
+<section class="q" id="s9">
+<header class="qh">
+  <div class="qrow"><span class="qid">S9</span><span class="tag added">Added</span></div>
+  <h2>Web Components and framework-agnostic systems</h2>
+  <p class="qtext">“What are Web Components? Explain custom elements, shadow DOM, templates and slots. How do they work with React and other frameworks? When do you build a design system as web components, and what are the limitations?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Web Components are a set of browser standards for creating reusable, encapsulated elements: custom elements define new HTML tags with lifecycle callbacks, shadow DOM encapsulates markup and styles, and templates and slots let consumers project content. Because they are native, they work in any framework or none, which makes them attractive for design systems shared across teams using React, Angular and Vue, or for micro-frontends. Tools such as Lit and Stencil make them easier to author. The trade-offs are weaker server-side rendering, awkward form participation and styling across the shadow boundary (solved with CSS custom properties and parts), accessibility across shadow roots, and a less ergonomic integration with React’s props and events, though React 19 improved custom element support.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: anatomy of a custom element with shadow root, slots and exposed parts and custom properties. Right: using the same element in React, Angular and plain HTML, and a comparison of approaches.">
+  <text x="10" y="18" class="bd">Anatomy of a web component</text>
+  <rect x="10" y="30" width="360" height="150" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10.5px">&lt;acme-card elevated&gt;</text>
+  <rect x="26" y="56" width="328" height="116" rx="5" class="h" style="stroke-dasharray:4 3"/><text x="34" y="74" class="sm">#shadow-root (encapsulated styles and DOM)</text>
+  <rect x="40" y="82" width="300" height="24" rx="3" class="g"/><text x="48" y="99" class="sm">&lt;header part="header"&gt;&lt;slot name="title"/&gt;&lt;/header&gt;</text>
+  <rect x="40" y="110" width="300" height="24" rx="3" class="g"/><text x="48" y="127" class="sm">&lt;div part="body"&gt;&lt;slot/&gt;&lt;/div&gt;   default slot</text>
+  <text x="34" y="154" class="sm">styles inside do not leak out; outside styles do not leak in</text><text x="34" y="168" class="sm">except inherited properties and CSS custom properties</text>
+  <rect x="10" y="190" width="360" height="120" rx="5" class="w"/><text x="18" y="210" class="bd">Four standards</text><text x="18" y="228" class="sm">Custom Elements: customElements.define('acme-card', Class)</text><text x="18" y="244" class="sm">Shadow DOM: attachShadow({ mode: 'open' })</text><text x="18" y="260" class="sm">HTML templates and slots: &lt;template&gt;, &lt;slot&gt;</text><text x="18" y="276" class="sm">Lifecycle: connectedCallback, disconnectedCallback,</text><text x="18" y="292" class="sm">attributeChangedCallback (observedAttributes), adoptedCallback</text>
+  <text x="400" y="18" class="bd">One component, many hosts</text>
+  <rect x="400" y="30" width="110" height="44" rx="4" class="g"/><text x="408" y="48" class="bd">HTML</text><text x="408" y="64" class="mono" style="font-size:9.5px">&lt;acme-button&gt;</text>
+  <rect x="520" y="30" width="110" height="44" rx="4" class="g"/><text x="528" y="48" class="bd">React</text><text x="528" y="64" class="mono" style="font-size:9.5px">&lt;acme-button/&gt;</text>
+  <rect x="640" y="30" width="110" height="44" rx="4" class="g"/><text x="648" y="48" class="bd">Angular, Vue</text><text x="648" y="64" class="sm">custom elements</text>
+  <rect x="400" y="84" width="350" height="64" rx="5" class="h"/><text x="408" y="104" class="bd">Authoring tools</text><text x="408" y="122" class="sm">Lit (small, reactive, templates), Stencil (compiler, framework</text><text x="408" y="138" class="sm">wrappers), FAST, Shoelace/Web Awesome, Material Web, vanilla</text>
+  <rect x="400" y="158" width="170" height="152" rx="5" class="g"/><text x="408" y="176" class="bd">Strengths</text><text x="408" y="194" class="sm">framework-agnostic</text><text x="408" y="210" class="sm">native encapsulation</text><text x="408" y="226" class="sm">long-lived standard</text><text x="408" y="242" class="sm">good for micro-</text><text x="408" y="258" class="sm">frontends and CMS</text><text x="408" y="274" class="sm">embeds, widgets</text>
+  <rect x="580" y="158" width="170" height="152" rx="5" class="x"/><text x="588" y="176" class="bd">Limitations</text><text x="588" y="194" class="sm">SSR/declarative shadow</text><text x="588" y="210" class="sm">DOM still maturing</text><text x="588" y="226" class="sm">forms (ElementInternals)</text><text x="588" y="242" class="sm">cross-root a11y (ARIA</text><text x="588" y="258" class="sm">id references)</text><text x="588" y="274" class="sm">theming and DX friction</text>
+</svg></div>
+<figcaption><b>Trade-off.</b> Native interoperability and encapsulation versus ergonomics and server-rendering maturity.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Custom elements:</b> classes extending <code>HTMLElement</code> registered with a hyphenated name; attributes are strings and properties are JavaScript values (map both and reflect where appropriate); events dispatched as <code>CustomEvent</code> with <code>bubbles</code> and <code>composed: true</code> to cross shadow boundaries (J27); upgrade behaviour when the element is defined after parsing.</li>
+<li><b>Shadow DOM:</b> encapsulates DOM and CSS; open versus closed mode; <code>::part()</code> exposes styleable parts; CSS custom properties pass through for theming (tokens as variables work well, S2); <code>:host</code>, <code>:host-context</code>, <code>::slotted()</code>; constructable stylesheets (<code>adoptedStyleSheets</code>) share styles efficiently; global CSS does not reach inside.</li>
+<li><b>Slots:</b> light DOM children are projected into shadow slots (default and named); styling projected content is limited to <code>::slotted</code>; slot change events notify of updates.</li>
+<li><b>Forms and accessibility:</b> form participation requires <code>ElementInternals</code> and <code>formAssociated</code> (validity, form value); ARIA relationships that use IDs cannot cross shadow roots, a limitation being addressed by reference-target proposals <span class="verify">verify status</span>; focus delegation (<code>delegatesFocus</code>); screen-reader support is generally fine but must be tested.</li>
+<li><b>Server-side rendering:</b> Declarative Shadow DOM (<code>&lt;template shadowrootmode="open"&gt;</code>) enables SSR of shadow content; Lit SSR and frameworks add support; hydration needs care; without it there is a flash of undefined elements (FOUC), mitigated with <code>:not(:defined)</code> styles.</li>
+<li><b>Using them in React:</b> before React 19, props were set as attributes (strings) and custom events needed manual listeners; React 19 passes props as properties where defined and supports custom events (<code>onMyEvent</code>) <span class="verify">verify version</span>; many teams generate typed React wrappers (Stencil output targets, <code>@lit/react</code>) to keep a native feel.</li>
+<li><b>Angular and Vue:</b> both support custom elements well (<code>CUSTOM_ELEMENTS_SCHEMA</code>, <code>[prop]</code> and event bindings); Angular Elements packages Angular components as custom elements.</li>
+<li><b>When to choose web components for a design system:</b> multiple frameworks across the organisation, micro-frontends, widgets embedded in third-party pages, long-lived assets independent of framework churn. When all teams use React, a React-based system gives better developer ergonomics, SSR and ecosystem fit.</li>
+<li><b>Hybrid strategies:</b> implement core primitives (tokens, behaviours) framework-agnostically and ship thin framework wrappers; or build in React/Vue with a headless core (Zag.js, Ark UI) compiled per framework; or ship CSS tokens plus per-framework components.</li>
+<li><b>Styling strategy:</b> tokens as CSS custom properties flow into shadow DOM; expose <code>part</code> attributes for controlled customisation; avoid heavy style duplication per instance by sharing stylesheets; support theming and dark mode through variables (S2).</li>
+<li><b>Performance and bundle:</b> custom elements register lazily; shared dependencies (Lit) loaded once; avoid duplicating the framework per element; code-split component definitions; check hydration and layout shift for upgraded elements.</li>
+<li><b>Testing:</b> test in real browsers (Web Test Runner, Playwright component testing) because jsdom lacks full shadow DOM support; test events, slots, form participation and accessibility.</li>
+<li><b>Ecosystem snapshot:</b> Salesforce Lightning Web Components, GitHub elements, Adobe Spectrum Web Components, Shoelace and Material Web show production use; adoption patterns vary by organisation <span class="verify">verify current status of each library</span>.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying web components replace React. They solve different layers: encapsulated elements versus app architecture and state.</li>
+<li>Assuming shadow DOM styling is impossible; custom properties and parts provide controlled theming.</li>
+<li>Ignoring SSR and form integration needs until late.</li>
+<li>Using attributes for complex data instead of properties.</li>
+<li>Testing only in jsdom and missing real shadow DOM behaviour.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you style a web component from outside?</dt><dd>CSS custom properties that cross the shadow boundary, exposed <code>::part()</code> selectors, and slotted content styled by the consumer.</dd>
+<dt>How do events leave a shadow root?</dt><dd>Dispatch <code>CustomEvent</code> with <code>composed: true</code> (and <code>bubbles: true</code>); non-composed events stay inside.</dd>
+<dt>Lit or Stencil?</dt><dd>Lit for small runtime and handwritten components; Stencil for a compiler-driven toolchain with framework wrappers and lazy loading.</dd>
+<dt>Why might a design system avoid web components?</dt><dd>If all consumers use one framework, native components give better SSR, ergonomics and ecosystem integration at lower complexity.</dd>
+</dl></div>
+</section>
+
+<!-- ============ S10 ============ -->
+<section class="q" id="s10">
+<header class="qh">
+  <div class="qrow"><span class="qid">S10</span><span class="tag added">Added</span></div>
+  <h2>Quality, performance and a build plan</h2>
+  <p class="qtext">“How do you ensure the quality and performance of a design system? Testing layers, visual regression, bundle size, internationalisation and RTL. If asked to build a design system from scratch, what is your plan for the first six months?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A design system’s quality bar must be higher than a product’s because defects multiply across every consumer. I test in layers: unit and interaction tests per component, accessibility checks, visual regression on stories, type and API tests, and tests against supported React versions and browsers; I track bundle size, tree shaking and runtime performance per component, and support internationalisation, right-to-left and theming from the start. For a new system I would start by listening: audit existing UI, interview product teams and designers, pick a few high-value components and the token foundation, ship a first release quickly with docs and accessibility, then iterate in short cycles while building the contribution and governance model and measuring adoption.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: quality gates for each component: unit, interaction, a11y, visual, types, size, performance, i18n. Right: a six-month plan in three phases: discover and foundations, first components and release, scale and govern.">
+  <text x="10" y="18" class="bd">Quality gates per component</text>
+  <rect x="10" y="30" width="170" height="34" rx="4" class="g"/><text x="18" y="52" class="sm">unit + interaction tests</text>
+  <rect x="190" y="30" width="180" height="34" rx="4" class="g"/><text x="198" y="52" class="sm">a11y (axe) + keyboard script</text>
+  <rect x="10" y="68" width="170" height="34" rx="4" class="h"/><text x="18" y="90" class="sm">visual regression (stories)</text>
+  <rect x="190" y="68" width="180" height="34" rx="4" class="h"/><text x="198" y="90" class="sm">type tests (API contracts)</text>
+  <rect x="10" y="106" width="170" height="34" rx="4" class="w"/><text x="18" y="128" class="sm">bundle size budget</text>
+  <rect x="190" y="106" width="180" height="34" rx="4" class="w"/><text x="198" y="128" class="sm">render performance checks</text>
+  <rect x="10" y="144" width="170" height="34" rx="4" class="b"/><text x="18" y="166" class="sm">i18n, RTL, text expansion</text>
+  <rect x="190" y="144" width="180" height="34" rx="4" class="b"/><text x="198" y="166" class="sm">SSR/RSC + React version matrix</text>
+  <rect x="10" y="190" width="360" height="120" rx="5" class="x"/><text x="18" y="210" class="bd">Performance rules</text><text x="18" y="228" class="sm">tree-shakable per-component imports; no heavy deps; lazy-load</text><text x="18" y="244" class="sm">big widgets (date picker, rich text); avoid inline object/function</text><text x="18" y="260" class="sm">churn in hot components; memoise context; virtualise tables; CSS</text><text x="18" y="276" class="sm">with low specificity and no runtime style injection where avoidable;</text><text x="18" y="292" class="sm">measure size per release and fail CI on regressions</text>
+  <text x="400" y="18" class="bd">Six-month plan</text>
+  <rect x="400" y="30" width="350" height="88" rx="5" class="b"/><text x="408" y="50" class="bd">Months 1 to 2: discover and lay foundations</text><text x="408" y="68" class="sm">UI inventory and audit · interview teams · define principles and</text><text x="408" y="84" class="sm">scope · tokens (colour, type, space) · monorepo, Storybook,</text><text x="408" y="100" class="sm">CI, release pipeline · a11y baseline · pick 8 to 10 core components</text>
+  <rect x="400" y="124" width="350" height="88" rx="5" class="h"/><text x="408" y="144" class="bd">Months 3 to 4: ship the core and prove value</text><text x="408" y="162" class="sm">build core components on headless primitives · docs and Figma kit</text><text x="408" y="178" class="sm">· pilot with 1 to 2 teams · release 1.0 · collect feedback · measure</text><text x="408" y="194" class="sm">time saved and a11y results · codemods for legacy replacements</text>
+  <rect x="400" y="218" width="350" height="92" rx="5" class="g"/><text x="408" y="238" class="bd">Months 5 to 6: scale and govern</text><text x="408" y="256" class="sm">contribution model and RFCs · office hours · roadmap · adoption</text><text x="408" y="272" class="sm">metrics dashboard · dark mode · more components on demand</text><text x="408" y="288" class="sm">· deprecation policy · report outcomes to leadership; plan funding</text>
+</svg></div>
+<figcaption><b>Plan.</b> Foundations first, prove value with a few components and real users, then scale the process and the catalogue.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Testing strategy:</b> unit tests for logic and hooks; interaction tests via Testing Library or Storybook play functions; accessibility tests (axe) on every story; visual regression snapshots (Chromatic, Playwright) with deterministic fonts and data; cross-browser runs on key browsers; type tests (<code>expectTypeOf</code>) for public APIs; server-render and hydration tests; and tests against the supported React and TypeScript versions.</li>
+<li><b>Visual regression practice:</b> baseline per story and theme, review diffs in PRs, flake control (disable animations, fix fonts, mock time), thresholds, and approval workflows; test dark mode, RTL and high contrast variants.</li>
+<li><b>Performance:</b> measure bundle size per component and in sample apps (size-limit, bundle analysers), track render counts and expensive effects, avoid layout shifts in components (reserve space for icons, images), test with large datasets for tables and lists, and document performance characteristics and recommended patterns (virtualisation).</li>
+<li><b>Internationalisation and RTL:</b> use logical CSS properties (<code>margin-inline-start</code>), mirror layouts and icons where meaning requires, allow text expansion (30 to 40%), avoid hard-coded strings (accept localised props or slots), support locale-aware formatting through <code>Intl</code>, bidirectional text, and test with pseudo-locales and a RTL language (R13, J31).</li>
+<li><b>Browser and platform support policy:</b> state supported browsers, React/TypeScript versions, and Node; use feature detection and progressive enhancement; test in the lowest supported browser.</li>
+<li><b>Security and supply chain:</b> minimal dependencies, audited, lockfiles and provenance for published packages, sanitised rich content, and CSP-friendly styling (nonce support or no inline styles) (P7).</li>
+<li><b>Observability for a system:</b> usage analytics (anonymous), error reports tagged with system version, performance trends by release, and feedback channels; dashboards for adoption and health.</li>
+<li><b>First six months, in practice:</b> audit existing UI for duplicates and inconsistencies (screenshots, component inventory) and quantify the waste; align with design on principles and brand; establish tokens and theming early; choose foundations (headless library, styling approach, framework support) with an ADR; ship vertical slices (component + docs + tests + a11y) rather than building everything; get a real product team to adopt early and use their feedback; publish a roadmap.</li>
+<li><b>Choosing the first components:</b> those used everywhere and with high accessibility risk or inconsistency: Button, Link, Input/Textarea/Select/Checkbox/Radio/Switch, Form field with label and error, Typography, Layout primitives (Stack, Grid), Modal/Dialog, Tooltip/Popover, Toast, Tabs, Table basics, Icon, Tag/Badge. Defer rare or complex widgets until demanded.</li>
+<li><b>Risks and mitigation:</b> low adoption (involve teams, deliver quick wins), scope creep (strict inclusion criteria), design-code drift (tokens and parity checks), single point of failure (bus factor, documentation), accessibility regressions (CI gates), and breaking changes (versioning discipline).</li>
+<li><b>Communicating progress:</b> monthly demos, release notes, a public roadmap, and quarterly metrics showing coverage and time saved; link to business outcomes such as faster delivery or fewer accessibility defects.</li>
+<li><b>Sustainability:</b> plan funding and team shape beyond the initial project; document everything; train contributors; schedule maintenance (dependency updates, browser changes, design refreshes).</li>
+<li><b>Exit and evolution:</b> design for replaceability (wrapped primitives, tokens), watch ecosystem shifts (React Server Components, CSS features), and revisit foundations periodically with ADRs.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Building a large component catalogue before any product team uses it.</li>
+<li>Visual regression with flaky baselines that everyone ignores.</li>
+<li>No size or performance budgets, so the library gradually bloats every consumer.</li>
+<li>Ignoring RTL and localisation until a new market demands it.</li>
+<li>Starting without stakeholder buy-in and a plan for ongoing ownership.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How would you pick the first components?</dt><dd>By usage frequency and accessibility risk across current products, discovered from a UI audit and team interviews.</dd>
+<dt>How do you keep visual tests reliable?</dt><dd>Deterministic rendering (fixed fonts, no animation, stable data), per-story baselines, and a disciplined review process.</dd>
+<dt>How do you prove the value after six months?</dt><dd>Adoption coverage, time to build comparable screens before and after, reduced accessibility defects, fewer UI bugs, and team satisfaction.</dd>
+<dt>What would you do differently in a startup versus an enterprise?</dt><dd>Startup: a thin layer over a headless library with tokens and no heavy governance; enterprise: invest in governance, versioning, multi-team support and compliance.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>30 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>Design system versus component library?</td><td>The library is the coded components; the system adds tokens, guidelines, process and governance.</td><td>S1</td></tr>
+<tr><td>2</td><td>When is a design system worth it?</td><td>Many teams or products with duplicated UI, inconsistency and accessibility gaps.</td><td>S1</td></tr>
+<tr><td>3</td><td>How do you measure success?</td><td>Adoption, delivery speed, consistency and accessibility defects, not component count.</td><td>S1</td></tr>
+<tr><td>4</td><td>Token layers?</td><td>Primitive (raw values), semantic (intent), component (mapped to a component).</td><td>S2</td></tr>
+<tr><td>5</td><td>How does theming work?</td><td>Remap semantic tokens per theme via CSS variables; components stay unchanged.</td><td>S2</td></tr>
+<tr><td>6</td><td>Style Dictionary does what?</td><td>Transforms one token source into CSS, JS and native outputs.</td><td>S2</td></tr>
+<tr><td>7</td><td>Avoid dark-mode flash how?</td><td>Set the theme attribute before first paint via inline script or cookie.</td><td>S2</td></tr>
+<tr><td>8</td><td>Props or composition?</td><td>Props for data and variants, composition for structure.</td><td>S3</td></tr>
+<tr><td>9</td><td>Why avoid many boolean props?</td><td>They allow invalid combinations; use enumerated variants.</td><td>S3</td></tr>
+<tr><td>10</td><td>What should a reusable component forward?</td><td>Native props and a ref to the root element.</td><td>S3</td></tr>
+<tr><td>11</td><td>Controlled and uncontrolled?</td><td>Support <code>value</code>/<code>onChange</code> and <code>defaultValue</code>.</td><td>S3</td></tr>
+<tr><td>12</td><td>Why build on native HTML and headless?</td><td>Keyboard, focus and ARIA come correct by default.</td><td>S4</td></tr>
+<tr><td>13</td><td>Target WCAG level?</td><td>2.2 AA: contrast 4.5:1 text, 3:1 UI and focus, keyboard and target size.</td><td>S4</td></tr>
+<tr><td>14</td><td>What do automated a11y tools miss?</td><td>Label quality, focus order, keyboard details and screen-reader experience.</td><td>S4</td></tr>
+<tr><td>15</td><td>What is on a component docs page?</td><td>Usage, anatomy, variants, behaviour, accessibility, content, code, design link, changelog.</td><td>S5</td></tr>
+<tr><td>16</td><td>What does Storybook provide?</td><td>Isolated states, living docs, interaction and a11y tests, visual regression.</td><td>S5</td></tr>
+<tr><td>17</td><td>Keeping Figma and code aligned?</td><td>Shared tokens and names, automated export, parity checks, design QA.</td><td>S5</td></tr>
+<tr><td>18</td><td>Breaking change examples?</td><td>Removed or renamed props, changed defaults or DOM, renamed tokens, raised peers.</td><td>S6</td></tr>
+<tr><td>19</td><td>How do you deprecate safely?</td><td>Warn, document, ship a replacement and codemod, wait a window, remove in a major.</td><td>S6</td></tr>
+<tr><td>20</td><td>Why peerDependency for React?</td><td>To avoid duplicate React copies and version conflicts in consumers.</td><td>S6</td></tr>
+<tr><td>21</td><td>Release automation tools?</td><td>Changesets or semantic-release with CI publishing and provenance.</td><td>S6</td></tr>
+<tr><td>22</td><td>Centralised versus federated governance?</td><td>Core team owns all versus teams contribute; most use a hybrid.</td><td>S7</td></tr>
+<tr><td>23</td><td>Criteria to add a component?</td><td>Reused by several teams, stable, accessible, generic, owned and worth maintaining.</td><td>S7</td></tr>
+<tr><td>24</td><td>How to prevent forks?</td><td>Make the system easier than building alone: fast support, contribution paths, listening.</td><td>S7</td></tr>
+<tr><td>25</td><td>SOLID in UI in one line each?</td><td>One job per component, extend by composition, substitutable contracts, small props, depend on abstractions.</td><td>S8</td></tr>
+<tr><td>26</td><td>MVVM versus Flux?</td><td>Two-way binding to a view model versus one-way actions and a store.</td><td>S8</td></tr>
+<tr><td>27</td><td>When use a state machine?</td><td>Multi-state flows with guarded transitions, to avoid impossible boolean combinations.</td><td>S8</td></tr>
+<tr><td>28</td><td>Web components standards?</td><td>Custom elements, shadow DOM, templates and slots.</td><td>S9</td></tr>
+<tr><td>29</td><td>Style a shadow component from outside?</td><td>CSS custom properties and exposed <code>::part()</code>.</td><td>S9</td></tr>
+<tr><td>30</td><td>First six months of a new system?</td><td>Audit and tokens, a few core components with docs and a11y, pilot teams, then governance and metrics.</td><td>S10</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer design system questions at L4</h4>
+<ul>
+<li>Treat the system as a product with users: talk about adoption, support, roadmap and metrics, not only components.</li>
+<li>Lead with trade-offs: flexibility versus consistency, centralised versus federated, headless versus styled, web components versus framework-specific.</li>
+<li>Show lifecycle thinking: versioning, deprecation, codemods, documentation and governance are where lead-level experience shows.</li>
+<li>Always include accessibility and performance as built-in properties, not afterthoughts.</li>
+<li>Bring a concrete story: a component you redesigned, a breaking change you rolled out, how you got a reluctant team to adopt.</li>
+<li>The interview is theoretical: expect “how would you build”, “how would you govern”, “what are the trade-offs”, not live coding.</li>
+</ul></div>
+</section>
+
+</div>

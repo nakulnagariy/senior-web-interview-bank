@@ -1,0 +1,835 @@
+<title>Angular Study Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"Angular Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"Angular Study Guide";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · Angular · Comparison depth (optional skill)</div>
+  <h1>Angular Study Guide</h1>
+  <p>Angular at the depth an experienced React lead needs for an interview: the architecture and how it compares with React, components and templates with the new control flow, dependency injection, change detection and zoneless Angular, signals, RxJS, routing and guards, forms, HTTP and state management, testing, and performance, server rendering and migration. Angular is an optional skill in the L4 profile, so every topic is framed as “how it works, and how it differs from what you know in React”. Each topic is something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> Angular evolves quickly: check the current version’s docs</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Core concepts</h3>
+    <ol>
+      <li><b>NG1</b><a href="#ng1">Angular architecture and comparison with React</a></li>
+      <li><b>NG2</b><a href="#ng2">Components, templates and control flow</a></li>
+      <li><b>NG3</b><a href="#ng3">Dependency injection</a></li>
+      <li><b>NG4</b><a href="#ng4">Change detection and zoneless</a></li>
+      <li><b>NG5</b><a href="#ng5">Signals and reactivity</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>2 · Building applications</h3>
+    <ol>
+      <li><b>NG6</b><a href="#ng6">RxJS essentials</a></li>
+      <li><b>NG7</b><a href="#ng7">Routing, guards and lazy loading</a></li>
+      <li><b>NG8</b><a href="#ng8">Forms</a></li>
+      <li><b>NG9</b><a href="#ng9">HTTP, state management and testing</a></li>
+      <li><b>NG10</b><a href="#ng10">Performance, SSR and migration</a></li>
+    </ol>
+    <h3 style="margin-top:16px">3 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+  </div>
+  <div>
+    <h3>Reading order</h3>
+    <p style="font-size:13px;color:var(--muted)">NG1 is the “React versus Angular” answer. NG3 to NG6 are the Angular-specific ideas interviewers test: DI, change detection, signals and RxJS.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Written for Angular 17 to 20 style (standalone components, new control flow, signals); older NgModule-based code is mentioned for legacy projects. Version points carry a <span class="verify">verify</span> tag.</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Core concepts</h1>
+
+<!-- ============ NG1 ============ -->
+<section class="q" id="ng1">
+<header class="qh">
+  <div class="qrow"><span class="qid">NG1</span><span class="tag added">Added</span></div>
+  <h2>Angular architecture and comparison with React</h2>
+  <p class="qtext">“What is Angular and how does it differ from React? Explain the main building blocks, the CLI, standalone components versus NgModules, and when you would choose Angular over React.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Angular is a full, opinionated TypeScript framework from Google for building applications, whereas React is a UI library you assemble into a stack. Angular ships routing, forms, HTTP client, dependency injection, testing tools and a CLI, and uses templates with directives, classes decorated for components and services, RxJS for async streams and, in recent versions, signals for fine-grained reactivity. Modern Angular uses standalone components instead of NgModules. React gives flexibility and a huge ecosystem with more choices to make; Angular gives consistency and structure, which suits large teams and long-lived enterprise applications. Both are component-based with one-way data flow in practice; they differ in templating, state and change detection models, and in how much the framework decides for you.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: Angular building blocks: components, templates, services with dependency injection, routing, forms, HTTP, pipes and directives. Right: a comparison table of Angular and React on key dimensions.">
+  <text x="10" y="18" class="bd">Building blocks</text>
+  <rect x="10" y="30" width="170" height="54" rx="5" class="g"/><text x="18" y="48" class="bd">Component</text><text x="18" y="64" class="sm">class + template + styles</text><text x="18" y="78" class="mono" style="font-size:10px">@Component({…})</text>
+  <rect x="200" y="30" width="170" height="54" rx="5" class="h"/><text x="208" y="48" class="bd">Service (injectable)</text><text x="208" y="64" class="sm">logic, data, shared state</text><text x="208" y="78" class="mono" style="font-size:10px">@Injectable()</text>
+  <rect x="10" y="92" width="170" height="54" rx="5" class="w"/><text x="18" y="110" class="bd">Directive / pipe</text><text x="18" y="126" class="sm">behaviour on elements;</text><text x="18" y="140" class="sm">template value transforms</text>
+  <rect x="200" y="92" width="170" height="54" rx="5" class="w"/><text x="208" y="110" class="bd">Router</text><text x="208" y="126" class="sm">routes, guards, resolvers,</text><text x="208" y="140" class="sm">lazy loading</text>
+  <rect x="10" y="154" width="170" height="54" rx="5" class="b"/><text x="18" y="172" class="bd">Forms</text><text x="18" y="188" class="sm">template-driven, reactive</text><text x="18" y="202" class="sm">validators, typed forms</text>
+  <rect x="200" y="154" width="170" height="54" rx="5" class="b"/><text x="208" y="172" class="bd">HttpClient</text><text x="208" y="188" class="sm">observables, interceptors</text><text x="208" y="202" class="sm">typed responses</text>
+  <rect x="10" y="216" width="360" height="94" rx="5" class="x"/><text x="18" y="236" class="bd">Tooling and conventions</text><text x="18" y="254" class="sm">Angular CLI: generate, serve, build, test, lint, update (ng update)</text><text x="18" y="270" class="sm">TypeScript everywhere · esbuild/Vite builder · Jasmine+Karma or</text><text x="18" y="286" class="sm">Jest/Vitest and Playwright · DevTools extension · Nx for monorepos ·</text><text x="18" y="302" class="sm">semver releases every 6 months, long support</text>
+  <text x="400" y="18" class="bd">Angular versus React</text>
+  <rect x="400" y="30" width="350" height="280" rx="5" class="b"/>
+  <text x="408" y="50" class="bd">Dimension</text><text x="520" y="50" class="bd">Angular</text><text x="640" y="50" class="bd">React</text>
+  <text x="408" y="74" class="sm">Type</text><text x="520" y="74" class="sm">framework</text><text x="640" y="74" class="sm">UI library</text>
+  <text x="408" y="98" class="sm">Language</text><text x="520" y="98" class="sm">TypeScript</text><text x="640" y="98" class="sm">JS or TS</text>
+  <text x="408" y="122" class="sm">Templates</text><text x="520" y="122" class="sm">HTML templates</text><text x="640" y="122" class="sm">JSX</text>
+  <text x="408" y="146" class="sm">Reactivity</text><text x="520" y="146" class="sm">signals + zone</text><text x="640" y="146" class="sm">re-render</text>
+  <text x="408" y="170" class="sm">State</text><text x="520" y="170" class="sm">services, NgRx</text><text x="640" y="170" class="sm">hooks, libs</text>
+  <text x="408" y="194" class="sm">Async</text><text x="520" y="194" class="sm">RxJS first</text><text x="640" y="194" class="sm">promises, libs</text>
+  <text x="408" y="218" class="sm">DI</text><text x="520" y="218" class="sm">built in</text><text x="640" y="218" class="sm">context</text>
+  <text x="408" y="242" class="sm">Routing, forms</text><text x="520" y="242" class="sm">built in</text><text x="640" y="242" class="sm">libraries</text>
+  <text x="408" y="266" class="sm">Learning curve</text><text x="520" y="266" class="sm">steeper</text><text x="640" y="266" class="sm">gentler start</text>
+  <text x="408" y="296" class="sm">Choose Angular: large teams, consistency, enterprise.</text>
+</svg></div>
+<figcaption><b>Summary.</b> Angular decides more for you; React gives more freedom and expects you to assemble and govern the stack.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Standalone components:</b> since Angular 14 and default from 17, components, directives and pipes can be <code>standalone: true</code> (default in recent versions) and import what they need directly, replacing most NgModules; applications bootstrap with <code>bootstrapApplication</code> and provide services via <code>provideRouter</code>, <code>provideHttpClient</code>. NgModules remain in legacy code and some libraries; migration schematics exist <span class="verify">verify version defaults</span>.</li>
+<li><b>Decorators and metadata:</b> <code>@Component</code> (selector, template, styles, imports, changeDetection), <code>@Directive</code>, <code>@Pipe</code>, <code>@Injectable</code>, <code>@Input</code>/<code>@Output</code> (or signal-based <code>input()</code>/<code>output()</code>), <code>@ViewChild</code>, <code>@HostListener</code>. Angular compiles templates ahead of time (AOT) into efficient code.</li>
+<li><b>Data binding syntax:</b> interpolation <code>{{ }}</code>, property binding <code>[prop]="expr"</code>, event binding <code>(click)="handler()"</code>, two-way <code>[(ngModel)]</code> or <code>model()</code>, structural logic with <code>@if</code>/<code>@for</code>; one-way data flow with explicit two-way sugar.</li>
+<li><b>Conceptual mapping from React:</b> component ≈ component; props ≈ <code>@Input</code>/<code>input()</code>; callbacks ≈ <code>@Output</code>/<code>output()</code>; <code>children</code> ≈ content projection (<code>&lt;ng-content&gt;</code>); hooks ≈ lifecycle hooks and <code>inject()</code>; context ≈ dependency injection; <code>useMemo</code> ≈ <code>computed()</code>; <code>useEffect</code> ≈ <code>effect()</code> and lifecycle hooks; Redux ≈ NgRx; React Query ≈ RxJS + HttpClient or signal resources; Next.js ≈ Angular SSR/Analog.</li>
+<li><b>Opinionated structure:</b> consistent file layout (<code>*.component.ts</code>, <code>.html</code>, <code>.scss</code>, <code>.spec.ts</code>), style guide, CLI schematics, strict TypeScript, and formal patterns reduce decision fatigue and make large codebases uniform.</li>
+<li><b>Release and support policy:</b> major version every six months, each supported for about 18 months (including LTS), automated migrations via <code>ng update</code>; predictable upgrades are a selling point for enterprises <span class="verify">verify the policy</span>.</li>
+<li><b>Ecosystem:</b> Angular Material and CDK for UI primitives, NgRx for state, Nx for monorepos, ngx-translate or built-in i18n, Storybook, Cypress and Playwright, Analog for meta-framework features; fewer choices than React but more standardised.</li>
+<li><b>When to choose Angular:</b> large teams and long-lived products needing consistency, strong typing and conventions; organisations with Java/.NET backgrounds used to DI and layered structure; projects that value built-in features and predictable upgrades. <b>When React:</b> flexible UIs, rich ecosystem needs, Next.js features, smaller teams wanting control, and talent availability.</li>
+<li><b>Honest trade-offs:</b> Angular’s learning curve (RxJS, DI, decorators), historically verbose boilerplate (reduced in recent versions), and less flexibility; React’s ecosystem fragmentation and governance burden. Neither is universally better.</li>
+<li><b>Related frameworks:</b> Vue (progressive, template-based with reactivity like signals), Svelte (compiler), Solid (signals, JSX); Angular’s signals and control flow show convergence across frameworks.</li>
+<li><b>Interview approach:</b> do not criticise the framework you do not use; explain concepts via mappings, show you can pick up Angular quickly, and give a balanced decision framework.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Calling Angular “just an old AngularJS”. Angular 2+ is a different, TypeScript-based framework.</li>
+<li>Describing Angular only as it was with NgModules and zone.js; modern Angular is standalone with signals.</li>
+<li>Saying React is better or worse in general instead of by context.</li>
+<li>Claiming Angular has no ecosystem choices; state and UI libraries still require decisions.</li>
+<li>Mixing up AngularJS (1.x) and Angular.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Library versus framework?</dt><dd>A library offers pieces you call; a framework defines the structure and calls your code; Angular includes routing, forms, DI and HTTP out of the box.</dd>
+<dt>What are standalone components?</dt><dd>Components that declare their own dependencies via <code>imports</code> without an NgModule, simplifying structure and enabling better tree shaking.</dd>
+<dt>How would you migrate a React skill set to Angular?</dt><dd>Map concepts (components, props, state, context) to inputs, signals and DI, then learn RxJS, the router and forms; the architecture ideas transfer directly.</dd>
+<dt>Why do enterprises choose Angular?</dt><dd>Consistency, opinionated structure, built-in capabilities, TypeScript-first design and predictable long-term upgrades.</dd>
+</dl></div>
+</section>
+
+<!-- ============ NG2 ============ -->
+<section class="q" id="ng2">
+<header class="qh">
+  <div class="qrow"><span class="qid">NG2</span><span class="tag added">Added</span></div>
+  <h2>Components, templates and control flow</h2>
+  <p class="qtext">“Explain Angular components: inputs and outputs, templates, lifecycle hooks, content projection, view queries, directives, pipes and the new built-in control flow (<code>@if</code>, <code>@for</code>, <code>@defer</code>).”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“An Angular component is a TypeScript class with a template and styles, selected by a tag. Data flows in through inputs and out through outputs; in recent versions these are signal-based <code>input()</code> and <code>output()</code> functions. The template uses bindings for properties, events and two-way sync, pipes to transform values and, since Angular 17, built-in control flow blocks <code>@if</code>, <code>@for</code> with a required <code>track</code> expression, and <code>@switch</code>, replacing the older <code>*ngIf</code> and <code>*ngFor</code> directives. Lifecycle hooks such as <code>ngOnInit</code> and <code>ngOnDestroy</code> let me react to creation and destruction. Content projection with <code>ng-content</code> is the equivalent of React’s children, and <code>@defer</code> lazy-loads parts of a template with triggers.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: a component with an input, an output, a template with control flow and content projection. Right: lifecycle hooks in order.">
+  <text x="10" y="18" class="bd">A component (modern style)</text>
+  <rect x="10" y="30" width="360" height="190" rx="5" class="b"/>
+  <text x="18" y="48" class="mono" style="font-size:10px">@Component({ selector: 'app-card', template: `</text>
+  <text x="18" y="64" class="mono" style="font-size:10px">  @if (item(); as i) {</text>
+  <text x="18" y="80" class="mono" style="font-size:10px">    &lt;h3&gt;{{ i.title | titlecase }}&lt;/h3&gt;</text>
+  <text x="18" y="96" class="mono" style="font-size:10px">    &lt;ng-content /&gt;</text>
+  <text x="18" y="112" class="mono" style="font-size:10px">    @for (t of i.tags; track t) { &lt;span&gt;{{t}}&lt;/span&gt; }</text>
+  <text x="18" y="128" class="mono" style="font-size:10px">    &lt;button (click)="picked.emit(i.id)"&gt;Pick&lt;/button&gt;</text>
+  <text x="18" y="144" class="mono" style="font-size:10px">  } @else { &lt;p&gt;Nothing&lt;/p&gt; }`})</text>
+  <text x="18" y="164" class="mono" style="font-size:10px">export class CardComponent {</text>
+  <text x="18" y="180" class="mono" style="font-size:10px">  item = input.required&lt;Item&gt;();</text>
+  <text x="18" y="196" class="mono" style="font-size:10px">  picked = output&lt;string&gt;(); }</text>
+  <text x="18" y="214" class="sm">parent: &lt;app-card [item]="x" (picked)="onPick($event)"&gt;…</text>
+  <rect x="10" y="232" width="360" height="78" rx="5" class="g"/><text x="18" y="252" class="bd">Control flow versus old directives</text><text x="18" y="270" class="sm">@if / @else, @for (track required), @switch, @empty, @defer</text><text x="18" y="286" class="sm">replace *ngIf, *ngFor, *ngSwitch: built into the compiler, faster,</text><text x="18" y="302" class="sm">no imports needed, better type narrowing</text>
+  <text x="400" y="18" class="bd">Lifecycle hooks (order)</text>
+  <rect x="400" y="30" width="350" height="30" rx="4" class="b"/><text x="408" y="50" class="sm"><tspan class="mono" style="font-size:10px">constructor</tspan> · inject() dependencies; no inputs yet</text>
+  <rect x="400" y="64" width="350" height="30" rx="4" class="h"/><text x="408" y="84" class="sm"><tspan class="mono" style="font-size:10px">ngOnChanges</tspan> · when inputs change (before OnInit)</text>
+  <rect x="400" y="98" width="350" height="30" rx="4" class="h"/><text x="408" y="118" class="sm"><tspan class="mono" style="font-size:10px">ngOnInit</tspan> · once, inputs ready: setup, initial data</text>
+  <rect x="400" y="132" width="350" height="30" rx="4" class="w"/><text x="408" y="152" class="sm"><tspan class="mono" style="font-size:10px">ngDoCheck</tspan> · every change detection run (use sparingly)</text>
+  <rect x="400" y="166" width="350" height="30" rx="4" class="w"/><text x="408" y="186" class="sm"><tspan class="mono" style="font-size:10px">ngAfterViewInit</tspan> · view and children ready; ViewChild</text>
+  <rect x="400" y="200" width="350" height="30" rx="4" class="g"/><text x="408" y="220" class="sm"><tspan class="mono" style="font-size:10px">ngOnDestroy</tspan> · cleanup: unsubscribe, timers, listeners</text>
+  <rect x="400" y="240" width="350" height="70" rx="5" class="x"/><text x="408" y="260" class="bd">Modern alternatives</text><text x="408" y="278" class="sm">afterNextRender for DOM work · effect() for reactions</text><text x="408" y="294" class="sm">· DestroyRef.onDestroy() and takeUntilDestroyed() for cleanup</text>
+</svg></div>
+<figcaption><b>Compare.</b> Inputs/outputs ≈ props/callbacks; <code>ng-content</code> ≈ children; lifecycle hooks ≈ effects with cleanup.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Inputs and outputs:</b> classic <code>@Input()</code> properties and <code>@Output() event = new EventEmitter&lt;T&gt;()</code>; signal-based <code>input()</code>, <code>input.required()</code>, <code>output()</code> and <code>model()</code> (two-way) in newer versions; input transforms (<code>booleanAttribute</code>); child never mutates the parent’s data directly: it emits events.</li>
+<li><b>Templates:</b> property binding (<code>[disabled]="busy()"</code>), attribute and class bindings (<code>[class.active]</code>, <code>[attr.aria-label]</code>), event binding, template reference variables (<code>#ref</code>), safe navigation (<code>?.</code>), nullish coalescing, pipes (<code>| date</code>, <code>| async</code>, custom pipes), and template-local variables (<code>@let</code> in new versions <span class="verify">verify</span>). Templates are type-checked in strict mode.</li>
+<li><b>Control flow blocks:</b> <code>@for (x of xs; track x.id)</code> requires <code>track</code> (like React keys) for efficient DOM reuse; <code>@empty</code> handles empty lists; <code>@if (cond; as value)</code> aliases; <code>@switch</code>; they reduce the need for <code>ng-container</code> and structural directive imports.</li>
+<li><b><code>@defer</code>:</b> declarative lazy loading of a template section with triggers (<code>on viewport</code>, <code>on idle</code>, <code>on interaction</code>, <code>on hover</code>, <code>on timer</code>, <code>when cond</code>), <code>@placeholder</code>, <code>@loading</code>, <code>@error</code> blocks, and prefetching; similar to <code>React.lazy</code> + Suspense but in templates.</li>
+<li><b>Content projection:</b> <code>&lt;ng-content&gt;</code> (default and <code>select</code>ed slots) for composing components, <code>ngTemplateOutlet</code> with <code>ng-template</code> for render-prop-like customisation, <code>@ContentChild</code> to query projected content.</li>
+<li><b>View queries:</b> <code>@ViewChild</code>/<code>viewChild()</code>, <code>viewChildren()</code>, <code>contentChild()</code> to access elements or child components after the view initialises; signal-based queries update reactively.</li>
+<li><b>Directives:</b> attribute directives change behaviour or appearance (<code>[appTooltip]</code>), structural directives (legacy <code>*ngIf</code>) alter DOM structure, host bindings/listeners via <code>host</code> metadata, and directive composition API (<code>hostDirectives</code>) to reuse behaviour.</li>
+<li><b>Pipes:</b> pure by default (re-run when input reference changes), so cheap and cacheable; <code>async</code> pipe subscribes to observables and promises and unsubscribes automatically; impure pipes run every cycle and should be avoided; prefer computed signals for derived values.</li>
+<li><b>Styles and encapsulation:</b> emulated view encapsulation by default (scoped via attributes), <code>ShadowDom</code> or <code>None</code> modes; component styles apply only to their template; global styles in <code>styles.scss</code>; <code>::ng-deep</code> is deprecated; design tokens via CSS variables work well.</li>
+<li><b>Component communication:</b> parent to child via inputs, child to parent via outputs, siblings via a shared service (signals or observables), and routing params; avoid reaching into other components through <code>@ViewChild</code> for logic.</li>
+<li><b>Smart versus presentational components:</b> container components inject services and manage state; presentational ones take inputs and emit outputs, often with <code>OnPush</code> change detection; the same idea as React’s container/presentational split.</li>
+<li><b>Accessibility and CDK:</b> Angular CDK provides accessibility primitives (focus trap, overlay, listbox, a11y utilities) similar to headless React libraries (E8).</li>
+<li><b>Gotchas:</b> forgetting <code>track</code> or using a poor key, heavy logic in template expressions (function calls run every cycle in default change detection), mutating inputs, and forgetting to unsubscribe from manual subscriptions.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Calling expensive functions in templates, which run on every change detection pass.</li>
+<li>Using <code>@for</code> without a meaningful <code>track</code> expression.</li>
+<li>Mutating an input object instead of emitting an event, hiding data flow.</li>
+<li>Doing component setup in the constructor that needs input values (use <code>ngOnInit</code> or signals).</li>
+<li>Leaving manual subscriptions open past <code>ngOnDestroy</code>.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt><code>constructor</code> versus <code>ngOnInit</code>?</dt><dd>The constructor wires dependencies (<code>inject()</code>) and runs before inputs are set; <code>ngOnInit</code> runs once after the first input values are available.</dd>
+<dt>What is the <code>async</code> pipe for?</dt><dd>It subscribes to an observable or promise in the template, renders the latest value and unsubscribes on destroy, avoiding manual subscription management.</dd>
+<dt>How does <code>@defer</code> help performance?</dt><dd>It code-splits and loads a template section on a trigger such as viewport entry, reducing initial bundle size and work.</dd>
+<dt>How do you customise a child’s rendering?</dt><dd>Content projection with named slots, or template outlets passing <code>ng-template</code> with context, comparable to render props.</dd>
+</dl></div>
+</section>
+
+<!-- ============ NG3 ============ -->
+<section class="q" id="ng3">
+<header class="qh">
+  <div class="qrow"><span class="qid">NG3</span><span class="tag added">Added</span></div>
+  <h2>Dependency injection</h2>
+  <p class="qtext">“Explain Angular’s dependency injection system: injectors, providers, tokens, <code>providedIn</code>, hierarchical injection, <code>inject()</code> versus constructor injection, and how DI helps testing and architecture. How does it compare with React context?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Dependency injection is how Angular provides classes and values to the code that needs them: I declare a dependency, and the injector creates or finds an instance. A service is marked <code>@Injectable({ providedIn: 'root' })</code> to be a tree-shakable singleton for the app, or provided at a component, route or environment level to scope its lifetime. Injectors form a hierarchy: a request is resolved from the nearest injector upward, so a component can override a service for its subtree. I request dependencies with <code>inject(Service)</code> or constructor parameters, and tokens, <code>InjectionToken</code>, let me inject configuration and interfaces. DI decouples code from implementations, which makes testing easy by providing fakes; React’s context covers part of this need but without constructors, scopes and lifecycle management.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: the injector hierarchy from platform to root environment injector to route injectors to element injectors, with resolution moving upward. Right: provider options and a testing override.">
+  <text x="10" y="18" class="bd">Hierarchical injectors (lookup goes up)</text>
+  <rect x="10" y="30" width="360" height="34" rx="4" class="b"/><text x="18" y="52" class="sm"><tspan class="bd">Platform injector</tspan>  shared across apps on the page</text>
+  <rect x="24" y="70" width="332" height="34" rx="4" class="h"/><text x="32" y="92" class="sm"><tspan class="bd">Root environment injector</tspan>  providedIn: 'root', app config</text>
+  <rect x="38" y="110" width="304" height="34" rx="4" class="h"/><text x="46" y="132" class="sm"><tspan class="bd">Route injectors</tspan>  providers on lazy routes</text>
+  <rect x="52" y="150" width="276" height="34" rx="4" class="g"/><text x="60" y="172" class="sm"><tspan class="bd">Element injectors</tspan>  component providers</text>
+  <rect x="66" y="190" width="248" height="34" rx="4" class="g"/><text x="74" y="212" class="sm"><tspan class="bd">Child component</tspan>  asks for Service</text>
+  <text x="10" y="248" class="sm">Resolved at the first injector up the chain that provides it.</text><text x="10" y="264" class="sm">A component-level provider creates one instance per component</text><text x="10" y="280" class="sm">instance and its subtree; root providers are app singletons.</text><text x="10" y="302" class="sm">Modifiers: @Optional, @Self, @SkipSelf, @Host (or inject options).</text>
+  <text x="400" y="18" class="bd">Ways to provide and request</text>
+  <rect x="400" y="30" width="350" height="106" rx="5" class="b"/><text x="408" y="48" class="mono" style="font-size:10px">@Injectable({ providedIn: 'root' })</text><text x="408" y="64" class="mono" style="font-size:10px">export class CartService { … }</text><text x="408" y="84" class="mono" style="font-size:10px">export class Page {</text><text x="408" y="100" class="mono" style="font-size:10px">  private cart = inject(CartService);</text><text x="408" y="116" class="mono" style="font-size:10px">  // or constructor(private cart: CartService)</text><text x="408" y="130" class="mono" style="font-size:10px">}</text>
+  <rect x="400" y="144" width="350" height="66" rx="5" class="g"/><text x="408" y="162" class="bd">Tokens and providers</text><text x="408" y="178" class="mono" style="font-size:10px">const API = new InjectionToken&lt;string&gt;('api');</text><text x="408" y="194" class="mono" style="font-size:10px">{ provide: API, useValue: '/api' }</text>
+  <rect x="400" y="218" width="350" height="92" rx="5" class="w"/><text x="408" y="238" class="bd">Testing benefit</text><text x="408" y="256" class="mono" style="font-size:10px">TestBed.configureTestingModule({</text><text x="408" y="272" class="mono" style="font-size:10px">  providers: [{ provide: Api, useClass: FakeApi }] })</text><text x="408" y="294" class="sm">swap real dependencies for fakes without changing code</text>
+</svg></div>
+<figcaption><b>Compare.</b> Angular DI is a typed, hierarchical dependency provider; React context passes values down the tree but has no built-in construction or scoping model.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Why DI:</b> decouples consumers from implementations (program to interfaces and tokens), centralises construction, enables scoping and lifetimes, makes testing simple, and supports the dependency inversion principle (S8). Angular’s injector instantiates classes lazily on first request.</li>
+<li><b><code>providedIn</code> options:</b> <code>'root'</code> (application-wide, tree-shakable), <code>'platform'</code>, or specific environment injectors; services only included in the bundle if used. Alternative: list in <code>providers</code> of a component, route, or <code>bootstrapApplication</code> config.</li>
+<li><b>Provider types:</b> <code>useClass</code> (substitute implementation), <code>useValue</code> (constant or mock), <code>useFactory</code> (computed with <code>deps</code> or <code>inject()</code>), <code>useExisting</code> (alias); <code>multi: true</code> for collecting several providers under one token (HTTP interceptors in the legacy API, validators).</li>
+<li><b><code>inject()</code> function:</b> works in injection contexts (constructor, field initialisers, factory functions, route guards, resolvers); enables functional guards and composable utility functions (<code>injectUser()</code>) similar to React hooks; preferred in modern code over constructor parameters for brevity and inheritance friendliness.</li>
+<li><b>Scoping examples:</b> a form-state service provided in a component to give each instance its own copy; a feature service provided on a lazy route so it exists only while that route is loaded; root singletons for auth and configuration.</li>
+<li><b>Injection tokens for config and interfaces:</b> TypeScript interfaces vanish at runtime, so use <code>InjectionToken</code> for abstractions (<code>API_BASE_URL</code>, <code>FEATURE_FLAGS</code>), optionally with a factory default.</li>
+<li><b>Hierarchy and modifiers:</b> <code>@Self</code>, <code>@SkipSelf</code>, <code>@Optional</code>, <code>@Host</code> (or <code>inject(Token, { optional: true, skipSelf: true })</code>) control lookup; used in directive and component library design.</li>
+<li><b>Environment versus node injectors:</b> environment injectors (root, route-level, <code>EnvironmentInjector</code>) hold services for app and lazy features; node injectors belong to the component tree; <code>runInInjectionContext</code> runs code with an injector programmatically.</li>
+<li><b>Interceptors, guards and resolvers use DI:</b> functional interceptors (<code>HttpInterceptorFn</code>) and guards use <code>inject()</code> to access services, avoiding class boilerplate.</li>
+<li><b>Compared with React context:</b> context passes values down at runtime and triggers re-renders; it is not a general object factory; DI constructs services with their own dependencies, supports hierarchical overrides and tree-shaking, and works outside the view tree. React achieves similar goals with props, context and module-level singletons, hooks for composition, and dependency injection patterns by convention (S8).</li>
+<li><b>Common mistakes:</b> circular dependencies between services, providing a service in multiple places and getting several instances unintentionally, heavy logic in constructors, and using services as global mutable bags without structure.</li>
+<li><b>State in services:</b> a root service with signals or <code>BehaviorSubject</code> is the standard lightweight state store; scale up to NgRx or signal stores when needed (NG9).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Providing a “singleton” service in a component’s providers and getting a new instance per component.</li>
+<li>Injecting an interface type directly; interfaces do not exist at run time, so use a token or abstract class.</li>
+<li>Circular dependencies between services.</li>
+<li>Putting a lot of work in constructors rather than lifecycle hooks or factories.</li>
+<li>Treating DI as only a testing convenience rather than an architectural tool for scope and decoupling.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does <code>providedIn: 'root'</code> mean?</dt><dd>The service is registered in the root injector as a tree-shakable application-wide singleton, created on first injection.</dd>
+<dt>How do you get a new service instance per component?</dt><dd>Add it to the component’s <code>providers</code>, creating an instance for that component and its subtree.</dd>
+<dt>How do you mock a service in a test?</dt><dd>Override its provider with <code>useClass</code> or <code>useValue</code> in <code>TestBed</code>.</dd>
+<dt>Constructor injection or <code>inject()</code>?</dt><dd>Both work; <code>inject()</code> is concise, works in functions such as guards, and plays well with inheritance and composition.</dd>
+</dl></div>
+</section>
+
+<!-- ============ NG4 ============ -->
+<section class="q" id="ng4">
+<header class="qh">
+  <div class="qrow"><span class="qid">NG4</span><span class="tag added">Added</span></div>
+  <h2>Change detection and zoneless</h2>
+  <p class="qtext">“How does Angular detect changes and update the DOM? What are zone.js, the default and OnPush strategies, and how do signals and zoneless change detection change this? How does it compare with React’s rendering model?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Change detection is how Angular knows when to refresh templates. Traditionally zone.js patches browser APIs such as events, timers and promises, so whenever async work completes Angular runs change detection from the root, checking each component’s template bindings against previous values and updating the DOM where they differ. The default strategy checks every component; <code>OnPush</code> checks a component only when its inputs change by reference, an event originates in it, an observable bound with <code>async</code> emits, or it is marked dirty, which is a major optimisation. Signals refine this: a template that reads a signal is updated precisely when that signal changes, and with zoneless change detection Angular drops zone.js and relies on signals and explicit notifications. Compared with React, Angular tracks bindings and dependencies rather than re-running component functions.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: zone.js triggers change detection from the root, default strategy checks every component, OnPush skips unchanged subtrees. Right: comparison of Angular and React update models.">
+  <text x="10" y="18" class="bd">Default versus OnPush</text>
+  <rect x="10" y="30" width="170" height="32" rx="4" class="w"/><text x="18" y="50" class="sm">event / timer / HTTP done</text>
+  <path class="a" d="M180 46H198"/>
+  <rect x="200" y="30" width="170" height="32" rx="4" class="h"/><text x="208" y="50" class="sm">zone.js notifies Angular</text>
+  <path class="a" d="M285 62V74"/>
+  <rect x="150" y="76" width="130" height="30" rx="4" class="w"/><text x="158" y="96" class="sm">App (checked)</text>
+  <path class="a" d="M180 106L100 128"/><path class="a" d="M250 106L300 128"/>
+  <rect x="30" y="130" width="110" height="30" rx="4" class="w"/><text x="38" y="150" class="sm">Default (checked)</text>
+  <rect x="250" y="130" width="110" height="30" rx="4" class="g"/><text x="258" y="150" class="sm">OnPush (clean)</text>
+  <path class="a" d="M85 160L50 182"/><path class="a" d="M85 160L120 182"/><path class="a" d="M305 160L305 182" style="stroke-dasharray:3 3"/>
+  <rect x="10" y="184" width="80" height="28" rx="4" class="w"/><text x="16" y="203" class="sm">checked</text>
+  <rect x="100" y="184" width="80" height="28" rx="4" class="w"/><text x="106" y="203" class="sm">checked</text>
+  <rect x="265" y="184" width="90" height="28" rx="4" class="g" style="stroke-dasharray:3 3"/><text x="271" y="203" class="sm">skipped</text>
+  <rect x="10" y="226" width="360" height="84" rx="5" class="b"/><text x="18" y="246" class="bd">OnPush re-checks a component when</text><text x="18" y="264" class="sm">an input reference changes · an event fires in it · an async pipe</text><text x="18" y="280" class="sm">emits · markForCheck() is called · a signal it reads changes.</text><text x="18" y="298" class="sm">Use immutable inputs and signals with OnPush.</text>
+  <text x="400" y="18" class="bd">Angular versus React updates</text>
+  <rect x="400" y="30" width="350" height="86" rx="5" class="h"/><text x="408" y="48" class="bd">Angular</text><text x="408" y="66" class="sm">compiled template with binding slots; framework checks bindings</text><text x="408" y="82" class="sm">(zone) or updates what changed (signals); component class</text><text x="408" y="98" class="sm">code does not re-run each update</text>
+  <rect x="400" y="124" width="350" height="86" rx="5" class="g"/><text x="408" y="142" class="bd">React</text><text x="408" y="160" class="sm">re-runs component functions to produce elements, diffs the tree;</text><text x="408" y="176" class="sm">skipping needs memo or the Compiler; state is immutable</text><text x="408" y="192" class="sm">snapshots</text>
+  <rect x="400" y="218" width="350" height="92" rx="5" class="w"/><text x="408" y="238" class="bd">Zoneless Angular (modern)</text><text x="408" y="256" class="sm">provideZonelessChangeDetection(): no zone.js, smaller bundle,</text><text x="408" y="272" class="sm">better debugging and performance; triggers: signals, async pipe,</text><text x="408" y="288" class="sm">markForCheck (verify stability)</text>
+</svg></div>
+<figcaption><b>Key idea.</b> Angular updates DOM bindings it tracks; the question is how it knows when to look: zone.js triggers or signal notifications.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>zone.js:</b> a library that patches async APIs (<code>setTimeout</code>, event listeners, promises, XHR/fetch) to tell Angular’s <code>NgZone</code> when tasks finish. After each, Angular calls <code>ApplicationRef.tick()</code>, running change detection top-down. Downsides: patching overhead, larger bundle, tricky stack traces, and unneeded checks.</li>
+<li><b>Default strategy:</b> every component’s bindings are compared on every cycle (dirty checking of template expressions), cheap per binding but costly in large trees or with expensive template functions. In development mode Angular runs a second pass to catch <code>ExpressionChangedAfterItHasBeenChecked</code> errors.</li>
+<li><b>OnPush strategy:</b> set <code>changeDetection: ChangeDetectionStrategy.OnPush</code>. The component’s view is checked only when marked dirty (see the diagram). Combine with immutable data (new object references) and observables with the <code>async</code> pipe or signals. Mutating an input object in place will not update an OnPush child.</li>
+<li><b>Manual control:</b> <code>ChangeDetectorRef.markForCheck()</code> (mark this and ancestors for the next cycle), <code>detectChanges()</code> (run now), <code>detach()</code>/<code>reattach()</code>; <code>NgZone.runOutsideAngular()</code> for high-frequency events (scroll, animation, third-party libs) that should not trigger detection.</li>
+<li><b>Signals and fine-grained reactivity:</b> reading a signal in a template registers a dependency; when it changes, Angular marks only that view for refresh, making OnPush-like behaviour automatic and enabling precise updates (NG5).</li>
+<li><b>Zoneless:</b> experimental then stable in newer versions <span class="verify">verify the version</span>; remove <code>zone.js</code> from polyfills and use <code>provideZonelessChangeDetection()</code>; code must notify Angular through signals, <code>async</code> pipe, or <code>markForCheck</code>; libraries must be compatible. Benefits: smaller bundles, simpler mental model, better performance.</li>
+<li><b>Performance tips:</b> OnPush everywhere, <code>track</code> in <code>@for</code>, avoid heavy template function calls (use <code>computed</code> or pure pipes), virtual scrolling (<code>cdk-virtual-scroll</code>), <code>@defer</code>, detach rarely changing parts, avoid deep object watching, and profile with Angular DevTools (change detection profiler).</li>
+<li><b>Comparison with React in an interview:</b> React re-renders components and relies on referential equality and memoisation to skip work; Angular compares bound values and can skip OnPush subtrees; signals bring Angular closer to Solid/Vue-style fine-grained reactivity, while React’s compiler automates memoisation (R5).</li>
+<li><b>Common bugs:</b> UI not updating because of in-place mutation under OnPush, updates from outside the zone (some third-party callbacks), <code>ExpressionChangedAfterItHasBeenChecked</code> caused by changing state during the check, and performance problems from impure pipes or getter-heavy templates.</li>
+<li><b>Testing change detection:</b> <code>fixture.detectChanges()</code> in tests; <code>ComponentFixtureAutoDetect</code>; zoneless testing helpers <span class="verify">verify</span>.</li>
+<li><b>Migrating towards signals:</b> replace <code>@Input</code> with <code>input()</code>, observables in templates with <code>toSignal</code>, derived getters with <code>computed</code>, and adopt OnPush then zoneless incrementally.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Mutating objects passed to OnPush components and wondering why the view is stale.</li>
+<li>Calling expensive methods in templates under the default strategy.</li>
+<li>Believing zone.js is part of the language; it is a library that Angular is moving away from.</li>
+<li>Running high-frequency listeners inside the zone, triggering constant change detection.</li>
+<li>Ignoring <code>ExpressionChangedAfterItHasBeenChecked</code> errors instead of fixing the data flow.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What triggers change detection?</dt><dd>With zone.js, any completed async task in the zone (events, timers, HTTP); in zoneless, signal changes and explicit notifications.</dd>
+<dt>When does an OnPush component update?</dt><dd>On input reference change, an event from it or its children, an <code>async</code> pipe emission, <code>markForCheck</code>, or a signal change in its template.</dd>
+<dt>How do you run code without triggering change detection?</dt><dd><code>NgZone.runOutsideAngular()</code> (or zoneless), then re-enter or update a signal when a UI update is needed.</dd>
+<dt>Why is Angular’s model different from React’s?</dt><dd>Angular keeps compiled templates and checks or tracks bindings; React re-executes component functions and diffs element trees.</dd>
+</dl></div>
+</section>
+
+<!-- ============ NG5 ============ -->
+<section class="q" id="ng5">
+<header class="qh">
+  <div class="qrow"><span class="qid">NG5</span><span class="tag added">Added</span></div>
+  <h2>Signals and reactivity</h2>
+  <p class="qtext">“What are Angular signals? Explain <code>signal</code>, <code>computed</code>, <code>effect</code>, signal inputs, <code>model</code>, <code>toSignal</code> and <code>toObservable</code>. When do you use signals versus RxJS?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A signal is a reactive value container: I read it by calling it, <code>count()</code>, and write with <code>set</code> or <code>update</code>. Reading a signal inside a <code>computed</code>, an <code>effect</code> or a template automatically registers a dependency, so when the signal changes, only the derived values and views that depend on it update, with lazy and memoised computation. <code>computed</code> creates read-only derived state; <code>effect</code> runs side effects when dependencies change. Angular also offers signal-based inputs, outputs, two-way <code>model</code> and view queries. I use signals for synchronous state and derived values, and RxJS for asynchronous event streams that need operators such as debouncing, cancellation and combination; <code>toSignal</code> and <code>toObservable</code> bridge the two.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a dependency graph of signals: price and qty feed a computed total, which feeds a template and an effect. Right: when to use signals versus RxJS with the bridging functions.">
+  <text x="10" y="18" class="bd">Signal graph (push-pull, glitch free)</text>
+  <rect x="10" y="30" width="110" height="36" rx="5" class="b"/><text x="18" y="52" class="mono" style="font-size:10px">price = signal(9)</text>
+  <rect x="10" y="78" width="110" height="36" rx="5" class="b"/><text x="18" y="100" class="mono" style="font-size:10.5px">qty = signal(2)</text>
+  <path class="a" d="M120 48L168 78"/><path class="a" d="M120 96L168 86"/>
+  <rect x="170" y="62" width="200" height="36" rx="5" class="h"/><text x="178" y="84" class="mono" style="font-size:10.5px">total = computed(…)</text>
+  <path class="a" d="M270 98L220 132"/><path class="a" d="M270 98L330 132"/>
+  <rect x="150" y="134" width="120" height="34" rx="4" class="g"/><text x="158" y="155" class="sm">template {{ total() }}</text>
+  <rect x="280" y="134" width="90" height="34" rx="4" class="w"/><text x="288" y="155" class="mono" style="font-size:10.5px">effect(…)</text>
+  <rect x="10" y="182" width="360" height="128" rx="5" class="b"/><text x="18" y="202" class="mono" style="font-size:10px">count = signal(0);</text><text x="18" y="218" class="mono" style="font-size:10px">double = computed(() =&gt; this.count() * 2);</text><text x="18" y="234" class="mono" style="font-size:10px">inc() { this.count.update(c =&gt; c + 1); }</text><text x="18" y="250" class="mono" style="font-size:10px">constructor() { effect(() =&gt; log(this.count())); }</text><text x="18" y="272" class="sm">computed is lazy and cached; effect runs after changes (for side</text><text x="18" y="288" class="sm">effects: logging, storage, DOM); do not set signals in effects casually.</text><text x="18" y="304" class="sm">Like useState/useMemo/useEffect, auto dependencies.</text>
+  <text x="400" y="18" class="bd">Signals versus RxJS</text>
+  <rect x="400" y="30" width="170" height="106" rx="5" class="g"/><text x="408" y="48" class="bd">Signals</text><text x="408" y="66" class="sm">current value, sync</text><text x="408" y="82" class="sm">derived state</text><text x="408" y="98" class="sm">component state</text><text x="408" y="114" class="sm">fine-grained updates</text><text x="408" y="130" class="sm">simple mental model</text>
+  <rect x="580" y="30" width="170" height="106" rx="5" class="h"/><text x="588" y="48" class="bd">RxJS</text><text x="588" y="66" class="sm">events over time</text><text x="588" y="82" class="sm">async, cancellation</text><text x="588" y="98" class="sm">debounce, retry, merge</text><text x="588" y="114" class="sm">HTTP, websockets</text><text x="588" y="130" class="sm">rich operators</text>
+  <rect x="400" y="146" width="350" height="64" rx="5" class="w"/><text x="408" y="166" class="bd">Bridges</text><text x="408" y="184" class="mono" style="font-size:10px">const s = toSignal(obs$, { initialValue: [] });</text><text x="408" y="200" class="mono" style="font-size:10px">const o$ = toObservable(signal);</text>
+  <rect x="400" y="218" width="350" height="92" rx="5" class="b"/><text x="408" y="238" class="bd">Other signal APIs</text><text x="408" y="256" class="sm">input(), input.required(), output(), model() (two-way)</text><text x="408" y="272" class="sm">viewChild(), contentChild(), linkedSignal(), resource() (async data)</text><text x="408" y="288" class="sm">verify availability by version; NgRx SignalStore</text>
+</svg></div>
+<figcaption><b>Rule.</b> Signals for state you read now; observables for streams of events you react to over time.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Writable signals:</b> <code>signal(initial)</code>; read with <code>()</code>; <code>set(value)</code>, <code>update(fn)</code>; for objects and arrays update immutably (<code>update(list =&gt; [...list, item])</code>) so equality checks detect changes; custom <code>equal</code> option available.</li>
+<li><b><code>computed()</code>:</b> pure derived value, lazily evaluated, memoised until dependencies change; dependencies are tracked automatically at run time (including conditional branches); no side effects inside.</li>
+<li><b><code>effect()</code>:</b> runs after change detection when its dependencies change; used for logging, syncing to <code>localStorage</code>, imperative DOM or third-party library updates; avoid using effects to propagate state (use <code>computed</code>); writing signals inside effects requires care (<code>allowSignalWrites</code> in some versions) <span class="verify">verify</span>; cleanup via the <code>onCleanup</code> callback; requires an injection context.</li>
+<li><b>Signal inputs, outputs and models:</b> <code>input()</code> returns a read-only signal, making derived values easy with <code>computed</code>; <code>model()</code> gives writable two-way bound signals; signal queries <code>viewChild()</code> update reactively.</li>
+<li><b>Interop with RxJS:</b> <code>toSignal(observable$, { initialValue })</code> subscribes (and unsubscribes on destroy) and exposes the latest value as a signal; <code>toObservable(signal)</code> emits changes asynchronously; <code>takeUntilDestroyed()</code> for manual subscriptions. Prefer the <code>async</code> pipe or <code>toSignal</code> in templates.</li>
+<li><b>Async data with signals:</b> <code>resource()</code>/<code>httpResource()</code> (newer APIs) provide signal-based async state (value, status, error, reload) similar to TanStack Query-lite; evolving <span class="verify">verify current API status</span>.</li>
+<li><b>Why signals matter:</b> fine-grained updates reduce work, remove many <code>ExpressionChanged</code> issues, make OnPush/zoneless natural, and provide a simpler alternative to <code>BehaviorSubject</code> boilerplate for state.</li>
+<li><b>Signals and RxJS division of labour:</b> HTTP calls, user input streams, websockets, and anything with time-based operators remain observable-based; local UI state, derived values, and shared service state become signals. They complement each other.</li>
+<li><b>State management with signals:</b> a service with private writable signals and public readonly accessors (<code>asReadonly()</code>), derived <code>computed</code> selectors, and methods as actions; NgRx SignalStore offers structure (state, computed, methods, entities) for larger features.</li>
+<li><b>Comparison with other frameworks:</b> similar to Solid signals, Vue refs, Preact signals; React’s hooks re-render the component rather than tracking fine-grained dependencies; React’s compiler and <code>useSyncExternalStore</code> approach differ. TC39 has a signals proposal <span class="verify">verify status</span>.</li>
+<li><b>Debugging and testing:</b> Angular DevTools shows signal graphs in newer versions; tests set signals directly and call <code>fixture.detectChanges()</code>; effects can be flushed with <code>TestBed.flushEffects()</code> <span class="verify">verify</span>.</li>
+<li><b>Gotchas:</b> forgetting to call the signal (<code>count</code> versus <code>count()</code>), mutating arrays in place, creating effects outside an injection context, and using effects for derived state.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Forgetting the parentheses when reading a signal in templates or code.</li>
+<li>Mutating an array or object held in a signal in place; equality does not change.</li>
+<li>Using <code>effect()</code> to compute derived state instead of <code>computed()</code>.</li>
+<li>Claiming signals replace RxJS entirely.</li>
+<li>Creating effects dynamically in places without an injection context.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Signal versus <code>BehaviorSubject</code>?</dt><dd>A signal is synchronous with an always-available value and automatic dependency tracking; a <code>BehaviorSubject</code> is an observable with a current value, using subscriptions and operators.</dd>
+<dt>Why is <code>computed</code> lazy and memoised?</dt><dd>It recalculates only when read after a dependency changed, avoiding unnecessary work and giving glitch-free derived values.</dd>
+<dt>How do signals help change detection?</dt><dd>Templates that read signals are updated only when those signals change, enabling OnPush-like precision and zoneless apps.</dd>
+<dt>When would you still choose RxJS?</dt><dd>For debounced search, cancellation with <code>switchMap</code>, merging event sources, retries, polling and websocket streams.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Building applications</h1>
+
+<!-- ============ NG6 ============ -->
+<section class="q" id="ng6">
+<header class="qh">
+  <div class="qrow"><span class="qid">NG6</span><span class="tag added">Added</span></div>
+  <h2>RxJS essentials</h2>
+  <p class="qtext">“What is RxJS and why does Angular use it? Explain observables, subscriptions, hot versus cold, subjects, the key operators (<code>map</code>, <code>switchMap</code>, <code>mergeMap</code>, <code>concatMap</code>, <code>exhaustMap</code>, <code>debounceTime</code>, <code>combineLatest</code>), error handling and avoiding memory leaks.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“RxJS is a library for composing asynchronous and event-based programs with observables: lazy streams of values over time that I can transform with operators and subscribe to. Angular uses it for HTTP, router events, form value changes and reactive state. An observable does nothing until subscribed, and each subscription runs the producer again, which is a cold observable; subjects multicast to many subscribers. The operators I reach for are <code>map</code> and <code>filter</code> for transforming, <code>debounceTime</code> and <code>distinctUntilChanged</code> for input, <code>combineLatest</code> for joining streams, and the flattening operators for streams of requests: <code>switchMap</code> cancels the previous inner request, ideal for typeahead; <code>concatMap</code> queues; <code>mergeMap</code> runs in parallel; <code>exhaustMap</code> ignores new ones until done, good for submit buttons. I avoid leaks with the <code>async</code> pipe, <code>takeUntilDestroyed</code> and by always completing or unsubscribing.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Left: marble diagrams comparing switchMap, mergeMap, concatMap and exhaustMap behaviour on outer clicks and inner requests. Right: typeahead pipeline and subscription management options.">
+  <text x="10" y="18" class="bd">Flattening operators (outer events → inner requests)</text>
+  <text x="10" y="42" class="sm">clicks</text><line x1="60" y1="38" x2="370" y2="38" class="d"/><circle cx="90" cy="38" r="6" class="fillh"/><circle cx="150" cy="38" r="6" class="fillh"/><circle cx="210" cy="38" r="6" class="fillh"/>
+  <text x="10" y="78" class="mono" style="font-size:10px">switchMap</text><rect x="90" y="68" width="30" height="14" class="x"/><rect x="150" y="68" width="30" height="14" class="x"/><rect x="210" y="68" width="110" height="14" class="g"/><text x="330" y="80" class="sm">cancels previous</text>
+  <text x="10" y="106" class="mono" style="font-size:10px">mergeMap</text><rect x="90" y="96" width="100" height="14" class="g"/><rect x="150" y="112" width="100" height="14" class="g"/><rect x="210" y="128" width="100" height="14" class="g"/><text x="320" y="106" class="sm">parallel</text>
+  <text x="10" y="170" class="mono" style="font-size:10px">concatMap</text><rect x="90" y="160" width="60" height="14" class="g"/><rect x="150" y="160" width="60" height="14" class="g"/><rect x="210" y="160" width="60" height="14" class="g"/><text x="280" y="172" class="sm">queued in order</text>
+  <text x="10" y="200" class="mono" style="font-size:10px">exhaustMap</text><rect x="90" y="190" width="60" height="14" class="g"/><rect x="150" y="190" width="30" height="14" class="x"/><rect x="210" y="190" width="60" height="14" class="g"/><text x="280" y="202" class="sm">ignores while busy</text>
+  <rect x="10" y="218" width="360" height="100" rx="5" class="w"/><text x="18" y="238" class="bd">Which to choose</text><text x="18" y="256" class="sm"><tspan class="bd">switchMap</tspan> latest wins: search, route params</text><text x="18" y="272" class="sm"><tspan class="bd">concatMap</tspan> order matters: sequential saves</text><text x="18" y="288" class="sm"><tspan class="bd">mergeMap</tspan> independent parallel work</text><text x="18" y="304" class="sm"><tspan class="bd">exhaustMap</tspan> block repeats: login or submit</text>
+  <text x="400" y="18" class="bd">Typeahead pipeline</text>
+  <rect x="400" y="30" width="350" height="100" rx="5" class="b"/><text x="408" y="48" class="mono" style="font-size:10px">results$ = this.term.valueChanges.pipe(</text><text x="408" y="64" class="mono" style="font-size:10px">  debounceTime(300), distinctUntilChanged(),</text><text x="408" y="80" class="mono" style="font-size:10px">  filter(t =&gt; t.length &gt; 1),</text><text x="408" y="96" class="mono" style="font-size:10px">  switchMap(t =&gt; this.api.search(t).pipe(</text><text x="408" y="112" class="mono" style="font-size:10px">    catchError(() =&gt; of([])))));</text>
+  <rect x="400" y="140" width="350" height="82" rx="5" class="g"/><text x="408" y="160" class="bd">Avoiding leaks</text><text x="408" y="178" class="sm">template: {{ results$ | async }} (auto unsubscribe)</text><text x="408" y="194" class="sm">code: takeUntilDestroyed(), toSignal(), or unsubscribe in</text><text x="408" y="210" class="sm">ngOnDestroy; HTTP observables complete by themselves</text>
+  <rect x="400" y="232" width="350" height="86" rx="5" class="w"/><text x="408" y="252" class="bd">Hot versus cold</text><text x="408" y="270" class="sm">cold: each subscriber triggers its own execution (HTTP call)</text><text x="408" y="286" class="sm">hot: shared source (events, Subject); late subscribers miss</text><text x="408" y="302" class="sm">past values. shareReplay / share turn cold into shared.</text>
+</svg></div>
+<figcaption><b>Idea.</b> Streams are values over time; operators compose them; the flattening operator you pick defines concurrency behaviour.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Observable basics:</b> lazy push-based collections that emit <code>next</code> values, then <code>error</code> or <code>complete</code>; <code>subscribe()</code> returns a <code>Subscription</code> with <code>unsubscribe()</code>; observables can be unicast (cold) or multicast. Differences from promises: multiple values, lazy, cancellable, operators, synchronous or asynchronous delivery.</li>
+<li><b>Creation and conversion:</b> <code>of</code>, <code>from</code>, <code>interval</code>, <code>fromEvent</code>, <code>defer</code>, <code>timer</code>, <code>EMPTY</code>; <code>firstValueFrom</code>/<code>lastValueFrom</code> convert to promises (needed for <code>await</code>); <code>toSignal</code> for templates.</li>
+<li><b>Subjects:</b> <code>Subject</code> (multicast, no replay), <code>BehaviorSubject</code> (current value, replays latest), <code>ReplaySubject</code> (replays N), <code>AsyncSubject</code>; commonly used for service state and event buses; expose as observables (<code>asObservable()</code>) to prevent outside <code>next</code> calls.</li>
+<li><b>Transformation and filtering:</b> <code>map</code>, <code>tap</code> (side effects), <code>filter</code>, <code>take</code>, <code>takeUntil</code>, <code>first</code>, <code>distinctUntilChanged</code>, <code>debounceTime</code>, <code>throttleTime</code>, <code>scan</code> (reducer), <code>startWith</code>.</li>
+<li><b>Combination:</b> <code>combineLatest</code> (latest of each, emits when any emits after all have emitted), <code>forkJoin</code> (waits for all to complete, last values; like <code>Promise.all</code>), <code>merge</code>, <code>concat</code>, <code>zip</code>, <code>withLatestFrom</code>, <code>race</code>.</li>
+<li><b>Error handling and retry:</b> <code>catchError</code> (return a fallback observable or rethrow), <code>retry</code> with delay/backoff config, <code>finalize</code>; errors terminate the stream, so catch inside the inner observable (as in the typeahead example) to keep the outer stream alive.</li>
+<li><b>Sharing and caching:</b> <code>shareReplay({ bufferSize: 1, refCount: true })</code> to share an HTTP call among subscribers; be careful with stale caches and memory; <code>share</code> without replay for hot streams.</li>
+<li><b>Memory leaks:</b> forgetting to unsubscribe from long-lived observables (router events, intervals, subjects, valueChanges) in components leaves handlers and closures alive; fixes: <code>async</code> pipe, <code>takeUntilDestroyed(destroyRef)</code>, <code>takeUntil(destroy$)</code> pattern, or converting to signals (J25).</li>
+<li><b>Schedulers and testing:</b> marble tests with <code>TestScheduler</code> (<code>cold</code>, <code>hot</code>, <code>expectObservable</code>) verify time-based logic; <code>fakeAsync</code> and <code>tick</code> in Angular tests.</li>
+<li><b>Angular integration:</b> <code>HttpClient</code> returns cold observables (one request per subscription); <code>Router.events</code>, <code>ActivatedRoute.paramMap</code>, <code>FormControl.valueChanges</code>, <code>EventEmitter</code> (observable-like) all use RxJS.</li>
+<li><b>Comparison with React:</b> React uses promises, async functions, effects and libraries for the same problems; RxJS gives a uniform operator toolkit. In React, TanStack Query handles caching and cancellation for requests; RxJS can be used but is not idiomatic (J19, E4).</li>
+<li><b>Common mistakes:</b> nested subscribes (“callback hell”) instead of flattening operators, wrong operator choice causing race conditions or duplicate requests, unhandled errors killing streams, and subscribing in templates and components twice.</li>
+<li><b>Style guidance:</b> keep pipelines readable, name streams with a trailing <code>$</code>, split complex pipelines into named observables, and keep side effects in <code>tap</code> or subscribers deliberately.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Nested <code>subscribe</code> calls instead of <code>switchMap</code>/<code>mergeMap</code>.</li>
+<li>Using <code>mergeMap</code> for typeahead and getting out-of-order or stale results.</li>
+<li>Letting an inner error complete the outer stream; catch inside the inner pipe.</li>
+<li>Assuming every observable needs manual unsubscription (HTTP completes) or that none do (intervals and subjects need it).</li>
+<li>Using <code>BehaviorSubject</code> everywhere when a signal is simpler.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt><code>switchMap</code> versus <code>mergeMap</code>?</dt><dd><code>switchMap</code> cancels the previous inner observable when a new value arrives; <code>mergeMap</code> keeps all inner observables running concurrently.</dd>
+<dt><code>combineLatest</code> versus <code>forkJoin</code>?</dt><dd><code>combineLatest</code> emits whenever any source emits (after each has emitted once); <code>forkJoin</code> waits for all to complete and emits the last values once.</dd>
+<dt>Observable versus promise?</dt><dd>Observables are lazy, cancellable, can emit many values and have operators; promises are eager, single-valued and not cancellable.</dd>
+<dt>How do you avoid duplicate HTTP calls from multiple subscribers?</dt><dd>Share the observable with <code>shareReplay</code> or cache in a service, or convert to a signal once.</dd>
+</dl></div>
+</section>
+
+<!-- ============ NG7 ============ -->
+<section class="q" id="ng7">
+<header class="qh">
+  <div class="qrow"><span class="qid">NG7</span><span class="tag added">Added</span></div>
+  <h2>Routing, guards and lazy loading</h2>
+  <p class="qtext">“How does the Angular router work? Define routes, nested routes, route parameters, guards, resolvers, lazy loading, preloading strategies and component input binding. How do you protect routes and structure large applications?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“The Angular router maps URLs to components using a route configuration; <code>&lt;router-outlet&gt;</code> renders the matched component, nested routes use child outlets, and parameters are read from the route or bound directly to component inputs. Functional guards such as <code>canActivate</code> decide whether navigation proceeds, for authentication and authorisation; <code>canDeactivate</code> warns about unsaved changes; resolvers fetch data before activation. For performance I lazy-load feature routes with <code>loadComponent</code> or <code>loadChildren</code> so code downloads on demand, and use a preloading strategy to fetch likely routes in the background. Guards are a UX layer; authorisation must still be enforced by the backend.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: route configuration with lazy children and guards. Right: the navigation lifecycle: match, guards, resolve, activate, render, with lazy loading.">
+  <text x="10" y="18" class="bd">Route configuration</text>
+  <rect x="10" y="30" width="360" height="156" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10px">export const routes: Routes = [</text><text x="18" y="64" class="mono" style="font-size:10px">  { path: '', component: HomeComponent },</text><text x="18" y="80" class="mono" style="font-size:10px">  { path: 'products/:id', component: ProductComponent },</text><text x="18" y="96" class="mono" style="font-size:10px">  { path: 'admin', canActivate: [authGuard],</text><text x="18" y="112" class="mono" style="font-size:10px">    loadChildren: () =&gt; import('./admin/routes')</text><text x="18" y="128" class="mono" style="font-size:10px">      .then(m =&gt; m.ADMIN_ROUTES) },</text><text x="18" y="144" class="mono" style="font-size:10px">  { path: '**', component: NotFoundComponent } ];</text><text x="18" y="166" class="mono" style="font-size:10px">provideRouter(routes, withComponentInputBinding())</text>
+  <rect x="10" y="196" width="360" height="114" rx="5" class="g"/><text x="18" y="216" class="bd">Functional guard</text><text x="18" y="234" class="mono" style="font-size:10px">export const authGuard: CanActivateFn = () =&gt; {</text><text x="18" y="250" class="mono" style="font-size:10px">  const auth = inject(AuthService);</text><text x="18" y="266" class="mono" style="font-size:10px">  return auth.ok() || inject(Router).parseUrl('/login');</text><text x="18" y="282" class="mono" style="font-size:10px">};</text><text x="18" y="302" class="sm">return true, false, or a UrlTree to redirect</text>
+  <text x="400" y="18" class="bd">Navigation lifecycle</text>
+  <rect x="400" y="30" width="350" height="32" rx="4" class="b"/><text x="408" y="51" class="sm"><tspan class="bd">1 Match</tspan> URL → route tree (first match wins)</text>
+  <rect x="400" y="66" width="350" height="32" rx="4" class="h"/><text x="408" y="87" class="sm"><tspan class="bd">2 Lazy load</tspan> download route chunk if needed</text>
+  <rect x="400" y="102" width="350" height="32" rx="4" class="w"/><text x="408" y="123" class="sm"><tspan class="bd">3 Guards</tspan> canMatch, canActivate, canActivateChild</text>
+  <rect x="400" y="138" width="350" height="32" rx="4" class="w"/><text x="408" y="159" class="sm"><tspan class="bd">4 Resolve</tspan> fetch data before activation</text>
+  <rect x="400" y="174" width="350" height="32" rx="4" class="g"/><text x="408" y="195" class="sm"><tspan class="bd">5 Activate</tspan> create components in outlets</text>
+  <rect x="400" y="210" width="350" height="32" rx="4" class="g"/><text x="408" y="231" class="sm"><tspan class="bd">6 Events</tspan> NavigationEnd; params available</text>
+  <rect x="400" y="252" width="350" height="58" rx="5" class="x"/><text x="408" y="272" class="bd">Preloading</text><text x="408" y="290" class="sm">PreloadAllModules or custom strategy to fetch lazy routes in the</text><text x="408" y="304" class="sm">background after the first load; or preload on hover/idle</text>
+</svg></div>
+<figcaption><b>Compare.</b> Similar to React Router with loaders: nested routes, guards ≈ loader redirects, lazy loading ≈ <code>lazy()</code>.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Configuration and navigation:</b> <code>provideRouter(routes, ...features)</code>; <code>routerLink</code> directive and <code>Router.navigate</code>/<code>navigateByUrl</code>; <code>routerLinkActive</code> for active styles; wildcard route for 404; redirects (<code>redirectTo</code> with <code>pathMatch</code>); route titles (<code>title</code>), data and static <code>data</code> property; relative navigation.</li>
+<li><b>Parameters:</b> path params (<code>:id</code>), query params, fragments; read via <code>ActivatedRoute.paramMap</code> observables (they update when the same component is reused), snapshot for static reads, or with <code>withComponentInputBinding()</code> bind route params, query params and resolver data directly to component <code>input()</code>s.</li>
+<li><b>Guards (functional):</b> <code>canActivate</code>, <code>canActivateChild</code>, <code>canDeactivate</code> (unsaved changes), <code>canMatch</code> (decide whether a route config applies, enabling role-based route variants and avoiding loading code), and legacy <code>canLoad</code>. They use <code>inject()</code>, can return observables, promises, booleans or a <code>UrlTree</code> for redirects.</li>
+<li><b>Resolvers:</b> <code>ResolveFn</code> fetches data before the route activates, avoiding empty states but delaying navigation; modern alternatives: load in the component with signals and show skeletons; choose by UX.</li>
+<li><b>Lazy loading:</b> <code>loadComponent</code> for a single standalone component, <code>loadChildren</code> for route trees; code-split per route with the builder automatically; combine with <code>@defer</code> for in-page splitting. Preloading strategies (<code>withPreloading(PreloadAllModules)</code> or custom) trade bandwidth for speed.</li>
+<li><b>Nested routes and outlets:</b> child routes render in the parent’s <code>&lt;router-outlet&gt;</code>; named outlets for secondary routes (modals, side panels); layout components with shared headers and sidebars.</li>
+<li><b>Route-level providers:</b> <code>providers</code> on a route create an environment injector for that subtree, scoping services to the feature (NG3).</li>
+<li><b>State and URL:</b> keep shareable state (filters, pagination) in query parameters; <code>queryParamsHandling: 'merge'</code>; avoid storing large state in the URL; use <code>Router.navigate</code> with <code>replaceUrl</code> for incremental changes.</li>
+<li><b>Security:</b> guards improve UX but can be bypassed by calling APIs directly; enforce authorisation on the server; avoid exposing admin routes in navigation for unauthorised users but never rely on hiding; handle token expiry with interceptors (NG9) (N11).</li>
+<li><b>Scroll and focus:</b> <code>withInMemoryScrolling</code> for scroll restoration and anchor scrolling; manage focus and title for accessibility after navigation (R13).</li>
+<li><b>Application structure:</b> feature folders with their own routes files; shared core services and UI libraries; avoid circular imports between features; use Nx module boundaries for large repos (A3).</li>
+<li><b>Router events and loading indicators:</b> subscribe to <code>NavigationStart</code>/<code>NavigationEnd</code>/<code>NavigationError</code> to show progress; <code>withViewTransitions()</code> for view transition API support <span class="verify">verify</span>.</li>
+<li><b>Testing routes:</b> <code>RouterTestingHarness</code> or <code>RouterTestingModule</code>; test guards as functions with <code>TestBed.runInInjectionContext</code>.</li>
+<li><b>SSR considerations:</b> guards and resolvers run on the server too; avoid browser-only APIs; redirects become HTTP redirects (NG10).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Treating route guards as security rather than UX.</li>
+<li>Reading <code>route.snapshot.params</code> in a component reused across different ids, so it never updates.</li>
+<li>Eagerly importing lazy feature modules elsewhere, which pulls them into the main bundle.</li>
+<li>Resolvers that block navigation on slow requests with no feedback.</li>
+<li>Route order mistakes: the wildcard route placed before specific routes.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt><code>canActivate</code> versus <code>canMatch</code>?</dt><dd><code>canMatch</code> decides whether a route configuration is considered at all (and avoids loading its code); <code>canActivate</code> runs after matching to allow or block activation.</dd>
+<dt>How do you get route params in a component?</dt><dd>Inject <code>ActivatedRoute</code> and observe <code>paramMap</code>, or bind them to inputs with component input binding.</dd>
+<dt>How do you lazy load a feature?</dt><dd><code>loadChildren: () =&gt; import('./feature/routes').then(m =&gt; m.ROUTES)</code>; the build creates a separate chunk.</dd>
+<dt>How do you warn about unsaved changes?</dt><dd>A <code>canDeactivate</code> guard that checks the component’s dirty state and asks for confirmation.</dd>
+</dl></div>
+</section>
+
+<!-- ============ NG8 ============ -->
+<section class="q" id="ng8">
+<header class="qh">
+  <div class="qrow"><span class="qid">NG8</span><span class="tag added">Added</span></div>
+  <h2>Forms</h2>
+  <p class="qtext">“Compare template-driven and reactive forms in Angular. How do typed forms, <code>FormGroup</code>, <code>FormArray</code>, validators, async validators and custom form controls (<code>ControlValueAccessor</code>) work? How do they compare with React Hook Form?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Angular offers two forms approaches. Template-driven forms use directives like <code>ngModel</code> in the template and are quick for simple forms. Reactive forms define the form model in code with <code>FormControl</code>, <code>FormGroup</code> and <code>FormArray</code>; they are explicit, testable, strongly typed in recent versions, and the better choice for complex forms with dynamic fields and custom validation. The model exposes values, validity, dirty and touched state, and observables such as <code>valueChanges</code>. Validators are functions, sync or async, applied to controls or groups, and custom inputs integrate through <code>ControlValueAccessor</code>. Compared with React Hook Form, Angular’s forms are built in and model-driven, whereas RHF registers uncontrolled inputs and relies on a schema library.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: a reactive form model of FormGroup with FormControls and a FormArray bound to a template. Right: validator types and state flags.">
+  <text x="10" y="18" class="bd">Reactive form model</text>
+  <rect x="10" y="30" width="360" height="130" rx="5" class="b"/><text x="18" y="48" class="mono" style="font-size:10px">form = this.fb.nonNullable.group({</text><text x="18" y="64" class="mono" style="font-size:10px">  email: ['', [Validators.required, Validators.email]],</text><text x="18" y="80" class="mono" style="font-size:10px">  password: ['', [Validators.minLength(8)]],</text><text x="18" y="96" class="mono" style="font-size:10px">  tags: this.fb.array&lt;string&gt;([]),</text><text x="18" y="112" class="mono" style="font-size:10px">});</text><text x="18" y="136" class="mono" style="font-size:10px">&lt;form [formGroup]="form" (ngSubmit)="save()"&gt;</text><text x="18" y="152" class="mono" style="font-size:10px">  &lt;input formControlName="email" /&gt;</text>
+  <rect x="10" y="170" width="360" height="140" rx="5" class="g"/><text x="18" y="190" class="bd">Template-driven vs reactive</text><text x="18" y="208" class="sm"><tspan class="bd">Template-driven</tspan> ngModel, logic in template, async setup,</text><text x="18" y="224" class="sm">good for small forms, harder to test and to type</text><text x="18" y="244" class="sm"><tspan class="bd">Reactive</tspan> model in TypeScript, explicit, synchronous, typed,</text><text x="18" y="260" class="sm">dynamic controls, easy unit tests, composable validators</text><text x="18" y="280" class="sm">Prefer reactive for anything non-trivial. Signal-based forms are</text><text x="18" y="296" class="sm">being explored in newer versions (verify).</text>
+  <text x="400" y="18" class="bd">Validation and state</text>
+  <rect x="400" y="30" width="350" height="100" rx="5" class="h"/><text x="408" y="48" class="bd">Validators</text><text x="408" y="66" class="sm">built in: required, min, max, minLength, pattern, email</text><text x="408" y="82" class="mono" style="font-size:10px">const noSpaces: ValidatorFn = c =&gt;</text><text x="408" y="98" class="mono" style="font-size:10px">  /\s/.test(c.value) ? { spaces: true } : null;</text><text x="408" y="116" class="sm">group validators compare fields; async validators</text><text x="408" y="128" class="sm">return Observable/Promise (username taken), debounced</text>
+  <rect x="400" y="140" width="350" height="82" rx="5" class="w"/><text x="408" y="160" class="bd">Control state</text><text x="408" y="178" class="sm">valid / invalid / pending · pristine / dirty · untouched / touched</text><text x="408" y="194" class="sm">errors object · value, valueChanges, statusChanges · setValue,</text><text x="408" y="210" class="sm">patchValue, reset, markAllAsTouched, disable, updateOn: 'blur'</text>
+  <rect x="400" y="232" width="350" height="78" rx="5" class="b"/><text x="408" y="252" class="bd">ControlValueAccessor</text><text x="408" y="270" class="sm">lets a custom component act as a form control: implements</text><text x="408" y="286" class="mono" style="font-size:10px">writeValue, registerOnChange, registerOnTouched,</text><text x="408" y="300" class="mono" style="font-size:10px">setDisabledState; provided via NG_VALUE_ACCESSOR</text>
+</svg></div>
+<figcaption><b>Compare.</b> Angular forms are a model-driven, built-in system; React Hook Form is a library using refs and schemas (E6).</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Reactive building blocks:</b> <code>FormControl</code> (single value), <code>FormGroup</code> (named controls), <code>FormArray</code> (dynamic list), <code>FormBuilder</code> (<code>fb.group</code>), <code>FormRecord</code> (dynamic keys). Since v14 forms are strictly typed: the model type is inferred, <code>nonNullable</code> avoids <code>null</code> resets, and <code>getRawValue()</code> includes disabled controls.</li>
+<li><b>Template binding:</b> <code>[formGroup]</code>, <code>formControlName</code>, <code>[formControl]</code>, <code>formArrayName</code>, <code>formGroupName</code>; display errors with <code>@if (form.controls.email.errors?.['required'] &amp;&amp; touched)</code>; <code>ngSubmit</code> on the form; <code>novalidate</code> to use Angular’s validation UI.</li>
+<li><b>Validators:</b> synchronous <code>ValidatorFn</code> returns an error map or <code>null</code>; group-level cross-field validators; asynchronous <code>AsyncValidatorFn</code> with a <code>pending</code> status; compose with <code>Validators.compose</code>; <code>updateOn: 'blur' | 'submit'</code> reduces noise; validators should be pure and fast.</li>
+<li><b>Dynamic forms:</b> add and remove controls (<code>formArray.push</code>, <code>removeAt</code>), build forms from JSON schemas or metadata, conditionally enable/disable controls with <code>valueChanges</code>, and keep the model and template in sync with <code>@for</code> and <code>track</code>.</li>
+<li><b>Custom form controls:</b> implement <code>ControlValueAccessor</code> for rating inputs, date pickers or wrappers over third-party widgets; provide <code>NG_VALUE_ACCESSOR</code> with <code>forwardRef</code>; also provide <code>NG_VALIDATORS</code> if the control validates itself; Angular Material components already implement this.</li>
+<li><b>Template-driven forms:</b> <code>FormsModule</code>, <code>[(ngModel)]</code>, <code>ngForm</code> template references, validation attributes (<code>required</code>, <code>pattern</code>), simple but model is created asynchronously and harder to type and test.</li>
+<li><b>UX and accessibility:</b> show errors after touch or submit, associate messages with inputs (<code>aria-describedby</code>, <code>aria-invalid</code>), focus the first invalid control on submit, avoid disabling the submit button as the only feedback, and use <code>autocomplete</code> attributes (R8, R13).</li>
+<li><b>Server integration:</b> map server validation errors back to controls with <code>control.setErrors({ server: 'msg' })</code>; avoid duplicating rules by sharing schemas or generating validators from OpenAPI where practical (E6, T11).</li>
+<li><b>Performance:</b> big forms with many controls can be slow under default change detection; use OnPush, avoid heavy validators, <code>updateOn: 'blur'</code>, and unsubscribe from <code>valueChanges</code> (use <code>takeUntilDestroyed</code>).</li>
+<li><b>Comparison with React Hook Form:</b> Angular owns the form model (a tree of controls with state) and integrates with templates and DI; RHF uses uncontrolled inputs, a resolver for Zod/Yup, and minimal re-renders. Angular’s reactive forms are more verbose but more structured; both support field arrays, async validation and custom controls (<code>Controller</code> ≈ ControlValueAccessor).</li>
+<li><b>Testing:</b> unit-test the form model and validators without the DOM; component tests set values and assert error display; test custom controls through a host component.</li>
+<li><b>Signal forms:</b> the Angular team has been developing signal-based forms to complement or replace the current API <span class="verify">verify the current status</span>.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Choosing template-driven forms for complex, dynamic forms and fighting the lack of explicit model.</li>
+<li>Forgetting to unsubscribe from <code>valueChanges</code> and leaking subscriptions.</li>
+<li>Putting heavy logic in validators that run on every keystroke.</li>
+<li>Mutating form values directly instead of using <code>setValue</code>/<code>patchValue</code>.</li>
+<li>Hiding validation messages from assistive technology by not associating them with fields.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt><code>setValue</code> versus <code>patchValue</code>?</dt><dd><code>setValue</code> requires the whole model shape; <code>patchValue</code> updates only the provided fields.</dd>
+<dt>How do you validate that two fields match?</dt><dd>A validator on the parent <code>FormGroup</code> that compares the controls and sets an error on the group or a control.</dd>
+<dt>How do you build a custom date picker as a form control?</dt><dd>Implement <code>ControlValueAccessor</code> and register it with <code>NG_VALUE_ACCESSOR</code> so it works with <code>formControlName</code>.</dd>
+<dt>Reactive or template-driven?</dt><dd>Reactive for anything beyond trivial forms; template-driven for quick, simple cases.</dd>
+</dl></div>
+</section>
+
+<!-- ============ NG9 ============ -->
+<section class="q" id="ng9">
+<header class="qh">
+  <div class="qrow"><span class="qid">NG9</span><span class="tag added">Added</span></div>
+  <h2>HTTP, state management and testing</h2>
+  <p class="qtext">“How do you make HTTP calls in Angular? Interceptors, error handling, caching. How do you manage state: services, NgRx, signal stores? How do you test components, services and routes? Compare with the React approach.”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Angular’s <code>HttpClient</code> returns typed observables; I provide it with <code>provideHttpClient()</code> and add functional interceptors for cross-cutting concerns such as attaching auth tokens, refreshing on 401, logging and error mapping. For state, I start with services holding signals or <code>BehaviorSubject</code>s, and move to NgRx, with its store, actions, reducers, selectors and effects, or the lighter NgRx SignalStore, when state is shared widely and needs structure, devtools and predictable flows. I keep server data caching in mind, since Angular has no built-in TanStack Query equivalent. For testing I use <code>TestBed</code> with Jasmine and Karma or Jest and Vitest, component harnesses, <code>HttpTestingController</code> to mock HTTP, and Playwright or Cypress for end-to-end tests.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: HTTP interceptor chain between the app and the network. Middle: NgRx data flow. Right: testing layers for Angular.">
+  <text x="10" y="18" class="bd">HttpClient interceptor chain</text>
+  <rect x="10" y="30" width="90" height="36" rx="4" class="b"/><text x="18" y="52" class="sm">service</text>
+  <rect x="110" y="30" width="80" height="36" rx="4" class="h"/><text x="118" y="52" class="sm">auth</text>
+  <rect x="200" y="30" width="80" height="36" rx="4" class="h"/><text x="208" y="52" class="sm">errors</text>
+  <rect x="290" y="30" width="80" height="36" rx="4" class="g"/><text x="298" y="52" class="sm">network</text>
+  <path class="a" d="M100 48H108"/><path class="a" d="M190 48H198"/><path class="a" d="M280 48H288"/>
+  <rect x="10" y="78" width="360" height="62" rx="5" class="b"/><text x="18" y="96" class="mono" style="font-size:10px">export const auth: HttpInterceptorFn = (req, next) =&gt;</text><text x="18" y="112" class="mono" style="font-size:10px">  next(req.clone({ setHeaders: { Authorization: tok() } }));</text><text x="18" y="130" class="sm">provideHttpClient(withInterceptors([auth, errors]))</text>
+  <text x="10" y="164" class="bd">NgRx flow (Redux-style)</text>
+  <rect x="10" y="174" width="110" height="36" rx="4" class="b"/><text x="18" y="196" class="sm">component</text>
+  <rect x="130" y="174" width="110" height="36" rx="4" class="h"/><text x="138" y="196" class="sm">action</text>
+  <rect x="250" y="174" width="120" height="36" rx="4" class="w"/><text x="258" y="196" class="sm">reducer / effect</text>
+  <path class="a" d="M120 192H128"/><path class="a" d="M240 192H248"/>
+  <rect x="10" y="220" width="170" height="36" rx="4" class="g"/><text x="18" y="242" class="sm">store (state)</text>
+  <rect x="200" y="220" width="170" height="36" rx="4" class="g"/><text x="208" y="242" class="sm">selectors → signals</text>
+  <path class="a" d="M310 210L100 220" style="stroke-dasharray:3 3"/>
+  <text x="10" y="280" class="sm">effects handle side effects (HTTP); selectors derive data; use for large,</text><text x="10" y="296" class="sm">shared state; services + signals suffice for most features.</text>
+  <text x="400" y="18" class="bd">State options by scale</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="g"/><text x="408" y="52" class="sm"><tspan class="bd">Component signals</tspan> local UI state</text>
+  <rect x="400" y="68" width="350" height="34" rx="4" class="g"/><text x="408" y="90" class="sm"><tspan class="bd">Service + signals/Subject</tspan> shared feature state</text>
+  <rect x="400" y="106" width="350" height="34" rx="4" class="h"/><text x="408" y="128" class="sm"><tspan class="bd">NgRx SignalStore</tspan> structured feature store, less boilerplate</text>
+  <rect x="400" y="144" width="350" height="34" rx="4" class="h"/><text x="408" y="166" class="sm"><tspan class="bd">NgRx Store + Effects</tspan> global state, devtools, time travel</text>
+  <rect x="400" y="182" width="350" height="34" rx="4" class="w"/><text x="408" y="204" class="sm"><tspan class="bd">Server cache</tspan> TanStack Query (Angular adapter), resource()</text>
+  <rect x="400" y="226" width="350" height="84" rx="5" class="b"/><text x="408" y="246" class="bd">Testing layers</text><text x="408" y="264" class="sm">unit: pure functions, services (TestBed + HttpTestingController)</text><text x="408" y="280" class="sm">component: TestBed + harnesses (Material CDK) or Testing Library</text><text x="408" y="296" class="sm">e2e: Playwright or Cypress; runners Karma/Jasmine or Jest/Vitest</text>
+</svg></div>
+<figcaption><b>Compare.</b> Angular provides HTTP, DI and testing utilities in the box; React relies on libraries for the same jobs.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>HttpClient basics:</b> <code>this.http.get&lt;User[]&gt;(url, { params, headers })</code> returns a cold observable (request starts on subscribe); typed generics are compile-time only (validate at boundaries, T11); <code>observe: 'response'</code> for headers and status; <code>withFetch()</code> to use the Fetch API; progress events for uploads; JSONP and XSRF support built in (cookie to header token).</li>
+<li><b>Interceptors:</b> functional <code>HttpInterceptorFn</code> chain registered with <code>withInterceptors</code>; common uses: add auth headers, refresh tokens on 401 (single-flight), global error handling and logging, loading indicators, caching, retry with backoff, request ids; order matters; avoid infinite loops on refresh calls.</li>
+<li><b>Error handling:</b> <code>catchError</code> in streams to map errors to user messages, global error handler via <code>ErrorHandler</code> provider for uncaught errors, retry strategies, distinguishing client, server and network errors; show errors in UI state, not only the console (J21).</li>
+<li><b>Caching:</b> simple in-service caches with <code>shareReplay</code> or a Map plus TTL; interceptor-based caches for GETs; <code>TransferState</code> to avoid duplicate requests during SSR hydration; for rich needs use TanStack Query’s Angular adapter or the newer <code>resource</code> APIs (E4).</li>
+<li><b>NgRx:</b> store (single state tree), actions (events), reducers (pure), selectors (memoised, composable), effects (side effects with RxJS), entity adapter for collections, router store, DevTools. Benefits: predictability, testability, tooling; costs: boilerplate and learning curve. <code>createFeature</code>, <code>createActionGroup</code> and signal selectors reduce boilerplate.</li>
+<li><b>NgRx SignalStore and alternatives:</b> <code>signalStore(withState, withComputed, withMethods, withEntities)</code> is lightweight and composable; alternatives include Akita (legacy), NGXS, Elf, and plain services. Do not adopt a global store by default: colocate state and promote it when sharing demands it (E1).</li>
+<li><b>Service-based state pattern:</b> private writable signals, readonly exposure, <code>computed</code> selectors, methods mutating state; async methods use <code>HttpClient</code> with <code>toSignal</code> or <code>subscribe</code> inside <code>takeUntilDestroyed</code>.</li>
+<li><b>Testing tools:</b> <code>TestBed</code> configures a testing module/environment; component fixtures with <code>detectChanges</code>; <code>HttpTestingController</code> expects and flushes requests; <code>fakeAsync</code>/<code>tick</code>/<code>waitForAsync</code> for async; component harnesses abstract DOM details (CDK <code>HarnessLoader</code>); Spectator and Testing Library for Angular improve ergonomics; Jest or the experimental Vitest builder replace Karma in many projects <span class="verify">verify the current default runner</span>.</li>
+<li><b>What to test:</b> behaviour through the template (inputs, outputs, rendered text), services’ logic, guards and interceptors as functions, form validators, route configs; avoid over-mocking; use real DI with fake providers (NG3).</li>
+<li><b>End-to-end:</b> Playwright or Cypress against the built app; mocking APIs with MSW or intercepts; visual tests with Storybook (Angular supported) (E10).</li>
+<li><b>Comparison with React:</b> Angular’s testing utilities and DI make unit testing services straightforward; React favours Testing Library and MSW for behaviour; both aim for user-centric tests.</li>
+<li><b>Tooling and code generation:</b> OpenAPI generators produce typed Angular services; schematics scaffold features consistently.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Subscribing to an HTTP observable twice and sending the request twice.</li>
+<li>Adding a global store (NgRx) to a small app where services with signals suffice.</li>
+<li>Refresh-token interceptors that trigger parallel refresh calls or infinite loops.</li>
+<li>Testing implementation details (private methods, internal observables) instead of behaviour.</li>
+<li>Assuming the generic type on <code>http.get&lt;T&gt;</code> validates the response.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do you attach an auth token to every request?</dt><dd>A functional HTTP interceptor that clones the request with an <code>Authorization</code> header, registered through <code>provideHttpClient(withInterceptors([...]))</code>.</dd>
+<dt>When is NgRx justified?</dt><dd>Large apps with complex, widely shared state, strict predictability needs and team familiarity; otherwise services with signals or a SignalStore are simpler.</dd>
+<dt>How do you test a service that calls HTTP?</dt><dd>Use <code>HttpTestingController</code> to assert the request and flush a mock response, without a real network.</dd>
+<dt>How do you cancel an in-flight request?</dt><dd>Unsubscribe or use <code>switchMap</code>; <code>takeUntilDestroyed</code> cancels on component destruction.</dd>
+</dl></div>
+</section>
+
+<!-- ============ NG10 ============ -->
+<section class="q" id="ng10">
+<header class="qh">
+  <div class="qrow"><span class="qid">NG10</span><span class="tag added">Added</span></div>
+  <h2>Performance, SSR and migration</h2>
+  <p class="qtext">“How do you optimise an Angular application? Bundle size, lazy loading, <code>@defer</code>, OnPush, virtual scrolling, SSR and hydration. How do you upgrade between versions or migrate from AngularJS or to standalone and signals? When would you choose Angular or React?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“For Angular performance I work on four fronts. Load: lazy-load routes, use <code>@defer</code> for heavy template sections, optimise images with <code>NgOptimizedImage</code>, and analyse bundles. Runtime: OnPush and signals, <code>track</code> in <code>@for</code>, avoid heavy template calls, virtual scrolling for long lists, and running noisy code outside the zone. Rendering: server-side rendering with hydration and incremental hydration for faster first paint and SEO. Build: the modern esbuild and Vite builder and zoneless apps reduce size and time. For upgrades I follow the six-month release cadence with <code>ng update</code> migrations, moving incrementally to standalone components, new control flow, signals and zoneless. I choose Angular for large, long-lived team projects and React for flexibility and ecosystem reach.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 320" role="img" aria-label="Left: performance levers in four areas. Right: a migration path with versions and tools, and a decision summary for Angular versus React.">
+  <text x="10" y="18" class="bd">Performance levers</text>
+  <rect x="10" y="30" width="175" height="130" rx="5" class="g"/><text x="18" y="48" class="bd">Load</text><text x="18" y="66" class="sm">lazy routes</text><text x="18" y="82" class="sm">@defer blocks</text><text x="18" y="98" class="sm">NgOptimizedImage</text><text x="18" y="114" class="sm">bundle budgets</text><text x="18" y="130" class="sm">tree shaking</text><text x="18" y="146" class="sm">preload strategy</text>
+  <rect x="195" y="30" width="175" height="130" rx="5" class="h"/><text x="203" y="48" class="bd">Runtime</text><text x="203" y="66" class="sm">OnPush + signals</text><text x="203" y="82" class="sm">@for with track</text><text x="203" y="98" class="sm">no heavy template calls</text><text x="203" y="114" class="sm">virtual scroll (CDK)</text><text x="203" y="130" class="sm">runOutsideAngular</text><text x="203" y="146" class="sm">zoneless</text>
+  <rect x="10" y="168" width="175" height="130" rx="5" class="w"/><text x="18" y="186" class="bd">Rendering</text><text x="18" y="204" class="sm">SSR + hydration</text><text x="18" y="220" class="sm">incremental hydration</text><text x="18" y="236" class="sm">prerender (SSG)</text><text x="18" y="252" class="sm">TransferState</text><text x="18" y="268" class="sm">route-level render mode</text><text x="18" y="284" class="sm">(verify per version)</text>
+  <rect x="195" y="168" width="175" height="130" rx="5" class="b"/><text x="203" y="186" class="bd">Build and tooling</text><text x="203" y="204" class="sm">esbuild/Vite builder</text><text x="203" y="220" class="sm">source-map-explorer</text><text x="203" y="236" class="sm">Angular DevTools</text><text x="203" y="252" class="sm">Lighthouse, CWV RUM</text><text x="203" y="268" class="sm">Nx caching</text><text x="203" y="284" class="sm">strict budgets in CI</text>
+  <text x="400" y="18" class="bd">Upgrade and migration path</text>
+  <rect x="400" y="30" width="350" height="34" rx="4" class="b"/><text x="408" y="52" class="sm"><tspan class="bd">ng update</tspan> one major at a time; run tests; read notes</text>
+  <rect x="400" y="68" width="350" height="34" rx="4" class="h"/><text x="408" y="90" class="sm"><tspan class="bd">Standalone</tspan> migration schematic (NgModules → standalone)</text>
+  <rect x="400" y="106" width="350" height="34" rx="4" class="h"/><text x="408" y="128" class="sm"><tspan class="bd">Control flow</tspan> schematic (*ngIf/*ngFor → @if/@for)</text>
+  <rect x="400" y="144" width="350" height="34" rx="4" class="w"/><text x="408" y="166" class="sm"><tspan class="bd">Signals + OnPush</tspan> inputs, queries, then zoneless</text>
+  <rect x="400" y="182" width="350" height="34" rx="4" class="w"/><text x="408" y="204" class="sm"><tspan class="bd">AngularJS (1.x)</tspan> ngUpgrade hybrid, strangler migration</text>
+  <rect x="400" y="226" width="350" height="84" rx="5" class="x"/><text x="408" y="246" class="bd">Angular or React? (lead view)</text><text x="408" y="264" class="sm">Angular: big teams, long life, consistency, built-in capabilities</text><text x="408" y="280" class="sm">React: flexibility, ecosystem and talent, Next.js features</text><text x="408" y="296" class="sm">Decide with team skills, hiring, governance and migration cost</text>
+</svg></div>
+<figcaption><b>Principle.</b> Measure first, then apply the framework’s levers: lazy loading, OnPush/signals, SSR and a disciplined upgrade cadence.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b>Bundle size and loading:</b> route-level lazy loading, <code>@defer</code> triggers, removing unused imports from standalone components, avoiding large libraries (moment, whole lodash), <code>budgets</code> in <code>angular.json</code> that fail builds, analysing with <code>source-map-explorer</code> or esbuild metafile, differential loading is obsolete for modern targets; check Material and CDK imports.</li>
+<li><b>Images and assets:</b> <code>NgOptimizedImage</code> (<code>ngSrc</code>) provides lazy loading, <code>priority</code> for LCP, required dimensions, srcset and CDN loaders, and warnings for common mistakes (F3).</li>
+<li><b>Runtime performance:</b> OnPush, signals, <code>trackBy</code>/<code>track</code>, pure pipes or <code>computed</code> over method calls in templates, virtual scrolling (<code>cdk-virtual-scroll-viewport</code>), batching updates, debouncing inputs, detaching change detection, and profiling with Angular DevTools plus the browser Performance panel (F4, F5).</li>
+<li><b>Server-side rendering:</b> <code>ng add @angular/ssr</code> (Angular Universal merged); renders on the server to HTML, transfers state, and <b>hydrates</b> instead of re-rendering; non-destructive hydration is stable; <b>incremental hydration</b> with <code>@defer (hydrate on ...)</code> hydrates parts on demand <span class="verify">verify the current status</span>; prerendering (SSG) for static routes; route-level render modes (server, prerender, client) in newer versions. Avoid direct <code>window</code>/<code>document</code> access (use <code>isPlatformBrowser</code>, <code>afterNextRender</code>) (N8).</li>
+<li><b>Hydration pitfalls:</b> mismatched DOM between server and client (manual DOM manipulation, random values), third-party libraries using the DOM directly (use <code>ngSkipHydration</code> for them), and time-dependent output.</li>
+<li><b>Build system:</b> the application builder uses esbuild and Vite (faster builds, dev server HMR), replacing the webpack-based browser builder; configure budgets, source maps, and optimisation; Nx or Turborepo for monorepos with caching.</li>
+<li><b>Upgrading Angular:</b> follow update.angular.io, update one major version at a time, use <code>ng update @angular/core @angular/cli</code> and <code>ng update</code> for Material and other libraries, run unit and e2e tests, adopt schematics (standalone, control flow, inject, signal inputs), and keep dependencies compatible; major releases come about every six months, with 18 months support.</li>
+<li><b>Migrating from AngularJS:</b> <code>ngUpgrade</code> hybrid apps to run both frameworks and migrate component by component, or a strangler approach with micro-frontends; AngularJS has long been end-of-life, so security is a driver; plan data, routing and styling carefully (A4).</li>
+<li><b>Migrating between frameworks:</b> prefer gradual strangler migration behind a shell or micro-frontends, share the design system as web components or CSS tokens, and avoid big-bang rewrites (A2, S9).</li>
+<li><b>Choosing Angular versus React as a lead:</b> evaluate team skills and hiring market, application size and lifetime, need for consistency and governance, ecosystem needs (Next.js, React Native), build tooling preferences, existing codebase, backend alignment (Angular often pairs with .NET/Java teams), and total cost. State a recommendation with trade-offs; avoid dogma.</li>
+<li><b>Interview posture for an optional skill:</b> be honest about depth: explain concepts through mappings from React, demonstrate you understand DI, RxJS, change detection and signals, and show you could be productive within weeks.</li>
+<li><b>Resources and ecosystem to cite:</b> Angular Material and CDK, Nx, NgRx, Angular DevTools, Storybook, Analog (meta-framework), Playwright, Cypress; official docs at angular.dev.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Skipping major versions during upgrades, then facing huge breaking changes.</li>
+<li>Using browser globals in code that also runs on the server.</li>
+<li>Calling a migration “done” while still depending on zone.js patterns and NgModules without a plan.</li>
+<li>Optimising with OnPush but mutating objects, causing missing updates.</li>
+<li>Advocating a framework switch without considering team and migration cost.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do SSR and hydration improve performance?</dt><dd>The server sends rendered HTML for fast first paint and SEO, and hydration attaches behaviour to the existing DOM instead of rebuilding it.</dd>
+<dt>How do you find what makes an Angular app slow?</dt><dd>Profile with Angular DevTools’ change detection profiler and the browser Performance panel, inspect bundles, and check long tasks and template functions.</dd>
+<dt>How do you upgrade a large Angular app safely?</dt><dd>One major at a time with <code>ng update</code>, schematics for standalone and new control flow, strong tests, and incremental adoption of signals.</dd>
+<dt>Angular or React for a new enterprise dashboard?</dt><dd>Angular if the team values structure, built-in forms/DI and long-term consistency; React if flexibility, Next.js and ecosystem breadth matter more; decide with team and hiring context.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>32 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>Angular versus React in one line?</td><td>Angular is an opinionated framework with batteries included; React is a UI library you assemble.</td><td>NG1</td></tr>
+<tr><td>2</td><td>What are standalone components?</td><td>Components that import their own dependencies without an NgModule.</td><td>NG1</td></tr>
+<tr><td>3</td><td>Angular concept for React <code>children</code>?</td><td>Content projection with <code>&lt;ng-content&gt;</code>.</td><td>NG2</td></tr>
+<tr><td>4</td><td>New control flow syntax?</td><td><code>@if</code>, <code>@for</code> (with <code>track</code>), <code>@switch</code>, <code>@defer</code>.</td><td>NG2</td></tr>
+<tr><td>5</td><td>Constructor versus <code>ngOnInit</code>?</td><td>Constructor wires dependencies; <code>ngOnInit</code> runs after inputs are set.</td><td>NG2</td></tr>
+<tr><td>6</td><td>Why use the <code>async</code> pipe?</td><td>It subscribes in the template and unsubscribes automatically.</td><td>NG2</td></tr>
+<tr><td>7</td><td>What does <code>providedIn: 'root'</code> do?</td><td>Registers a tree-shakable application-wide singleton.</td><td>NG3</td></tr>
+<tr><td>8</td><td>How do you scope a service to a component?</td><td>List it in the component’s <code>providers</code>.</td><td>NG3</td></tr>
+<tr><td>9</td><td>Why <code>InjectionToken</code>?</td><td>Interfaces do not exist at run time; tokens identify values and abstractions.</td><td>NG3</td></tr>
+<tr><td>10</td><td>What does zone.js do?</td><td>Patches async APIs so Angular knows when to run change detection.</td><td>NG4</td></tr>
+<tr><td>11</td><td>When does an OnPush component update?</td><td>Input reference change, event, async pipe emission, <code>markForCheck</code>, or signal change.</td><td>NG4</td></tr>
+<tr><td>12</td><td>What is zoneless Angular?</td><td>Change detection driven by signals and notifications, without zone.js.</td><td>NG4</td></tr>
+<tr><td>13</td><td>What is a signal?</td><td>A reactive value read by calling it, with automatic dependency tracking.</td><td>NG5</td></tr>
+<tr><td>14</td><td><code>computed</code> versus <code>effect</code>?</td><td><code>computed</code> derives a value lazily; <code>effect</code> runs side effects on change.</td><td>NG5</td></tr>
+<tr><td>15</td><td>Signals versus RxJS?</td><td>Signals for synchronous state; RxJS for async event streams and operators.</td><td>NG5</td></tr>
+<tr><td>16</td><td>Bridge signals and observables?</td><td><code>toSignal</code> and <code>toObservable</code>.</td><td>NG5</td></tr>
+<tr><td>17</td><td><code>switchMap</code> use?</td><td>Latest wins and cancels the previous inner request: typeahead, route params.</td><td>NG6</td></tr>
+<tr><td>18</td><td><code>mergeMap</code> versus <code>concatMap</code>?</td><td>Parallel versus queued in order; <code>exhaustMap</code> ignores new while busy.</td><td>NG6</td></tr>
+<tr><td>19</td><td>Hot versus cold observable?</td><td>Cold runs per subscription (HTTP); hot shares a source (events, subjects).</td><td>NG6</td></tr>
+<tr><td>20</td><td>Avoid subscription leaks how?</td><td><code>async</code> pipe, <code>takeUntilDestroyed</code>, <code>toSignal</code>, or unsubscribe on destroy.</td><td>NG6</td></tr>
+<tr><td>21</td><td>Lazy load a route?</td><td><code>loadComponent</code> or <code>loadChildren</code> with dynamic <code>import()</code>.</td><td>NG7</td></tr>
+<tr><td>22</td><td>Guard return types?</td><td>Boolean, observable or promise of it, or a <code>UrlTree</code> to redirect.</td><td>NG7</td></tr>
+<tr><td>23</td><td>Are guards security?</td><td>No: UX only; enforce authorisation on the server.</td><td>NG7</td></tr>
+<tr><td>24</td><td>Template-driven versus reactive forms?</td><td>Template-led <code>ngModel</code> versus explicit typed model in code; reactive for complex forms.</td><td>NG8</td></tr>
+<tr><td>25</td><td>What is <code>ControlValueAccessor</code>?</td><td>The interface that lets a custom component work as a form control.</td><td>NG8</td></tr>
+<tr><td>26</td><td><code>setValue</code> versus <code>patchValue</code>?</td><td>Whole model versus partial update.</td><td>NG8</td></tr>
+<tr><td>27</td><td>How to add an auth header globally?</td><td>A functional HTTP interceptor registered with <code>withInterceptors</code>.</td><td>NG9</td></tr>
+<tr><td>28</td><td>When use NgRx?</td><td>Large shared state needing predictability and tooling; otherwise services with signals.</td><td>NG9</td></tr>
+<tr><td>29</td><td>Mock HTTP in tests?</td><td><code>HttpTestingController</code> with <code>TestBed</code>.</td><td>NG9</td></tr>
+<tr><td>30</td><td>Speed up Angular rendering?</td><td>OnPush, signals, <code>track</code>, virtual scroll, <code>@defer</code>, SSR with hydration.</td><td>NG10</td></tr>
+<tr><td>31</td><td>Upgrade strategy?</td><td>One major at a time with <code>ng update</code>, schematics and tests.</td><td>NG10</td></tr>
+<tr><td>32</td><td>AngularJS migration?</td><td>Hybrid with <code>ngUpgrade</code> or a strangler migration, piece by piece.</td><td>NG10</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer Angular questions as a React lead</h4>
+<ul>
+<li>Be honest about depth, then show transfer: map each Angular concept to its React counterpart and explain the difference in model (bindings and signals versus re-rendering).</li>
+<li>Lead with the architectural ideas Angular makes explicit: dependency injection, change detection, RxJS streams, signals.</li>
+<li>Use the modern vocabulary: standalone components, signal inputs, new control flow, <code>inject()</code>, functional guards and interceptors, OnPush and zoneless.</li>
+<li>Give a balanced selection framework instead of a preference: team, scale, lifespan, ecosystem, hiring, migration cost.</li>
+<li>Version-specific details (signal forms, resource APIs, incremental hydration) are fine with “I would check the current docs”.</li>
+<li>The interview is theoretical: expect “explain”, “compare” and “when would you choose”, not live coding.</li>
+</ul></div>
+</section>
+
+</div>

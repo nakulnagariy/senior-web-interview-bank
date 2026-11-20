@@ -1,7 +1,7 @@
 {
-	"name": "Frontend & MERN Interview Prep",
+	"name": "Frontend Interview Prep",
 	"short_name": "Interview Prep",
-	"description": "Interview prep notes, flashcards and MERN MCQ practice. Works fully offline.",
+	"description": "Prepare for frontend and web developer interviews with 100+ topics, quizzes, progress tracking, and offline access.",
 	"start_url": "/",
 	"scope": "/",
 	"display": "standalone",

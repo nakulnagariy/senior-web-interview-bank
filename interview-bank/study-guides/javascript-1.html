@@ -1,0 +1,1454 @@
+<title>JavaScript Study Guide 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column, question cards separated by headers; print-first (A4, double-sided), screen gets a contents grid. */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#17202b; --muted:#566272; --line:#d3d9e1;
+  --accent:#0a6a5e; --accent-soft:#e3f2ef; --warn:#8f5200; --warn-soft:#fff3dd;
+  --bad:#a8231b; --bad-soft:#fdeceb; --good:#1f6b32; --good-soft:#e8f5ea; --code-bg:#eef1f5;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1620; --surface:#16202c; --fg:#e4eaf1; --muted:#9aa8b8; --line:#2b3846;
+  --accent:#58c8b3; --accent-soft:#12302d; --warn:#eab34f; --warn-soft:#33270f;
+  --bad:#ff8f86; --bad-soft:#3a1a19; --good:#7fd48f; --good-soft:#14301a; --code-bg:#1d2937; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0;
+  padding-block:24px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:860px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--ui);line-height:1.25;text-wrap:balance;margin:0}
+p{margin:0 0 .8em} ul,ol{margin:0 0 .9em;padding-left:1.3em} li{margin-bottom:.25em}
+a{color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code{font:.86em var(--mono);background:var(--code-bg);padding:.08em .32em;border-radius:3px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px;overflow-x:auto;margin:.6em 0 1em;font:12.5px/1.5 var(--mono)}
+pre code{background:none;padding:0;font:inherit;overflow-wrap:normal}
+.tw{overflow-x:auto;margin:.6em 0 1em}
+table{border-collapse:collapse;width:100%;font:14px/1.4 var(--ui)}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--code-bg);font-weight:600}
+td code{font-size:.85em}
+
+/* cover + contents */
+.cover{border-bottom:3px solid var(--fg);padding-bottom:18px;margin-bottom:22px}
+.cover .kicker{font:600 12px var(--ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.cover h1{font-size:clamp(28px,5vw,40px);margin:6px 0 10px}
+.cover p{color:var(--muted);max-width:62ch}
+.printtip{font:13px/1.5 var(--ui);border:1px solid var(--line);background:var(--surface);padding:10px 14px;border-radius:4px;margin:-6px 0 22px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font:13px var(--ui);margin-top:12px}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px 28px;margin:0 0 30px;font:14px/1.45 var(--ui)}
+.toc h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.toc ol{list-style:none;padding:0;margin:0} .toc li{margin:0 0 3px;display:flex;gap:7px} .toc b{color:var(--muted);font-weight:600;min-width:2.1em}
+.toc a{text-decoration:none;color:var(--fg)} .toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* parts and questions */
+h1.part{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--surface);background:var(--fg);padding:9px 14px;margin:44px 0 22px;border-radius:3px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px 22px 8px;margin:0 0 26px}
+.qh{border-bottom:2px solid var(--fg);padding-bottom:12px;margin-bottom:14px;break-after:avoid}
+.qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;font:600 12px var(--ui)}
+.qid{background:var(--fg);color:var(--surface);padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.tag{border:1px solid currentColor;padding:1px 7px;border-radius:99px;letter-spacing:.03em}
+.tag.asked{color:var(--accent)} .tag.added{color:var(--warn)}
+.q h2{font-size:22px}
+.qtext{font-style:italic;color:var(--muted);margin:8px 0 0;font-size:15px}
+.q h3{font-size:16px;margin:20px 0 6px;color:var(--accent);break-after:avoid}
+.q h4{font-size:12px;letter-spacing:.09em;text-transform:uppercase;margin:0 0 5px;break-after:avoid}
+.box{border-left:4px solid;border-radius:0 4px 4px 0;padding:10px 14px 4px;margin:14px 0 16px;break-inside:avoid}
+.say{border-color:var(--accent);background:var(--accent-soft)} .say h4{color:var(--accent)}
+.trap{border-color:var(--bad);background:var(--bad-soft)} .trap h4{color:var(--bad)}
+.note{border-color:var(--warn);background:var(--warn-soft)} .note h4{color:var(--warn)}
+.fu{border:1px solid var(--line);border-radius:4px;padding:10px 14px 4px;margin:16px 0 14px;break-inside:avoid}
+.fu dl{margin:0} .fu dt{font:600 14px/1.4 var(--ui);margin-top:7px} .fu dd{margin:1px 0 8px 0;font-size:15px}
+.fu dt::before{content:"Q  ";color:var(--accent)} .fu dd::before{content:"A  ";font:600 13px var(--ui);color:var(--muted)}
+.yes{color:var(--good);font-weight:600} .no{color:var(--bad);font-weight:600}
+.verify{font:600 11px var(--ui);color:var(--warn);border:1px solid var(--warn);padding:0 5px;border-radius:3px;white-space:nowrap}
+
+figure{margin:14px 0 18px;break-inside:avoid}
+figure svg{display:block;width:100%;height:auto;max-width:100%}
+.figscroll{overflow-x:auto}
+figcaption{font:13px/1.45 var(--ui);color:var(--muted);margin-top:4px}
+figcaption b{color:var(--fg)}
+.dg text{font:13px var(--ui);fill:var(--fg)} .dg .sm{font-size:11.5px;fill:var(--muted)} .dg .bd{font-weight:600} .dg .mono{font-family:var(--mono);font-size:12px}
+.dg .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.4}
+.dg .h{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.8}
+.dg .w{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.6}
+.dg .x{fill:var(--bad-soft);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 3}
+.dg .g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+.dg .l{stroke:var(--fg);stroke-width:1.4;fill:none} .dg .d{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3;fill:none}
+.dg .a{stroke:var(--fg);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+.dg .ax{stroke:var(--bad);stroke-width:1.5;fill:none;stroke-dasharray:5 3;marker-end:url(#ar)}
+.dg .fillh{fill:var(--accent)} .dg .fillw{fill:var(--warn)} .dg .fillb{fill:var(--bad)} .dg .fillm{fill:var(--muted)} .dg .fillg{fill:var(--good)}
+
+/* print: A4, black on white, double-sided */
+@page{size:A4;margin:14mm 14mm 18mm}
+/* double-sided with a binding side: extra inner margin (left on odd/front pages, right on even/back pages); page number on the outer corner */
+@page :right{margin-left:28mm;margin-right:12mm;
+  @bottom-right{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-left{content:"JavaScript Study Guide 1";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@page :left{margin-left:12mm;margin-right:28mm;
+  @bottom-left{content:counter(page);font:600 9pt "IBM Plex Sans",Arial,sans-serif;color:#333;vertical-align:top;padding-top:4mm}
+  @bottom-right{content:"JavaScript Study Guide 1";font:8pt "IBM Plex Sans",Arial,sans-serif;color:#666;vertical-align:top;padding-top:4mm}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--fg:#111;--muted:#444;--line:#999;--accent:#064d44;--accent-soft:#eef6f4;
+    --warn:#6b3d00;--warn-soft:#fbf4e6;--bad:#8a1a14;--bad-soft:#fbefee;--good:#17552a;--good-soft:#eef7f0;--code-bg:#f1f1f1;color-scheme:light}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:9.6pt;line-height:1.46;padding:0}
+  .wrap{max-width:none}
+  .q{border:0;padding:0;margin:0 0 14mm;border-radius:0}
+  .q{break-before:page}
+  h1.part{break-before:page;margin-top:0}
+  h1.part + .q{break-before:avoid}
+  pre{font-size:8.2pt;overflow:visible;white-space:pre-wrap;break-inside:avoid}
+  table{font-size:8.6pt} tr{break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+  .noprint{display:none!important}
+  .cover{break-after:page}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#667" /></marker></defs></svg>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kicker">EPAM L3 → L4 · JavaScript Frontend · Expert level</div>
+  <h1>JavaScript Study Guide 1</h1>
+  <p>The language core: types, coercion, scope, closures, <code>this</code>, prototypes, classes, functions, objects, collections, iteration, modules and modern syntax. Part 2 covers the event loop, promises, async, memory and patterns. The interview is theoretical, so every topic is written as something you say aloud: a 30-second answer, the background, a diagram, the traps and the follow-ups. Printed double-sided, each topic starts on a new page.</p>
+  <div class="legend"><span><span class="tag asked">Asked</span> came up in a practice session</span><span><span class="tag added">Added</span> likely interview topic</span><span><span class="verify">verify</span> check MDN or the spec before stating as fact</span></div>
+</header>
+<div class="noprint printtip"><b>Printing:</b> do not print from the claude.ai viewer (it prints the surrounding app, with blank pages and no page numbers). Print the matching PDF in this folder, or open the saved .html file in Chrome or Edge, paper A4, Two-sided (flip on long edge), Margins: Default, Background graphics: on, Headers and footers: off (the page numbers are built in; the inner margin leaves room for punching holes).</div>
+
+<nav class="toc" aria-label="Contents">
+  <div>
+    <h3>1 · Values and operators</h3>
+    <ol>
+      <li><b>J1</b><a href="#j1">Types, primitives and references</a></li>
+      <li><b>J2</b><a href="#j2">Type coercion and equality</a></li>
+      <li><b>J3</b><a href="#j3">Scope, hoisting and the TDZ</a></li>
+    </ol>
+    <h3 style="margin-top:16px">2 · Functions and objects</h3>
+    <ol>
+      <li><b>J4</b><a href="#j4">Closures</a></li>
+      <li><b>J5</b><a href="#j5"><code>this</code> binding</a></li>
+      <li><b>J6</b><a href="#j6">Prototypes and inheritance</a></li>
+      <li><b>J7</b><a href="#j7">Classes</a></li>
+      <li><b>J8</b><a href="#j8">Functions in depth</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>3 · Data</h3>
+    <ol>
+      <li><b>J9</b><a href="#j9">Property descriptors, immutability, Proxy</a></li>
+      <li><b>J10</b><a href="#j10">Arrays and functional methods</a></li>
+      <li><b>J11</b><a href="#j11">Map, Set and weak collections</a></li>
+      <li><b>J12</b><a href="#j12">Iterators and generators</a></li>
+      <li><b>J13</b><a href="#j13">Numbers, dates and JSON</a></li>
+      <li><b>J14</b><a href="#j14">Strings, Unicode and regex</a></li>
+    </ol>
+  </div>
+  <div>
+    <h3>4 · Language and ecosystem</h3>
+    <ol>
+      <li><b>J15</b><a href="#j15">ES modules versus CommonJS</a></li>
+      <li><b>J16</b><a href="#j16">Modern syntax and how the language evolves</a></li>
+      <li><b>J17</b><a href="#j17">Functional programming in JavaScript</a></li>
+    </ol>
+    <h3 style="margin-top:16px">5 · Revision</h3>
+    <ol><li><b>R</b><a href="#rapid">Rapid-fire round</a></li></ol>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">Coming in Part 2: event loop, promises and async/await, error handling, memory and garbage collection, V8, design patterns, JS security.</p>
+  </div>
+</nav>
+
+<h1 class="part">Part 1 · Values and operators</h1>
+
+<!-- ============ J1 ============ -->
+<section class="q" id="j1">
+<header class="qh">
+  <div class="qrow"><span class="qid">J1</span><span class="tag added">Added</span></div>
+  <h2>Types, primitives and references</h2>
+  <p class="qtext">“What are the data types in JavaScript? What is the difference between primitives and objects? Is JavaScript pass by value or pass by reference?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“JavaScript has seven primitive types: string, number, bigint, boolean, undefined, symbol and null. Everything else is an object, including arrays, functions, dates and maps. Primitives are immutable and compared by value. Objects are compared by reference: two objects with the same content are not equal. JavaScript is always pass by value, but the value of an object variable is a reference, so a function can mutate the object it receives, yet reassigning the parameter does not change the caller’s variable. Some people call this ‘call by sharing’.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 290" role="img" aria-label="Left: the type hierarchy, seven primitives and objects. Right: two variables a and b holding the same object reference, so mutating through one is visible through the other, while a primitive copy is independent.">
+  <text x="10" y="18" class="bd">Seven primitives, one object type</text>
+  <rect x="10" y="28" width="360" height="104" rx="5" class="g"/><text x="20" y="48" class="bd">Primitives (immutable, compared by value)</text>
+  <text x="20" y="72" class="mono">string  number  bigint  boolean</text><text x="20" y="92" class="mono">undefined  null  symbol</text><text x="20" y="116" class="sm">typeof gives the type name; typeof null → "object" (legacy bug)</text>
+  <rect x="10" y="142" width="360" height="86" rx="5" class="h"/><text x="20" y="162" class="bd">Objects (mutable, compared by reference)</text>
+  <text x="20" y="186" class="sm">object · array · function · Date · RegExp · Map · Set · Error</text><text x="20" y="206" class="sm">typeof function → "function" (callable object); arrays → "object"</text>
+  <text x="400" y="18" class="bd">Values vs references</text>
+  <rect x="400" y="30" width="90" height="30" class="b"/><text x="410" y="50" class="mono">let x = 5</text><rect x="400" y="66" width="90" height="30" class="b"/><text x="410" y="86" class="mono">let y = x</text>
+  <text x="500" y="62" class="sm">y is a copy: y = 6 leaves x at 5</text>
+  <rect x="400" y="120" width="90" height="30" class="b"/><text x="410" y="140" class="mono">a ─────┐</text><rect x="400" y="156" width="90" height="30" class="b"/><text x="410" y="176" class="mono">b ─────┤</text>
+  <rect x="560" y="124" width="190" height="56" rx="4" class="h"/><text x="572" y="146" class="mono">{ name: "Ada" }</text><text x="572" y="166" class="sm">one object, two references</text>
+  <path class="a" d="M490 135H558"/><path class="a" d="M490 171H558"/>
+  <text x="400" y="212" class="sm">b.name = "Bob" is visible through a.</text><text x="400" y="230" class="sm">b = {} only rebinds b; a still points at the old object.</text>
+  <text x="10" y="262" class="sm">Numbers are IEEE 754 doubles; bigint is arbitrary-precision integers (no mixing with number); symbols are unique keys.</text>
+</svg></div>
+<figcaption><b>Mental model.</b> Stack and heap are engine details; the language rule is: primitives hold values, objects hold identity.</figcaption></figure>
+
+<h3>Details interviewers probe</h3>
+<ul>
+<li><b><code>null</code> vs <code>undefined</code>:</b> <code>undefined</code> is the language’s “no value yet” (uninitialised variable, missing property, missing argument, no return). <code>null</code> is an intentional “no object”. <code>typeof null === "object"</code> is a historic bug kept for compatibility.</li>
+<li><b>Checking types:</b> <code>typeof</code> for primitives (safe on undeclared names); <code>Array.isArray()</code> for arrays; <code>instanceof</code> for class instances (breaks across realms such as iframes); <code>Object.prototype.toString.call(x)</code> for the internal tag; <code>x === null</code> explicitly.</li>
+<li><b>Wrapper objects:</b> <code>"abc".length</code> works because the primitive is temporarily wrapped in a <code>String</code> object. <code>new String("a")</code> creates a real object; avoid it (it is truthy and not strictly equal to <code>"a"</code>).</li>
+<li><b>Numbers:</b> one type for integers and floats (IEEE 754 double). Safe integers are up to 2<sup>53</sup> − 1. See J13.</li>
+<li><b>Strings are immutable</b> sequences of UTF-16 code units (J14). Operations return new strings.</li>
+<li><b>Symbol:</b> unique and non-colliding; used for property keys, well-known protocols (<code>Symbol.iterator</code>, <code>Symbol.toPrimitive</code>) and hidden metadata. <code>Symbol.for(key)</code> uses a global registry.</li>
+<li><b>Copying:</b> assignment copies the reference. Spread and <code>Object.assign</code> make shallow copies; <code>structuredClone</code> makes a deep copy (J9).</li>
+<li><b>Equality of objects:</b> <code>{} === {}</code> is false. To compare content you need a deep-equal routine or a stable serialisation.</li>
+<li><b>Immutability:</b> <code>const</code> prevents rebinding, not mutation (J3, J9).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying “objects are passed by reference”. If that were true, reassigning a parameter would change the caller’s variable. It does not.</li>
+<li>Saying “there are only 6 primitives” (older answer, before <code>Symbol</code> and <code>BigInt</code>).</li>
+<li>Calling arrays or functions “not objects”. They are objects with special behaviour.</li>
+<li>Using <code>typeof x === "object"</code> to test for objects without excluding <code>null</code>.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why is <code>typeof null</code> “object”?</dt><dd>In the first engine, values were tagged with a type bit and <code>null</code> was the zero pointer, matching the object tag. It was never fixed to avoid breaking the web.</dd>
+<dt>How do you copy an object?</dt><dd>Shallow: spread or <code>Object.assign</code>. Deep: <code>structuredClone</code> (not functions or class prototypes). <code>JSON.parse(JSON.stringify())</code> loses types and breaks on cycles.</dd>
+<dt>How do you check for an empty object?</dt><dd><code>Object.keys(o).length === 0</code> (own enumerable string keys only).</dd>
+<dt>What is a value type in a React context?</dt><dd>Props and state compare with <code>Object.is</code>: new object identity means “changed”, which drives re-renders and effect dependencies.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J2 ============ -->
+<section class="q" id="j2">
+<header class="qh">
+  <div class="qrow"><span class="qid">J2</span><span class="tag added">Added</span></div>
+  <h2>Type coercion and equality</h2>
+  <p class="qtext">“What is the difference between <code>==</code> and <code>===</code>? How does implicit coercion work? What is truthy and falsy?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“<code>===</code> compares without converting types. <code>==</code> converts types first using the abstract equality algorithm, which is hard to predict, so I use <code>===</code> by default. The one useful exception is <code>x == null</code>, which matches both <code>null</code> and <code>undefined</code>. Coercion converts values between types: to string, to number or to boolean. Conditions use ToBoolean: the falsy values are <code>false</code>, <code>0</code>, <code>-0</code>, <code>0n</code>, empty string, <code>null</code>, <code>undefined</code> and <code>NaN</code>. Everything else is truthy, including <code>"0"</code>, <code>[]</code> and <code>{}</code>. Objects are converted to primitives with ToPrimitive, which calls <code>Symbol.toPrimitive</code>, or <code>valueOf</code> and <code>toString</code>.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="The ToPrimitive process for an object: if it has Symbol.toPrimitive call it with a hint; otherwise for a string hint try toString then valueOf, and for number or default hint try valueOf then toString. Beside it, a flow of the loose equality rules.">
+  <text x="10" y="18" class="bd">Object → primitive (ToPrimitive)</text>
+  <rect x="10" y="28" width="210" height="36" rx="5" class="b"/><text x="20" y="51" class="sm">object in a primitive context</text>
+  <path class="a" d="M115 64V84"/>
+  <rect x="10" y="86" width="210" height="44" rx="5" class="h"/><text x="20" y="106" class="mono" style="font-size:11px">obj[Symbol.toPrimitive](hint)</text><text x="20" y="122" class="sm" style="font-size:11px">exists? use it (with hint)</text>
+  <path class="a" d="M115 130V150"/><text x="124" y="146" class="sm" style="font-size:11px">no</text>
+  <rect x="10" y="152" width="100" height="60" rx="5" class="w"/><text x="18" y="172" class="bd" style="font-size:11.5px">hint string</text><text x="18" y="188" class="mono" style="font-size:10.5px">toString()</text><text x="18" y="203" class="mono" style="font-size:10.5px">then valueOf()</text>
+  <rect x="120" y="152" width="100" height="60" rx="5" class="w"/><text x="128" y="172" class="bd" style="font-size:11.5px">number/default</text><text x="128" y="188" class="mono" style="font-size:10.5px">valueOf()</text><text x="128" y="203" class="mono" style="font-size:10.5px">then toString</text>
+  <text x="10" y="236" class="sm">first result that is a primitive wins; else TypeError</text><text x="10" y="252" class="sm">Date's default hint is string; everything else's is number</text>
+  <text x="270" y="18" class="bd">Loose equality a == b (simplified)</text>
+  <rect x="270" y="28" width="230" height="32" class="b"/><text x="280" y="49" class="sm">same type → behaves like ===</text>
+  <rect x="270" y="66" width="230" height="32" class="b"/><text x="280" y="87" class="sm">null == undefined (only each other)</text>
+  <rect x="270" y="104" width="230" height="32" class="b"/><text x="280" y="125" class="sm">number vs string → string to number</text>
+  <rect x="270" y="142" width="230" height="32" class="b"/><text x="280" y="163" class="sm">boolean → number first (true=1)</text>
+  <rect x="270" y="180" width="230" height="32" class="b"/><text x="280" y="201" class="sm">object vs primitive → ToPrimitive(object)</text>
+  <rect x="270" y="218" width="230" height="32" class="x"/><text x="280" y="239" class="sm">NaN == NaN is false; use Object.is</text>
+  <text x="530" y="18" class="bd">Falsy (8)</text>
+  <text x="530" y="42" class="mono" style="font-size:11.5px">false  0  -0  0n</text><text x="530" y="60" class="mono" style="font-size:11.5px">""  null  undefined  NaN</text>
+  <text x="530" y="92" class="bd">Truthy surprises</text>
+  <text x="530" y="114" class="mono" style="font-size:11.5px">"0"  "false"  []  {}</text><text x="530" y="132" class="mono" style="font-size:11.5px">function(){}  new Boolean(false)</text>
+  <text x="530" y="164" class="bd">Operators</text><text x="530" y="184" class="sm">+  concatenates if either side</text><text x="530" y="200" class="sm">is a string after ToPrimitive</text><text x="530" y="218" class="sm">- * / ToNumber both sides</text>
+</svg></div>
+<figcaption><b>Three mechanisms.</b> ToPrimitive (objects), loose equality (<code>==</code>), ToBoolean (conditions).</figcaption></figure>
+
+<h3>Equality family</h3>
+<div class="tw"><table>
+<tr><th>Comparison</th><th>Types converted?</th><th>NaN</th><th>+0 and −0</th><th>Use</th></tr>
+<tr><td><code>==</code></td><td>yes</td><td>NaN ≠ NaN</td><td>equal</td><td>almost never; <code>x == null</code> is the accepted idiom</td></tr>
+<tr><td><code>===</code></td><td>no</td><td>NaN ≠ NaN</td><td>equal</td><td>default</td></tr>
+<tr><td><code>Object.is</code></td><td>no</td><td>NaN is NaN</td><td>different</td><td>edge cases; used by React for state and dependency comparison</td></tr>
+<tr><td>SameValueZero</td><td>no</td><td>NaN equals NaN</td><td>equal</td><td>what <code>includes</code>, <code>Map</code> keys and <code>Set</code> use</td></tr>
+</table></div>
+
+<h3>Conversions in brief</h3>
+<ul>
+<li><b>ToString:</b> <code>String(x)</code>, template literals, <code>+ ""</code>. <code>null</code> → <code>"null"</code>, arrays → joined by commas, plain objects → <code>"[object Object]"</code>. Symbols do not convert implicitly (TypeError).</li>
+<li><b>ToNumber:</b> <code>Number(x)</code>, unary <code>+x</code>. <code>""</code> → 0, <code>" 12 "</code> → 12, <code>"12px"</code> → NaN, <code>null</code> → 0, <code>undefined</code> → NaN, <code>true</code> → 1. <code>parseInt("12px")</code> → 12, and always pass the radix.</li>
+<li><b>ToBoolean:</b> <code>Boolean(x)</code>, <code>!!x</code>, conditions, <code>&amp;&amp;</code>, <code>||</code>, <code>!</code>.</li>
+<li><b><code>+</code> operator:</b> if either operand becomes a string, concatenate; otherwise add as numbers. All other arithmetic operators convert to numbers.</li>
+<li><b>Short-circuit operators return operands, not booleans:</b> <code>a || b</code> returns the first truthy, <code>a &amp;&amp; b</code> the first falsy, <code>a ?? b</code> the right side only if <code>a</code> is <code>null</code> or <code>undefined</code>.</li>
+<li><b>Relational:</b> <code>&lt;</code> converts to primitives, then compares strings lexicographically if both are strings, else numbers. This is why <code>"10" &lt; "9"</code> is true as strings.</li>
+</ul>
+
+<pre><code>const port = config.port ?? 3000;    // keeps 0 and "" as valid values
+const port2 = config.port || 3000;   // replaces 0 and "" with 3000 (often a bug)
+if (value == null) { /* null or undefined */ }
+class Money { valueOf() { return this.cents; } [Symbol.toPrimitive](hint) { return hint === 'string' ? `$${this.cents/100}` : this.cents; } }</code></pre>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“Always use ===” without being able to explain what <code>==</code> does. Describe the rules and the <code>== null</code> exception.</li>
+<li>Using <code>||</code> for defaults when 0, empty string or false are valid. Use <code>??</code>.</li>
+<li>Believing <code>[]</code> is falsy. It is truthy. (<code>[] == false</code> is true through coercion, which is the confusing part.)</li>
+<li>Forgetting that <code>NaN</code> is the only value not equal to itself; use <code>Number.isNaN</code> (the global <code>isNaN</code> coerces first).</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why is <code>NaN !== NaN</code>?</dt><dd>IEEE 754 defines NaN as unordered with everything, including itself.</dd>
+<dt>Difference between <code>isNaN</code> and <code>Number.isNaN</code>?</dt><dd>The global one converts to number first (<code>isNaN("abc")</code> is true); the <code>Number</code> one only returns true for the actual NaN value.</dd>
+<dt>What does <code>[] + {}</code> teach?</dt><dd>That <code>+</code> calls ToPrimitive on both sides; both become strings, so it concatenates. The point is the mechanism, not memorising results.</dd>
+<dt>When is <code>Object.is</code> useful?</dt><dd>To distinguish +0 and −0 and to treat NaN as equal; it is what React uses to compare state and dependencies.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J3 ============ -->
+<section class="q" id="j3">
+<header class="qh">
+  <div class="qrow"><span class="qid">J3</span><span class="tag added">Added</span></div>
+  <h2>Scope, hoisting and the temporal dead zone</h2>
+  <p class="qtext">“Explain scope, the scope chain, hoisting, and the difference between <code>var</code>, <code>let</code> and <code>const</code>. What is the temporal dead zone?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Scope decides where a variable is visible. JavaScript uses lexical scope: visibility is fixed by where the code is written, not where it is called. When a name is not found, the engine walks up the chain of enclosing scopes to the global scope. <code>var</code> is function-scoped and hoisted with the value <code>undefined</code>. <code>let</code> and <code>const</code> are block-scoped; they are hoisted too, but they cannot be used before their declaration runs. That gap is the temporal dead zone, and accessing the variable there throws a ReferenceError. <code>const</code> forbids rebinding, not mutation of the object it points to.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 290" role="img" aria-label="Nested lexical scopes: global, function and block. A name lookup starts in the innermost scope and walks outward. Beside it, a timeline of a let variable showing the temporal dead zone from the start of the block until the declaration line.">
+  <rect x="10" y="10" width="400" height="270" rx="6" class="b"/><text x="22" y="30" class="bd">Global scope</text><text x="22" y="48" class="mono" style="font-size:11px">const app = "x"</text>
+  <rect x="30" y="62" width="360" height="200" rx="6" class="h"/><text x="42" y="82" class="bd">function scope: function f()</text><text x="42" y="100" class="mono" style="font-size:11px">var total = 0; const rate = 2</text>
+  <rect x="50" y="114" width="320" height="136" rx="6" class="g"/><text x="62" y="134" class="bd">block scope: { … } or for (let i …)</text><text x="62" y="152" class="mono" style="font-size:11px">let i = 1; const tmp = total * rate</text>
+  <text x="62" y="176" class="sm">lookup of “app”: block → function → global ✓</text><text x="62" y="194" class="sm">the chain is fixed where the function is written</text><text x="62" y="212" class="sm">(lexical), not where it is called</text>
+  <path class="ax" d="M370 200C395 200 395 70 410 60" style="stroke-dasharray:none"/>
+  <text x="440" y="22" class="bd">Hoisting by declaration kind</text>
+  <rect x="440" y="32" width="310" height="34" class="b"/><text x="450" y="54" class="mono" style="font-size:11px">var x</text><text x="520" y="54" class="sm">hoisted, initialised to undefined</text>
+  <rect x="440" y="70" width="310" height="34" class="b"/><text x="450" y="92" class="mono" style="font-size:11px">let / const / class</text><text x="570" y="92" class="sm">hoisted, in TDZ until declared</text>
+  <rect x="440" y="108" width="310" height="34" class="b"/><text x="450" y="130" class="mono" style="font-size:11px">function f(){}</text><text x="560" y="130" class="sm">hoisted with its body</text>
+  <rect x="440" y="146" width="310" height="34" class="b"/><text x="450" y="168" class="mono" style="font-size:11px">var f = function(){}</text><text x="580" y="168" class="sm">only var f hoisted (undefined)</text>
+  <text x="440" y="206" class="bd">Temporal dead zone (let x = 1)</text>
+  <rect x="440" y="216" width="150" height="22" class="x"/><text x="448" y="232" class="sm">TDZ: access throws</text><rect x="590" y="216" width="160" height="22" class="g"/><text x="598" y="232" class="sm">initialised, usable</text>
+  <text x="440" y="256" class="sm">block start</text><text x="560" y="256" class="sm">↑ declaration line runs</text><text x="440" y="272" class="sm">typeof x also throws inside the TDZ</text>
+</svg></div>
+<figcaption><b>Where, and from when.</b> Scope is “where”, hoisting and the TDZ are “from when”.</figcaption></figure>
+
+<h3>var, let and const</h3>
+<div class="tw"><table>
+<tr><th></th><th><code>var</code></th><th><code>let</code></th><th><code>const</code></th></tr>
+<tr><td>Scope</td><td>function (or global)</td><td>block</td><td>block</td></tr>
+<tr><td>Hoisting</td><td>yes, value <code>undefined</code></td><td>yes, but TDZ</td><td>yes, but TDZ</td></tr>
+<tr><td>Redeclare in same scope</td><td>allowed</td><td>SyntaxError</td><td>SyntaxError</td></tr>
+<tr><td>Reassign</td><td>yes</td><td>yes</td><td>no (binding is fixed; object contents can change)</td></tr>
+<tr><td>Global declaration creates property on <code>globalThis</code></td><td>yes (in scripts)</td><td>no</td><td>no</td></tr>
+<tr><td>In a <code>for</code> loop</td><td>one binding shared by all iterations</td><td>a fresh binding per iteration (closures capture each)</td><td>fresh binding, cannot be incremented</td></tr>
+</table></div>
+<p>Default: <code>const</code>, switch to <code>let</code> when you must reassign, avoid <code>var</code>. It signals intent and prevents accidental rebinding.</p>
+
+<h3>How it works underneath</h3>
+<ul>
+<li>Each execution context has <b>environment records</b> that map names to values, with a link to the outer environment (the scope chain). A function keeps a reference to the environment where it was created, which is what makes closures possible (J4).</li>
+<li><b>Two phases:</b> creation (declarations are registered: <code>var</code> initialised to <code>undefined</code>, functions to their bodies, <code>let</code>/<code>const</code> left uninitialised) and execution (code runs line by line). “Hoisting” is a description of the creation phase, not code being moved.</li>
+<li><b>Function declarations in blocks</b> behave differently in sloppy mode (legacy semantics) and strict mode (block-scoped). Avoid them in blocks.</li>
+<li><b>Strict mode</b> (<code>"use strict"</code>, and automatically in modules and classes): no implicit globals (assigning to an undeclared name throws), <code>this</code> is <code>undefined</code> in plain function calls, duplicate parameters are an error, silent failures become errors.</li>
+<li><b>Implicit global:</b> assigning to an undeclared variable in sloppy mode creates a global property. A classic leak source.</li>
+<li><b>Shadowing:</b> an inner declaration with the same name hides the outer one. Legal, but lint it (<code>no-shadow</code>).</li>
+<li><b>Global scope hygiene:</b> modules have their own top-level scope, so top-level variables do not become globals.</li>
+</ul>
+
+<pre><code>console.log(a);   // undefined   (var is hoisted and initialised)
+var a = 1;
+// console.log(b); // ReferenceError: Cannot access 'b' before initialization (TDZ)
+let b = 2;
+
+const user = { name: 'Ada' };
+user.name = 'Bob';   // allowed: the object is mutable
+// user = {};        // TypeError: assignment to constant variable</code></pre>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying “<code>let</code> and <code>const</code> are not hoisted”. They are hoisted; the TDZ is the proof (an inner <code>let</code> shadows the outer variable for the whole block).</li>
+<li>Saying “<code>const</code> makes a value immutable”. Use <code>Object.freeze</code> for shallow immutability (J9).</li>
+<li>Explaining hoisting as code literally moving to the top.</li>
+<li>Forgetting that function expressions and arrow functions assigned to <code>var</code> are not callable before the assignment.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why does <code>let</code> in a loop fix the closure-in-loop problem?</dt><dd>Each iteration gets its own binding, so each callback captures its own value.</dd>
+<dt>What is an IIFE for today?</dt><dd>Mostly legacy module isolation. Modules and blocks replace it; still used for async top-level code in scripts.</dd>
+<dt>Is <code>typeof</code> always safe?</dt><dd>For undeclared names yes (returns <code>"undefined"</code>); inside the TDZ it throws.</dd>
+<dt>What is the global object?</dt><dd><code>globalThis</code> in every environment (<code>window</code> in browsers, <code>global</code> in Node).</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 2 · Functions and objects</h1>
+
+<!-- ============ J4 ============ -->
+<section class="q" id="j4">
+<header class="qh">
+  <div class="qrow"><span class="qid">J4</span><span class="tag added">Added</span></div>
+  <h2>Closures</h2>
+  <p class="qtext">“What is a closure? Give practical uses. What are the downsides?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“A closure is a function together with a reference to the lexical environment where it was created. It keeps access to the variables of its outer scopes even after the outer function has returned. Note it holds the variables themselves, not copies of their values. I use closures for private state, factories, memoisation, partial application, callbacks and event handlers, and the module pattern. They are also how React hooks work, and the source of stale-closure bugs. The cost is that captured variables stay in memory as long as the function lives, so long-lived closures can leak large objects.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 250" role="img" aria-label="A function counter creates a variable count and returns an inner function. After counter returns, the inner function still holds a reference to the environment containing count, so each returned function has its own private count.">
+  <rect x="10" y="10" width="300" height="110" rx="5" class="b"/><text x="20" y="30" class="bd">makeCounter() runs, then returns</text>
+  <text x="20" y="54" class="mono" style="font-size:11.5px">function makeCounter() {</text><text x="30" y="72" class="mono" style="font-size:11.5px">let count = 0;</text><text x="30" y="90" class="mono" style="font-size:11.5px">return () =&gt; ++count;</text><text x="20" y="108" class="mono" style="font-size:11.5px">}</text>
+  <rect x="380" y="10" width="170" height="64" rx="5" class="h"/><text x="390" y="30" class="bd">counterA (function)</text><text x="390" y="50" class="sm">code + [[Environment]] ─┐</text>
+  <rect x="380" y="86" width="170" height="64" rx="5" class="h"/><text x="390" y="106" class="bd">counterB (function)</text><text x="390" y="126" class="sm">code + [[Environment]] ─┐</text>
+  <rect x="610" y="10" width="140" height="64" rx="5" class="g"/><text x="620" y="32" class="bd">env A</text><text x="620" y="52" class="mono">count = 2</text>
+  <rect x="610" y="86" width="140" height="64" rx="5" class="g"/><text x="620" y="108" class="bd">env B</text><text x="620" y="128" class="mono">count = 0</text>
+  <path class="a" d="M550 42H608"/><path class="a" d="M550 118H608"/>
+  <path class="d" d="M310 60H378"/><text x="318" y="52" class="sm">each call</text><path class="d" d="M310 100H378"/><text x="318" y="116" class="sm">new env</text>
+  <text x="10" y="186" class="sm">The outer function finished, but its environment lives on because an inner function still references it.</text>
+  <text x="10" y="206" class="sm">Variables are shared by reference between closures from the same call, and private from the outside.</text>
+  <text x="10" y="232" class="sm">Garbage collection frees env A only when counterA is unreachable.</text>
+</svg></div>
+<figcaption><b>Closures are references to environments, not snapshots.</b> Two calls create two independent environments.</figcaption></figure>
+
+<h3>Practical uses</h3>
+<div class="tw"><table>
+<tr><th>Use</th><th>Why a closure</th></tr>
+<tr><td>Private state / encapsulation</td><td>variables are unreachable except through returned functions (module pattern, factories; before <code>#private</code> fields)</td></tr>
+<tr><td>Function factories and partial application</td><td><code>const add = a =&gt; b =&gt; a + b</code>; configuration baked into the returned function</td></tr>
+<tr><td>Memoisation / caching</td><td>the cache lives in the enclosing scope</td></tr>
+<tr><td>Callbacks, event handlers, timers</td><td>handler remembers the data at registration time</td></tr>
+<tr><td>Debounce / throttle / once</td><td>timer id or flag kept in the closure</td></tr>
+<tr><td>React hooks</td><td>each render’s functions close over that render’s props and state</td></tr>
+<tr><td>Iterators and generators, currying, middleware chains</td><td>retain position or next handler</td></tr>
+</table></div>
+
+<h3>Downsides and pitfalls</h3>
+<ul>
+<li><b>Memory retention:</b> everything in the captured scope can stay alive. Engines (V8) typically retain only variables that some closure actually references, but variables shared by several closures in one scope, or use of <code>eval</code>, can keep more alive. Large DOM nodes or data captured by long-lived listeners are a classic leak. Remove listeners, clear timers, null large references.</li>
+<li><b>Loop with <code>var</code>:</b> all callbacks share one variable. Use <code>let</code> (a new binding per iteration) or an IIFE.</li>
+<li><b>Stale closures:</b> in React a callback or effect captures the props and state of its render. With a missing dependency it keeps using old values. Fixes: correct dependency array, functional updates (<code>setCount(c =&gt; c + 1)</code>), refs for latest values.</li>
+<li><b>Hard to test or debug</b> if overused as hidden state.</li>
+<li><b>Performance:</b> creating closures in hot loops allocates; usually irrelevant, relevant in render paths with many children (and for memoised children, a new function each render defeats <code>React.memo</code>).</li>
+</ul>
+
+<pre><code>function once(fn) { let done = false, result; return (...args) =&gt; done ? result : (done = true, result = fn(...args)); }
+function createStore(initial) {
+  let state = initial; const listeners = new Set();           // private, only reachable via the API below
+  return { get: () =&gt; state, set(next) { state = next; listeners.forEach(l =&gt; l(state)); }, subscribe(l) { listeners.add(l); return () =&gt; listeners.delete(l); } };
+}</code></pre>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Defining a closure as “a function inside a function”. The essential part is access to the outer environment after the outer function returned.</li>
+<li>Saying closures copy values. They share live variables.</li>
+<li>Answering only with the counter example. Add a real use: hooks, debounce, private state, a cleanup function.</li>
+<li>Claiming closures always cause memory leaks. They retain memory only while reachable.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How do closures relate to scope?</dt><dd>Lexical scope defines which variables are visible; a closure is the runtime bundle of function plus environment that keeps that visibility alive.</dd>
+<dt>How would you find a closure-related memory leak?</dt><dd>Heap snapshots in DevTools Memory: compare snapshots, inspect retainers (“Closure” / “Context”) of detached DOM nodes or growing arrays.</dd>
+<dt>Does an arrow function create a closure?</dt><dd>Yes, every function does; arrows also capture <code>this</code> and <code>arguments</code> lexically.</dd>
+<dt>How are closures and private fields different?</dt><dd>Closure privacy is per instance and costs a function copy per instance; <code>#private</code> fields are shared on the prototype chain methods and checked by the engine.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J5 ============ -->
+<section class="q" id="j5">
+<header class="qh">
+  <div class="qrow"><span class="qid">J5</span><span class="tag added">Added</span></div>
+  <h2><code>this</code> binding</h2>
+  <p class="qtext">“How is <code>this</code> determined in JavaScript? How do arrow functions differ? What are <code>call</code>, <code>apply</code> and <code>bind</code>?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“<code>this</code> is not about where a function is written, it is about how it is called. There are four rules, in order of priority: <code>new</code> creates a fresh object; explicit binding with <code>call</code>, <code>apply</code> or <code>bind</code> sets it; a method call <code>obj.fn()</code> uses <code>obj</code>; otherwise the default is <code>undefined</code> in strict mode and the global object in sloppy mode. Arrow functions have no <code>this</code> of their own: they take it from the enclosing scope at definition time, and it cannot be changed. That is why they are used for callbacks and class fields, and why they are wrong for object methods that need their own <code>this</code>.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 330" role="img" aria-label="Decision flow for determining this: is it an arrow function, then lexical this from the enclosing scope; called with new, then the new object; called with call, apply or bind, then the given object; called as obj.method, then obj; otherwise undefined in strict mode or the global object in sloppy mode.">
+  <rect x="270" y="8" width="220" height="34" rx="5" class="b"/><text x="380" y="30" text-anchor="middle" class="bd">How was the function called?</text>
+  <path class="a" d="M380 42V58"/>
+  <rect x="10" y="60" width="300" height="40" rx="5" class="g"/><text x="20" y="78" class="bd">1  Arrow function?</text><text x="20" y="93" class="sm">→ lexical this (call/bind ignored)</text>
+  <rect x="10" y="108" width="300" height="40" rx="5" class="h"/><text x="20" y="126" class="bd">2  new F()</text><text x="20" y="141" class="sm">→ the newly created object</text>
+  <rect x="10" y="156" width="300" height="40" rx="5" class="h"/><text x="20" y="174" class="bd">3  f.call / f.apply / f.bind(obj)</text><text x="20" y="189" class="sm">→ obj (bind is permanent; later call cannot override)</text>
+  <rect x="10" y="204" width="300" height="40" rx="5" class="h"/><text x="20" y="222" class="bd">4  obj.method()</text><text x="20" y="237" class="sm">→ obj (the object before the dot at the call site)</text>
+  <rect x="10" y="252" width="300" height="46" rx="5" class="w"/><text x="20" y="270" class="bd">5  plain f()</text><text x="20" y="286" class="sm">→ undefined (strict) or globalThis</text>
+  <text x="340" y="30" class="bd">Losing this</text>
+  <rect x="340" y="40" width="410" height="110" rx="5" class="x"/>
+  <text x="352" y="62" class="mono" style="font-size:11.5px">const fn = user.greet;   fn();           // detached</text><text x="352" y="82" class="mono" style="font-size:11.5px">setTimeout(user.greet, 0);                // callback</text><text x="352" y="102" class="mono" style="font-size:11.5px">button.onclick = user.greet;              // this = element</text><text x="352" y="124" class="sm">the function is the same; the call site changed</text>
+  <text x="340" y="176" class="bd">Fixes</text>
+  <text x="340" y="198" class="mono" style="font-size:11.5px">user.greet.bind(user)</text><text x="340" y="218" class="mono" style="font-size:11.5px">() =&gt; user.greet()            // wrapper</text><text x="340" y="238" class="mono" style="font-size:11.5px">class A { handle = () =&gt; {…} }  // field arrow</text><text x="340" y="262" class="sm">Order of priority: new &gt; bind &gt; call/apply &gt; method &gt; default.</text>
+</svg></div>
+<figcaption><b>Ask “how was it called?”</b> and walk the list from the top.</figcaption></figure>
+
+<h3>call, apply, bind</h3>
+<div class="tw"><table>
+<tr><th></th><th>Runs now?</th><th>Arguments</th><th>Returns</th></tr>
+<tr><td><code>fn.call(obj, a, b)</code></td><td>yes</td><td>listed</td><td>the result</td></tr>
+<tr><td><code>fn.apply(obj, [a, b])</code></td><td>yes</td><td>array</td><td>the result</td></tr>
+<tr><td><code>fn.bind(obj, a)</code></td><td>no</td><td>listed, partial application</td><td>a new bound function</td></tr>
+</table></div>
+
+<h3>Arrow function differences</h3>
+<ul>
+<li>No own <code>this</code>, <code>arguments</code>, <code>super</code> or <code>new.target</code>; they use the enclosing ones.</li>
+<li>Cannot be used with <code>new</code>; have no <code>prototype</code>.</li>
+<li><code>call</code>, <code>apply</code> and <code>bind</code> cannot change their <code>this</code> (arguments still work).</li>
+<li>Cannot be generators. Shorter syntax with implicit return.</li>
+<li><b>Do not use as object methods</b> or prototype methods when you need <code>this</code> to be the object, and avoid where the caller sets <code>this</code> (some library callbacks).</li>
+</ul>
+
+<h3>Where you meet this</h3>
+<ul>
+<li><b>DOM event handlers:</b> a regular function handler has <code>this</code> equal to the element (<code>currentTarget</code>); arrow handlers do not.</li>
+<li><b>Classes:</b> methods are not auto-bound. Passing <code>this.handle</code> as a callback loses <code>this</code>. React class components needed <code>bind</code> in the constructor; hooks removed the issue.</li>
+<li><b>Nested functions:</b> an inner regular function does not inherit the outer <code>this</code> (the old <code>const self = this</code> or <code>.bind(this)</code>); arrows do.</li>
+<li><b>Strict vs sloppy:</b> modules and classes are strict, so a detached call gives <code>undefined</code> and a clear TypeError instead of silently touching <code>window</code>.</li>
+<li><b>Top level:</b> in a module <code>this</code> is <code>undefined</code>; in a CommonJS module it is <code>module.exports</code>; in a classic script it is the global object.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“<code>this</code> is the object the function is defined in.” It is decided by the call, except for arrows.</li>
+<li>Arrow function as an object method that uses <code>this</code>.</li>
+<li>Thinking <code>bind</code> twice re-binds. The first <code>bind</code> wins.</li>
+<li>Forgetting that the default rule differs between strict and sloppy mode.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Implement <code>bind</code> conceptually.</dt><dd>Return a function that calls the original with the fixed <code>this</code> and the partial arguments prepended to the new ones (and handle <code>new</code> on the bound function).</dd>
+<dt>What does <code>new</code> do?</dt><dd>Creates an object whose prototype is <code>F.prototype</code>, calls <code>F</code> with <code>this</code> set to it, and returns it unless <code>F</code> returns another object (J6).</dd>
+<dt>What is <code>globalThis</code>?</dt><dd>A standard way to reach the global object in any environment.</dd>
+<dt>Why do React class components bind handlers?</dt><dd>Because <code>this.handleClick</code> passed as a prop is called without its object, so <code>this</code> is lost.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J6 ============ -->
+<section class="q" id="j6">
+<header class="qh">
+  <div class="qrow"><span class="qid">J6</span><span class="tag added">Added</span></div>
+  <h2>Prototypes and inheritance</h2>
+  <p class="qtext">“How does prototypal inheritance work? What is the prototype chain? What does <code>new</code> do? What is the difference between <code>__proto__</code> and <code>prototype</code>?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Every object has an internal link, <code>[[Prototype]]</code>, to another object or to <code>null</code>. When I read a property, the engine looks on the object itself, then follows that link up the chain until it finds it or reaches <code>null</code>. That chain is how inheritance works: objects inherit directly from other objects. <code>prototype</code> is a property of constructor functions: it is the object that becomes the <code>[[Prototype]]</code> of instances created with <code>new</code>. <code>__proto__</code> is the accessor that exposes an object’s actual <code>[[Prototype]]</code>; the modern way is <code>Object.getPrototypeOf</code> and <code>Object.setPrototypeOf</code>. Classes are syntax over this mechanism.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 290" role="img" aria-label="A prototype chain: the instance ada has own property name and links to Person.prototype which holds greet and constructor, which links to Object.prototype which holds toString and hasOwnProperty, which links to null. Person.prototype is the same object as the prototype property of the Person function.">
+  <rect x="10" y="30" width="170" height="86" rx="5" class="h"/><text x="20" y="50" class="bd">ada  (instance)</text><text x="20" y="72" class="mono" style="font-size:11.5px">name: "Ada"</text><text x="20" y="92" class="sm">own properties only</text><text x="20" y="108" class="mono" style="font-size:10.5px">[[Prototype]] ──┐</text>
+  <rect x="230" y="30" width="200" height="86" rx="5" class="g"/><text x="240" y="50" class="bd">Person.prototype</text><text x="240" y="72" class="mono" style="font-size:11.5px">greet()  constructor</text><text x="240" y="92" class="sm">shared methods live here</text><text x="240" y="108" class="mono" style="font-size:10.5px">[[Prototype]] ──┐</text>
+  <rect x="480" y="30" width="200" height="86" rx="5" class="w"/><text x="490" y="50" class="bd">Object.prototype</text><text x="490" y="72" class="mono" style="font-size:11.5px">toString hasOwnProperty</text><text x="490" y="92" class="sm">end of most chains</text><text x="490" y="108" class="mono" style="font-size:10.5px">[[Prototype]] ──┐</text>
+  <rect x="705" y="52" width="45" height="30" rx="5" class="b"/><text x="715" y="72" class="mono">null</text>
+  <path class="a" d="M180 74H228"/><path class="a" d="M430 74H478"/><path class="a" d="M680 74H703"/>
+  <rect x="230" y="150" width="200" height="50" rx="5" class="b"/><text x="240" y="170" class="bd">function Person</text><text x="240" y="188" class="mono" style="font-size:11.5px">Person.prototype ─┐</text>
+  <path class="a" d="M330 150V118"/><text x="340" y="138" class="sm">.prototype</text>
+  <text x="10" y="232" class="bd">Lookup of ada.greet</text><text x="10" y="252" class="sm">own? no → Person.prototype? yes, found. ada.toString: own? no → Person.prototype? no → Object.prototype? yes.</text><text x="10" y="270" class="sm">ada.missing: walks to null, returns undefined. Writes always create an own property (shadowing) unless a setter or read-only property is inherited.</text>
+</svg></div>
+<figcaption><b>Two different things called “prototype”:</b> the <code>prototype</code> property on a constructor, and the internal <code>[[Prototype]]</code> link on every object.</figcaption></figure>
+
+<h3>What <code>new</code> does</h3>
+<ol>
+<li>Creates a new empty object.</li>
+<li>Sets its <code>[[Prototype]]</code> to <code>Constructor.prototype</code>.</li>
+<li>Calls the constructor with <code>this</code> bound to the new object.</li>
+<li>Returns the new object, unless the constructor returns another <i>object</i> (primitive returns are ignored).</li>
+</ol>
+
+<pre><code>function Person(name) { this.name = name; }
+Person.prototype.greet = function () { return `Hi ${this.name}`; };   // shared by all instances (one copy)
+const ada = new Person('Ada');
+
+// equivalent without new:
+const proto = { greet() { return `Hi ${this.name}`; } };
+const bob = Object.create(proto); bob.name = 'Bob';
+
+Object.getPrototypeOf(ada) === Person.prototype;   // true
+ada instanceof Person;                              // checks Person.prototype is in ada's chain
+Object.hasOwn(ada, 'name');                         // own property check (prefer over hasOwnProperty)
+'greet' in ada;                                     // own or inherited</code></pre>
+
+<h3>Inheritance patterns</h3>
+<div class="tw"><table>
+<tr><th>Pattern</th><th>How</th><th>Note</th></tr>
+<tr><td>Constructor + prototype (ES5)</td><td><code>Child.prototype = Object.create(Parent.prototype); Child.prototype.constructor = Child</code>; <code>Parent.call(this, …)</code></td><td>verbose, error-prone</td></tr>
+<tr><td><code>Object.create(proto)</code></td><td>object-to-object delegation (OLOO)</td><td>no constructors needed; <code>Object.create(null)</code> makes a dictionary with no prototype</td></tr>
+<tr><td><code>class … extends</code> (ES2015)</td><td>sets up both the instance chain and the constructor chain</td><td>preferred syntax (J7)</td></tr>
+<tr><td>Mixins / composition</td><td>copy or compose behaviour (<code>Object.assign(Target.prototype, mixin)</code>, factory functions)</td><td>avoids deep hierarchies</td></tr>
+</table></div>
+
+<h3>More points</h3>
+<ul>
+<li><b>Own vs inherited:</b> <code>Object.keys</code>, <code>JSON.stringify</code>, spread see own enumerable properties only; <code>for…in</code> also walks inherited enumerable ones (avoid it for arrays; combine with <code>Object.hasOwn</code>).</li>
+<li><b>Memory:</b> methods on the prototype exist once; methods created in the constructor (or class field arrow functions) exist per instance.</li>
+<li><b>Built-ins are prototype-based too:</b> arrays inherit from <code>Array.prototype</code>, functions from <code>Function.prototype</code>, all from <code>Object.prototype</code>. Do not modify built-in prototypes (“monkey patching”): it breaks libraries and collides with future standards (a famous case: <code>Array.prototype.flatten</code> renamed to <code>flat</code> because of MooTools).</li>
+<li><b>Performance:</b> engines (V8) optimise with hidden classes (shapes) and inline caches; avoid changing an object’s prototype after creation (<code>setPrototypeOf</code> is slow) and avoid very deep chains.</li>
+<li><b>Security, prototype pollution:</b> a merge or set-by-path function that accepts keys like <code>__proto__</code> or <code>constructor.prototype</code> can modify <code>Object.prototype</code>, affecting every object. Mitigate: validate keys, use <code>Object.create(null)</code> or <code>Map</code>, <code>Object.freeze(Object.prototype)</code> in hardened environments, <code>structuredClone</code>, keep libraries updated.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Mixing up <code>prototype</code> (function property) and <code>__proto__</code> / <code>[[Prototype]]</code> (object link).</li>
+<li>Saying JavaScript has no inheritance, or that classes make it class-based. It is still prototype-based underneath.</li>
+<li>Believing assignment to an inherited property changes the prototype. It creates an own property that shadows it.</li>
+<li>Using <code>__proto__</code> in new code, or <code>for…in</code> without an own-property check.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does <code>Object.create(null)</code> give you?</dt><dd>An object with no prototype: no inherited keys like <code>toString</code>, safe as a dictionary (though <code>Map</code> is usually better).</dd>
+<dt>How does <code>instanceof</code> work?</dt><dd>It checks whether <code>Constructor.prototype</code> appears in the object’s prototype chain (customisable with <code>Symbol.hasInstance</code>).</dd>
+<dt>Prototype vs class: when would you still use prototypes directly?</dt><dd>Rarely; for delegation with <code>Object.create</code>, polyfills, and to understand library internals.</dd>
+<dt>What is <code>constructor</code>?</dt><dd>A property on <code>Constructor.prototype</code> pointing back to the function; it is lost if you replace the prototype object without restoring it.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J7 ============ -->
+<section class="q" id="j7">
+<header class="qh">
+  <div class="qrow"><span class="qid">J7</span><span class="tag added">Added</span></div>
+  <h2>Classes</h2>
+  <p class="qtext">“Are JavaScript classes real classes? What do <code>extends</code>, <code>super</code>, <code>static</code> and <code>#private</code> do? Composition or inheritance?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Classes are syntax over the prototype system, with some real differences: the class body is always strict, the constructor must be called with <code>new</code>, methods are non-enumerable, and classes are not usable before their declaration. <code>extends</code> links both the instance prototype chain and the constructor chain; in a derived constructor I must call <code>super()</code> before touching <code>this</code>. <code>static</code> members belong to the class itself. <code>#private</code> fields are truly private and enforced by the engine, unlike a naming convention. In practice I prefer composition over deep inheritance and plain functions where I do not need identity or state.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 260" role="img" aria-label="A class Animal and a subclass Dog. Two chains: instances chain from dog to Dog.prototype to Animal.prototype, and constructors chain from Dog to Animal. Static members live on the constructors, instance methods on the prototypes, private fields on each instance.">
+  <text x="10" y="18" class="bd">Instance chain (methods)</text>
+  <rect x="10" y="28" width="150" height="70" rx="5" class="h"/><text x="20" y="48" class="bd">rex</text><text x="20" y="68" class="mono" style="font-size:11px">name  #secret</text><text x="20" y="86" class="sm">own fields, private slots</text>
+  <rect x="210" y="28" width="150" height="70" rx="5" class="g"/><text x="220" y="48" class="bd">Dog.prototype</text><text x="220" y="68" class="mono" style="font-size:11px">bark()</text><text x="220" y="86" class="sm">non-enumerable</text>
+  <rect x="410" y="28" width="150" height="70" rx="5" class="g"/><text x="420" y="48" class="bd">Animal.prototype</text><text x="420" y="68" class="mono" style="font-size:11px">speak()</text>
+  <rect x="610" y="28" width="140" height="70" rx="5" class="w"/><text x="620" y="48" class="bd">Object.prototype</text>
+  <path class="a" d="M160 63H208"/><path class="a" d="M360 63H408"/><path class="a" d="M560 63H608"/>
+  <text x="10" y="132" class="bd">Constructor chain (static members)</text>
+  <rect x="210" y="142" width="150" height="56" rx="5" class="g"/><text x="220" y="162" class="bd">class Dog</text><text x="220" y="182" class="mono" style="font-size:11px">static create()</text>
+  <rect x="410" y="142" width="150" height="56" rx="5" class="g"/><text x="420" y="162" class="bd">class Animal</text><text x="420" y="182" class="mono" style="font-size:11px">static count</text>
+  <rect x="610" y="142" width="140" height="56" rx="5" class="w"/><text x="620" y="162" class="bd">Function.prototype</text>
+  <path class="a" d="M360 170H408"/><path class="a" d="M560 170H608"/>
+  <text x="10" y="226" class="sm">extends sets BOTH links: Dog.prototype → Animal.prototype and Dog → Animal (statics are inherited too).</text>
+  <text x="10" y="246" class="sm">Derived constructor: call super(...) first; it creates the object. Only then is this available.</text>
+</svg></div>
+<figcaption><b>Where each kind of member lives.</b></figcaption></figure>
+
+<h3>Class features</h3>
+<div class="tw"><table>
+<tr><th>Feature</th><th>Behaviour</th></tr>
+<tr><td><code>constructor</code></td><td>runs on <code>new</code>; calling a class without <code>new</code> throws</td></tr>
+<tr><td>Methods</td><td>on the prototype, non-enumerable, strict mode</td></tr>
+<tr><td>Fields <code>x = 1</code></td><td>own property per instance, initialised before the constructor body (base) or right after <code>super()</code> (derived)</td></tr>
+<tr><td><code>#private</code> fields and methods</td><td>hard-private: not accessible outside, not even via reflection; <code>#x in obj</code> is a brand check; subclasses cannot see them</td></tr>
+<tr><td><code>static</code> members and <code>static {}</code> blocks</td><td>on the class itself; inherited by subclasses</td></tr>
+<tr><td><code>get</code> / <code>set</code></td><td>accessor properties on the prototype</td></tr>
+<tr><td><code>extends</code>, <code>super</code></td><td><code>super.method()</code> calls the parent method; <code>extends</code> accepts any constructor expression, including built-ins (<code>Error</code>, <code>Array</code>)</td></tr>
+<tr><td>Hoisting</td><td>class declarations are in the TDZ before their definition</td></tr>
+</table></div>
+
+<pre><code>class Account {
+  #balance = 0;                                   // private
+  static #count = 0;
+  constructor(owner) { this.owner = owner; Account.#count++; }
+  deposit(n) { if (n &lt;= 0) throw new RangeError('positive only'); this.#balance += n; return this; }
+  get balance() { return this.#balance; }
+  static get count() { return Account.#count; }
+}
+class Savings extends Account {
+  constructor(owner, rate) { super(owner); this.rate = rate; }      // super() before this
+  addInterest() { return this.deposit(this.balance * this.rate); }
+}</code></pre>
+
+<h3>Class vs prototype vs factory function</h3>
+<div class="tw"><table>
+<tr><th></th><th>class</th><th>factory function (closure)</th></tr>
+<tr><td>Privacy</td><td><code>#private</code></td><td>closure variables</td></tr>
+<tr><td><code>instanceof</code>, inheritance</td><td>yes</td><td>no (composition instead)</td></tr>
+<tr><td>Memory</td><td>methods shared on the prototype</td><td>new function objects per instance</td></tr>
+<tr><td><code>this</code> problems</td><td>yes (lost <code>this</code>)</td><td>none</td></tr>
+<tr><td>Typical use</td><td>domain entities, error types, Angular services, library classes</td><td>React-style code, small modules, hooks</td></tr>
+</table></div>
+
+<h3>Composition over inheritance</h3>
+<p>Deep hierarchies couple subclasses to parent internals (the fragile base class problem), and JavaScript allows only single inheritance. Prefer: small objects or functions combined by composition, mixins (<code>const Serializable = Base =&gt; class extends Base {…}</code>) when you need shared behaviour, and dependency injection for collaborators. Use inheritance for real “is-a” relationships with a stable base, such as custom <code>Error</code> types. React moved from class components and inheritance to function components, hooks and composition; the docs explicitly recommend composition.</p>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“Classes were added so JavaScript is object-oriented now.” It is the same prototype model with nicer syntax and a few semantic differences.</li>
+<li>Using arrow-function class fields everywhere for binding: they create one function per instance and are not on the prototype (hard to mock or override in subclasses).</li>
+<li>Reading <code>this</code> before <code>super()</code> in a derived constructor (ReferenceError).</li>
+<li>Assuming <code>#private</code> is the same as a <code>_underscore</code> convention. The former is enforced.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Can you extend built-ins?</dt><dd>Yes, with <code>class MyErr extends Error</code>; modern engines support it correctly; set <code>this.name</code> and use <code>cause</code>.</dd>
+<dt>What is a mixin?</dt><dd>A function that takes a base class and returns a subclass adding behaviour, allowing multiple capabilities without multiple inheritance.</dd>
+<dt>How do private fields differ from WeakMap-based privacy?</dt><dd>Same goal; <code>#private</code> is native, faster and syntax-checked; WeakMap was the pre-2022 workaround.</dd>
+<dt>Abstract classes?</dt><dd>Not in JavaScript; check <code>new.target === Base</code> and throw, or use TypeScript <code>abstract</code>.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J8 ============ -->
+<section class="q" id="j8">
+<header class="qh">
+  <div class="qrow"><span class="qid">J8</span><span class="tag added">Added</span></div>
+  <h2>Functions in depth</h2>
+  <p class="qtext">“What are first-class and higher-order functions? Declaration versus expression versus arrow? Rest, spread and default parameters? Currying versus partial application?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Functions are first-class: they are objects, so they can be assigned, passed as arguments and returned. A higher-order function takes or returns a function, like <code>map</code>, <code>debounce</code> or a React HOC. Declarations are hoisted with their body; expressions and arrows are not usable before the line that assigns them. Arrows have lexical <code>this</code> and no <code>arguments</code>. Rest collects arguments into an array, spread expands an iterable into arguments or elements. Default parameters are evaluated at call time. Currying turns <code>f(a, b)</code> into <code>f(a)(b)</code>; partial application fixes some arguments and returns a function waiting for the rest.”</p></div>
+
+<h3>Ways to define a function</h3>
+<div class="tw"><table>
+<tr><th>Form</th><th>Hoisted</th><th><code>this</code></th><th><code>new</code></th><th><code>arguments</code></th><th>Note</th></tr>
+<tr><td><code>function f() {}</code> (declaration)</td><td>yes, with body</td><td>dynamic</td><td>yes</td><td>yes</td><td>named, good stack traces</td></tr>
+<tr><td><code>const f = function () {}</code></td><td>no (TDZ)</td><td>dynamic</td><td>yes</td><td>yes</td><td>can be named for recursion</td></tr>
+<tr><td><code>const f = () =&gt; {}</code></td><td>no (TDZ)</td><td>lexical</td><td>no</td><td>no (use rest)</td><td>concise callbacks</td></tr>
+<tr><td>method <code>{ f() {} }</code></td><td>n/a</td><td>dynamic</td><td>no</td><td>yes</td><td>has <code>super</code> access</td></tr>
+<tr><td><code>function*</code>, <code>async function</code></td><td>like declarations</td><td>dynamic</td><td>no</td><td>yes</td><td>return iterator or promise</td></tr>
+<tr><td><code>new Function('a', 'return a')</code></td><td>n/a</td><td>global scope</td><td>yes</td><td>yes</td><td>like <code>eval</code>: avoid, blocked by CSP</td></tr>
+</table></div>
+
+<h3>Parameters</h3>
+<ul>
+<li><b>Default parameters</b> are evaluated at each call, left to right, and can use earlier parameters. They apply for <code>undefined</code>, not <code>null</code>.</li>
+<li><b>Rest</b> <code>(...args)</code>: a real array, must be last. Replaces <code>arguments</code> (array-like, not in arrows).</li>
+<li><b>Spread</b> <code>f(...arr)</code>, <code>[...a, ...b]</code>, <code>{...o1, ...o2}</code>: expands iterables (objects: own enumerable properties); shallow.</li>
+<li><b>Destructuring in parameters</b> gives named options: <code>function f({ a, b = 2 } = {})</code>.</li>
+<li><b><code>f.length</code></b> counts parameters before the first default or rest; <b><code>f.name</code></b> is inferred.</li>
+<li><b>Arguments are passed by sharing</b> (J1): mutating an object parameter affects the caller’s object.</li>
+</ul>
+
+<h3>Higher-order patterns</h3>
+<div class="tw"><table>
+<tr><th>Pattern</th><th>Idea</th><th>Example use</th></tr>
+<tr><td>Callback</td><td>function passed to be called later</td><td>events, timers, <code>array.map</code></td></tr>
+<tr><td>Currying</td><td><code>f(a, b, c)</code> → <code>f(a)(b)(c)</code>, one argument at a time</td><td>composition-friendly utilities (Ramda, Redux <code>connect</code> style)</td></tr>
+<tr><td>Partial application</td><td>fix some arguments now, supply the rest later (<code>bind</code>, closures)</td><td><code>const log = logger.bind(null, 'app')</code></td></tr>
+<tr><td>Composition</td><td><code>compose(f, g)(x) = f(g(x))</code>; <code>pipe</code> left-to-right</td><td>middleware, transformations</td></tr>
+<tr><td>Memoisation</td><td>cache results by arguments</td><td>expensive pure functions, selectors (Reselect), <code>useMemo</code></td></tr>
+<tr><td>Debounce / throttle</td><td>limit call frequency: debounce waits for quiet, throttle limits rate</td><td>search input, scroll, resize</td></tr>
+<tr><td>Decorator / wrapper</td><td>function returning an enhanced function</td><td>logging, retries, auth checks, React HOCs</td></tr>
+<tr><td>IIFE</td><td>define and call at once</td><td>legacy isolation, async top-level in scripts</td></tr>
+</table></div>
+
+<pre><code>const compose = (...fns) =&gt; x =&gt; fns.reduceRight((acc, f) =&gt; f(acc), x);
+const curry = fn =&gt; function c(...a) { return a.length &gt;= fn.length ? fn(...a) : (...b) =&gt; c(...a, ...b); };
+function debounce(fn, ms) { let t; return (...args) =&gt; { clearTimeout(t); t = setTimeout(() =&gt; fn(...args), ms); }; }</code></pre>
+
+<h3>Other function facts</h3>
+<ul>
+<li><b>Pure functions</b>: same input gives same output, no side effects. Easier to test, memoise and reason about; the basis of Redux reducers and React rendering (J17).</li>
+<li><b>Recursion</b> and the call stack: each call adds a frame; deep recursion throws <code>RangeError: Maximum call stack size exceeded</code>. Tail-call optimisation is in the spec but only implemented in Safari <span class="verify">verify</span>, so use loops or trampolines for deep recursion.</li>
+<li><b>Function objects have properties</b> (<code>name</code>, <code>length</code>, <code>prototype</code>) and methods (<code>call</code>, <code>apply</code>, <code>bind</code>, <code>toString</code>).</li>
+<li><b>Getters and generators</b> are functions with special call behaviour (J9, J12).</li>
+<li><b>Async functions</b> always return a promise and are covered in Part 2.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Confusing currying with partial application. Currying changes the function’s shape to unary steps; partial application fixes some arguments of the existing shape.</li>
+<li>Arrow functions as constructors or methods that need <code>this</code>.</li>
+<li>Expecting default parameters to apply for <code>null</code>.</li>
+<li>Using <code>arguments</code> in arrows (it refers to the outer function’s).</li>
+<li>Creating a new function in every render and passing it to a memoised child.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Debounce vs throttle?</dt><dd>Debounce runs after the calls stop for N ms (search box); throttle runs at most once every N ms (scroll handler).</dd>
+<dt>What is a callback hell and how do you avoid it?</dt><dd>Deeply nested callbacks; flatten with named functions, promises and async/await.</dd>
+<dt>What is function hoisting precedence?</dt><dd>Declarations are hoisted over <code>var</code> of the same name, but a later assignment overwrites; avoid same-name collisions.</dd>
+<dt>Why is the rest parameter better than <code>arguments</code>?</dt><dd>It is a real array, works in arrows, and is explicit in the signature.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 3 · Data</h1>
+
+<!-- ============ J9 ============ -->
+<section class="q" id="j9">
+<header class="qh">
+  <div class="qrow"><span class="qid">J9</span><span class="tag added">Added</span></div>
+  <h2>Property descriptors, immutability and Proxy</h2>
+  <p class="qtext">“What is the difference between <code>Object.freeze</code>, <code>seal</code> and <code>preventExtensions</code>? How do you deep copy? What are <code>Proxy</code> and <code>Reflect</code> used for?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Every property has attributes: writable, enumerable and configurable, or a getter and setter. <code>Object.preventExtensions</code> stops adding properties; <code>seal</code> also stops removing and reconfiguring; <code>freeze</code> also stops changing values. All three are shallow. For copying, spread and <code>Object.assign</code> are shallow, <code>structuredClone</code> is the standard deep copy, and the JSON round trip loses types. A <code>Proxy</code> wraps an object and intercepts operations like get, set, has and delete through traps; <code>Reflect</code> offers the default behaviour for each trap. Libraries such as Vue 3 and Immer use proxies for reactivity and drafts.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="A matrix of what each protection level allows: normal object allows add, delete and change; preventExtensions blocks add; seal blocks add and delete; freeze blocks add, delete and change. All are shallow. Below, a Proxy sits between caller and target and its traps intercept operations.">
+  <text x="190" y="18" class="bd">add property</text><text x="310" y="18" class="bd">delete</text><text x="400" y="18" class="bd">change value</text><text x="520" y="18" class="bd">reconfigure</text>
+  <rect x="10" y="26" width="740" height="30" class="b"/><text x="20" y="46" class="mono" style="font-size:11.5px">normal</text><text x="205" y="46" style="fill:var(--good)">✓</text><text x="325" y="46" style="fill:var(--good)">✓</text><text x="425" y="46" style="fill:var(--good)">✓</text><text x="545" y="46" style="fill:var(--good)">✓</text>
+  <rect x="10" y="60" width="740" height="30" class="b"/><text x="20" y="80" class="mono" style="font-size:11.5px">preventExtensions</text><text x="205" y="80" style="fill:var(--bad)">✗</text><text x="325" y="80" style="fill:var(--good)">✓</text><text x="425" y="80" style="fill:var(--good)">✓</text><text x="545" y="80" style="fill:var(--good)">✓</text>
+  <rect x="10" y="94" width="740" height="30" class="b"/><text x="20" y="114" class="mono" style="font-size:11.5px">seal</text><text x="205" y="114" style="fill:var(--bad)">✗</text><text x="325" y="114" style="fill:var(--bad)">✗</text><text x="425" y="114" style="fill:var(--good)">✓</text><text x="545" y="114" style="fill:var(--bad)">✗</text>
+  <rect x="10" y="128" width="740" height="30" class="b"/><text x="20" y="148" class="mono" style="font-size:11.5px">freeze</text><text x="205" y="148" style="fill:var(--bad)">✗</text><text x="325" y="148" style="fill:var(--bad)">✗</text><text x="425" y="148" style="fill:var(--bad)">✗</text><text x="545" y="148" style="fill:var(--bad)">✗</text>
+  <text x="600" y="48" class="sm">all three are SHALLOW:</text><text x="600" y="66" class="sm">nested objects stay mutable</text><text x="600" y="84" class="sm">Violations throw in strict</text><text x="600" y="102" class="sm">mode, are silent in sloppy</text>
+  <rect x="10" y="186" width="130" height="50" rx="5" class="b"/><text x="20" y="216" class="bd">caller</text>
+  <rect x="200" y="176" width="310" height="70" rx="5" class="h"/><text x="212" y="196" class="bd">Proxy  (handler traps)</text><text x="212" y="216" class="mono" style="font-size:11px">get set has deleteProperty ownKeys</text><text x="212" y="234" class="mono" style="font-size:11px">apply construct getPrototypeOf …</text>
+  <rect x="580" y="186" width="170" height="50" rx="5" class="g"/><text x="590" y="216" class="bd">target object</text>
+  <path class="a" d="M140 211H198"/><path class="a" d="M510 211H578"/><text x="520" y="204" class="sm" style="font-size:10.5px">Reflect.*</text>
+</svg></div>
+<figcaption><b>Protection levels and the proxy sandwich.</b> Reflect forwards an operation to the target with the default semantics.</figcaption></figure>
+
+<h3>Property descriptors</h3>
+<ul>
+<li><b>Data descriptor:</b> <code>value</code>, <code>writable</code>, <code>enumerable</code>, <code>configurable</code>. <b>Accessor descriptor:</b> <code>get</code>, <code>set</code>, <code>enumerable</code>, <code>configurable</code>.</li>
+<li><code>Object.defineProperty</code> defaults every missing attribute to <code>false</code>; properties created by assignment default to <code>true</code>.</li>
+<li><b>Enumerable</b> controls <code>for…in</code>, <code>Object.keys</code>, spread and JSON. <b>Configurable: false</b> means you cannot delete or redefine it. Class methods are non-enumerable.</li>
+<li>Inspect with <code>Object.getOwnPropertyDescriptor(s)</code>. <code>Object.isFrozen</code>, <code>isSealed</code>, <code>isExtensible</code> test the state.</li>
+<li><b>Key order:</b> integer-like keys ascending, then string keys in insertion order, then symbols.</li>
+</ul>
+
+<h3>Immutability and copying</h3>
+<div class="tw"><table>
+<tr><th>Technique</th><th>Depth</th><th>Keeps</th><th>Loses or fails</th></tr>
+<tr><td>Spread <code>{...o}</code>, <code>Object.assign</code></td><td>shallow</td><td>own enumerable props, copies getter <i>values</i></td><td>prototype, non-enumerable, nested copies</td></tr>
+<tr><td><code>structuredClone(x)</code></td><td>deep</td><td>cycles, Date, Map, Set, RegExp, typed arrays, Error</td><td>throws on functions and DOM nodes; class instances become plain objects; getters evaluated</td></tr>
+<tr><td><code>JSON.parse(JSON.stringify(x))</code></td><td>deep</td><td>plain data only</td><td><code>undefined</code>, functions, symbols dropped; <code>Date</code> → string; NaN/Infinity → null; BigInt throws; cycles throw</td></tr>
+<tr><td>Immer, immutable data libs</td><td>structural sharing</td><td>unchanged parts keep identity</td><td>learning curve; drafts via Proxy</td></tr>
+<tr><td><code>Object.freeze</code> (and deep-freeze helper)</td><td>shallow unless recursive</td><td>—</td><td>runtime cost on large graphs; use mainly in dev</td></tr>
+</table></div>
+<p><b>Why immutability matters in frontend:</b> change detection by identity (React state, <code>useMemo</code>, Redux, <code>memo</code>) is cheap only if updates create new objects for changed parts. Update immutably: <code>{...state, user: {...state.user, name}}</code>, or use Immer.</p>
+
+<h3>Proxy and Reflect</h3>
+<pre><code>const log = [];
+const tracked = new Proxy({ count: 0 }, {
+  get(target, key, receiver) { log.push(['get', key]); return Reflect.get(target, key, receiver); },
+  set(target, key, value, receiver) { if (key === 'count' &amp;&amp; typeof value !== 'number') throw new TypeError(); return Reflect.set(target, key, value, receiver); },
+  deleteProperty(t, k) { return Reflect.deleteProperty(t, k); }
+});</code></pre>
+<ul>
+<li><b>Uses:</b> reactivity systems (Vue 3, MobX), draft state (Immer), validation, logging, access control, default values, lazy loading, API clients (<code>api.users.get()</code>), mocking in tests.</li>
+<li><b>Limits:</b> slower than direct access; invariants (a non-configurable property must report its real value); a proxy is not equal to its target (<code>proxy !== target</code>), which breaks identity checks; some built-ins with internal slots (Map, Date) need <code>this</code> bound to the real object; cannot be polyfilled for old browsers.</li>
+<li><b>Reflect</b> mirrors the proxy traps, returns booleans instead of throwing for some operations, and is the correct way to forward a trap while preserving <code>receiver</code>.</li>
+<li><b><code>Object.defineProperty</code> reactivity (Vue 2)</b> could not detect added properties; Proxy can (this is a classic “why Vue 3 changed” question).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Calling <code>Object.freeze</code> “deep”. It is shallow.</li>
+<li>Recommending <code>JSON.parse(JSON.stringify())</code> for deep clone without listing what it breaks.</li>
+<li>Mutating state in React or Redux and wondering why nothing re-renders.</li>
+<li>Forgetting that frozen-object writes only throw in strict mode.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does <code>const</code> plus <code>freeze</code> give?</dt><dd>A binding that cannot be reassigned and an object that cannot be changed at the top level.</dd>
+<dt>What is structural sharing?</dt><dd>When updating an immutable structure, unchanged branches are reused, so equality checks by identity stay cheap and memory is small.</dd>
+<dt>How does Vue 3 reactivity use Proxy?</dt><dd>A proxy tracks which properties an effect reads (<code>get</code>) and triggers the effects on <code>set</code>.</dd>
+<dt>How do getters and setters differ from methods?</dt><dd>They look like properties and run code on access; useful for computed values and validation, but hide cost, so keep them cheap.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J10 ============ -->
+<section class="q" id="j10">
+<header class="qh">
+  <div class="qrow"><span class="qid">J10</span><span class="tag added">Added</span></div>
+  <h2>Arrays and functional methods</h2>
+  <p class="qtext">“Which array methods mutate? How do <code>map</code>, <code>filter</code> and <code>reduce</code> differ? What is the difference between <code>for…in</code>, <code>for…of</code> and <code>forEach</code>?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Arrays are objects with a <code>length</code> and integer keys. <code>map</code> transforms each element into a new array, <code>filter</code> keeps some elements, <code>reduce</code> folds everything into one value of any type; none of these mutate the original. <code>push</code>, <code>pop</code>, <code>shift</code>, <code>unshift</code>, <code>splice</code>, <code>sort</code>, <code>reverse</code> and <code>fill</code> do mutate; newer copies like <code>toSorted</code> and <code>toSpliced</code> do not. <code>for…of</code> iterates values and supports <code>break</code> and <code>await</code>; <code>for…in</code> iterates enumerable keys including inherited ones and is for objects; <code>forEach</code> cannot be stopped and ignores returned promises.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 250" role="img" aria-label="A pipeline over an array: map transforms each element, filter keeps matching elements, reduce folds to a single value. A table of mutating and non-mutating methods.">
+  <text x="10" y="18" class="bd">Pipeline: nothing is mutated, each step returns a new value</text>
+  <rect x="10" y="28" width="150" height="40" rx="4" class="b"/><text x="20" y="52" class="mono" style="font-size:11.5px">[1, 2, 3, 4]</text>
+  <path class="a" d="M160 48H190"/><rect x="190" y="28" width="130" height="40" rx="4" class="h"/><text x="200" y="46" class="bd">map(x ⇒ x*2)</text><text x="200" y="60" class="sm" style="font-size:10.5px">same length</text>
+  <path class="a" d="M320 48H350"/><rect x="350" y="28" width="150" height="40" rx="4" class="h"/><text x="360" y="46" class="bd">filter(x ⇒ x&gt;4)</text><text x="360" y="60" class="sm" style="font-size:10.5px">shorter or equal</text>
+  <path class="a" d="M500 48H530"/><rect x="530" y="28" width="220" height="40" rx="4" class="h"/><text x="540" y="46" class="bd">reduce((a,x)⇒a+x, 0)</text><text x="540" y="60" class="sm" style="font-size:10.5px">any single result; give an initial value</text>
+  <rect x="10" y="96" width="360" height="140" rx="5" class="x"/><text x="20" y="116" class="bd">Mutating (change the array)</text>
+  <text x="20" y="140" class="mono" style="font-size:11.5px">push pop shift unshift</text><text x="20" y="160" class="mono" style="font-size:11.5px">splice sort reverse fill copyWithin</text><text x="20" y="184" class="sm">shift/unshift are O(n): they re-index</text><text x="20" y="202" class="sm">sort mutates and, by default, compares as strings</text><text x="20" y="220" class="sm">(use a comparator for numbers)</text>
+  <rect x="390" y="96" width="360" height="140" rx="5" class="g"/><text x="400" y="116" class="bd">Non-mutating (return new / a value)</text>
+  <text x="400" y="140" class="mono" style="font-size:11.5px">map filter slice concat flat flatMap</text><text x="400" y="160" class="mono" style="font-size:11.5px">find findLast some every includes at</text><text x="400" y="184" class="mono" style="font-size:11.5px">toSorted toReversed toSpliced with</text><text x="400" y="202" class="sm">the last four are ES2023 copy methods (verify</text><text x="400" y="220" class="sm">support target); before that use [...a].sort()</text>
+</svg></div>
+<figcaption><b>Functional pipeline versus mutating methods.</b></figcaption></figure>
+
+<h3>Choosing a method</h3>
+<div class="tw"><table>
+<tr><th>Goal</th><th>Method</th></tr>
+<tr><td>Transform every element</td><td><code>map</code></td></tr>
+<tr><td>Keep some</td><td><code>filter</code></td></tr>
+<tr><td>First match / its index / existence</td><td><code>find</code> / <code>findIndex</code> / <code>some</code>, <code>includes</code></td></tr>
+<tr><td>All satisfy</td><td><code>every</code></td></tr>
+<tr><td>Aggregate, group, build an object</td><td><code>reduce</code>; <code>Object.groupBy</code> / <code>Map.groupBy</code> <span class="verify">ES2024, check support</span></td></tr>
+<tr><td>Map then flatten one level</td><td><code>flatMap</code></td></tr>
+<tr><td>Side effects only</td><td><code>for…of</code> or <code>forEach</code></td></tr>
+<tr><td>Sort without mutating</td><td><code>toSorted</code> or <code>[...a].sort(cmp)</code></td></tr>
+<tr><td>Dedupe</td><td><code>[...new Set(a)]</code></td></tr>
+</table></div>
+
+<h3>Loops compared</h3>
+<div class="tw"><table>
+<tr><th></th><th><code>for…of</code></th><th><code>for…in</code></th><th><code>forEach</code></th><th>classic <code>for</code></th></tr>
+<tr><td>Iterates</td><td>values of any iterable</td><td>enumerable string keys, including inherited</td><td>array elements</td><td>by index</td></tr>
+<tr><td><code>break</code> / <code>continue</code></td><td>yes</td><td>yes</td><td>no (throw or use <code>some</code>)</td><td>yes</td></tr>
+<tr><td><code>await</code> inside</td><td>runs sequentially</td><td>sequentially</td><td><b>does not wait</b> (callbacks run all at once)</td><td>sequentially</td></tr>
+<tr><td>Use for</td><td>arrays, strings, Map, Set, generators</td><td>plain object keys (prefer <code>Object.keys</code>)</td><td>simple side effects</td><td>performance-critical or index-driven code</td></tr>
+</table></div>
+
+<h3>More points</h3>
+<ul>
+<li><b>Sort:</b> default converts to strings (<code>[10, 9, 1].sort()</code> gives 1, 10, 9). Pass <code>(a, b) =&gt; a - b</code>. Sorting is stable since ES2019. Use <code>localeCompare</code> or <code>Intl.Collator</code> for text.</li>
+<li><b>Reduce:</b> always supply an initial value (an empty array without one throws). Do not overuse: a chain of <code>map</code>/<code>filter</code> is clearer. Spreading the accumulator inside <code>reduce</code> is O(n²).</li>
+<li><b>Sparse arrays</b> (holes) are skipped by <code>forEach</code>/<code>map</code> and behave oddly; avoid creating them (<code>new Array(5)</code>). <code>Array.from({length: 5}, fn)</code> fills properly.</li>
+<li><b>Array-likes</b> (<code>arguments</code>, <code>NodeList</code>) are not arrays: convert with <code>Array.from</code> or spread.</li>
+<li><b>Complexity:</b> index access and <code>push</code>/<code>pop</code> are O(1) amortised; <code>includes</code>, <code>indexOf</code>, <code>find</code> O(n); for repeated lookups convert to a <code>Set</code> or <code>Map</code>.</li>
+<li><b>Chaining cost:</b> each step allocates an intermediate array; fine for normal sizes; for huge data use a loop or iterator helpers <span class="verify">newer, check support</span>.</li>
+<li><b>Typed arrays</b> (<code>Uint8Array</code>…) are fixed-type, fixed-length views over an <code>ArrayBuffer</code>, used for binary data, canvas, WebGL and WebAssembly.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using <code>async</code> callbacks in <code>forEach</code> or expecting <code>map(async …)</code> to give values (it gives promises; wrap with <code>Promise.all</code>).</li>
+<li>Calling <code>sort()</code> on numbers without a comparator, or sorting state in place in React.</li>
+<li>Using <code>for…in</code> on arrays.</li>
+<li>Reaching for <code>reduce</code> when a simple loop or <code>filter</code> would read better.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is the difference between <code>map</code> and <code>forEach</code>?</dt><dd><code>map</code> returns a new array of the callback results; <code>forEach</code> returns <code>undefined</code> and is for side effects.</dd>
+<dt><code>find</code> vs <code>filter</code>?</dt><dd><code>find</code> returns the first matching element (or <code>undefined</code>) and stops; <code>filter</code> returns all matches.</dd>
+<dt>How do you remove duplicates?</dt><dd><code>[...new Set(arr)]</code> for primitives; for objects key by an id with a <code>Map</code>.</dd>
+<dt>Is <code>Array</code> a real array in memory?</dt><dd>Engines use dense, typed backing stores when elements are uniform (fast elements), and fall back to dictionary mode for sparse or mixed use.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J11 ============ -->
+<section class="q" id="j11">
+<header class="qh">
+  <div class="qrow"><span class="qid">J11</span><span class="tag added">Added</span></div>
+  <h2>Map, Set and weak collections</h2>
+  <p class="qtext">“When would you use <code>Map</code> instead of an object? What are <code>WeakMap</code>, <code>WeakSet</code> and <code>WeakRef</code> for?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“<code>Map</code> is a key-value collection where keys can be any value, it remembers insertion order, has a <code>size</code>, and is built for frequent additions and removals. A plain object is for fixed records and JSON; it only has string and symbol keys and inherits keys from its prototype. <code>Set</code> stores unique values. <code>WeakMap</code> and <code>WeakSet</code> hold their keys weakly: if nothing else references the key object, it can be garbage collected, so they are used to attach data to objects without causing leaks. They are not iterable and have no size. <code>WeakRef</code> and <code>FinalizationRegistry</code> exist but are non-deterministic, so I avoid relying on them.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 240" role="img" aria-label="A Map holds a strong reference to its key object, so the key stays alive as long as the Map does. A WeakMap holds the key weakly: when the last outside reference to the key is dropped, the key and its value can be garbage collected.">
+  <text x="10" y="18" class="bd">Map: strong reference</text>
+  <rect x="10" y="28" width="150" height="44" rx="4" class="b"/><text x="20" y="46" class="mono" style="font-size:11px">const el = node</text><text x="20" y="62" class="sm" style="font-size:10.5px">outside reference</text>
+  <rect x="200" y="28" width="170" height="44" rx="4" class="h"/><text x="210" y="46" class="bd">Map</text><text x="210" y="62" class="mono" style="font-size:11px">el → metadata</text>
+  <rect x="200" y="96" width="170" height="44" rx="4" class="g"/><text x="210" y="114" class="bd">node object</text><text x="210" y="130" class="sm" style="font-size:10.5px">kept alive by the Map</text>
+  <path class="a" d="M285 72V94"/>
+  <text x="10" y="112" class="sm">el = null; the Map still holds</text><text x="10" y="128" class="sm">the node → leak unless deleted</text>
+  <text x="400" y="18" class="bd">WeakMap: weak reference to the key</text>
+  <rect x="400" y="28" width="150" height="44" rx="4" class="b"/><text x="410" y="46" class="mono" style="font-size:11px">const el = node</text><text x="410" y="62" class="sm" style="font-size:10.5px">outside reference</text>
+  <rect x="590" y="28" width="160" height="44" rx="4" class="h"/><text x="600" y="46" class="bd">WeakMap</text><text x="600" y="62" class="mono" style="font-size:11px">el ⇢ metadata</text>
+  <rect x="590" y="96" width="160" height="44" rx="4" class="g" style="stroke-dasharray:5 3"/><text x="600" y="114" class="bd">node object</text><text x="600" y="130" class="sm" style="font-size:10.5px">free to be collected</text>
+  <path class="d" d="M670 72V94"/>
+  <text x="400" y="112" class="sm">after el = null and no other</text><text x="400" y="128" class="sm">references, entry disappears</text>
+  <text x="10" y="176" class="sm">WeakMap/WeakSet: keys must be objects (or non-registered symbols); not iterable; no size or clear; timing of collection is not observable.</text>
+  <text x="10" y="196" class="sm">Use: private data per object, caches keyed by objects, DOM node metadata, “has this object been processed” flags.</text>
+  <text x="10" y="216" class="sm">WeakRef / FinalizationRegistry: cache-like references and cleanup callbacks, with no guarantee of when (or whether) they run.</text>
+</svg></div>
+<figcaption><b>Strong versus weak.</b> The only observable difference is memory lifetime.</figcaption></figure>
+
+<h3>Map vs Object vs Set vs Array</h3>
+<div class="tw"><table>
+<tr><th></th><th><code>Object</code></th><th><code>Map</code></th><th><code>Set</code></th></tr>
+<tr><td>Keys</td><td>strings and symbols</td><td>any value, including objects, functions, NaN</td><td>unique values</td></tr>
+<tr><td>Order</td><td>integer keys first, then insertion</td><td>insertion order</td><td>insertion order</td></tr>
+<tr><td>Size</td><td><code>Object.keys(o).length</code> (O(n))</td><td><code>map.size</code></td><td><code>set.size</code></td></tr>
+<tr><td>Inherited keys</td><td>yes (<code>toString</code>, <code>__proto__</code>), unless <code>Object.create(null)</code></td><td>none</td><td>none</td></tr>
+<tr><td>Iteration</td><td><code>Object.entries</code></td><td>directly iterable</td><td>directly iterable</td></tr>
+<tr><td>Add/remove performance</td><td>fine, but engine optimises for stable shapes</td><td>optimised for frequent changes</td><td>O(1) average membership</td></tr>
+<tr><td>Serialisation</td><td><code>JSON.stringify</code> works</td><td>needs conversion (<code>[...map]</code>)</td><td>needs conversion</td></tr>
+<tr><td>Best for</td><td>records, config, JSON, small fixed shapes</td><td>dictionaries, caches, counting, objects as keys</td><td>uniqueness, fast membership, set operations</td></tr>
+</table></div>
+
+<h3>Details</h3>
+<ul>
+<li><b>Equality:</b> Map and Set use SameValueZero (NaN equals NaN, +0 equals −0). Two different object literals are different keys.</li>
+<li><b>Complexity:</b> the spec requires sub-linear access; engines implement hash tables, so <code>get</code>, <code>set</code>, <code>has</code>, <code>delete</code> are O(1) on average.</li>
+<li><b>Set operations:</b> union, intersection, difference are available as methods in newer engines <span class="verify">ES2025, check support</span>; otherwise filter with <code>has</code>.</li>
+<li><b>WeakMap and private data:</b> was the pre-<code>#private</code> way to hide per-instance state; still useful for metadata on objects you do not own.</li>
+<li><b>Memoise by object argument</b> with a <code>WeakMap</code> so cached results die with the arguments.</li>
+<li><b>Garbage collection nuance:</b> an entry’s value is kept alive only through the key; a value that references its own key does not keep it alive (ephemeron semantics).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using an object as a dictionary with user-controlled keys (<code>__proto__</code> and prototype pollution). Use <code>Map</code>.</li>
+<li>Expecting <code>WeakMap</code> to be iterable or to show its size.</li>
+<li>Using <code>Map</code> for data that must be sent as JSON without converting.</li>
+<li>Promising that <code>FinalizationRegistry</code> callbacks run. They may never run.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Why can’t WeakMap be iterated?</dt><dd>Because entries can disappear at any time during garbage collection; iteration would expose non-deterministic behaviour.</dd>
+<dt>How do you count occurrences?</dt><dd><code>const m = new Map(); for (const x of arr) m.set(x, (m.get(x) ?? 0) + 1)</code>.</dd>
+<dt>Is <code>Set</code> faster than <code>array.includes</code>?</dt><dd>For many lookups, yes: O(1) average versus O(n). For tiny arrays it does not matter.</dd>
+<dt>How does React’s <code>key</code> relate?</dt><dd>Keys identify list items across renders like a map from key to element; stable unique ids avoid wrong reuse.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J12 ============ -->
+<section class="q" id="j12">
+<header class="qh">
+  <div class="qrow"><span class="qid">J12</span><span class="tag added">Added</span></div>
+  <h2>Iterators and generators</h2>
+  <p class="qtext">“What is the iterator protocol? What are generators and what are they useful for? What is an async iterator?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“An iterable is an object with a <code>[Symbol.iterator]()</code> method that returns an iterator. An iterator has a <code>next()</code> method that returns <code>{ value, done }</code>. <code>for…of</code>, spread, destructuring, <code>Array.from</code>, <code>Map</code> and <code>Promise.all</code> all consume this protocol. A generator function, <code>function*</code>, is an easy way to write an iterator: it pauses at each <code>yield</code> and resumes on the next call, so it produces values lazily, and can even receive values back through <code>next(value)</code>. Async generators and <code>for await…of</code> do the same for values that arrive over time, like paginated APIs or streams.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 270" role="img" aria-label="The iteration protocol: an iterable returns an iterator by calling Symbol.iterator; each call to next returns an object with value and done. A generator pauses at each yield and resumes after the yield expression on the next call.">
+  <rect x="10" y="20" width="170" height="60" rx="5" class="h"/><text x="20" y="42" class="bd">iterable</text><text x="20" y="62" class="mono" style="font-size:11px">[Symbol.iterator]()</text>
+  <path class="a" d="M180 50H230"/><text x="184" y="42" class="sm" style="font-size:10.5px">returns</text>
+  <rect x="230" y="20" width="200" height="60" rx="5" class="g"/><text x="240" y="42" class="bd">iterator</text><text x="240" y="62" class="mono" style="font-size:11px">next() → {value, done}</text>
+  <rect x="470" y="20" width="280" height="60" rx="5" class="b"/><text x="480" y="42" class="bd">consumers</text><text x="480" y="62" class="sm">for…of · spread · destructuring · from()</text>
+  <path class="a" d="M430 50H468"/>
+  <text x="10" y="112" class="bd">Generator: function* pauses at yield</text>
+  <rect x="10" y="122" width="150" height="34" class="b"/><text x="20" y="144" class="mono" style="font-size:11px">const g = gen()</text><text x="170" y="144" class="sm">nothing runs yet</text>
+  <rect x="10" y="162" width="150" height="34" class="h"/><text x="20" y="184" class="mono" style="font-size:11px">g.next()</text><text x="170" y="184" class="sm">runs to first yield → {value: 1, done: false}</text>
+  <rect x="10" y="202" width="150" height="34" class="h"/><text x="20" y="224" class="mono" style="font-size:11px">g.next(x)</text><text x="170" y="224" class="sm">resumes; x becomes the result of the yield expression</text>
+  <rect x="10" y="242" width="150" height="26" class="g"/><text x="20" y="260" class="mono" style="font-size:11px">return / end</text><text x="170" y="260" class="sm">→ {value: ret, done: true}; also g.return(v), g.throw(e)</text>
+  <text x="520" y="132" class="bd">Use cases</text>
+  <text x="520" y="152" class="sm">• lazy / infinite sequences (ids, fibonacci)</text><text x="520" y="170" class="sm">• custom iterables for your classes</text><text x="520" y="188" class="sm">• state machines, coroutines (redux-saga)</text><text x="520" y="206" class="sm">• async iteration: pagination, streams</text><text x="520" y="224" class="sm">• tree traversal with yield*</text>
+</svg></div>
+<figcaption><b>One protocol, many consumers.</b> Generators are the convenient way to implement it.</figcaption></figure>
+
+<pre><code>class Range {
+  constructor(a, b) { this.a = a; this.b = b; }
+  *[Symbol.iterator]() { for (let i = this.a; i &lt;= this.b; i++) yield i; }   // generator method as the iterator
+}
+[...new Range(1, 4)];                          // [1, 2, 3, 4]
+
+function* ids() { let i = 0; while (true) yield ++i; }   // infinite, lazy
+
+async function* pages(url) {                   // async generator
+  let next = url;
+  while (next) { const res = await fetch(next); const body = await res.json(); yield* body.items; next = body.next; }
+}
+for await (const item of pages('/api/items')) { /* process one at a time */ }</code></pre>
+
+<h3>Details</h3>
+<ul>
+<li><b>Early exit:</b> <code>break</code> or <code>return</code> in <code>for…of</code> calls the iterator’s optional <code>return()</code> method, so resources (file handles, streams) can be released. In a generator, <code>try…finally</code> runs on early exit.</li>
+<li><b>Lazy:</b> values are computed on demand, so a pipeline of generators processes one item at a time without intermediate arrays. Iterator helpers (<code>map</code>, <code>filter</code>, <code>take</code> on iterators) bring this to built-ins <span class="verify">newer, check support</span>.</li>
+<li><b>Iterables in the language:</b> arrays, strings (by code point), <code>Map</code>, <code>Set</code>, <code>arguments</code>, typed arrays, <code>NodeList</code>, generators. Plain objects are not iterable.</li>
+<li><b>Async iteration:</b> <code>Symbol.asyncIterator</code>; <code>next()</code> returns a promise; <code>ReadableStream</code> is async iterable in modern runtimes <span class="verify">check support</span>; Node streams are async iterables.</li>
+<li><b>Generators and async/await:</b> async/await is generators plus promises (the old <code>co</code> library); that is the conceptual link to know.</li>
+<li><b>Two-way communication</b> through <code>next(value)</code>, <code>throw()</code> and <code>return()</code> is what makes redux-saga effects testable.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying plain objects are iterable, or spreading an object into an array (<code>[...obj]</code> throws).</li>
+<li>Forgetting that a generator object is single-use: once done, it stays done.</li>
+<li>Using an infinite generator with spread or <code>Array.from</code> (never ends).</li>
+<li>Not mentioning <code>return()</code> for cleanup.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What does <code>yield*</code> do?</dt><dd>Delegates to another iterable or generator, yielding all its values (and returning its result).</dd>
+<dt>How is async/await related to generators?</dt><dd>An async function behaves like a generator driven by a promise runner: each <code>await</code> is a <code>yield</code> that resumes when the promise settles.</dd>
+<dt>Why would you write an iterator instead of returning an array?</dt><dd>Laziness, memory efficiency, infinite or on-demand data, and control over iteration.</dd>
+<dt><code>for await…of</code> over an array of promises?</dt><dd>It awaits each value in order; compare with <code>Promise.all</code>, which runs them concurrently.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J13 ============ -->
+<section class="q" id="j13">
+<header class="qh">
+  <div class="qrow"><span class="qid">J13</span><span class="tag added">Added</span></div>
+  <h2>Numbers, dates and JSON</h2>
+  <p class="qtext">“Why is <code>0.1 + 0.2</code> not <code>0.3</code>? What are <code>BigInt</code> and safe integers? What is wrong with <code>Date</code>? What does <code>JSON.stringify</code> do to unusual values?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Numbers are 64-bit IEEE 754 floating point, so many decimal fractions like 0.1 cannot be represented exactly in binary, and tiny errors appear; I compare with a tolerance or work in integer units, for example cents for money. Integers are exact only up to 2<sup>53</sup> − 1; beyond that I use <code>BigInt</code>, which cannot be mixed with numbers. <code>Date</code> is a millisecond timestamp with a confusing API: zero-based months, mutable, implementation-dependent parsing, and time-zone traps. I store UTC timestamps or ISO strings, format with <code>Intl</code>, use a library or Temporal for date maths, and treat <code>JSON.stringify</code> as lossy: it drops <code>undefined</code> and functions, turns <code>Date</code> into a string and throws on BigInt and cycles.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 240" role="img" aria-label="The layout of a 64-bit double: 1 sign bit, 11 exponent bits, 52 mantissa bits. The safe integer range ends at 2 to the power 53 minus 1. Money should be stored as integer minor units.">
+  <text x="10" y="18" class="bd">64-bit IEEE 754 double</text>
+  <rect x="10" y="28" width="30" height="40" class="w"/><text x="14" y="52" class="sm">sign</text><text x="12" y="82" class="sm">1 bit</text>
+  <rect x="40" y="28" width="120" height="40" class="h"/><text x="70" y="52" class="sm">exponent</text><text x="62" y="82" class="sm">11 bits</text>
+  <rect x="160" y="28" width="450" height="40" class="g"/><text x="330" y="52" class="sm">mantissa (fraction)</text><text x="330" y="82" class="sm">52 bits (+1 implicit)</text>
+  <text x="10" y="116" class="bd">Consequences</text>
+  <text x="10" y="138" class="sm">• 0.1 = 0.1000000000000000055…  so 0.1 + 0.2 = 0.30000000000000004</text><text x="10" y="156" class="sm">• integers are exact up to 2^53 − 1 = 9,007,199,254,740,991 (Number.MAX_SAFE_INTEGER)</text><text x="10" y="174" class="sm">• special values: NaN, Infinity, −Infinity, −0; bitwise operators work on 32-bit integers</text>
+  <rect x="10" y="190" width="350" height="40" rx="4" class="x"/><text x="20" y="208" class="mono" style="font-size:11.5px">19.99 * 100  → 1998.9999999999998</text><text x="20" y="224" class="sm" style="font-size:10.5px">money as floats accumulates error</text>
+  <rect x="400" y="190" width="350" height="40" rx="4" class="g"/><text x="410" y="208" class="mono" style="font-size:11.5px">1999 cents (integer) → format with Intl</text><text x="410" y="224" class="sm" style="font-size:10.5px">or a decimal library; BigInt for huge ids</text>
+</svg></div>
+<figcaption><b>The cause of most number questions.</b> It is not a JavaScript bug; every language using doubles behaves the same.</figcaption></figure>
+
+<h3>Numbers</h3>
+<ul>
+<li><b>Comparison:</b> <code>Math.abs(a - b) &lt; Number.EPSILON</code> works near 1; scale the tolerance for larger numbers. For display, <code>toFixed(2)</code> returns a <i>string</i> and rounds by the underlying binary value (so <code>1.005.toFixed(2)</code> gives “1.00”).</li>
+<li><b>BigInt:</b> <code>123n</code>, arbitrary precision integers; cannot mix with Number in arithmetic (TypeError); no <code>Math</code> functions; <code>JSON.stringify</code> throws unless you add <code>toJSON</code>; good for 64-bit ids and cryptography. APIs that return 64-bit ids should send them as strings.</li>
+<li><b>Parsing:</b> <code>Number("12px")</code> is NaN; <code>parseInt("12px", 10)</code> is 12 (always pass the radix); <code>parseFloat</code>; <code>Number.isInteger</code>, <code>Number.isSafeInteger</code>, <code>Number.isFinite</code>.</li>
+<li><b><code>Math.round</code></b> rounds halves toward +∞ (−2.5 → −2); <code>Math.trunc</code>, <code>floor</code>, <code>ceil</code>. Use <code>Intl.NumberFormat</code> for currency and locale output.</li>
+<li><b>Random:</b> <code>Math.random</code> is not cryptographically secure; use <code>crypto.getRandomValues</code> or <code>crypto.randomUUID()</code>.</li>
+</ul>
+
+<h3>Dates</h3>
+<ul>
+<li><code>Date</code> stores milliseconds since 1970-01-01 UTC. Methods exist in local and UTC variants. Months are zero-based; years from <code>getYear</code> are legacy.</li>
+<li><b>Parsing:</b> ISO 8601 strings are reliable. A date-only string (<code>"2025-03-10"</code>) is parsed as UTC while a date-time without offset is parsed as local time. Other formats are implementation-dependent. Always include an offset or <code>Z</code>.</li>
+<li><b>Mutable:</b> <code>setDate</code> mutates; copy before changing. Adding “one month” or crossing DST is error-prone with raw arithmetic.</li>
+<li><b>Time zones:</b> the browser knows only the user’s zone and UTC. Store timestamps in UTC (or ISO with offset) and render in the user’s zone. For named zones use <code>Intl.DateTimeFormat(locale, { timeZone })</code>.</li>
+<li><b>Libraries:</b> <code>date-fns</code> (functional), <code>Luxon</code> (zones), <code>Day.js</code> (small); <b>Temporal</b> is the modern replacement (immutable, zones, calendars), shipping progressively <span class="verify">check support</span>.</li>
+<li><b><code>Intl</code>:</b> <code>NumberFormat</code>, <code>DateTimeFormat</code>, <code>RelativeTimeFormat</code>, <code>PluralRules</code>, <code>ListFormat</code>, <code>Collator</code>, <code>Segmenter</code>: locale-aware formatting without libraries.</li>
+</ul>
+
+<h3>JSON</h3>
+<div class="tw"><table>
+<tr><th>Value</th><th><code>JSON.stringify</code> result</th></tr>
+<tr><td><code>undefined</code>, function, symbol as an object property</td><td>omitted</td></tr>
+<tr><td>the same in an array</td><td><code>null</code></td></tr>
+<tr><td><code>NaN</code>, <code>Infinity</code></td><td><code>null</code></td></tr>
+<tr><td><code>Date</code></td><td>ISO string (via <code>toJSON</code>); parsing gives a string back, not a Date</td></tr>
+<tr><td><code>Map</code>, <code>Set</code></td><td><code>{}</code> (empty object)</td></tr>
+<tr><td><code>BigInt</code>, circular reference</td><td>throws TypeError</td></tr>
+<tr><td>class instance</td><td>own enumerable props only (or custom <code>toJSON</code>)</td></tr>
+</table></div>
+<ul>
+<li><code>JSON.parse(text, reviver)</code> and <code>JSON.stringify(value, replacer, space)</code> let you transform. <code>JSON.parse</code> throws on invalid input: wrap in try/catch for external data.</li>
+<li>JSON has no comments, no trailing commas, no <code>undefined</code>, only double-quoted strings. Never use <code>eval</code> to parse it.</li>
+<li>Large payloads: parse cost is on the main thread; consider streaming, pagination or a worker.</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Saying “JavaScript has a bug with decimals”. It is standard binary floating point.</li>
+<li>Storing money as floats, or using <code>toFixed</code> as a rounding function in calculations.</li>
+<li>Passing 64-bit database ids through JSON numbers: they lose precision above 2<sup>53</sup>.</li>
+<li>Parsing local date strings without a time zone and getting a day-off error in some zones.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>How would you handle currency?</dt><dd>Integer minor units (cents) or a decimal library, formatted with <code>Intl.NumberFormat</code> using the currency code.</dd>
+<dt>Why does <code>new Date("2025-03-10")</code> show the previous day in some time zones?</dt><dd>It is midnight UTC, which is the previous evening in zones behind UTC when displayed in local time.</dd>
+<dt>What is <code>-0</code>?</dt><dd>A distinct IEEE value; equal to 0 with <code>===</code> but different under <code>Object.is</code>; appears in some rounding and division results.</dd>
+<dt>How would you send large integers to a browser?</dt><dd>As strings (or as BigInt-aware formats) and parse with <code>BigInt()</code> where arithmetic is needed.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J14 ============ -->
+<section class="q" id="j14">
+<header class="qh">
+  <div class="qrow"><span class="qid">J14</span><span class="tag added">Added</span></div>
+  <h2>Strings, Unicode and regular expressions</h2>
+  <p class="qtext">“How are strings represented? Why is <code>"😀".length</code> 2? What are regex flags, lookaheads and catastrophic backtracking?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Strings are immutable sequences of UTF-16 code units. Characters outside the basic plane, such as emoji, take two code units, so <code>length</code> counts code units, not characters, while <code>for…of</code> and the spread operator iterate code points. What a user sees as one character can still be several code points (a flag, an accented letter in decomposed form), so for user-facing text I use <code>normalize()</code> and <code>Intl.Segmenter</code>. Regular expressions have flags like <code>g</code>, <code>i</code>, <code>m</code>, <code>s</code>, <code>u</code>, <code>y</code>; they support named groups, lookahead and lookbehind. A badly written pattern with nested quantifiers can backtrack exponentially, a ReDoS risk, so I avoid ambiguity and never run untrusted patterns on untrusted input.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 230" role="img" aria-label="Layers of text: code units, code points, and grapheme clusters. A smiley emoji is one code point but two UTF-16 code units. A flag is two code points and four code units but one user-perceived character.">
+  <text x="10" y="18" class="bd">Three levels of “length”</text>
+  <rect x="10" y="30" width="110" height="30" class="b"/><text x="20" y="50" class="bd">string</text>
+  <rect x="130" y="30" width="190" height="30" class="b"/><text x="140" y="50" class="mono">"a"</text>
+  <rect x="330" y="30" width="190" height="30" class="b"/><text x="340" y="50" class="mono">"😀"</text>
+  <rect x="530" y="30" width="220" height="30" class="b"/><text x="540" y="50" class="mono">"🇮🇳" (flag)</text>
+  <rect x="10" y="68" width="110" height="30" class="h"/><text x="20" y="88" class="sm">UTF-16 units</text>
+  <rect x="130" y="68" width="190" height="30" class="h"/><text x="140" y="88" class="sm">1</text><rect x="330" y="68" width="190" height="30" class="h"/><text x="340" y="88" class="sm">2  (surrogate pair)</text><rect x="530" y="68" width="220" height="30" class="h"/><text x="540" y="88" class="sm">4</text>
+  <rect x="10" y="104" width="110" height="30" class="g"/><text x="20" y="124" class="sm">code points ([...s])</text>
+  <rect x="130" y="104" width="190" height="30" class="g"/><text x="140" y="124" class="sm">1</text><rect x="330" y="104" width="190" height="30" class="g"/><text x="340" y="124" class="sm">1</text><rect x="530" y="104" width="220" height="30" class="g"/><text x="540" y="124" class="sm">2</text>
+  <rect x="10" y="140" width="110" height="30" class="w"/><text x="20" y="160" class="sm">graphemes</text>
+  <rect x="130" y="140" width="190" height="30" class="w"/><text x="140" y="160" class="sm">1</text><rect x="330" y="140" width="190" height="30" class="w"/><text x="340" y="160" class="sm">1</text><rect x="530" y="140" width="220" height="30" class="w"/><text x="540" y="160" class="sm">1</text>
+  <text x="10" y="196" class="sm">é can be one code point (U+00E9) or e + combining accent (2 code points): "é".normalize("NFC") makes comparisons reliable.</text>
+  <text x="10" y="216" class="sm">Case and sort rules are locale-specific: use toLocaleUpperCase, localeCompare or Intl.Collator for user text.</text>
+</svg></div>
+<figcaption><b>Why string length surprises people.</b> Pick the level that matches what you are doing.</figcaption></figure>
+
+<h3>Strings</h3>
+<ul>
+<li><b>Immutable:</b> methods return new strings. Building large strings by <code>+=</code> in loops is optimised by engines (ropes); arrays and <code>join</code> are also fine.</li>
+<li><b>Useful methods:</b> <code>includes</code>, <code>startsWith</code>, <code>endsWith</code>, <code>padStart</code>, <code>slice</code> (prefer over <code>substr</code>/<code>substring</code>), <code>replaceAll</code>, <code>at</code>, <code>trim</code>, <code>split</code>, <code>localeCompare</code>, <code>normalize</code>, <code>codePointAt</code>, <code>String.raw</code>.</li>
+<li><b>Template literals</b> support interpolation, multi-line strings and <b>tagged templates</b> (<code>tag`a${b}`</code> calls a function with the string parts and values: used by styled-components, GraphQL <code>gql</code>, lit-html, and for safe SQL).</li>
+<li><b>Security:</b> never build HTML with string concatenation from user input (XSS); escape or use <code>textContent</code>, framework binding, or <code>DOMPurify</code>.</li>
+</ul>
+
+<h3>Regular expressions</h3>
+<div class="tw"><table>
+<tr><th>Flag</th><th>Meaning</th><th>Flag</th><th>Meaning</th></tr>
+<tr><td><code>g</code></td><td>global: all matches; makes the regex stateful (<code>lastIndex</code>)</td><td><code>s</code></td><td><code>.</code> also matches newlines</td></tr>
+<tr><td><code>i</code></td><td>ignore case</td><td><code>u</code></td><td>Unicode mode (code points, <code>\p{…}</code> properties); <code>v</code> is a newer superset <span class="verify">check support</span></td></tr>
+<tr><td><code>m</code></td><td><code>^</code> and <code>$</code> match line boundaries</td><td><code>y</code></td><td>sticky: match only at <code>lastIndex</code></td></tr>
+<tr><td><code>d</code></td><td>indices for match groups</td><td></td><td></td></tr>
+</table></div>
+<ul>
+<li><b>Groups:</b> capturing <code>(…)</code>, non-capturing <code>(?:…)</code>, named <code>(?&lt;year&gt;\d{4})</code>, backreferences <code>\1</code> or <code>\k&lt;name&gt;</code>.</li>
+<li><b>Assertions:</b> lookahead <code>(?=…)</code>, <code>(?!…)</code>; lookbehind <code>(?&lt;=…)</code>, <code>(?&lt;!…)</code>. They match positions without consuming characters.</li>
+<li><b>Quantifiers:</b> greedy by default; add <code>?</code> for lazy (<code>.*?</code>).</li>
+<li><b>APIs:</b> <code>test</code>, <code>exec</code>, <code>match</code>, <code>matchAll</code> (iterator of all matches with groups), <code>replace</code> / <code>replaceAll</code> (with a function or <code>$&lt;name&gt;</code>), <code>split</code>, <code>search</code>.</li>
+<li><b>Stateful gotcha:</b> a regex with <code>g</code> or <code>y</code> keeps <code>lastIndex</code> between calls, so reusing it with <code>test()</code> can alternate between true and false. Create a new regex or reset <code>lastIndex</code>.</li>
+<li><b>ReDoS:</b> patterns like <code>(a+)+$</code> or <code>(.*a){20}</code> with failing input take exponential time and can freeze a page or a Node server. Mitigate: avoid nested quantifiers and overlapping alternatives, limit input length, use a linear-time engine or timeout (in Node, a worker), test with a ReDoS checker.</li>
+<li><b>Do not parse HTML or email fully with regex.</b> Use a parser or the platform (<code>DOMParser</code>, <code>URL</code>, <code>input type=email</code>).</li>
+</ul>
+
+<pre><code>const m = '2025-03-10'.match(/(?&lt;y&gt;\d{4})-(?&lt;m&gt;\d{2})-(?&lt;d&gt;\d{2})/u);   // m.groups.y === '2025'
+'a1b22'.replace(/\d+/g, n =&gt; `[${n}]`);                                      // 'a[1]b[22]'
+const price = /(?&lt;=\$)\d+(\.\d{2})?/;                                       // lookbehind: digits after a dollar sign
+const seg = [...new Intl.Segmenter('en', { granularity: 'grapheme' }).segment('👨‍👩‍👧')].length; // 1</code></pre>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Truncating or reversing strings by code unit and cutting an emoji in half.</li>
+<li>Comparing user-entered text with <code>===</code> without normalising, or sorting names with the default <code>sort()</code>.</li>
+<li>Reusing a global regex across inputs.</li>
+<li>Validating email or URLs with an overly clever regex instead of the platform.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is a surrogate pair?</dt><dd>Two UTF-16 code units that together encode one code point above U+FFFF.</dd>
+<dt>Difference between <code>match</code> and <code>matchAll</code>?</dt><dd>Without <code>g</code>, <code>match</code> returns the first match with groups; with <code>g</code> it returns only the matched strings. <code>matchAll</code> returns an iterator of full match objects (requires <code>g</code>).</dd>
+<dt>How do you escape user input for a regex?</dt><dd>Replace special characters with a backslash (<code>s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&amp;')</code>); newer engines may add <code>RegExp.escape</code> <span class="verify">check support</span>.</dd>
+<dt>How do you detect and fix ReDoS?</dt><dd>Review quantified groups, run a checker (for example <code>safe-regex</code>, <code>recheck</code>), cap input, rewrite without ambiguity.</dd>
+</dl></div>
+</section>
+
+<h1 class="part">Part 4 · Language and ecosystem</h1>
+
+<!-- ============ J15 ============ -->
+<section class="q" id="j15">
+<header class="qh">
+  <div class="qrow"><span class="qid">J15</span><span class="tag added">Added</span></div>
+  <h2>ES modules versus CommonJS</h2>
+  <p class="qtext">“What is the difference between ES modules and CommonJS? What are live bindings? How does tree shaking work? How do dynamic <code>import()</code> and top-level <code>await</code> work?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“CommonJS is the older Node format: <code>require</code> runs synchronously at runtime, can be called anywhere and conditionally, and exports are a plain object whose primitive values are copied. ES modules are the language standard: <code>import</code> and <code>export</code> are static, so the dependency graph is known before any code runs. That enables tree shaking, early errors and asynchronous loading. ESM exports are live bindings: the importer sees updates, but cannot assign to them. ESM is strict mode by default, supports top-level <code>await</code> and dynamic <code>import()</code> for lazy loading. Browsers use ESM natively; Node supports both, and mixing them needs care.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 280" role="img" aria-label="Two timelines. CommonJS: require runs the module file immediately and synchronously, returns module.exports, caches it. ES modules: three phases: construction parses and fetches the whole static graph, instantiation links export and import bindings, evaluation runs the modules in dependency order.">
+  <text x="10" y="18" class="bd">CommonJS: executed on demand, synchronously</text>
+  <rect x="10" y="28" width="150" height="40" class="b"/><text x="20" y="52" class="mono" style="font-size:11px">main.js runs</text>
+  <rect x="160" y="28" width="150" height="40" class="w"/><text x="170" y="52" class="mono" style="font-size:11px">require('./a')</text>
+  <rect x="310" y="28" width="170" height="40" class="x"/><text x="320" y="46" class="sm">a.js loads + runs NOW</text><text x="320" y="60" class="sm" style="font-size:10.5px">blocking, then cached</text>
+  <rect x="480" y="28" width="270" height="40" class="b"/><text x="490" y="46" class="sm">returns module.exports (an object)</text><text x="490" y="60" class="sm" style="font-size:10.5px">primitives copied at that moment</text>
+  <text x="10" y="102" class="bd">ES modules: three phases</text>
+  <rect x="10" y="112" width="240" height="70" class="h"/><text x="20" y="132" class="bd">1  Construction</text><text x="20" y="150" class="sm">parse every file, find imports,</text><text x="20" y="166" class="sm">fetch the whole graph (no code runs)</text>
+  <rect x="260" y="112" width="240" height="70" class="h"/><text x="270" y="132" class="bd">2  Instantiation</text><text x="270" y="150" class="sm">allocate memory, link exports to</text><text x="270" y="166" class="sm">imports: live bindings, not copies</text>
+  <rect x="510" y="112" width="240" height="70" class="g"/><text x="520" y="132" class="bd">3  Evaluation</text><text x="520" y="150" class="sm">run in dependency order (post-order),</text><text x="520" y="166" class="sm">each module once; TLA can pause</text>
+  <path class="a" d="M250 147H258"/><path class="a" d="M500 147H508"/>
+  <text x="10" y="212" class="bd">Live binding</text>
+  <rect x="10" y="222" width="360" height="44" rx="4" class="b"/><text x="20" y="240" class="mono" style="font-size:11px">// counter.js: export let n = 0; inc = () =&gt; n++</text><text x="20" y="257" class="mono" style="font-size:11px">// app.js: import { n, inc }; inc(); n // 1</text>
+  <text x="400" y="240" class="sm">The importer cannot assign (n = 5 throws),</text><text x="400" y="258" class="sm">but sees the exporter’s changes.</text>
+</svg></div>
+<figcaption><b>Static versus dynamic.</b> That one difference gives ESM tree shaking, parallel loading and early error detection.</figcaption></figure>
+
+<h3>Comparison</h3>
+<div class="tw"><table>
+<tr><th></th><th>CommonJS</th><th>ES modules</th></tr>
+<tr><td>Syntax</td><td><code>require()</code>, <code>module.exports</code></td><td><code>import</code>, <code>export</code></td></tr>
+<tr><td>Loading</td><td>synchronous, runtime</td><td>static analysis first; async loading in browsers</td></tr>
+<tr><td>Position</td><td>anywhere, conditional</td><td>top level only (use <code>import()</code> for conditional)</td></tr>
+<tr><td>Exports</td><td>object, values copied on require</td><td>live bindings (references)</td></tr>
+<tr><td>Strict mode</td><td>opt in</td><td>always</td></tr>
+<tr><td><code>this</code> at top level</td><td><code>module.exports</code></td><td><code>undefined</code></td></tr>
+<tr><td>Tree shaking</td><td>hard (dynamic)</td><td>yes</td></tr>
+<tr><td>Top-level <code>await</code></td><td>no</td><td>yes</td></tr>
+<tr><td>File extension in Node</td><td><code>.js</code> by default or <code>.cjs</code></td><td><code>.mjs</code>, or <code>.js</code> with <code>"type": "module"</code></td></tr>
+<tr><td><code>__dirname</code>, <code>require</code></td><td>available</td><td>use <code>import.meta.url</code> / <code>import.meta.dirname</code> <span class="verify">newer Node versions</span></td></tr>
+</table></div>
+
+<h3>More points</h3>
+<ul>
+<li><b>Named vs default exports:</b> named exports give consistent names, better refactoring, autocompletion and tree shaking; default exports allow any local name and make re-export and search harder. Many style guides prefer named exports (exception: framework conventions, such as Next.js pages).</li>
+<li><b>Tree shaking</b> removes unused exports during bundling. It needs ESM syntax, side-effect-free modules (<code>"sideEffects": false</code> in <code>package.json</code> or <code>/*#__PURE__*/</code> annotations), and avoiding barrel files that pull everything in.</li>
+<li><b>Dynamic <code>import('./x.js')</code></b> returns a promise for the module namespace: code splitting, lazy routes (<code>React.lazy</code>), conditional or on-interaction loading. Works in both ESM and CJS.</li>
+<li><b>Top-level <code>await</code>:</b> a module can await at top level; importers wait for it. Use sparingly: it delays dependents and can create waterfalls.</li>
+<li><b>Circular dependencies:</b> ESM handles them through live bindings, but accessing a binding before it is initialised gives a ReferenceError (TDZ). CJS returns a partially filled <code>exports</code> object. Fix by restructuring (extract shared code), not by ordering imports.</li>
+<li><b>Interop in Node:</b> ESM can import CJS (default import is <code>module.exports</code>); <code>require()</code> of ESM was unsupported for a long time and is arriving in newer versions <span class="verify">check Node release notes</span>. A package can ship both through the <code>exports</code> map with <code>import</code> and <code>require</code> conditions, with the dual-package hazard (two copies, two instances of state).</li>
+<li><b>package.json fields:</b> <code>main</code> (CJS entry), <code>module</code> (bundler hint), <code>exports</code> (modern, encapsulating, conditional), <code>type</code>, <code>sideEffects</code>, <code>files</code>.</li>
+<li><b>Browsers:</b> <code>&lt;script type="module"&gt;</code> is deferred, strict, CORS-fetched, evaluated once per URL; import maps map bare specifiers to URLs without a bundler.</li>
+<li><b>Module scope vs globals:</b> top-level variables are module-private; singletons are natural (module instance is cached).</li>
+</ul>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>“ES modules are just new syntax.” The static structure and live bindings are the semantic difference.</li>
+<li>Saying <code>require</code> and <code>import</code> are interchangeable in the same file.</li>
+<li>Barrel files (<code>index.ts</code> re-exporting everything) that defeat tree shaking and slow dev servers.</li>
+<li>Believing tree shaking works on any code. Side effects and CJS dependencies block it.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is a module namespace object?</dt><dd>The object <code>import * as ns</code> or <code>import()</code> gives: read-only live view of all exports.</dd>
+<dt>How does code splitting work?</dt><dd>The bundler turns each dynamic <code>import()</code> into a separate chunk loaded on demand, with shared chunks extracted.</dd>
+<dt>Why does the module system matter for bundle size?</dt><dd>Static imports allow dead-code elimination; each unused export or library can be dropped.</dd>
+<dt>What is the module singleton pattern?</dt><dd>Because a module is evaluated once and cached, exporting an instance or state gives a shared singleton across importers (be careful with SSR and duplicated packages).</dd>
+</dl></div>
+</section>
+
+<!-- ============ J16 ============ -->
+<section class="q" id="j16">
+<header class="qh">
+  <div class="qrow"><span class="qid">J16</span><span class="tag added">Added</span></div>
+  <h2>Modern syntax and how the language evolves</h2>
+  <p class="qtext">“What ES features do you use daily? How do optional chaining and nullish coalescing work? How is JavaScript standardised and how do new features reach production?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Daily I use <code>const</code>/<code>let</code>, arrow functions, destructuring, spread and rest, template literals, modules, classes, promises with <code>async/await</code>, optional chaining <code>?.</code> and nullish coalescing <code>??</code>, plus newer array and object helpers. The language is standardised by ECMA TC39 as ECMAScript, with a yearly release. A proposal goes through stages 0 to 4; at stage 3 browsers start implementing, and at stage 4 it joins the next edition. In production I decide with Baseline, the browserslist, and the build tooling: Babel or SWC transform syntax, and core-js polyfills missing APIs.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 250" role="img" aria-label="The TC39 proposal process stages 0 to 4: strawperson, proposal, draft, candidate, finished. Below, the toolchain: syntax is transformed by the compiler, while missing APIs need polyfills, and the browserslist decides targets.">
+  <text x="10" y="18" class="bd">TC39 stages</text>
+  <rect x="10" y="28" width="132" height="62" rx="4" class="b"/><text x="20" y="48" class="bd">Stage 0</text><text x="20" y="66" class="sm">idea</text>
+  <rect x="152" y="28" width="132" height="62" rx="4" class="b"/><text x="162" y="48" class="bd">Stage 1</text><text x="162" y="66" class="sm">proposal, champion</text>
+  <rect x="294" y="28" width="132" height="62" rx="4" class="h"/><text x="304" y="48" class="bd">Stage 2</text><text x="304" y="66" class="sm">draft spec text</text>
+  <rect x="436" y="28" width="150" height="62" rx="4" class="w"/><text x="446" y="48" class="bd">Stage 3</text><text x="446" y="66" class="sm">candidate: engines</text><text x="446" y="80" class="sm">implement, feedback</text>
+  <rect x="596" y="28" width="154" height="62" rx="4" class="g"/><text x="606" y="48" class="bd">Stage 4</text><text x="606" y="66" class="sm">finished: in the next</text><text x="606" y="80" class="sm">yearly ECMAScript</text>
+  <path class="a" d="M142 59H150"/><path class="a" d="M284 59H292"/><path class="a" d="M426 59H434"/><path class="a" d="M586 59H594"/>
+  <text x="10" y="124" class="bd">Getting a feature to users</text>
+  <rect x="10" y="134" width="170" height="54" rx="4" class="b"/><text x="20" y="154" class="bd">your source</text><text x="20" y="172" class="mono" style="font-size:11px">a?.b ?? c  #x  await</text>
+  <rect x="210" y="134" width="170" height="54" rx="4" class="h"/><text x="220" y="154" class="bd">Babel / SWC / esbuild</text><text x="220" y="172" class="sm">rewrites SYNTAX for targets</text>
+  <rect x="410" y="134" width="170" height="54" rx="4" class="h"/><text x="420" y="154" class="bd">core-js polyfills</text><text x="420" y="172" class="sm">adds missing APIs (Map, at…)</text>
+  <rect x="610" y="134" width="140" height="54" rx="4" class="g"/><text x="620" y="154" class="bd">browserslist</text><text x="620" y="172" class="sm">decides the targets</text>
+  <path class="a" d="M180 161H208"/><path class="a" d="M380 161H408"/><path class="d" d="M610 161H582"/>
+  <text x="10" y="216" class="sm">Syntax cannot be polyfilled (it must be transpiled); APIs can be polyfilled; Proxy cannot. Check MDN browser compatibility or Baseline first.</text>
+  <text x="10" y="236" class="sm">Modern targets ship less code: serve modern syntax to modern browsers and avoid legacy bundles unless analytics demand them.</text>
+</svg></div>
+<figcaption><b>Standardisation and delivery.</b> Two different problems: when a feature exists, and when you can use it.</figcaption></figure>
+
+<h3>Syntax you should explain precisely</h3>
+<div class="tw"><table>
+<tr><th>Feature</th><th>What to say</th></tr>
+<tr><td>Destructuring</td><td>Pull values from arrays and objects into variables; defaults, renaming, nested patterns, rest; works in parameters and loops.</td></tr>
+<tr><td>Optional chaining <code>?.</code></td><td>Short-circuits to <code>undefined</code> when the left side is <code>null</code> or <code>undefined</code>: <code>a?.b</code>, <code>a?.[k]</code>, <code>fn?.()</code>. Not for assignment; does not guard <code>0</code> or <code>""</code>.</td></tr>
+<tr><td>Nullish coalescing <code>??</code></td><td>Default only for <code>null</code> and <code>undefined</code>; <code>||</code> also replaces <code>0</code>, <code>""</code>, <code>false</code>. Cannot mix with <code>||</code>/<code>&amp;&amp;</code> without parentheses.</td></tr>
+<tr><td>Logical assignment</td><td><code>a ||= b</code>, <code>a &amp;&amp;= b</code>, <code>a ??= b</code> assign only when needed (short-circuit).</td></tr>
+<tr><td>Spread / rest</td><td>Same <code>...</code> syntax, opposite roles: expand vs collect (J8).</td></tr>
+<tr><td>Template literals, tagged</td><td>Interpolation, multi-line, tag functions (J14).</td></tr>
+<tr><td>Shorthand and computed properties</td><td><code>{ a, [key]: v, method() {} }</code>.</td></tr>
+<tr><td>Class fields, <code>#private</code>, static blocks</td><td>J7.</td></tr>
+<tr><td><code>async</code>/<code>await</code>, <code>Promise.allSettled/any</code>, <code>AbortController</code></td><td>Part 2.</td></tr>
+<tr><td><code>Object.entries/fromEntries/hasOwn</code>, <code>Array.prototype.at/flat/flatMap</code>, <code>structuredClone</code></td><td>Utility additions that replace library helpers.</td></tr>
+<tr><td><code>Error</code> <code>cause</code></td><td><code>new Error('msg', { cause })</code> chains errors.</td></tr>
+</table></div>
+
+<h3>Rough timeline (check MDN for exact versions)</h3>
+<div class="tw"><table>
+<tr><th>Edition</th><th>Highlights <span class="verify">verify details</span></th></tr>
+<tr><td>ES2015 (ES6)</td><td><code>let/const</code>, arrows, classes, modules, template literals, destructuring, default/rest/spread, promises, <code>Map/Set</code>, symbols, generators, <code>for…of</code>, <code>Proxy</code></td></tr>
+<tr><td>ES2016–2017</td><td><code>**</code>, <code>includes</code>; <code>async/await</code>, <code>Object.entries/values</code>, <code>padStart</code></td></tr>
+<tr><td>ES2018–2019</td><td>object rest/spread, async iteration, <code>Promise.finally</code>, regex named groups and lookbehind; <code>flat/flatMap</code>, <code>Object.fromEntries</code>, optional catch binding</td></tr>
+<tr><td>ES2020–2021</td><td><code>?.</code>, <code>??</code>, <code>BigInt</code>, dynamic <code>import()</code>, <code>globalThis</code>, <code>allSettled</code>; <code>replaceAll</code>, <code>Promise.any</code>, logical assignment, numeric separators</td></tr>
+<tr><td>ES2022</td><td>class fields, <code>#private</code>, static blocks, top-level <code>await</code>, <code>at()</code>, <code>Object.hasOwn</code>, <code>Error</code> cause</td></tr>
+<tr><td>ES2023–2025</td><td><code>findLast</code>, <code>toSorted</code> family; <code>Object.groupBy</code>, <code>Promise.withResolvers</code>; iterator helpers, new <code>Set</code> methods (check each for Baseline status)</td></tr>
+</table></div>
+
+<h3>Decision process for using a new feature</h3>
+<ol>
+<li>Check MDN and Baseline: “newly available” (all core browsers) or “widely available” (about 30 months).</li>
+<li>Check your browserslist and analytics.</li>
+<li>Syntax: let the compiler handle it. APIs: polyfill (core-js with <code>useBuiltIns: 'usage'</code>) or feature-detect.</li>
+<li>Keep bundles lean: modern output, no unnecessary polyfills, <code>differential loading</code> only when needed.</li>
+</ol>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Using <code>||</code> where <code>??</code> is intended, or <code>?.</code> to hide bugs (it silences errors that should surface).</li>
+<li>Saying “Babel polyfills everything”. Babel transforms syntax; polyfills come from core-js or similar.</li>
+<li>Claiming a feature is “ES6” when it is newer. Mention “ES2020+” and verify.</li>
+<li>Over-destructuring deeply nested objects in function signatures, hurting readability.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>What is the difference between a transpiler and a polyfill?</dt><dd>A transpiler rewrites syntax into older syntax at build time; a polyfill adds missing runtime APIs.</dd>
+<dt>What is <code>globalThis</code>?</dt><dd>A uniform reference to the global object in browsers, workers and Node.</dd>
+<dt>What are decorators?</dt><dd>A proposal for annotating classes and members; TypeScript has had its own version; the standard version is progressing <span class="verify">check status</span>.</dd>
+<dt>What is the Temporal proposal?</dt><dd>A replacement for <code>Date</code> with immutable, time-zone-aware types <span class="verify">check status</span>.</dd>
+</dl></div>
+</section>
+
+<!-- ============ J17 ============ -->
+<section class="q" id="j17">
+<header class="qh">
+  <div class="qrow"><span class="qid">J17</span><span class="tag added">Added</span></div>
+  <h2>Functional programming in JavaScript</h2>
+  <p class="qtext">“What is functional programming? What are pure functions, immutability and side effects? Why does React favour this style?”</p>
+</header>
+
+<div class="box say"><h4>Say this first (30 seconds)</h4>
+<p>“Functional programming builds programs from functions that take inputs and return outputs without changing anything outside. A pure function always returns the same result for the same arguments and has no side effects. That makes code easy to test, cache and reason about, and safe to run in any order. Immutability means data is not changed in place; updates create new values, so change detection can use cheap identity checks. Functions are composed and passed around. JavaScript is multi-paradigm, so I apply this where it pays: reducers, selectors, transformations, React render logic, and keep side effects at the edges.”</p></div>
+
+<figure><div class="figscroll"><svg class="dg" viewBox="0 0 760 240" role="img" aria-label="A functional core with pure functions surrounded by an imperative shell that performs side effects such as network, DOM, storage and time. Data flows in, is transformed by pure functions into new data, and effects happen at the edge.">
+  <rect x="10" y="10" width="740" height="220" rx="8" class="w"/><text x="24" y="32" class="bd">Imperative shell: side effects live here</text><text x="24" y="50" class="sm">network · DOM · storage · timers · logging · randomness · Date.now()</text>
+  <rect x="150" y="70" width="460" height="140" rx="8" class="g"/><text x="164" y="92" class="bd">Functional core: pure functions</text>
+  <rect x="170" y="108" width="120" height="44" rx="4" class="b"/><text x="180" y="128" class="mono" style="font-size:11px">parse(raw)</text><text x="180" y="144" class="sm" style="font-size:10.5px">data in, data out</text>
+  <rect x="320" y="108" width="130" height="44" rx="4" class="b"/><text x="330" y="128" class="mono" style="font-size:11px">reduce(state, a)</text><text x="330" y="144" class="sm" style="font-size:10.5px">new state, no mutation</text>
+  <rect x="480" y="108" width="110" height="44" rx="4" class="b"/><text x="490" y="128" class="mono" style="font-size:11px">select(state)</text><text x="490" y="144" class="sm" style="font-size:10.5px">derived data</text>
+  <path class="a" d="M290 130H318"/><path class="a" d="M450 130H478"/>
+  <text x="164" y="184" class="sm">Same input → same output. Easy to unit test with no mocks, memoise, parallelise.</text><text x="164" y="200" class="sm">Redux reducers, React render, selectors, validators, formatters.</text>
+  <path class="a" d="M80 130H148"/><path class="a" d="M612 130H680"/><text x="40" y="162" class="sm">input events</text><text x="636" y="162" class="sm">effects</text>
+</svg></div>
+<figcaption><b>Functional core, imperative shell.</b> A practical way to apply the idea without going dogmatic.</figcaption></figure>
+
+<h3>Core ideas</h3>
+<div class="tw"><table>
+<tr><th>Concept</th><th>Meaning</th><th>Frontend example</th></tr>
+<tr><td>Pure function</td><td>deterministic, no side effects, no reading mutable external state</td><td>Redux reducer; component render; <code>formatPrice(n)</code></td></tr>
+<tr><td>Side effect</td><td>anything observable outside: I/O, mutation, DOM, time, randomness, logging</td><td>fetch in <code>useEffect</code>; analytics call</td></tr>
+<tr><td>Immutability</td><td>create new values instead of changing</td><td><code>setUser(u =&gt; ({...u, name}))</code>, Immer</td></tr>
+<tr><td>First-class and higher-order functions</td><td>functions as values</td><td><code>map</code>, HOCs, middleware, event handlers</td></tr>
+<tr><td>Composition</td><td>build complex behaviour from small functions</td><td><code>pipe(trim, toLower, slugify)</code>, custom hooks</td></tr>
+<tr><td>Referential transparency</td><td>a call can be replaced by its result</td><td>enables memoisation and caching</td></tr>
+<tr><td>Declarative style</td><td>describe what, not how</td><td>JSX, <code>filter</code> over loops with flags</td></tr>
+<tr><td>Idempotence</td><td>repeating gives the same effect</td><td>PUT requests, safe retries, effects with cleanup</td></tr>
+</table></div>
+
+<h3>Why it matters in React and Redux</h3>
+<ul>
+<li><b>Rendering must be pure:</b> the same props and state give the same JSX; React can render twice (Strict Mode), pause, or discard a render (concurrent features). Side effects belong in event handlers and effects.</li>
+<li><b>State updates by identity:</b> React and Redux use shallow or identity comparison to detect change, so mutation produces missed updates.</li>
+<li><b>Redux reducers</b> are pure <code>(state, action) =&gt; newState</code> functions, which enable time travel, logging and testing; Redux Toolkit uses Immer so you can write “mutating” code that is turned into immutable updates.</li>
+<li><b>Selectors and memoisation</b> (<code>useMemo</code>, Reselect) rely on purity.</li>
+<li><b>Testing</b> pure functions needs no mocks; effects are isolated and mocked at the boundary.</li>
+</ul>
+
+<h3>Trade-offs and pragmatism</h3>
+<ul>
+<li><b>Performance:</b> copying large structures on every update is costly; use structural sharing (Immer, persistent data structures) and avoid deep clones.</li>
+<li><b>Readability:</b> heavy point-free or curried code can be unreadable to a team; prefer clear intermediate names.</li>
+<li><b>Not everything is pure:</b> UI and I/O are effects by nature. The goal is to <i>isolate</i> them, not remove them.</li>
+<li><b>Mixed paradigms:</b> classes for stateful domain objects and error types, functions for transformation and UI, modules for organisation.</li>
+<li><b>Errors as values</b> (result objects) versus exceptions: a style choice; be consistent per layer.</li>
+</ul>
+
+<pre><code>// pure: new array, original untouched
+const addTodo = (todos, text) =&gt; [...todos, { id: crypto.randomUUID(), text, done: false }];
+const toggle  = (todos, id) =&gt; todos.map(t =&gt; t.id === id ? { ...t, done: !t.done } : t);
+// impure on purpose: randomUUID and fetch are at the edge of the program, not inside reducers
+const pipe = (...fns) =&gt; x =&gt; fns.reduce((acc, f) =&gt; f(acc), x);</code></pre>
+
+<div class="box trap"><h4>Traps</h4><ul>
+<li>Defining FP as “using <code>map</code> and <code>filter</code>”. The core is purity and immutability.</li>
+<li>Calling a function pure when it reads <code>Date.now()</code>, <code>Math.random()</code> or a mutable module variable.</li>
+<li>Claiming immutability is free. Explain structural sharing and where copies cost.</li>
+<li>Treating FP versus OOP as a war; show when each fits.</li>
+</ul></div>
+
+<div class="fu"><h4>Likely follow-ups</h4><dl>
+<dt>Is <code>Array.prototype.sort</code> pure?</dt><dd>No, it mutates; copy first or use <code>toSorted</code>.</dd>
+<dt>What is a monad or functor in JavaScript?</dt><dd>A container with <code>map</code>/<code>flatMap</code>: arrays and promises behave like them. Know the idea; do not push the jargon.</dd>
+<dt>How do you keep side effects testable?</dt><dd>Inject dependencies (fetch, clock) and keep logic in pure functions; test effects with integration tests.</dd>
+<dt>What does Immer do?</dt><dd>Lets you write mutations on a draft Proxy and produces an immutable next state with structural sharing.</dd>
+</dl></div>
+</section>
+
+<h1 class="part" id="rapid">Revision · Rapid-fire round</h1>
+<section class="q" style="break-before:avoid">
+<header class="qh"><h2>30 questions, one-line answers</h2><p class="qtext">Cover the right column and answer out loud. If you need more than two sentences, go back to the topic number.</p></header>
+<div class="tw"><table>
+<tr><th>#</th><th>Question</th><th>Answer</th><th>Q</th></tr>
+<tr><td>1</td><td>How many primitive types?</td><td>Seven: string, number, bigint, boolean, undefined, symbol, null.</td><td>J1</td></tr>
+<tr><td>2</td><td>Pass by value or reference?</td><td>Always by value; for objects the value is a reference (call by sharing).</td><td>J1</td></tr>
+<tr><td>3</td><td>Why is <code>typeof null</code> “object”?</td><td>A legacy bug from the first engine’s type tags, kept for compatibility.</td><td>J1</td></tr>
+<tr><td>4</td><td><code>==</code> versus <code>===</code>?</td><td><code>==</code> coerces types; <code>===</code> does not. Use <code>===</code>, except <code>x == null</code>.</td><td>J2</td></tr>
+<tr><td>5</td><td>List the falsy values.</td><td>false, 0, -0, 0n, "", null, undefined, NaN.</td><td>J2</td></tr>
+<tr><td>6</td><td><code>||</code> versus <code>??</code>?</td><td><code>||</code> replaces any falsy value; <code>??</code> only null and undefined.</td><td>J2</td></tr>
+<tr><td>7</td><td>How is an object converted to a primitive?</td><td>ToPrimitive: <code>Symbol.toPrimitive</code>, else <code>valueOf</code>/<code>toString</code> depending on the hint.</td><td>J2</td></tr>
+<tr><td>8</td><td>What is the TDZ?</td><td>The time between entering a scope and the <code>let</code>/<code>const</code>/<code>class</code> declaration running; access throws.</td><td>J3</td></tr>
+<tr><td>9</td><td>Are <code>let</code> and <code>const</code> hoisted?</td><td>Yes, but uninitialised until their declaration (TDZ).</td><td>J3</td></tr>
+<tr><td>10</td><td>Does <code>const</code> make an object immutable?</td><td>No: it fixes the binding. Use <code>freeze</code> for shallow immutability.</td><td>J3</td></tr>
+<tr><td>11</td><td>What is lexical scope?</td><td>Variable visibility is fixed by where code is written, not where it is called.</td><td>J3</td></tr>
+<tr><td>12</td><td>Define a closure.</td><td>A function plus a reference to the lexical environment where it was created.</td><td>J4</td></tr>
+<tr><td>13</td><td>What is a stale closure?</td><td>A callback that captured old props or state, typically from a missing React dependency.</td><td>J4</td></tr>
+<tr><td>14</td><td>How is <code>this</code> determined?</td><td>By the call: new, bind/call/apply, method call, default; arrows use the enclosing <code>this</code>.</td><td>J5</td></tr>
+<tr><td>15</td><td>Why do callbacks lose <code>this</code>?</td><td>The function is called without its object. Fix: bind, arrow wrapper or class-field arrow.</td><td>J5</td></tr>
+<tr><td>16</td><td><code>call</code> versus <code>apply</code> versus <code>bind</code>?</td><td>Call and apply invoke now (args listed or array); bind returns a new function.</td><td>J5</td></tr>
+<tr><td>17</td><td><code>prototype</code> versus <code>__proto__</code>?</td><td><code>prototype</code> is on constructor functions; <code>[[Prototype]]</code> (exposed by <code>__proto__</code>) is every object’s link.</td><td>J6</td></tr>
+<tr><td>18</td><td>What does <code>new</code> do?</td><td>Creates an object linked to <code>F.prototype</code>, runs <code>F</code> with <code>this</code> as it, returns it.</td><td>J6</td></tr>
+<tr><td>19</td><td>What is prototype pollution?</td><td>Writing to <code>__proto__</code> or <code>constructor.prototype</code> via untrusted keys, altering every object.</td><td>J6</td></tr>
+<tr><td>20</td><td>Are classes real classes?</td><td>Syntax over prototypes, with strict mode, TDZ, non-enumerable methods and private fields.</td><td>J7</td></tr>
+<tr><td>21</td><td>Currying versus partial application?</td><td>Currying makes unary steps; partial application fixes some arguments.</td><td>J8</td></tr>
+<tr><td>22</td><td>Freeze versus seal?</td><td>Seal blocks add and delete; freeze also blocks changing values. Both shallow.</td><td>J9</td></tr>
+<tr><td>23</td><td>Best deep copy?</td><td><code>structuredClone</code>; not functions or class prototypes.</td><td>J9</td></tr>
+<tr><td>24</td><td>Which array methods mutate?</td><td>push, pop, shift, unshift, splice, sort, reverse, fill, copyWithin.</td><td>J10</td></tr>
+<tr><td>25</td><td><code>Map</code> versus object?</td><td>Any key type, insertion order, <code>size</code>, no inherited keys; object for records and JSON.</td><td>J11</td></tr>
+<tr><td>26</td><td>What is a WeakMap for?</td><td>Metadata keyed by objects without preventing garbage collection; not iterable.</td><td>J11</td></tr>
+<tr><td>27</td><td>What is a generator?</td><td>A function that pauses at <code>yield</code> and resumes; implements iterators lazily.</td><td>J12</td></tr>
+<tr><td>28</td><td>Why is <code>0.1 + 0.2 !== 0.3</code>?</td><td>Binary floating point (IEEE 754 doubles) cannot represent 0.1 exactly.</td><td>J13</td></tr>
+<tr><td>29</td><td>ESM versus CommonJS key difference?</td><td>ESM is static with live bindings (tree shaking); CJS is dynamic and copies values.</td><td>J15</td></tr>
+<tr><td>30</td><td>What makes a function pure?</td><td>Same input, same output, no side effects.</td><td>J17</td></tr>
+</table></div>
+
+<div class="box note"><h4>How to answer JavaScript questions at L4</h4>
+<ul>
+<li>Open with the 30-second answer, then add the mechanism (“why”), then a trade-off or a production angle (a bug you saw, a React consequence).</li>
+<li>Name the edge cases an interviewer is waiting for: TDZ for hoisting, <code>min-width</code>-style traps have their JavaScript equivalents here: <code>typeof null</code>, <code>NaN</code>, shallow copies, lost <code>this</code>.</li>
+<li>Do not hedge on facts you know. For version-specific facts say “I would verify that on MDN”.</li>
+<li>Connect to React and tooling where natural: identity comparison, stale closures, immutability, tree shaking, polyfills.</li>
+<li>The interview is theoretical: expect “explain”, “compare”, “when would you use” and “what are the trade-offs”, not code puzzles.</li>
+</ul></div>
+</section>
+
+</div>
