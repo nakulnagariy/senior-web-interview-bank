@@ -9,7 +9,8 @@ const appRoot = path.resolve(path.dirname(__filename), '..');
 type Row = {
 	category: string;
 	total: number;
-	withAssets: number;
+	withAuthoredAssets: number;
+	authoredFiles: number;
 	placeholderOnly: number;
 	placeholderFiles: number;
 };
@@ -23,31 +24,65 @@ async function exists(filePath: string): Promise<boolean> {
 	}
 }
 
+async function listFiles(directory: string, prefix = ''): Promise<string[]> {
+	const entries = await fs.readdir(directory, { withFileTypes: true });
+	const files: string[] = [];
+	for (const entry of entries) {
+		const relativePath = path.join(prefix, entry.name);
+		if (entry.isDirectory()) {
+			files.push(...(await listFiles(path.join(directory, entry.name), relativePath)));
+		} else if (entry.isFile()) {
+			files.push(relativePath.replace(/\\/g, '/'));
+		}
+	}
+	return files;
+}
+
+async function collectUnmappedAuthoredFiles(): Promise<string[]> {
+	const contentRoot = path.join(appRoot, 'static', 'content');
+	const mappedPaths = new Set(
+		TOPIC_CATEGORIES.flatMap((category) => category.topics.flatMap((topic) =>
+			topic.assets.map((asset) => asset.path.replace(/^\/content\//, ''))
+		))
+	);
+	const allFiles = await listFiles(contentRoot);
+	return allFiles.filter(
+		(file) =>
+			!file.startsWith('shared/') &&
+			!file.includes('-generated.') &&
+			!mappedPaths.has(file)
+	);
+}
+
 async function collectRows(): Promise<Row[]> {
 	const rows: Row[] = [];
 
 	for (const category of TOPIC_CATEGORIES) {
-		let withAssets = 0;
+		let withAuthoredAssets = 0;
+		let authoredFiles = 0;
 		let placeholderOnly = 0;
 		let placeholderFiles = 0;
 
 		for (const topic of category.topics) {
-			if (topic.assets.length > 0) {
-				withAssets += 1;
-				continue;
+			const authoredAssets = topic.assets.filter((asset) => !asset.generated);
+			if (authoredAssets.length > 0) {
+				withAuthoredAssets += 1;
+				authoredFiles += authoredAssets.length;
+			} else {
+				placeholderOnly += 1;
 			}
 
-			placeholderOnly += 1;
-			const placeholderPath = path.join(appRoot, 'static', 'content', topic.slug, 'notes.md');
-			if (await exists(placeholderPath)) {
-				placeholderFiles += 1;
+			for (const asset of topic.assets.filter((item) => item.generated)) {
+				const placeholderPath = path.join(appRoot, 'static', asset.path.replace(/^\//, ''));
+				if (await exists(placeholderPath)) placeholderFiles += 1;
 			}
 		}
 
 		rows.push({
 			category: category.label,
 			total: category.topics.length,
-			withAssets,
+			withAuthoredAssets,
+			authoredFiles,
 			placeholderOnly,
 			placeholderFiles
 		});
@@ -63,29 +98,34 @@ function pct(part: number, total: number): string {
 
 async function main(): Promise<void> {
 	const rows = await collectRows();
+	const unmappedAuthoredFiles = await collectUnmappedAuthoredFiles();
 
 	const totals = rows.reduce(
 		(acc, row) => {
 			acc.total += row.total;
-			acc.withAssets += row.withAssets;
+			acc.withAuthoredAssets += row.withAuthoredAssets;
+			acc.authoredFiles += row.authoredFiles;
 			acc.placeholderOnly += row.placeholderOnly;
 			acc.placeholderFiles += row.placeholderFiles;
 			return acc;
 		},
-		{ total: 0, withAssets: 0, placeholderOnly: 0, placeholderFiles: 0 }
+		{ total: 0, withAuthoredAssets: 0, authoredFiles: 0, placeholderOnly: 0, placeholderFiles: 0 }
 	);
 
 	console.log('Coverage Report');
 	console.log('---------------');
 	for (const row of rows) {
 		console.log(
-			`${row.category}: total=${row.total}, assets=${row.withAssets} (${pct(row.withAssets, row.total)}), placeholders=${row.placeholderOnly}, placeholder-files=${row.placeholderFiles}`
+			`${row.category}: total=${row.total}, authored-topics=${row.withAuthoredAssets} (${pct(row.withAuthoredAssets, row.total)}), authored-files=${row.authoredFiles}, placeholder-only=${row.placeholderOnly}, generated-files=${row.placeholderFiles}`
 		);
 	}
 	console.log('---------------');
 	console.log(
-		`Overall: total=${totals.total}, assets=${totals.withAssets} (${pct(totals.withAssets, totals.total)}), placeholders=${totals.placeholderOnly}, placeholder-files=${totals.placeholderFiles}`
+		`Overall: total=${totals.total}, authored-topics=${totals.withAuthoredAssets} (${pct(totals.withAuthoredAssets, totals.total)}), authored-files=${totals.authoredFiles}, placeholder-only=${totals.placeholderOnly}, generated-files=${totals.placeholderFiles}`
 	);
+	console.log('---------------');
+	console.log(`Unmapped authored files: ${unmappedAuthoredFiles.length}`);
+	for (const file of unmappedAuthoredFiles) console.log(`/content/${file}`);
 }
 
 void main();

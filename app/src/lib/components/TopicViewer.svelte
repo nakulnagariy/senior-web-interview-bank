@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CATEGORY_BY_ID, type Topic, type TopicCategory } from '$lib/data/topics';
+	import { CATEGORY_BY_ID, type Topic, type TopicAsset, type TopicCategory } from '$lib/data/topics';
 	import type { LoadedAsset } from '$lib/content/loaders';
 	import Flashcard from '$lib/components/Flashcard.svelte';
 
@@ -28,6 +28,12 @@
 		hasPrev: boolean;
 		hasNext: boolean;
 	}>();
+	let showGenerated = $state(false);
+
+	$effect(() => {
+		topic.slug;
+		showGenerated = false;
+	});
 
 	const categoryId = $derived.by(() => topic.slug.split('/')[0]);
 	const categoryName = $derived.by(
@@ -37,6 +43,30 @@
 	function safeAssetLabel(label: string, type: string): string {
 		return `${label} (${type})`;
 	}
+
+	const visibleAssets: { asset: TopicAsset; index: number }[] = $derived(
+		topic.assets.flatMap((asset: TopicAsset, index: number) =>
+			showGenerated || !asset.generated ? [{ asset, index }] : []
+		)
+	);
+	const selectedAssetVisible = $derived(
+		visibleAssets.some(({ index }: { index: number }) => index === selectedAssetIndex)
+	);
+
+	function toggleGenerated(): void {
+		if (!showGenerated) {
+			showGenerated = true;
+			if (visibleAssets.length === 0) {
+				onSelectAsset(topic.assets.findIndex((asset: TopicAsset) => asset.generated));
+			}
+			return;
+		}
+
+		if (topic.assets[selectedAssetIndex]?.generated) {
+			onSelectAsset(topic.assets.findIndex((asset: TopicAsset) => !asset.generated));
+		}
+		showGenerated = false;
+	}
 </script>
 
 <article class="viewer">
@@ -44,7 +74,6 @@
 		<div>
 			<p class="crumbs">{categoryName} / {topic.slug.split('/')[1]}</p>
 			<h3>{topic.title}</h3>
-			<p>{topic.slug}</p>
 		</div>
 		<button class="done-toggle" onclick={onToggleDone}>
 			{done ? 'Mark as not covered' : 'Mark as covered'}
@@ -56,16 +85,26 @@
 		<button disabled={!hasNext} onclick={onNext}>Next topic</button>
 	</div>
 
-	{#if topic.assets.length > 0}
+	{#if topic.assets.some((asset: TopicAsset) => asset.generated)}
+		<button class="starter-toggle" onclick={toggleGenerated} aria-expanded={showGenerated}>
+			{showGenerated ? 'Hide generated starter drafts' : 'Show generated starter drafts'}
+		</button>
+	{/if}
+
+	{#if visibleAssets.length > 0}
 		<div class="asset-tabs">
-			{#each topic.assets as asset, index}
+			{#each visibleAssets as { asset, index } (asset.path)}
 				<button class:active={selectedAssetIndex === index} onclick={() => onSelectAsset(index)}>
 					{safeAssetLabel(asset.label, asset.type)}
 				</button>
 			{/each}
 		</div>
-
-		{#if loadedAsset?.error}
+		{#if !selectedAssetVisible}
+			<div class="placeholder">
+				<h4>No authored material yet</h4>
+				<p>Generated starter drafts are available above; they are not reviewed interview content.</p>
+			</div>
+		{:else if loadedAsset?.error}
 			<p class="placeholder error">{loadedAsset.error}</p>
 		{:else if loadedAsset?.asset.type === 'markdown' && loadedAsset.html}
 			<div class="markdown" class:is-loading={loading}>{@html loadedAsset.html}</div>
@@ -78,15 +117,15 @@
 		{:else if loading}
 			<p class="placeholder">Loading content...</p>
 		{/if}
+	{:else if topic.assets.length > 0}
+		<div class="placeholder">
+			<h4>No authored material yet</h4>
+			<p>Show generated starter drafts above if you want to use an unreviewed scaffold.</p>
+		</div>
 	{:else}
 		<div class="placeholder">
-			<h4>Placeholder topic</h4>
-			<p>This topic is fully routed and connected, but content has not been added yet.</p>
-			<ol>
-				<li>Add interview notes markdown for this topic.</li>
-				<li>Add at least one code or assessment asset.</li>
-				<li>Update manifest mapping for the new files.</li>
-			</ol>
+			<h4>Authored material in progress</h4>
+			<p>No reviewed notes or exercises are mapped to this topic yet.</p>
 		</div>
 	{/if}
 </article>
@@ -182,6 +221,19 @@
 		background: #1a2437;
 		color: #fff;
 		border-color: #1a2437;
+	}
+
+	.starter-toggle {
+		justify-self: start;
+		border: 0;
+		padding: 0.2rem 0;
+		background: none;
+		color: #586476;
+		font: inherit;
+		font-size: 0.8rem;
+		text-decoration: underline;
+		text-underline-offset: 0.15rem;
+		cursor: pointer;
 	}
 
 	.markdown :global(h1),

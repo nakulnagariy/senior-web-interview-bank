@@ -184,10 +184,9 @@
 	<div class="ci-header">
 		<div class="ci-title-group">
 			<div class="ci-title-row">
-				<h2>Interview Experiences</h2>
-				<span class="premium-badge">✦ Premium</span>
+				<h2>Interview Log</h2>
 			</div>
-			<p class="ci-subtitle">Log real interview questions by client and role. Your private knowledge base.</p>
+			<p class="ci-subtitle">Organize interview questions and your answers by client and role. Stored on this device.</p>
 		</div>
 		<button class="add-client-btn" onclick={() => (showAddClient = !showAddClient)}>
 			{showAddClient ? '✕ Cancel' : '+ Add Client'}
@@ -434,23 +433,6 @@
 		margin: 0.3rem 0 0;
 		font-size: 0.88rem;
 		color: #657389;
-	}
-
-	.premium-badge {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.25rem;
-		background: linear-gradient(135deg, #bf9b30, #f2d060, #bf9b30);
-		background-size: 200% 200%;
-		color: #3a2800;
-		font-size: 0.7rem;
-		font-weight: 700;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		padding: 0.2rem 0.6rem;
-		border-radius: 999px;
-		white-space: nowrap;
-		animation: shimmer 3s ease infinite;
 	}
 
 	@keyframes shimmer {

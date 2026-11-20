@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L4 Leadership and Team Development Guide</title>
+<meta name="description" content="An EPAM L3 to L4 leadership interview guide covering team leadership, delegation, developing people, motivation, conflict, meetings, and remote performance.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f7;--paper:#fff;--ink:#17232e;--muted:#586878;--line:#d5dde3;--teal:#08685f;--teal-soft:#e4f2ef;--orange:#a54d12;--orange-soft:#fff0e3;--red:#a12c27;--red-soft:#fbebea;--green:#28653e;--green-soft:#eaf4ed;--ui:"IBM Plex Sans",Arial,sans-serif;--body:"Source Serif 4",Georgia,serif;--mono:"IBM Plex Mono",Consolas,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;padding:24px 18px 56px;background:var(--bg);color:var(--ink);font:16px/1.58 var(--body)}
+.wrap{max-width:900px;margin:0 auto}
+h1,h2,h3,h4,th,.kicker,.toc,.label,.prompt,.small{font-family:var(--ui)}
+h1,h2,h3,h4{line-height:1.24;text-wrap:balance}
+h1{font-size:38px;margin:8px 0 12px}
+h2{font-size:25px;margin:0 0 12px}
+h3{font-size:18px;margin:24px 0 8px}
+h4{font-size:15px;margin:0 0 6px}
+p{margin:0 0 12px}
+ul,ol{padding-left:22px;margin:8px 0 14px}
+li{margin:4px 0}
+a{color:var(--teal);text-underline-offset:3px}
+:focus-visible{outline:3px solid #ef8b40;outline-offset:3px}
+.cover{padding:10px 0 23px;border-bottom:3px solid var(--ink);margin-bottom:20px}
+.kicker{color:var(--teal);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.cover .lede{max-width:72ch;color:var(--muted);font-size:18px}
+.cover-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.tag{border:1px solid var(--line);border-radius:3px;padding:4px 8px;background:var(--paper);font:600 12px var(--ui)}
+.callout{border-left:4px solid var(--teal);background:var(--teal-soft);padding:12px 15px;margin:16px 0 20px}
+.callout.warning{border-color:var(--orange);background:var(--orange-soft)}
+.callout p:last-child{margin-bottom:0}
+.toc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 24px;padding:17px 20px;margin:20px 0 28px;border:1px solid var(--line);background:var(--paper);font-size:14px}
+.toc ol{margin:0;padding-left:20px}
+section{margin:32px 0;scroll-margin-top:16px}
+.section-kicker{display:block;color:var(--orange);font:700 11px var(--ui);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.table-wrap{overflow-x:auto;margin:12px 0 18px}
+table{width:100%;border-collapse:collapse;font:13px/1.45 var(--ui)}
+th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+th{background:#eaf0f2;font-size:12px}
+td:first-child{font-weight:600;min-width:145px}
+.small{font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}
+.item{border-top:2px solid var(--line);padding:10px 0 2px;break-inside:avoid}
+.item h3{margin:0 0 5px;font-size:16px}
+.item p,.item ul{font-size:14px}
+.prompt{border-top:1px solid var(--line);padding:12px 0;break-inside:avoid}
+.prompt h3{font-size:16px;margin:0 0 5px}
+.prompt p{margin:0;color:var(--muted);font-size:14px}
+.answer-frame{border:1px solid var(--line);background:var(--paper);padding:13px 15px;margin:12px 0;font:14px/1.55 var(--ui)}
+.answer-frame b{color:var(--teal)}
+.worksheet{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin:12px 0}
+.field{min-height:64px;border-bottom:1px solid #98a7b3;padding:6px 0}
+.field b{display:block;color:var(--muted);font:600 12px var(--ui)}
+.footer{margin-top:42px;border-top:1px solid var(--line);padding-top:12px;color:var(--muted);font:12px/1.5 var(--ui)}
+@page{size:A4;margin:16mm 16mm 18mm}
+@media print{
+ body{padding:0;background:#fff;font-size:10pt;line-height:1.42}
+ .wrap{max-width:none}
+ h1{font-size:27pt}h2{font-size:19pt}h3{font-size:13pt}
+ .cover{break-after:page;padding-top:20mm}
+ .toc{break-after:page}
+ section{margin:20px 0}
+ a{color:inherit;text-decoration:none}
+ .callout,.item,.prompt,tr{break-inside:avoid}
+ th{background:#eaf0f2!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .footer{margin-top:24px}
+}
+@media(max-width:640px){body{padding:16px 13px 40px}h1{font-size:31px}.toc,.grid,.worksheet{grid-template-columns:1fr}.cover .lede{font-size:16px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="cover">
+  <div class="kicker">EPAM L3 to L4 | Leadership and Team Development</div>
+  <h1>Lead through people, not only code</h1>
+  <p class="lede">A practical interview guide synthesized from your leadership notes and the L4 requirements workbook. The focus is how a lead creates outcomes through a capable team: direction, ownership, development, constructive conflict, and follow-through.</p>
+  <div class="cover-meta"><span class="tag">Team management</span><span class="tag">Delegation and coaching</span><span class="tag">Conflict management</span><span class="tag">Meetings and remote teams</span></div>
+  <div class="callout warning"><p><strong>Use evidence, not borrowed claims.</strong> Frameworks help explain your judgment, but they are not proof that you have led people. For every answer, add a real example, your personal actions, a verifiable result, and what you learned. Do not present course reflections as past work outcomes.</p></div>
+</header>
+
+<nav class="toc" aria-label="Guide contents">
+  <ol>
+    <li><a href="#bar">What the L4 bar asks for</a></li>
+    <li><a href="#shift">The leadership shift</a></li>
+    <li><a href="#delegate">Prioritize and delegate</a></li>
+    <li><a href="#develop">Develop people and performance</a></li>
+  </ol>
+  <ol start="5">
+    <li><a href="#motivate">Motivation and team health</a></li>
+    <li><a href="#conflict">Resolve conflict at the advanced level</a></li>
+    <li><a href="#meetings">Meetings and distributed teams</a></li>
+    <li><a href="#practice">Panel questions and evidence worksheet</a></li>
+  </ol>
+</nav>
+
+<section id="bar">
+  <span class="section-kicker">01 | Assessment target</span>
+  <h2>What the L4 bar asks for</h2>
+  <p>The General Requirements describe a lead as someone who organizes work and gets it done through the team: communicates a shared vision, understands people’s strengths, uses motivation and delegation, resolves conflict, shares knowledge, and helps less experienced engineers grow. The role also includes technical leadership, decision-making, removing impediments, prioritization, and self-management.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Workbook area</th><th>L4 level</th><th>What to demonstrate</th></tr></thead>
+    <tbody>
+      <tr><td>Leadership and ownership</td><td>Intermediate</td><td>Take initiative for self and team; align people around goals; carry responsibility beyond assigned work.</td></tr>
+      <tr><td>Managing teamwork</td><td>Intermediate</td><td>Build respectful, inclusive collaboration; synthesize ideas; adapt across functions and cultures; address recurring process issues.</td></tr>
+      <tr><td>Delegation</td><td>Intermediate</td><td>Choose work deliberately, define outcome and authority, give reasonable autonomy, and agree how risks and progress surface.</td></tr>
+      <tr><td>Communication</td><td>Intermediate</td><td>Listen and clarify, give and receive constructive feedback, communicate diplomatically, and facilitate meetings.</td></tr>
+      <tr><td>Motivation and developing others</td><td>Intermediate</td><td>Adapt to individual drivers, reinforce contribution, coach strengths, maintain feedback, and support challenging development goals.</td></tr>
+      <tr><td>Conflict management</td><td>Advanced</td><td>Mediate when needed, help people resolve conflict, repair relationships, improve communication systems, and create trust for open discussion.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">The workbook’s detailed skill levels are not all “Advanced” at L4. Conflict management is the standout Advanced requirement; the related leadership, delegation, motivation, communication, and development skills are generally Intermediate. Confirm against the current workbook if its version changes.</p>
+</section>
+
+<section id="shift">
+  <span class="section-kicker">02 | Leadership identity</span>
+  <h2>The shift: from personal output to team capability</h2>
+  <p>A strong individual contributor is valued for what they personally deliver. A lead still needs technical judgment, but their leverage comes from making good work easier for others: clarifying direction, enabling decisions, sharing context, reducing friction, and growing capability.</p>
+  <div class="grid">
+    <article class="item"><h3>Balance delivery and people</h3><p>Protect outcomes without treating people as interchangeable capacity. Watch for both failure modes: shipping at any cost, and avoiding hard decisions to keep everyone comfortable.</p></article>
+    <article class="item"><h3>Know when to direct and when to step back</h3><p>Be decisive when risk, ambiguity, or time requires it. When the team can solve the problem, ask questions, make constraints visible, and let them own the solution.</p></article>
+    <article class="item"><h3>Influence without title</h3><p>Align stakeholders around evidence and shared goals. Make trade-offs explicit, invite disagreement, and follow through on the decision even when your preferred option is not chosen.</p></article>
+    <article class="item"><h3>Communicate for understanding</h3><p>State the purpose, audience, decision, and next step. Ask questions and check what was understood; sending a message is not the same as creating alignment.</p></article>
+  </div>
+  <div class="callout"><p><strong>Commitment beats bare compliance.</strong> People are more likely to own work when they understand why it matters, have a meaningful say in how to do it, and can raise risks without being punished for candor.</p></div>
+  <div class="callout"><p><strong>Values should show up in trade-offs.</strong> Value individuals, act as a team, pursue excellence, focus on client outcomes, and act with integrity. Explain how you balance them when they pull in different directions; do not rely on naming values as proof.</p></div>
+</section>
+
+<section id="delegate">
+  <span class="section-kicker">03 | Leverage and accountability</span>
+  <h2>Prioritize and delegate for outcomes and growth</h2>
+  <p>Delegation is not dumping tasks. It is a deliberate choice about the best owner, the development opportunity, the decision rights, and the support needed to protect the outcome. It also exposes a lead’s own work to scrutiny: what should only you do, and what are you holding because it feels faster or safer?</p>
+  <h3>A value-first filter</h3>
+  <ol>
+    <li><strong>Stop:</strong> remove work that has no useful outcome or owner.</li>
+    <li><strong>Clarify:</strong> if the value or timing is uncertain, get the missing context before committing.</li>
+    <li><strong>Defer:</strong> make a deliberate later decision with a review date, rather than letting low-value work interrupt focus.</li>
+    <li><strong>Automate or simplify:</strong> remove repeated manual effort where a safe system can do it.</li>
+    <li><strong>Delegate:</strong> move work to the right owner with context, authority, and support.</li>
+    <li><strong>Do:</strong> keep work that genuinely needs your judgment or is your highest-value contribution now.</li>
+  </ol>
+  <p class="small">The TVP funnel in your notes is a useful prompt, not a financial formula for engineering. Judge value by user impact, risk reduction, delivery outcomes, team leverage, and opportunity cost.</p>
+  <h3>Before and during a handoff</h3>
+  <ul>
+    <li>Check the person’s interests, strengths, current load, and the task’s risk. A stretch assignment should stretch, not set someone up to fail.</li>
+    <li>Explain the purpose, users or stakeholders, expected outcome, definition of done, priority, deadline, constraints, and what must not be changed.</li>
+    <li>Agree what decisions the owner can make independently and which require consultation. Delegate the outcome, not your personal implementation style.</li>
+    <li>Set a proportionate check-in cadence and a clear escalation path. Inspect risk and progress; do not make someone report every keystroke.</li>
+    <li>Make the workload trade-off explicit. If the new work is higher priority, agree what moves out.</li>
+    <li>Close the loop with timely, specific feedback. Recognize the contribution and capture what the person can own next time.</li>
+  </ul>
+  <div class="callout"><p><strong>Delegating outside your authority:</strong> check the person’s manager or team protocol when appropriate, ask rather than assign, be honest about who benefits, and make it safe to discuss capacity or decline.</p></div>
+</section>
+
+<section id="develop">
+  <span class="section-kicker">04 | Coaching and performance</span>
+  <h2>Develop people while protecting delivery</h2>
+  <p>Development happens in day-to-day work: useful feedback, stretch tasks, mentoring, clear goals, and safe opportunities to practice. The lead’s job is not to own another person’s career, but to help them see options, build capability, and take responsibility for progress.</p>
+  <div class="grid">
+    <article class="item"><h3>Make one-to-ones useful</h3><p>Use them for goals, blockers, feedback, wellbeing, and the person’s agenda, not only status. Agree actions and revisit them. Adapt the format to the person instead of running a script.</p></article>
+    <article class="item"><h3>Coach before giving the answer</h3><p>Ask what they have tried, what they think is happening, and what options they see. Give direction when safety, urgency, or experience requires it; explain why and return ownership as soon as possible.</p></article>
+    <article class="item"><h3>Address performance early</h3><p>Use specific, observable examples. Clarify the expected result and impact, listen for context, agree support and a measurable improvement plan, then follow up. Discuss behavior and outcomes, not character.</p></article>
+    <article class="item"><h3>Keep high performers growing</h3><p>Do not assume strong contributors need no support. Give specific recognition, meaningful autonomy, new scope, and feedback. Check that stretch work remains sustainable and aligned with their goals.</p></article>
+  </div>
+  <h3>Set goals people can own</h3>
+  <p>Connect an agreed goal to the team or client outcome, then translate it into measurable objectives, tasks, owners, and dates. Invite the person’s input; align expectations and support; review progress and adjust when conditions change.</p>
+  <p class="small">Accountability is not blame. Model it yourself: name commitments, communicate risk early, own your part in ambiguity, and make progress visible.</p>
+</section>
+
+<section id="motivate">
+  <span class="section-kicker">05 | Team conditions</span>
+  <h2>Motivation, psychological safety, and team health</h2>
+  <p>Motivation is not a fixed trait that people either have or lack. Learn what gives each person energy and what blocks contribution. Connect work to purpose, offer appropriate autonomy and growth, recognize specific contributions, make expectations clear, and address disengagement with curiosity rather than diagnosis.</p>
+  <h3>Psychological safety is not comfort or low standards</h3>
+  <p>It means people can raise concerns, ask for help, challenge an idea, and acknowledge a mistake without humiliation or retaliation. Pair that safety with clear standards and accountability. Model it by listening without punishing candor, admitting your own mistakes, and separating debate about work from judgment of people.</p>
+  <h3>Use team-stage models as prompts, not labels</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Common pattern</th><th>Useful leadership response</th></tr></thead>
+    <tbody>
+      <tr><td>New team or new goal</td><td>Clarify purpose, roles, decision paths, and working agreements. Invite questions and make uncertainty discussable.</td></tr>
+      <tr><td>Friction or disagreement</td><td>Find the source of tension, hear differing perspectives, and adjust goals or ownership when needed. Do not confuse disagreement with failure.</td></tr>
+      <tr><td>Shared working norms</td><td>Reinforce constructive feedback, transparent communication, and collective ownership. Facilitate rather than decide every detail.</td></tr>
+      <tr><td>Effective self-direction</td><td>Coach, remove blockers, recognize progress, and avoid taking control away without a reason. Reassess when membership or conditions change.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small">Forming, storming, norming, and performing can help discuss team needs. Real teams do not move through fixed stages on a schedule; use observed behavior, not the label, to choose your response.</p>
+</section>
+
+<section id="conflict">
+  <span class="section-kicker">06 | Advanced competency</span>
+  <h2>Resolve conflict, then improve the system</h2>
+  <p>At the L4 bar, conflict management is more than being agreeable or winning a technical debate. Diagnose what is happening, create a fair conversation, help people reach a workable resolution, repair trust where needed, and address recurring causes in the team’s process.</p>
+  <h3>Diagnose before prescribing</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Conflict focus</th><th>Question to uncover it</th></tr></thead>
+    <tbody>
+      <tr><td>Task</td><td>Are we disagreeing about the goal, evidence, or definition of success?</td></tr>
+      <tr><td>Process</td><td>Are we aligned on the outcome but not on how to reach it?</td></tr>
+      <tr><td>Roles or status</td><td>Is ownership, decision authority, recognition, or escalation unclear?</td></tr>
+      <tr><td>Relationship</td><td>Has the conversation become personal or damaged trust? Address behavior directly and respectfully.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>A practical response sequence</h3>
+  <ol>
+    <li><strong>Assess urgency and safety.</strong> If someone is being harmed, policy is at risk, or the issue is escalating, intervene or escalate through the right channel. Do not leave a serious issue to “work itself out.”</li>
+    <li><strong>Prepare and engage.</strong> Check your own state, gather concrete examples, and arrange a respectful time. State that the goal is a better outcome, not a winner.</li>
+    <li><strong>Listen and clarify.</strong> Let each person explain their view. Reflect the facts and impact you heard, ask whether you understood, and separate observation from assumptions about intent.</li>
+    <li><strong>Find the underlying need and shared goal.</strong> Ask what matters to each person and what outcome they need. The stated positions may differ while the underlying goal overlaps.</li>
+    <li><strong>Agree action and ownership.</strong> Choose a change, owner, and review point. If a team can resolve the issue with coaching, help them do so; do not take over by default.</li>
+    <li><strong>Repair and learn.</strong> Check whether working trust recovered. If the issue repeats, address the system: unclear expectations, overloaded capacity, poor handoffs, missing decision rights, or harmful norms.</li>
+  </ol>
+  <div class="callout"><p><strong>Useful language:</strong> “I may be missing context. Can you walk me through how you see it?” “I heard the goal as X and the concern as Y; did I get that right?” “We seem aligned on the outcome and split on the approach. What evidence would help us decide?”</p></div>
+</section>
+
+<section id="meetings">
+  <span class="section-kicker">07 | Execution environment</span>
+  <h2>Run meetings and distributed work with intent</h2>
+  <h3>Meetings are for work that benefits from real-time collaboration</h3>
+  <ul>
+    <li>State the purpose and the decision or output needed. If the work is only status sharing, consider an asynchronous update.</li>
+    <li>Send a short agenda, invite the people needed, and assign realistic time. Use a facilitator, timekeeper, or note-taker when the group or topic warrants it.</li>
+    <li>Park tangents without losing them. Invite quieter voices and summarize disagreements neutrally.</li>
+    <li>Close each decision with an action, a named owner, and a due date. Share the notes and revisit whether the meeting format is still useful.</li>
+  </ul>
+  <h3>Remote leadership needs more explicit signals</h3>
+  <p>Write down expectations, priorities, and what “done” means. Keep shared work visible, agree on check-in cadence and escalation paths, and give timely feedback in the channel closest to the work. Maintain human connection deliberately; do not mistake online presence or message volume for performance.</p>
+  <p class="small">Useful rotating meeting roles from your notes: facilitator, timekeeper, scribe, and energy monitor. Assign roles only when they help the meeting; they are tools, not ceremony.</p>
+</section>
+
+<section id="practice">
+  <span class="section-kicker">08 | Interview practice</span>
+  <h2>Panel prompts to prepare</h2>
+  <p>These are practice prompts synthesized from your notes and the workbook. They are not recorded as questions you have already been asked.</p>
+  <div class="prompt"><h3>How would you describe your leadership style?</h3><p>State how you set direction, share context, give autonomy, stay available for blockers, and adjust your approach to the person and risk. Prove it with one example.</p></div>
+  <div class="prompt"><h3>Tell me about a time you helped someone grow.</h3><p>Explain what the person wanted to learn, what you did rather than simply taking over, how you gave feedback, and what changed for them or the team.</p></div>
+  <div class="prompt"><h3>Describe a conflict you helped resolve.</h3><p>Show how you diagnosed the disagreement, listened to both sides, reached a decision or agreement, restored collaboration, and prevented recurrence.</p></div>
+  <div class="prompt"><h3>How do you delegate when quality and deadlines matter?</h3><p>Cover owner selection, context, success criteria, authority, constraints, milestones, risk-based check-ins, and the capacity trade-off.</p></div>
+  <div class="prompt"><h3>How have you influenced a decision without formal authority?</h3><p>Show how you understood stakeholder goals, made options and trade-offs legible, invited challenge, and secured a decision or next step.</p></div>
+  <div class="prompt"><h3>How would you address a performance concern?</h3><p>Use timely, specific observations; listen for context; align on expectations; agree support and measurable actions; follow up fairly.</p></div>
+  <div class="prompt"><h3>How do you keep a remote team aligned and motivated?</h3><p>Describe written outcomes, shared visibility, appropriate check-ins, timely feedback, connection, and how you adapt to individual needs.</p></div>
+  <div class="prompt"><h3>How do you prioritize when everything appears urgent?</h3><p>Explain how you connect work to client or team outcomes, manage risk and dependencies, stop or defer low-value work, and communicate trade-offs.</p></div>
+
+  <h3>Build a concise evidence-based answer</h3>
+  <div class="answer-frame"><p><b>Context:</b> What team, client, or delivery outcome was at stake?</p><p><b>Responsibility:</b> What were you accountable for, and what authority did you have?</p><p><b>Actions:</b> What did you personally do to align, enable, decide, coach, or resolve?</p><p><b>Result:</b> What changed? Use a verified measure or a concrete observable outcome.</p><p><b>Learning:</b> What would you repeat or change, and how did the team benefit afterward?</p></div>
+  <p class="small">Keep the answer focused on your actions while giving credit to collaborators. If you have not formally managed people, say so plainly and use real examples of mentoring, facilitation, technical leadership, or influence. Do not imply direct-report responsibilities you did not have.</p>
+
+  <h3>Your story worksheet</h3>
+  <p>Complete this with facts before rehearsal. “I would” describes intent; it is not evidence that you have already done it.</p>
+  <div class="worksheet">
+    <div class="field"><b>Story / date / project</b></div>
+    <div class="field"><b>Team or client outcome</b></div>
+    <div class="field"><b>My responsibility and authority</b></div>
+    <div class="field"><b>People, constraints, and risk</b></div>
+    <div class="field"><b>My specific actions</b></div>
+    <div class="field"><b>Observable result or measure</b></div>
+    <div class="field"><b>What I learned or changed</b></div>
+    <div class="field"><b>Who can verify / follow-up evidence</b></div>
+  </div>
+  <h3>Development actions from your notes</h3>
+  <ul>
+    <li>Ask your lead for feedback on communication, influence, delegation, and team impact, not only technical delivery.</li>
+    <li>Volunteer to facilitate a technical discussion or retrospective; set an outcome and close with owners and dates.</li>
+    <li>Practice coaching peers by asking questions before offering a solution; ask afterward how the conversation landed.</li>
+    <li>Track your work for one or two weeks, identify high-leverage activities, and make one explicit prioritization change.</li>
+    <li>Seek a stretch assignment involving coordination, mentoring, or a recurring team impediment; record the result and feedback.</li>
+  </ul>
+  <h3>Personal learning reflection</h3>
+  <ul>
+    <li><strong>What changed in my thinking?</strong> Leadership is not simply directing or keeping peace; it is choosing when to decide, when to coach, and how to make ownership safe and clear.</li>
+    <li><strong>What can I practice now?</strong> Listen and check understanding, clarify outcomes, facilitate a discussion, coach a peer, and make my own priorities and blockers visible.</li>
+    <li><strong>What resources can I use?</strong> Observe my lead, ask peers for feedback, and use cross-functional meetings, planning, reviews, and retrospectives as practice opportunities.</li>
+    <li><strong>What is my limitation and response?</strong> Without direct reports, formal delegation and performance management are limited. Seek mentoring, facilitation, and stretch ownership, then ask for feedback on the impact.</li>
+  </ul>
+</section>
+
+<footer class="footer"><p>Prepared from your supplied notes and the EPAM JavaScript Frontend requirements workbook. Course concepts have been consolidated and paraphrased. Confirm organizational terminology against the current workbook; personalize every interview answer with truthful evidence.</p></footer>
+</main>
+</body>
+</html>

@@ -2,36 +2,41 @@
 	import { onMount } from 'svelte';
 	import {
 		ALL_TOPICS,
+		AUTHORED_TOPIC_COUNT,
 		MUST_KNOW_TOPICS,
 		TOPIC_BY_SLUG,
 		TOPIC_CATEGORIES,
 		type Topic
 	} from '$lib/data/topics';
 	import { loadAsset, type LoadedAsset } from '$lib/content/loaders';
+	import { STUDY_GUIDES } from '$lib/data/studyGuides';
 	import StatsHero from '$lib/components/StatsHero.svelte';
-	import FiltersBar from '$lib/components/FiltersBar.svelte';
 	import TopicSidebar from '$lib/components/TopicSidebar.svelte';
 	import TopicViewer from '$lib/components/TopicViewer.svelte';
 	import ClientInterviews from '$lib/components/ClientInterviews.svelte';
 	import McqPractice from '$lib/components/McqPractice.svelte';
 	import InterviewBank from '$lib/components/InterviewBank.svelte';
+	import StudyGuides from '$lib/components/StudyGuides.svelte';
 	import Footer from '$lib/components/Footer.svelte';
-
-	type FilterValue = 'all' | 'js' | 'react' | 'ts' | 'css' | 'perf' | 'test' | 'angular' | 'design';
 
 	const DONE_STORAGE_KEY = 'bench_done_topics';
 
 	let selectedSlug = $state(ALL_TOPICS[0].slug);
-	let activeFilter = $state<FilterValue>('all');
-	let selectedAssetIndex = $state(0);
+	let selectedAssetIndex = $state(ALL_TOPICS[0].assets.findIndex((asset) => !asset.generated));
 	let loadedAsset = $state<LoadedAsset | null>(null);
 	let loadingAsset = $state(false);
 	let doneTopicSlugs = $state<Record<string, boolean>>({});
-	let collapsedByCategory = $state<Record<string, boolean>>({});
+	let collapsedByCategory = $state<Record<string, boolean>>(
+		Object.fromEntries(
+			TOPIC_CATEGORIES.map((category) => [category.id, category.id !== ALL_TOPICS[0].slug.split('/')[0]])
+		)
+	);
 	let sidebarCollapsed = $state(false);
 	let mobileSidebarOpen = $state(false);
 	let showBackToTop = $state(false);
-	let activeView = $state<'topics' | 'mcq' | 'bank' | 'interviews'>('topics');
+	let activeView = $state<'learn' | 'practice' | 'interviews'>('learn');
+	let learnSection = $state<'topics' | 'guides'>('topics');
+	let practiceSection = $state<'mcq' | 'bank'>('mcq');
 
 	function toggleSidebar(): void {
 		sidebarCollapsed = !sidebarCollapsed;
@@ -45,9 +50,6 @@
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
 
-	const visibleCategories = $derived(
-		TOPIC_CATEGORIES.filter((category) => activeFilter === 'all' || category.cat === activeFilter)
-	);
 	const selectedTopic = $derived.by(() => TOPIC_BY_SLUG[selectedSlug] ?? ALL_TOPICS[0]);
 	const selectedTopicIndex = $derived.by(() =>
 		ALL_TOPICS.findIndex((topic) => topic.slug === selectedTopic.slug)
@@ -69,7 +71,10 @@
 
 	function selectTopic(topicSlug: string): void {
 		selectedSlug = topicSlug;
-		selectedAssetIndex = 0;
+		const nextTopic = TOPIC_BY_SLUG[topicSlug] ?? ALL_TOPICS[0];
+		selectedAssetIndex = nextTopic.assets.findIndex((asset) => !asset.generated);
+		const categoryId = topicSlug.split('/')[0];
+		collapsedByCategory = { ...collapsedByCategory, [categoryId]: false };
 		setHashForTopic(topicSlug);
 		mobileSidebarOpen = false;
 	}
@@ -99,10 +104,6 @@
 			...collapsedByCategory,
 			[categoryId]: !collapsedByCategory[categoryId]
 		};
-	}
-
-	function setFilter(next: FilterValue): void {
-		activeFilter = next;
 	}
 
 	let loadToken = 0;
@@ -135,14 +136,23 @@
 			}
 		}
 
-		collapsedByCategory = Object.fromEntries(TOPIC_CATEGORIES.map((category) => [category.id, false]));
 		selectedSlug = readHash() ?? ALL_TOPICS[0].slug;
+		const selectedCategoryId = selectedSlug.split('/')[0];
+		selectedAssetIndex = (TOPIC_BY_SLUG[selectedSlug] ?? ALL_TOPICS[0]).assets.findIndex(
+			(asset) => !asset.generated
+		);
+		collapsedByCategory = Object.fromEntries(
+			TOPIC_CATEGORIES.map((category) => [category.id, category.id !== selectedCategoryId])
+		);
 
 		const onHashChange = () => {
 			const hashTopic = readHash();
 			if (hashTopic) {
 				selectedSlug = hashTopic;
-				selectedAssetIndex = 0;
+				const nextTopic = TOPIC_BY_SLUG[hashTopic];
+				selectedAssetIndex = nextTopic?.assets.findIndex((asset) => !asset.generated) ?? -1;
+				const categoryId = hashTopic.split('/')[0];
+				collapsedByCategory = { ...collapsedByCategory, [categoryId]: false };
 			}
 		};
 
@@ -243,88 +253,100 @@
 <main class="app-shell">
 	<StatsHero
 		totalTopics={ALL_TOPICS.length}
+		authoredTopicCount={AUTHORED_TOPIC_COUNT}
+		guideCount={STUDY_GUIDES.length}
 		doneCount={doneCount}
 		mustKnowTopics={MUST_KNOW_TOPICS}
 		progressPct={progressPct}
 	/>
 
-	<!-- Top-level view switcher -->
-	<div class="view-tabs">
+	<nav class="view-tabs" aria-label="Main application views">
 		<button
 			class="view-tab"
-			class:active={activeView === 'topics'}
-			onclick={() => (activeView = 'topics')}
+			class:active={activeView === 'learn'}
+			aria-pressed={activeView === 'learn'}
+			onclick={() => (activeView = 'learn')}
 		>
-			📚 Study Topics
+			📚 Learn
 		</button>
 		<button
 			class="view-tab"
-			class:active={activeView === 'mcq'}
-			onclick={() => (activeView = 'mcq')}
+			class:active={activeView === 'practice'}
+			aria-pressed={activeView === 'practice'}
+			onclick={() => (activeView = 'practice')}
 		>
-			📝 MCQ Practice
+			📝 Practice
 		</button>
 		<button
 			class="view-tab"
-			class:active={activeView === 'bank'}
-			onclick={() => (activeView = 'bank')}
-		>
-			🧠 Interview Bank
-		</button>
-		<button
-			class="view-tab view-tab-premium"
 			class:active={activeView === 'interviews'}
+			aria-pressed={activeView === 'interviews'}
 			onclick={() => (activeView = 'interviews')}
 		>
 			💼 Interview Log
-			<span class="tab-badge">❖ Premium</span>
 		</button>
-	</div>
+	</nav>
 
-	{#if activeView === 'topics'}
-		<div class="mobile-topbar">
-			<button class="mobile-menu-btn" onclick={toggleMobileSidebar}>&#9776; Topics</button>
-		</div>
-
-		<div class="filters-sticky">
-			<FiltersBar activeFilter={activeFilter} onChange={setFilter} />
-		</div>
-
-		{#if mobileSidebarOpen}
-			<div class="mobile-backdrop" onclick={toggleMobileSidebar} aria-hidden="true"></div>
+	{#if activeView === 'learn'}
+		<nav class="view-subtabs" aria-label="Learn sections">
+			<button class:active={learnSection === 'topics'} aria-pressed={learnSection === 'topics'} onclick={() => (learnSection = 'topics')}>
+				Topics
+			</button>
+			<button class:active={learnSection === 'guides'} aria-pressed={learnSection === 'guides'} onclick={() => (learnSection = 'guides')}>
+				Study guides <span>{STUDY_GUIDES.length}</span>
+			</button>
+		</nav>
+		{#if learnSection === 'topics'}
+			<div class="mobile-topbar">
+				<button class="mobile-menu-btn" onclick={toggleMobileSidebar}>&#9776; Subjects &amp; topics</button>
+			</div>
+			{#if mobileSidebarOpen}
+				<div class="mobile-backdrop" onclick={toggleMobileSidebar} aria-hidden="true"></div>
+			{/if}
+			<section class="layout" class:sidebar-collapsed={sidebarCollapsed}>
+				<TopicSidebar
+					categories={TOPIC_CATEGORIES}
+					selectedTopic={selectedTopic}
+					doneTopicSlugs={doneTopicSlugs}
+					collapsedByCategory={collapsedByCategory}
+					onToggleCategory={toggleCategory}
+					onSelectTopic={selectTopic}
+					collapsed={sidebarCollapsed}
+					onToggleCollapse={toggleSidebar}
+					mobileOpen={mobileSidebarOpen}
+					onMobileClose={toggleMobileSidebar}
+				/>
+				<TopicViewer
+					topic={selectedTopic}
+					done={Boolean(doneTopicSlugs[selectedTopic.slug])}
+					loading={loadingAsset}
+					loadedAsset={loadedAsset}
+					selectedAssetIndex={selectedAssetIndex}
+					onSelectAsset={(index) => (selectedAssetIndex = index)}
+					onToggleDone={() => toggleDone(selectedTopic.slug)}
+					onPrev={selectPrevTopic}
+					onNext={selectNextTopic}
+					hasPrev={hasPrevTopic}
+					hasNext={hasNextTopic}
+				/>
+			</section>
+		{:else}
+			<StudyGuides />
 		{/if}
-
-		<section class="layout" class:sidebar-collapsed={sidebarCollapsed}>
-			<TopicSidebar
-				categories={visibleCategories}
-				selectedTopic={selectedTopic}
-				doneTopicSlugs={doneTopicSlugs}
-				collapsedByCategory={collapsedByCategory}
-				onToggleCategory={toggleCategory}
-				onSelectTopic={selectTopic}
-				collapsed={sidebarCollapsed}
-				onToggleCollapse={toggleSidebar}
-				mobileOpen={mobileSidebarOpen}
-				onMobileClose={toggleMobileSidebar}
-			/>
-			<TopicViewer
-				topic={selectedTopic}
-				done={Boolean(doneTopicSlugs[selectedTopic.slug])}
-				loading={loadingAsset}
-				loadedAsset={loadedAsset}
-				selectedAssetIndex={selectedAssetIndex}
-				onSelectAsset={(index) => (selectedAssetIndex = index)}
-				onToggleDone={() => toggleDone(selectedTopic.slug)}
-				onPrev={selectPrevTopic}
-				onNext={selectNextTopic}
-				hasPrev={hasPrevTopic}
-				hasNext={hasNextTopic}
-			/>
-		</section>
-	{:else if activeView === 'mcq'}
-		<McqPractice />
-	{:else if activeView === 'bank'}
-		<InterviewBank />
+	{:else if activeView === 'practice'}
+		<nav class="view-subtabs" aria-label="Practice sections">
+			<button class:active={practiceSection === 'mcq'} aria-pressed={practiceSection === 'mcq'} onclick={() => (practiceSection = 'mcq')}>
+				MCQ practice
+			</button>
+			<button class:active={practiceSection === 'bank'} aria-pressed={practiceSection === 'bank'} onclick={() => (practiceSection = 'bank')}>
+				Interview questions
+			</button>
+		</nav>
+		{#if practiceSection === 'mcq'}
+			<McqPractice />
+		{:else}
+			<InterviewBank />
+		{/if}
 	{:else}
 		<ClientInterviews />
 	{/if}
@@ -390,17 +412,6 @@
 		cursor: pointer;
 	}
 
-	.filters-sticky {
-		position: sticky;
-		top: 0;
-		z-index: 100;
-		background: rgba(247, 245, 240, 0.94);
-		backdrop-filter: blur(8px);
-		border-radius: 20px;
-		padding: 0.5rem;
-		margin: -0.5rem 0;
-	}
-
 	.mobile-backdrop {
 		position: fixed;
 		inset: 0;
@@ -439,16 +450,68 @@
 
 	/* ── View tab switcher ── */
 	.view-tabs {
+		position: sticky;
+		top: max(0.5rem, env(safe-area-inset-top));
+		z-index: 20;
 		display: flex;
+		align-self: start;
+		flex-wrap: nowrap;
 		gap: 0.5rem;
 		padding: 0.3rem;
 		background: rgba(255, 255, 255, 0.7);
 		border: 1px solid #d8dee7;
 		border-radius: 16px;
 		width: fit-content;
+		max-width: 100%;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		backdrop-filter: blur(12px);
+		scrollbar-width: thin;
+	}
+
+	.view-subtabs {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		width: fit-content;
+		max-width: 100%;
+		padding: 0.2rem;
+		border: 1px solid #d8dee7;
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 0.65);
+		overflow-x: auto;
+	}
+
+	.view-subtabs button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		min-height: 2.25rem;
+		padding: 0.45rem 0.75rem;
+		border: 0;
+		border-radius: 6px;
+		background: transparent;
+		color: #586476;
+		font: inherit;
+		font-size: 0.84rem;
+		font-weight: 600;
+		white-space: nowrap;
+		cursor: pointer;
+	}
+
+	.view-subtabs button.active {
+		background: #fff;
+		color: #1a2437;
+		box-shadow: 0 1px 4px rgba(26, 36, 55, 0.16);
+	}
+
+	.view-subtabs button span {
+		color: #738095;
+		font-size: 0.72rem;
 	}
 
 	.view-tab {
+		flex: 0 0 auto;
 		font-family: inherit;
 		display: flex;
 		align-items: center;
@@ -474,33 +537,6 @@
 		background: #1a2437;
 		color: #fff;
 		box-shadow: 0 2px 10px rgba(26, 36, 55, 0.25);
-	}
-
-	.view-tab-premium .tab-badge {
-		display: inline-flex;
-		align-items: center;
-		background: linear-gradient(135deg, #bf9b30, #f2d060, #bf9b30);
-		background-size: 200% 200%;
-		color: #3a2800;
-		font-size: 0.65rem;
-		font-weight: 700;
-		letter-spacing: 0.05em;
-		text-transform: uppercase;
-		padding: 0.15rem 0.5rem;
-		border-radius: 999px;
-		animation: tab-shimmer 3s ease infinite;
-	}
-
-	.view-tab-premium.active .tab-badge {
-		background: linear-gradient(135deg, #f2d060, #fff8dc, #f2d060);
-		background-size: 200% 200%;
-		animation: tab-shimmer 3s ease infinite;
-	}
-
-	@keyframes tab-shimmer {
-		0% { background-position: 0% 50%; }
-		50% { background-position: 100% 50%; }
-		100% { background-position: 0% 50%; }
 	}
 
 	/* ── Tablet + smaller: single-column layout (≤ 1024px) ── */
@@ -533,7 +569,7 @@
 
 		.view-tabs {
 			width: 100%;
-			justify-content: stretch;
+			justify-content: flex-start;
 		}
 
 		.view-tab {
@@ -558,25 +594,16 @@
 		.view-tabs {
 			gap: 0.25rem;
 			padding: 0.25rem;
-			flex-wrap: wrap;
 		}
 
 		.view-tab {
-			flex: 1 1 calc(50% - 0.25rem);
-			flex-direction: column;
-			gap: 0.2rem;
-			min-width: 0;
+			flex: 0 0 auto;
+			gap: 0.35rem;
 			padding: 0.45rem 0.4rem;
 			font-size: 0.8rem;
-			white-space: normal;
-			text-align: center;
-			line-height: 1.2;
+			white-space: nowrap;
 		}
 
-		.view-tab-premium .tab-badge {
-			font-size: 0.58rem;
-			padding: 0.1rem 0.4rem;
-		}
 	}
 
 	/* ── Extra small phones (≤ 360px) ── */
